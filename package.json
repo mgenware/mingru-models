@@ -1,0 +1,46 @@
+{
+  "name": "dd-models",
+  "version": "0.0.1",
+  "description": "Redefining database models",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "author": "Mgen (https://www.mgenware.com)",
+  "homepage": "https://github.com/mgenware/dd-models",
+  "bugs": "https://github.com/mgenware/dd-models/issues",
+  "keywords": [
+    "database", "orm", "sql generator"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mgenware/dd-models.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "test": "yarn run clean && yarn run compile && yarn run lint && yarn run t",
+    "t": "tsc -p ./tests && jest",
+    "build": "yarn test",
+    "compile": "tsc",
+    "dev": "yarn run clean && tsc -w",
+    "prepublishOnly": "yarn run test",
+    "lint": "tslint --project tsconfig.json --config tslint.json",
+    "clean": "rimraf dist"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.7",
+    "@types/node": "^10.12.0",
+    "jest": "^23.6.0",
+    "rimraf": "^2.6.2",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.3"
+  },
+  "dependencies": {
+    "throw-if-arg-empty": "^1.0.1"
+  }
+}

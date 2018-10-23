@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+      "module": "commonjs",
+      "removeComments": true,
+      "preserveConstEnums": true,
+      "sourceMap": true,
+      "baseUrl": ".",
+      "target": "es6",
+      "strict": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "lib": [
+          "es5", "es6"
+      ]
+  },
+}
