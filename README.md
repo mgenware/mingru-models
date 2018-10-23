@@ -7,4 +7,4 @@
 
 Redefining database models using TypeScript.
 
-**WIP***
+**WIP**
