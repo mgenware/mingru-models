@@ -5,7 +5,7 @@
         "preserveConstEnums": true,
         "sourceMap": true,
         "baseUrl": "lib",
-        "target": "ES5",
+        "target": "es6",
         "outDir": "dist",
         "declaration": true,
         "strict": true,
