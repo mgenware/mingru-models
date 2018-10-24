@@ -4,8 +4,18 @@ export { default as DataTypes } from './dt';
 
 /** Core types */
 export class ColumnBase {
-  table!: Table;
+  __table!: Table;
   name!: string;
+
+  join<T extends Table>(destTable: T): T {
+    const that = this;
+    return new Proxy<T>(destTable, {
+      get(target, propKey, receiver) {
+        const col = Reflect.get(target, propKey, receiver) as ColumnBase;
+        return new JoinedColumn(that, destTable, col);
+      },
+    });
+  }
 }
 
 export class ForeignColumn extends ColumnBase {
@@ -43,43 +53,46 @@ export class Column extends ColumnBase {
 }
 
 export class Table {
-  TableColumns: ColumnBase[];
-  TableName!: string;
+  __columns: ColumnBase[];
+  __name!: string;
 
   constructor() {
-    this.TableColumns = [];
+    this.__columns = [];
   }
 }
 
-const TABLE_CORE_PROPS = new Set<string>(['TableName', 'TableColumns']);
-
   // tslint:disable-next-line
-export function table<T>(cls: { new(): T }): T {
+export function table<T extends Table>(cls: { new(): T }): T {
   throwIfFalsy(cls, 'cls');
-  const obj = new cls();
-  const name = obj.constructor.name;
-  const t = new Table();
-  t.TableName = name.toLowerCase();
-  const cols = t.TableColumns;
-  for (const pair of Object.entries(obj)) {
-    const k = pair[0] as string;
-    if (TABLE_CORE_PROPS.has(k)) {
+  const tableObj = new cls();
+  const className = tableObj.constructor.name;
+  tableObj.__name = className.toLowerCase();
+  const cols = tableObj.__columns;
+  for (const pair of Object.entries(tableObj)) {
+    const colName = pair[0] as string;
+    if (colName.startsWith('__')) {
       continue;
     }
-    const v = pair[1] as ColumnBase;
-    if (v instanceof ColumnBase === false) {
-      throw new Error(`Invalid column at property "${k}", class ${name}`);
+    const colObj = pair[1] as ColumnBase;
+    if (!colObj) {
+      throw new Error(`Empty column object at property "${colName}"`);
+    }
+    if (colObj instanceof ColumnBase === false) {
+      throw new Error(`Invalid column at property "${colName}", expected a ColumnBase, got "${colObj}"`);
     }
 
-    if (v.name) {
+    if (colObj.name) {
       // This is an FK
-      cols.push(new ForeignColumn(v));
+      const fkColObj = new ForeignColumn(colObj);
+      // tslint:disable-next-line
+      (tableObj as any)[colName] = fkColObj;
+      cols.push(fkColObj);
     } else {
-      v.name = k;
-      cols.push(v);
+      colObj.name = colName;
+      cols.push(colObj);
     }
   }
-  return (t as unknown) as T;
+  return (tableObj as unknown) as T;
 }
 
 /** Column creation helpers */
@@ -114,4 +127,21 @@ export function notNull(col: Column): Column {
   throwIfFalsy(col, 'col');
   col.notNull = true;
   return col;
+}
+
+/** Joins */
+export class JoinedTable extends Table {
+  constructor() {
+    super();
+  }
+}
+
+export class JoinedColumn extends ColumnBase {
+  constructor(
+    public srcCol: ColumnBase,
+    public destTable: JoinedTable,
+    public destCol: ColumnBase,
+  ) {
+    super();
+  }
 }

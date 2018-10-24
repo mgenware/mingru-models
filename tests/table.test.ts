@@ -1,5 +1,5 @@
 import user from './models/user';
 
-test('table', () => {
-  expect(user.TableName).toBe('user');
+test('Table name', () => {
+  expect(user.__name).toBe('user');
 });
