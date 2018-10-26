@@ -8,3 +8,17 @@
 Redefining database models using TypeScript.
 
 **WIP**
+
+## JoinedColumn
+
+How joined columns are connected:
+
+```
+comment.post_id.join(post).user_id.join(user).name
+|                          |
+----------------------------
+                          JC
+                           |                  |
+                           --------------------
+                                             JC
+```
