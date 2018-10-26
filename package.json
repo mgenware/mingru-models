@@ -1,6 +1,6 @@
 {
   "name": "dd-models",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Redefining database models",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
@@ -8,7 +8,9 @@
   "homepage": "https://github.com/mgenware/dd-models",
   "bugs": "https://github.com/mgenware/dd-models/issues",
   "keywords": [
-    "database", "orm", "sql generator"
+    "database",
+    "orm",
+    "sql generator"
   ],
   "repository": {
     "type": "git",
