@@ -11,8 +11,8 @@ export class ColumnBase {
     const that = this;
     return new Proxy<T>(destTable, {
       get(target, propKey, receiver) {
-        const col = Reflect.get(target, propKey, receiver) as ColumnBase;
-        return new JoinedColumn(that, destTable, col);
+        const destCol = Reflect.get(target, propKey, receiver) as ColumnBase;
+        return new JoinedColumn(that, destCol);
       },
     });
   }
@@ -130,16 +130,9 @@ export function notNull(col: Column): Column {
 }
 
 /** Joins */
-export class JoinedTable extends Table {
-  constructor() {
-    super();
-  }
-}
-
 export class JoinedColumn extends ColumnBase {
   constructor(
     public srcCol: ColumnBase,
-    public destTable: JoinedTable,
     public destCol: ColumnBase,
   ) {
     super();
