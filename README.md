@@ -51,7 +51,7 @@ comment.post_id.join(post).user_id.join(user).name
 ```
 
 ### Reuse a joined table
-Suppose we need to select the post author's name and URL base from a comment of the post. We can do:
+Suppose we need to select post author's name and URL from a comment of the post. We can do:
 ```ts
 const cols = [
   comment.post_id.join(post).user_id.join(user).name,
