@@ -49,3 +49,21 @@ comment.post_id.join(post).user_id.join(user).name
                            --------------------
                                              JC
 ```
+
+### Reuse a joined table
+Suppose we need to select the post author's name and URL base from a comment of the post. We can do:
+```ts
+const cols = [
+  comment.post_id.join(post).user_id.join(user).name,
+  comment.post_id.join(post).user_id.join(user).url,
+];
+```
+
+This contains too much duplicate code, we can reuse the joined intermediate table like this:
+```ts
+const joinedUser = comment.post_id.join(post).user_id.join(user);
+const cols = [
+  joinedUser.name,
+  joinedUser.url,
+];
+```
