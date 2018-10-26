@@ -8,11 +8,17 @@ export class ColumnBase {
   name!: string;
 
   join<T extends Table>(destTable: T): T {
-    const that = this;
+    const srcColumn = this;
     return new Proxy<T>(destTable, {
       get(target, propKey, receiver) {
+        switch (propKey) {
+          case '__destTable':
+            return destTable;
+          case '__srcColumn':
+            return srcColumn;
+        }
         const destCol = Reflect.get(target, propKey, receiver) as ColumnBase;
-        return new JoinedColumn(that, destCol);
+        return new JoinedColumn(srcColumn, destCol);
       },
     });
   }
