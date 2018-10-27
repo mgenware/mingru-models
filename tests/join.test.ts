@@ -22,4 +22,7 @@ test('JoinedColumn', () => {
   // Note that JoinedColumn.__table and __name point to remote table
   expect(col.__table).toBe(user);
   expect(col.__name).toBe('id');
+
+  expect(col.localCol).toBe(post.user_id);
+  expect(col.remoteCol).toBe(user.id);
 });
