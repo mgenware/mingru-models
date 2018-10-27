@@ -44,7 +44,7 @@ export class ColumnBase {
             return srcColumn;
         }
         const destCol = Reflect.get(target, propKey, receiver) as Column;
-        return new JoinedColumn(srcColumn, destCol);
+        return new JoinedColumn(destTable, propKey as string, srcColumn, destCol);
       },
     });
   }
@@ -167,10 +167,16 @@ export function notNull(col: Column): Column {
 /** Joins */
 export class JoinedColumn extends ColumnBase {
   constructor(
+    rTable: Table,
+    rName: string,
     public localCol: ColumnBase,
     public remoteCol: ColumnBase,
   ) {
     super();
+
+    // Both __table and __name point to the remote table
+    this.__table = rTable;
+    this.__name = rName;
     this.__type = ColumnType.Joined;
   }
 }
