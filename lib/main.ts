@@ -2,22 +2,48 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import dt from './dt';
 export { default as DataTypes } from './dt';
 
+const InternalPropPrefix = '__';
+const ColumnTypeProp = '__type';
+
+export enum ColumnType {
+  Default = 1,
+  Joined,
+}
+
 /** Core types */
 export class ColumnBase {
   __table!: Table;
-  name!: string;
+  __name!: string;
+  __type = ColumnType.Default;
+
+  get isDefaultColumn(): boolean {
+    return this.__type === ColumnType.Default;
+  }
+
+  get isJoinedColumn(): boolean {
+    return this.__type === ColumnType.Joined;
+  }
+
+  get path(): string {
+    if (!this.__table) {
+      throw new Error(`__table not set on this type "${this}:${this.__type}"`);
+    }
+    return `${this.__table.__name}.${this.__name}`;
+  }
 
   join<T extends Table>(destTable: T): T {
     const srcColumn = this;
     return new Proxy<T>(destTable, {
       get(target, propKey, receiver) {
         switch (propKey) {
+          case ColumnTypeProp:
+            return ColumnType.Joined;
           case '__destTable':
             return destTable;
           case '__srcColumn':
             return srcColumn;
         }
-        const destCol = Reflect.get(target, propKey, receiver) as ColumnBase;
+        const destCol = Reflect.get(target, propKey, receiver) as Column;
         return new JoinedColumn(srcColumn, destCol);
       },
     });
@@ -48,6 +74,7 @@ export class Column extends ColumnBase {
   ) {
     super();
     throwIfFalsy(types, 'types');
+
     if (Array.isArray(types)) {
       for (const t of types) {
         this.types.add(t);
@@ -76,27 +103,24 @@ export function table<T extends Table>(cls: { new(): T }): T {
   const cols = tableObj.__columns;
   for (const pair of Object.entries(tableObj)) {
     const colName = pair[0] as string;
-    if (colName.startsWith('__')) {
+    // Ignore internal props
+    if (colName.startsWith(InternalPropPrefix)) {
       continue;
     }
-    const colObj = pair[1] as ColumnBase;
-    if (!colObj) {
+    const col = pair[1] as ColumnBase;
+    if (!col) {
       throw new Error(`Empty column object at property "${colName}"`);
     }
-    if (colObj instanceof ColumnBase === false) {
-      throw new Error(`Invalid column at property "${colName}", expected a ColumnBase, got "${colObj}"`);
+    if (col instanceof ColumnBase === false) {
+      throw new Error(`Invalid column at property "${colName}", expected a ColumnBase, got "${col}"`);
     }
 
-    if (colObj.name) {
-      // This is an FK
-      const fkColObj = new ForeignColumn(colObj);
-      // tslint:disable-next-line
-      (tableObj as any)[colName] = fkColObj;
-      cols.push(fkColObj);
-    } else {
-      colObj.name = colName;
-      cols.push(colObj);
+    if (col.__name) {
+      throw new Error(`Error creating column "${colName}". It seems you are using a column from another table, please use the fk function to create foreign key column`);
     }
+    col.__name = colName;
+    col.__table = tableObj;
+    cols.push(col);
   }
   return (tableObj as unknown) as T;
 }
@@ -107,6 +131,11 @@ export function pk(): Column {
   col.pk = true;
   col.unique = true;
   return col;
+}
+
+export function fk(ref: ColumnBase): ForeignColumn {
+  throwIfFalsy(ref, 'ref');
+  return new ForeignColumn(ref);
 }
 
 export function varChar(length: number, defaultValue?: string): Column {
@@ -138,9 +167,10 @@ export function notNull(col: Column): Column {
 /** Joins */
 export class JoinedColumn extends ColumnBase {
   constructor(
-    public srcCol: ColumnBase,
-    public destCol: ColumnBase,
+    public localCol: ColumnBase,
+    public remoteCol: ColumnBase,
   ) {
     super();
+    this.__type = ColumnType.Joined;
   }
 }
