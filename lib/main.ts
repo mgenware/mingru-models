@@ -16,6 +16,10 @@ export class ColumnBase {
   __name!: string;
   __type = ColumnType.Default;
 
+  get tableName(): string {
+    return this.__table.__name;
+  }
+
   get isDefaultColumn(): boolean {
     return this.__type === ColumnType.Default;
   }
@@ -25,10 +29,7 @@ export class ColumnBase {
   }
 
   get path(): string {
-    if (!this.__table) {
-      throw new Error(`__table not set on this type "${this}:${this.__type}"`);
-    }
-    return `${this.__table.__name}.${this.__name}`;
+    return `${this.tableName}.${this.__name}`;
   }
 
   join<T extends Table>(destTable: T): T {
