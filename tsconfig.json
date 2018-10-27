@@ -6,7 +6,6 @@
         "sourceMap": true,
         "baseUrl": "lib",
         "target": "es6",
-        "outDir": "dist",
         "declaration": true,
         "strict": true,
         "noUnusedLocals": true,
@@ -14,11 +13,5 @@
         "lib": [
             "es5", "es6", "es2017"
         ]
-    },
-    "include": [
-        "lib/**/*"
-    ],
-    "exclude": [
-        "node_modules"
-    ]
+    }
 }
