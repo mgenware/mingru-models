@@ -3,49 +3,38 @@ import dt from './dt';
 export { default as DataTypes } from './dt';
 
 const InternalPropPrefix = '__';
-const ColumnTypeProp = '__type';
-
-export enum ColumnType {
-  Default = 1,
-  Joined,
-}
 
 /** Core types */
 export class ColumnBase {
   __table!: Table;
   __name!: string;
-  __type = ColumnType.Default;
 
   get tableName(): string {
     return this.__table.__name;
-  }
-
-  get isDefaultColumn(): boolean {
-    return this.__type === ColumnType.Default;
-  }
-
-  get isJoinedColumn(): boolean {
-    return this.__type === ColumnType.Joined;
   }
 
   get path(): string {
     return `${this.tableName}.${this.__name}`;
   }
 
-  join<T extends Table>(destTable: T): T {
-    const srcColumn = this;
-    return new Proxy<T>(destTable, {
+  join<T extends Table>(remoteTable: T, remoteColumn?: ColumnBase): T {
+    const localColumn = this;
+    let rc: ColumnBase;
+    if (remoteColumn) {
+      if (remoteColumn.__table !== remoteTable) {
+        throw new Error(`The remote column "${remoteColumn}" does not belong to the remote table "${remoteTable}"`);
+      }
+      rc = remoteColumn;
+    } else {
+      if (this instanceof ForeignColumn === false) {
+        throw new Error(`Local column "${this}" is not a foreign column, you have to specify the "remoteColumn" argument`);
+      }
+      rc = ((this as unknown) as ForeignColumn).ref;
+    }
+    return new Proxy<T>(remoteTable, {
       get(target, propKey, receiver) {
-        switch (propKey) {
-          case ColumnTypeProp:
-            return ColumnType.Joined;
-          case '__destTable':
-            return destTable;
-          case '__srcColumn':
-            return srcColumn;
-        }
-        const destCol = Reflect.get(target, propKey, receiver) as Column;
-        return new JoinedColumn(destTable, propKey as string, srcColumn, destCol);
+        const targetColumn = Reflect.get(target, propKey, receiver) as Column;
+        return new JoinedColumn(localColumn, rc, targetColumn);
       },
     });
   }
@@ -172,16 +161,17 @@ export function notNull(col: Column): Column {
 /** Joins */
 export class JoinedColumn extends ColumnBase {
   constructor(
-    rTable: Table,
-    rName: string,
-    public localCol: ColumnBase,
-    public remoteCol: ColumnBase,
+    public localColumn: ColumnBase,
+    public remoteColumn: ColumnBase,
+    public targetColumn: ColumnBase,
   ) {
     super();
 
-    // Both __table and __name point to the remote table
-    this.__table = rTable;
-    this.__name = rName;
-    this.__type = ColumnType.Joined;
+    throwIfFalsy(localColumn, 'localColumn');
+    throwIfFalsy(remoteColumn, 'remoteColumn');
+    throwIfFalsy(targetColumn, 'targetColumn');
+    // Both __table and __name point to the target column
+    this.__table = targetColumn.__table;
+    this.__name = targetColumn.__name;
   }
 }
