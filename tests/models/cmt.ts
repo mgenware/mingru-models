@@ -4,8 +4,8 @@ import post from './post';
 
 class Cmt extends dd.Table {
   id = dd.pk();
-  user_id = dd.fk(user.id);
-  post_id = dd.fk(post.id);
+  user_id = user.id;
+  post_id = post.id;
 }
 
 export default dd.table(Cmt);
