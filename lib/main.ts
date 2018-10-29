@@ -13,10 +13,6 @@ export class ColumnBase {
     return this.__table.__name;
   }
 
-  get path(): string {
-    return `${this.tableName}.${this.__name}`;
-  }
-
   join<T extends Table>(remoteTable: T, remoteColumn?: ColumnBase): T {
     const localColumn = this;
     let rc: ColumnBase;
