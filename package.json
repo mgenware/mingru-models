@@ -21,7 +21,7 @@
     "test": "yarn run clean && yarn run compile && yarn run lint && yarn run t",
     "t": "jest --verbose=false",
     "build": "yarn test",
-    "compile": "tsc --b tests",
+    "compile": "tsc -b tests",
     "dev": "yarn run clean && tsc -b tests -w",
     "prepublishOnly": "yarn run test",
     "lint": "tslint --project tsconfig.json --config tslint.json",
