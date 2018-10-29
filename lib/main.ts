@@ -53,10 +53,14 @@ export class ColumnBase {
 
 export class ForeignColumn extends ColumnBase {
   constructor(
+    name: string,
+    tbl: Table,
     public ref: ColumnBase,
   ) {
     super();
     throwIfFalsy(ref, 'ref');
+    this.__name = name;
+    this.__table = tbl;
   }
 }
 
@@ -95,7 +99,7 @@ export class Table {
   }
 }
 
-  // tslint:disable-next-line
+// tslint:disable-next-line
 export function table<T extends Table>(cls: { new(): T }): T {
   throwIfFalsy(cls, 'cls');
   const tableObj = new cls();
@@ -117,11 +121,16 @@ export function table<T extends Table>(cls: { new(): T }): T {
     }
 
     if (col.__name) {
-      throw new Error(`Error creating column "${colName}". It seems you are using a column from another table, please use the fk function to create foreign key column`);
+      // Foreign column
+      const fc = new ForeignColumn(colName, tableObj, col);
+      // tslint:disable-next-line
+      (tableObj as any)[colName] = fc;
+      cols.push(fc);
+    } else {
+      col.__name = colName;
+      col.__table = tableObj;
+      cols.push(col);
     }
-    col.__name = colName;
-    col.__table = tableObj;
-    cols.push(col);
   }
   return (tableObj as unknown) as T;
 }
@@ -132,11 +141,6 @@ export function pk(): Column {
   col.pk = true;
   col.unique = true;
   return col;
-}
-
-export function fk(ref: ColumnBase): ForeignColumn {
-  throwIfFalsy(ref, 'ref');
-  return new ForeignColumn(ref);
 }
 
 export function varChar(length: number, defaultValue?: string): Column {
