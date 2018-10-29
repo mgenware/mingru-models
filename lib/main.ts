@@ -26,10 +26,12 @@ export class ColumnBase {
       }
       rc = remoteColumn;
     } else {
-      if (this instanceof ForeignColumn === false) {
-        throw new Error(`Local column "${this}" is not a foreign column, you have to specify the "remoteColumn" argument`);
+      // See README.md (JoinedColumn for details)
+      if (this instanceof JoinedColumn) {
+        rc = this.remoteColFromFCOrThrow(((this as unknown) as JoinedColumn).targetColumn);
+      } else {
+        rc = this.remoteColFromFCOrThrow();
       }
-      rc = ((this as unknown) as ForeignColumn).ref;
     }
     return new Proxy<T>(remoteTable, {
       get(target, propKey, receiver) {
@@ -37,6 +39,14 @@ export class ColumnBase {
         return new JoinedColumn(localColumn, rc, targetColumn);
       },
     });
+  }
+
+  private remoteColFromFCOrThrow(col?: ColumnBase): ColumnBase {
+    col = col || this;
+    if (col instanceof ForeignColumn) {
+      return ((col as unknown) as ForeignColumn).ref;
+    }
+    throw new Error(`Local column "${col}" is not a foreign column, you have to specify the "remoteColumn" argument`);
   }
 }
 
