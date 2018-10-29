@@ -37,18 +37,42 @@ export default dd.table(Post);
 ```
 
 ## JoinedColumn
-
-How joined columns are connected:
-
+Suppose the following join:
+```typescript
+post.user_id.join(user).name;
 ```
-comment.post_id.join(post).user_id.join(user).name
+
+It returns a `JoinedColumn`:
+```
+post.user_id.join(user).name;
+----------------------------- JoinedColumn
+        |
+        -- Local column
+                          |
+                          -- Target column
+
+Remote column: auto detected if local column is a foreign column.
+```
+
+Multiple joins are also allowed:
+```
+cmt.post_id.join(post).user_id.join(user).name
 |                          |
 ----------------------------
                           JC
-                           |                  |
-                           --------------------
+                           | Local column        |
+                           -----------------------
                                              JC
 ```
+
+* First joined column:
+  * Local column: `cmt.post_id`
+  * Remote column: `post.id`
+  * Target column: `post.user_id`
+* Second joined column:
+  * Local column: first joined column
+  * Remote column: `user.id`
+  * Target column: `user.name`
 
 ### Reuse a joined table
 Suppose we need to select post author's name and URL from a comment of the post. We can do:
