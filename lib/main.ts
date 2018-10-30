@@ -24,7 +24,7 @@ export class ColumnBase {
     } else {
       // See README.md (JoinedColumn for details)
       if (this instanceof JoinedColumn) {
-        rc = this.remoteColFromFCOrThrow(((this as unknown) as JoinedColumn).targetColumn);
+        rc = this.remoteColFromFCOrThrow(((this as unknown) as JoinedColumn).selectedColumn);
       } else {
         rc = this.remoteColFromFCOrThrow();
       }
@@ -32,7 +32,16 @@ export class ColumnBase {
     return new Proxy<T>(remoteTable, {
       get(target, propKey, receiver) {
         const targetColumn = Reflect.get(target, propKey, receiver) as Column;
-        return new JoinedColumn(localColumn, rc, targetColumn);
+        let localPath: string;
+        if (localColumn instanceof JoinedColumn) {
+          const colPath = ((localColumn as unknown) as JoinedColumn).path;
+          localPath = `[${colPath}.${localColumn.__name}]`;
+        } else {
+          localPath = `[${localColumn.__table.__name}.${localColumn.__name}]`;
+        }
+        const remotePath = `[${rc.__table.__name}.${rc.__name}]`;
+        const path = `[${localPath}.${remotePath}]`;
+        return new JoinedColumn(path, localColumn, rc, targetColumn);
       },
     });
   }
@@ -167,17 +176,18 @@ export function notNull(col: Column): Column {
 /** Joins */
 export class JoinedColumn extends ColumnBase {
   constructor(
+    public path: string,
     public localColumn: ColumnBase,
     public remoteColumn: ColumnBase,
-    public targetColumn: ColumnBase,
+    public selectedColumn: ColumnBase,
   ) {
     super();
 
     throwIfFalsy(localColumn, 'localColumn');
     throwIfFalsy(remoteColumn, 'remoteColumn');
-    throwIfFalsy(targetColumn, 'targetColumn');
-    // Both __table and __name point to the target column
-    this.__table = targetColumn.__table;
-    this.__name = targetColumn.__name;
+    throwIfFalsy(selectedColumn, 'selectedColumn');
+    // Both __table and __name point to the selected column
+    this.__table = selectedColumn.__table;
+    this.__name = selectedColumn.__name;
   }
 }
