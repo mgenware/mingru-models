@@ -34,7 +34,7 @@ export class ColumnBase {
         const targetColumn = Reflect.get(target, propKey, receiver) as Column;
         let localPath: string;
         if (localColumn instanceof JoinedColumn) {
-          const colPath = ((localColumn as unknown) as JoinedColumn).path;
+          const colPath = ((localColumn as unknown) as JoinedColumn).joinPath;
           localPath = `[${colPath}.${localColumn.__name}]`;
         } else {
           localPath = `[${localColumn.__table.__name}.${localColumn.__name}]`;
@@ -176,7 +176,8 @@ export function notNull(col: Column): Column {
 /** Joins */
 export class JoinedColumn extends ColumnBase {
   constructor(
-    public path: string,
+    /** Note that joinPath does not include the selected column name. */
+    public joinPath: string,
     public localColumn: ColumnBase,
     public remoteColumn: ColumnBase,
     public selectedColumn: ColumnBase,
