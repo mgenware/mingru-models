@@ -1,6 +1,6 @@
-import * as dd from '..';
-import user from './models/user';
-import post from './models/post';
+import * as dd from '../..';
+import user from '../models/user';
+import post from '../models/post';
 
 test('Table and name', () => {
   // Normal col

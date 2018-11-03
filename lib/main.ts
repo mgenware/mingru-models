@@ -16,3 +16,5 @@ export {
   pk,
   varChar,
 } from './core/cols';
+
+export { default as view } from './views/viewBuilder';

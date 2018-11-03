@@ -1,7 +1,7 @@
-import * as dd from '..';
-import user from './models/user';
-import post from './models/post';
-import cmt from './models/cmt';
+import * as dd from '../..';
+import user from '../models/user';
+import post from '../models/post';
+import cmt from '../models/cmt';
 
 function testType(col: dd.ColumnBase) {
   expect(col instanceof dd.JoinedColumn).toBe(true);
