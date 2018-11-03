@@ -4,7 +4,7 @@ import { Table, ColumnBase } from 'core/core';
 
 export default class SelectView extends View {
   fromTable: Table|null = null;
-  whereLiterals: TemplateStringsArray|null = null;
+  whereLiterals: string[]|null = null;
   whereColumns: ColumnBase[] = [];
 
   constructor(name: string, columns: ColumnBase[]) {
@@ -25,7 +25,7 @@ export default class SelectView extends View {
     if (this.whereLiterals) {
       throw new Error('"where" is called twice');
     }
-    this.whereLiterals = literals;
+    this.whereLiterals = literals.map(s => s);
     this.whereColumns = columns;
     return this;
   }
