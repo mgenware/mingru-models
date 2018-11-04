@@ -17,4 +17,4 @@ export {
   varChar,
 } from './core/cols';
 
-export { default as view } from './views/viewBuilder';
+export { default as action } from './actions/actionBuilder';

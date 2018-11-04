@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
-export class View {
+export class Action {
   constructor(
     public name: string,
   ) {

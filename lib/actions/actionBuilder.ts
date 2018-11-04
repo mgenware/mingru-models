@@ -1,7 +1,7 @@
 import { ColumnBase } from 'core/core';
-import SelectView from './selectView';
+import SelectView from './selectAction';
 
-export class ViewBuilder {
+export class ActionBuilder {
   constructor(
     public name: string,
   ) { }
@@ -11,6 +11,6 @@ export class ViewBuilder {
   }
 }
 
-export default function view(name: string): ViewBuilder {
-  return new ViewBuilder(name);
+export default function action(name: string): ActionBuilder {
+  return new ActionBuilder(name);
 }

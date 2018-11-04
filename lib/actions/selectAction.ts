@@ -1,8 +1,8 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { View } from './view';
+import { Action } from './action';
 import { Table, ColumnBase } from 'core/core';
 
-export default class SelectView extends View {
+export default class SelectView extends Action {
   fromTable: Table|null = null;
   whereLiterals: string[]|null = null;
   whereColumns: ColumnBase[] = [];
