@@ -23,10 +23,43 @@ export function char(length: number, defaultValue?: string): Column {
   return col;
 }
 
-export function int(defaultValue?: string): Column {
-  const col = new Column(dt.Int);
-  col.default = defaultValue;
+function _int(dt: string, unsigned: boolean, def?: number): Column {
+  const col = new Column(dt);
+  col.unsigned = unsigned;
+  col.default = def;
   return col;
+}
+
+export function int(defaultValue?: number): Column {
+  return _int(dt.Int, false, defaultValue);
+}
+
+export function unsignedInt(defaultValue?: number): Column {
+  return _int(dt.Int, true, defaultValue);
+}
+
+export function bigInt(defaultValue?: number): Column {
+  return _int(dt.BigInt, false, defaultValue);
+}
+
+export function unsignedBigInt(defaultValue?: number): Column {
+  return _int(dt.BigInt, true, defaultValue);
+}
+
+export function smallInt(defaultValue?: number): Column {
+  return _int(dt.SmallInt, false, defaultValue);
+}
+
+export function unsignedSmallInt(defaultValue?: number): Column {
+  return _int(dt.SmallInt, true, defaultValue);
+}
+
+export function tinyInt(defaultValue?: number): Column {
+  return _int(dt.TinyInt, false, defaultValue);
+}
+
+export function unsignedTinyInt(defaultValue?: number): Column {
+  return _int(dt.TinyInt, true, defaultValue);
 }
 
 export function notNull(col: Column): Column {
