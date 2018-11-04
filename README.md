@@ -1,4 +1,4 @@
-# dd-models
+# dd-models [WIP]
 
 [![MEAN Module](https://img.shields.io/badge/MEAN%20Module-TypeScript-blue.svg?style=flat-square)](https://github.com/mgenware/MEAN-Module)
 [![Build Status](https://img.shields.io/travis/mgenware/dd-models.svg?style=flat-square&label=Build+Status)](https://travis-ci.org/mgenware/dd-models)
@@ -9,20 +9,21 @@ Redefining database models using TypeScript.
 
 **Working in progress**
 
-## Defining a model
-User
+# Models
+User table(`user.ts`):
 ```ts
 import * as dd from 'dd-models';
 
 class User extends dd.Table {
   id = dd.pk();
   name = dd.varChar(100);
+  is_admin = dd.tinyInt();
 }
 
 export default dd.table(User);
 ```
 
-Post
+Post table(`post.ts`), which has a foreign key to user table:
 ```ts
 import * as dd from 'dd-models';
 import user from './user';
@@ -36,6 +37,26 @@ class Post extends dd.Table {
 export default dd.table(Post);
 ```
 
+# Actions
+## Select
+```ts
+import * as dd from 'dd-models';
+import user from './user';
+
+const selectUsers = dd.action('Users')
+  .select(user.id, user.name, user.is_admin)
+  .from(user);
+
+const selectAdmins = dd.action('Admins')
+  .select(user.id, user.name)
+  .from(user);
+  .where`
+    ${user.id} = ${dd.param(user.id)}
+    AND ${user.is_admin} = 1
+  `;
+```
+
+# Advanced Topics
 ## JoinedColumn
 Suppose the following join:
 ```typescript
