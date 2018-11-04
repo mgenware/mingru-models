@@ -8,6 +8,19 @@ export class ColumnBase {
   __table!: Table;
   __name!: string;
 
+  __getTargetColumn(): Column {
+    if (this instanceof Column) {
+      return this as Column;
+    }
+    if (this instanceof ForeignColumn) {
+      return (this as ForeignColumn).ref.__getTargetColumn();
+    }
+    if (this instanceof JoinedColumn) {
+      return (this as JoinedColumn).selectedColumn.__getTargetColumn();
+    }
+    throw new Error(`Not supported column type: ${this}`);
+  }
+
   get tableName(): string {
     return this.__table.__name;
   }

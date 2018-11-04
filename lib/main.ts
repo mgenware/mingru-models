@@ -18,3 +18,4 @@ export {
 } from './core/cols';
 
 export { default as action } from './actions/actionBuilder';
+export { default as param } from './actions/param';
