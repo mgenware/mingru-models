@@ -3,7 +3,7 @@ import { Action } from './action';
 import { Table, ColumnBase } from 'core/core';
 import { ActionParam } from './param';
 
-export default class SelectView extends Action {
+export default class SelectAction extends Action {
   fromTable: Table|null = null;
   whereLiterals: string[]|null = null;
   whereColumns: Array<ColumnBase|ActionParam> = [];
@@ -13,7 +13,7 @@ export default class SelectView extends Action {
     throwIfFalsy(columns, 'columns');
   }
 
-  from(table: Table): SelectView {
+  from(table: Table): SelectAction {
     throwIfFalsy(table, 'table');
     if (this.fromTable) {
       throw new Error('"from" is called twice');
@@ -22,7 +22,7 @@ export default class SelectView extends Action {
     return this;
   }
 
-  where(literals: TemplateStringsArray, ...columns: Array<ColumnBase|ActionParam>): SelectView {
+  where(literals: TemplateStringsArray, ...columns: Array<ColumnBase|ActionParam>): SelectAction {
     if (this.whereLiterals) {
       throw new Error('"where" is called twice');
     }
