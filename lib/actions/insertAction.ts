@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action } from './action';
-import { Table, ColumnBase } from 'core/core';
+import { Table, ColumnBase } from '../core/core';
 import SQL from './sql';
 import ColumnSetter from './columnSetter';
 
