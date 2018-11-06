@@ -1,4 +1,4 @@
-import { ColumnBase, Table } from 'core/core';
+import { ColumnBase, Table } from '../core/core';
 import SelectView from './selectAction';
 import UpdateAction from './updateAction';
 import InsertAction from './insertAction';
