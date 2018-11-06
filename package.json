@@ -1,6 +1,6 @@
 {
   "name": "dd-models",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Redefining database models",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
