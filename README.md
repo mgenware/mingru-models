@@ -18,6 +18,7 @@ class User extends dd.Table {
   id = dd.pk();
   name = dd.varChar(100);
   is_admin = dd.tinyInt();
+  follower_count = dd.int(0);
 }
 
 export default dd.table(User);
@@ -50,10 +51,26 @@ const selectUsers = dd.action('Users')
 const selectAdmins = dd.action('Admins')
   .select(user.id, user.name)
   .from(user);
-  .where`
-    ${user.id} = ${dd.param(user.id)}
+  .where(dd.sql`
+    ${user.id} = ${dd.input(user.id)}
     AND ${user.is_admin} = 1
-  `;
+  `);
+```
+
+## Update
+```ts
+const updateUserFollower = dd.action('UserFollower')
+  .update(user)
+  .set(user.follower_count, dd.sql`${user.follower_count} + 1`)
+  .where(dd.sql`${user.id} = ${dd.input(user.id)}`);
+```
+
+## Insert
+```ts
+const addUser = dd.action('AddUser')
+  .insert(user)
+  .set(user.name, dd.sql`${dd.input(user.name)}}`)
+  .set(user.follower_count, dd.sql`${dd.input(user.follower_count)}}`)
 ```
 
 # Advanced Topics
