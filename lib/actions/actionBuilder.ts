@@ -1,5 +1,6 @@
-import { ColumnBase } from 'core/core';
+import { ColumnBase, Table } from 'core/core';
 import SelectView from './selectAction';
+import UpdateAction from './updateAction';
 
 export class ActionBuilder {
   constructor(
@@ -8,6 +9,10 @@ export class ActionBuilder {
 
   select(...columns: ColumnBase[]): SelectView {
     return new SelectView(this.name, columns);
+  }
+
+  update(table: Table): UpdateAction {
+    return new UpdateAction(this.name, table);
   }
 }
 
