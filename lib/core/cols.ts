@@ -23,8 +23,8 @@ export function char(length: number, defaultValue?: string): Column {
   return col;
 }
 
-function _int(dt: string, unsigned: boolean, def?: number): Column {
-  const col = new Column(dt);
+function _int(type: string, unsigned: boolean, def?: number): Column {
+  const col = new Column(type);
   col.unsigned = unsigned;
   col.default = def;
   return col;

@@ -12,7 +12,7 @@ export class InputParam {
     if (this === oth) {
       return true;
     }
-    return this.setEquals(this.types, oth.types); 
+    return this.setEquals(this.types, oth.types);
   }
 
   private setEquals(a: Set<string>, b: Set<string>) {
@@ -30,7 +30,7 @@ export class InputParam {
 
 export default function input(types: Set<string>|ColumnBase): InputParam {
   if (types instanceof ColumnBase) {
-    return new InputParam((types as ColumnBase).__getTargetColumn().types)
+    return new InputParam((types as ColumnBase).__getTargetColumn().types);
   }
   return new InputParam(types as Set<string>);
 }

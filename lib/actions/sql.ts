@@ -14,7 +14,7 @@ export default class SQL {
     if (literals) {
       this.literals = literals.map(s => s);
     } else {
-      this.literals = []
+      this.literals = [];
     }
     this.params = params || [];
   }
