@@ -20,7 +20,7 @@
         "strict-type-predicates": true,
         "variable-name": false,
         "max-line-length": false,
-        "arrow-parens": [true, "ban-single-arg-parens"],
+        "arrow-parens": [true, "ban-single-arg-parens"]
     },
     "rulesDirectory": []
 }
