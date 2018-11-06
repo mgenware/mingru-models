@@ -4,7 +4,6 @@
         "removeComments": true,
         "preserveConstEnums": true,
         "sourceMap": true,
-        "baseUrl": "lib",
         "target": "es6",
         "declaration": true,
         "strict": true,
