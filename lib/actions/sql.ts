@@ -1,15 +1,15 @@
 import { InputParam } from './input';
 import { ColumnBase } from '../core/core';
 
-export type ExprParam = ColumnBase | InputParam;
+export type SQLParam = ColumnBase | InputParam;
 
-export default class Expr {
+export default class SQL {
   literals: string[];
-  params: ExprParam[];
+  params: SQLParam[];
 
   constructor(
     literals: TemplateStringsArray,
-    params: ExprParam[],
+    params: SQLParam[],
   ) {
     if (literals) {
       this.literals = literals.map(s => s);
@@ -21,7 +21,7 @@ export default class Expr {
 
   equalsTo(
     literals: string[],
-    params: ExprParam[],
+    params: SQLParam[],
   ): boolean {
     if (this.literals.length !== literals.length) {
       return false;
@@ -42,7 +42,7 @@ export default class Expr {
     return true;
   }
 
-  private paramEquals(a: ExprParam, b: ExprParam) {
+  private paramEquals(a: SQLParam, b: SQLParam) {
     if (a === b) {
       return true;
     }
@@ -57,4 +57,8 @@ export default class Expr {
     // a and b are ColumnBase
     return a === b;
   }
+}
+
+export function sql(literals: TemplateStringsArray, ...params: SQLParam[]): SQL {
+  return new SQL(literals, params);
 }

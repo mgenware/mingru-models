@@ -1,12 +1,11 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action } from './action';
 import { Table, ColumnBase } from 'core/core';
-import { ExprParam } from './expr';
-import Expr from './expr';
+import SQL from './sql';
 
 export default class SelectAction extends Action {
   fromTable: Table|null = null;
-  whereExpr: Expr|null = null;
+  whereSQL: SQL|null = null;
 
   constructor(name: string, columns: ColumnBase[]) {
     super(name);
@@ -22,11 +21,11 @@ export default class SelectAction extends Action {
     return this;
   }
 
-  where(literals: TemplateStringsArray, ...columns: ExprParam[]): SelectAction {
-    if (this.whereExpr) {
+  where(sql: SQL): SelectAction {
+    if (this.whereSQL) {
       throw new Error('"where" is called twice');
     }
-    this.whereExpr = new Expr(literals, columns);
+    this.whereSQL = sql;
     return this;
   }
 }
