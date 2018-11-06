@@ -9,7 +9,7 @@ Redefining database models using TypeScript.
 
 **Working in progress**
 
-# Models
+## Models
 User table(`user.ts`):
 ```ts
 import * as dd from 'dd-models';
@@ -38,8 +38,8 @@ class Post extends dd.Table {
 export default dd.table(Post);
 ```
 
-# Actions
-## Select
+## Actions
+### Select
 ```ts
 import * as dd from 'dd-models';
 import user from './user';
@@ -57,7 +57,7 @@ const selectAdmins = dd.action('Admins')
   `);
 ```
 
-## Update
+### Update
 ```ts
 const updateUserFollower = dd.action('UserFollower')
   .update(user)
@@ -65,7 +65,7 @@ const updateUserFollower = dd.action('UserFollower')
   .where(dd.sql`${user.id} = ${dd.input(user.id)}`);
 ```
 
-## Insert
+### Insert
 ```ts
 const addUser = dd.action('AddUser')
   .insert(user)
@@ -73,14 +73,24 @@ const addUser = dd.action('AddUser')
   .set(user.follower_count, dd.sql`${dd.input(user.follower_count)}}`)
 ```
 
-# Advanced Topics
-## JoinedColumn
-Suppose the following join:
+## Advanced Topics
+### JoinedColumn
+Imagine the following join:
 ```typescript
 post.user_id.join(user).name;
 ```
 
-It returns a `JoinedColumn`:
+It returns a `JoinedColumn`, which contains:
+```ts
+class JoinedColumn extends ColumnBase {
+    joinPath: string;
+    localColumn: ColumnBase;
+    remoteColumn: ColumnBase;
+    selectedColumn: ColumnBase;
+}
+```
+
+The relationship of `JoinedColumn`'s properties:
 ```
 post.user_id.join(user).name;
 ----------------------------- JoinedColumn
