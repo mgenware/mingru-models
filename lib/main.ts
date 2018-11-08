@@ -23,3 +23,4 @@ export { default as InsertAction } from './actions/InsertAction';
 export { default as action } from './actions/actionBuilder';
 export { default as input } from './actions/input';
 export { sql, default as SQL } from './actions/sql';
+export { default as ColumnSetter } from './actions/columnSetter';
