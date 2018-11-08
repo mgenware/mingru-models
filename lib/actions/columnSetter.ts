@@ -1,6 +1,6 @@
 import { ColumnBase } from '../core/core';
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import SQL from './sql';
+import { SQL } from './sql';
 
 export default class ColumnSetter {
   constructor(

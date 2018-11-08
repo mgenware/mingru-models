@@ -1,7 +1,7 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action } from './action';
 import { Table, ColumnBase } from '../core/core';
-import SQL from './sql';
+import { SQL } from './sql';
 
 export default class SelectAction extends Action {
   table: Table|null = null;

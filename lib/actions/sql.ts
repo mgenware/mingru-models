@@ -3,7 +3,7 @@ import { ColumnBase } from '../core/core';
 
 export type SQLParam = ColumnBase | InputParam;
 
-export default class SQL {
+export class SQL {
   literals: string[];
   params: SQLParam[];
 
@@ -59,6 +59,6 @@ export default class SQL {
   }
 }
 
-export function sql(literals: TemplateStringsArray, ...params: SQLParam[]): SQL {
+export default function sql(literals: TemplateStringsArray, ...params: SQLParam[]): SQL {
   return new SQL(literals, params);
 }
