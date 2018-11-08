@@ -16,5 +16,5 @@ export { default as UpdateAction } from './actions/updateAction';
 export { default as InsertAction } from './actions/InsertAction';
 export { default as action } from './actions/actionBuilder';
 export { default as input, InputParam } from './actions/input';
-export { default as sql, SQL, SQLParam } from './actions/sql';
+export { default as sql, SQL, SQLParam, SQLElement } from './actions/sql';
 export { default as ColumnSetter } from './actions/columnSetter';
