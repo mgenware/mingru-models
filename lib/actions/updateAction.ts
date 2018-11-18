@@ -16,6 +16,10 @@ export default class UpdateAction extends Action {
     this.table = table;
   }
 
+  prefix(): string {
+    return 'Update';
+  }
+
   set(column: ColumnBase, sql: SQL): UpdateAction {
     const setter = new ColumnSetter(column, sql);
     this.setters.push(setter);

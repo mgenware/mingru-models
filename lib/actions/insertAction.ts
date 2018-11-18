@@ -15,6 +15,10 @@ export default class InsertAction extends Action {
     this.table = table;
   }
 
+  prefix(): string {
+    return 'Insert';
+  }
+
   set(column: ColumnBase, sql: SQL): InsertAction {
     const setter = new ColumnSetter(column, sql);
     this.setters.push(setter);

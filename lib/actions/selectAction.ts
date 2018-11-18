@@ -12,6 +12,10 @@ export default class SelectAction extends Action {
     throwIfFalsy(columns, 'columns');
   }
 
+  prefix(): string {
+    return 'Select';
+  }
+
   from(table: Table): SelectAction {
     throwIfFalsy(table, 'table');
     if (this.table) {
