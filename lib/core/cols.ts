@@ -3,21 +3,21 @@ import { Column } from './core';
 import dt from './dt';
 
 export function pk(): Column {
-  const col = new Column(dt.BigInt);
+  const col = new Column(dt.bigInt);
   col.pk = true;
   col.unique = true;
-  return col;
+  return notNull(col);
 }
 
 export function varChar(length: number, defaultValue?: string): Column {
-  const col = new Column(dt.VarChar);
+  const col = new Column(dt.varChar);
   col.length = length;
   col.default = defaultValue;
   return col;
 }
 
 export function char(length: number, defaultValue?: string): Column {
-  const col = new Column(dt.Char);
+  const col = new Column(dt.char);
   col.length = length;
   col.default = defaultValue;
   return col;
@@ -31,35 +31,35 @@ function _int(type: string, unsigned: boolean, def?: number): Column {
 }
 
 export function int(defaultValue?: number): Column {
-  return _int(dt.Int, false, defaultValue);
+  return _int(dt.int, false, defaultValue);
 }
 
 export function unsignedInt(defaultValue?: number): Column {
-  return _int(dt.Int, true, defaultValue);
+  return _int(dt.int, true, defaultValue);
 }
 
 export function bigInt(defaultValue?: number): Column {
-  return _int(dt.BigInt, false, defaultValue);
+  return _int(dt.bigInt, false, defaultValue);
 }
 
 export function unsignedBigInt(defaultValue?: number): Column {
-  return _int(dt.BigInt, true, defaultValue);
+  return _int(dt.bigInt, true, defaultValue);
 }
 
 export function smallInt(defaultValue?: number): Column {
-  return _int(dt.SmallInt, false, defaultValue);
+  return _int(dt.smallInt, false, defaultValue);
 }
 
 export function unsignedSmallInt(defaultValue?: number): Column {
-  return _int(dt.SmallInt, true, defaultValue);
+  return _int(dt.smallInt, true, defaultValue);
 }
 
 export function tinyInt(defaultValue?: number): Column {
-  return _int(dt.TinyInt, false, defaultValue);
+  return _int(dt.tinyInt, false, defaultValue);
 }
 
 export function unsignedTinyInt(defaultValue?: number): Column {
-  return _int(dt.TinyInt, true, defaultValue);
+  return _int(dt.tinyInt, true, defaultValue);
 }
 
 export function notNull(col: Column): Column {

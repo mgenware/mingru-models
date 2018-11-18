@@ -1,15 +1,15 @@
 const Prefix = 'SQL.';
 
 export class DataTypes {
-  Char = Prefix + 'CHAR';
-  VarChar = Prefix + 'VARCHAR';
+  char = Prefix + 'CHAR';
+  varChar = Prefix + 'VARCHAR';
 
-  Int = Prefix + 'INT';
-  BigInt = Prefix + 'BIGINT';
-  SmallInt = Prefix + 'SMALLINT';
-  TinyInt = Prefix + 'TINYINT';
+  int = Prefix + 'INT';
+  bigInt = Prefix + 'BIGINT';
+  smallInt = Prefix + 'SMALLINT';
+  tinyInt = Prefix + 'TINYINT';
 
-  Text = Prefix + 'TEXT';
+  text = Prefix + 'TEXT';
 }
 
 export default new DataTypes();
