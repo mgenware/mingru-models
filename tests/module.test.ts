@@ -1,4 +1,4 @@
-const main = require('..');
+const main = require('../');
 const fs = require('fs');
 
 test('Verify type definition files', () => {

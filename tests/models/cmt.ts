@@ -1,4 +1,4 @@
-import * as dd from '../..';
+import * as dd from '../../';
 import user from './user';
 import post from './post';
 

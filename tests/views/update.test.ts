@@ -1,4 +1,4 @@
-import * as dd from '../..';
+import * as dd from '../../';
 import user from '../models/user';
 
 test('Update', () => {

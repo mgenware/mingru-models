@@ -1,4 +1,4 @@
-import * as dd from '../..';
+import * as dd from '../../';
 
 class User extends dd.Table {
   id = dd.pk();
