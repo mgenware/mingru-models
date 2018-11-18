@@ -9,7 +9,20 @@ export {
 
 export { default as dt } from './core/dt';
 
-export { char, int, notNull, pk, varChar } from './core/cols';
+export {
+  bigInt,
+  char,
+  int,
+  notNull,
+  pk,
+  smallInt,
+  tinyInt,
+  unsignedBigInt,
+  unsignedInt,
+  unsignedSmallInt,
+  unsignedTinyInt,
+  varChar,
+} from './core/cols';
 
 export { default as SelectAction } from './actions/selectAction';
 export { default as UpdateAction } from './actions/updateAction';
