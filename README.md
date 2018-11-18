@@ -39,38 +39,28 @@ export default dd.table(Post);
 ```
 
 ## Actions
-### Select
+Each table can create its own set of actions, e.g. `select`, `update`, `insert`.
+
 ```ts
 import * as dd from 'dd-models';
 import user from './user';
 
-const selectUsers = dd.action('Users')
-  .select(user.id, user.name, user.is_admin)
-  .from(user);
+const userActions = dd.actions(user);
+// SELECT
+userActions.select('UserInfo', user.id, user.name)
+  .from(user)
+  .where(dd.sql`${user.id} = 1`);
 
-const selectAdmins = dd.action('Admins')
-  .select(user.id, user.name)
-  .from(user);
-  .where(dd.sql`
-    ${user.id} = ${dd.input(user.id)}
-    AND ${user.is_admin} = 1
-  `);
-```
+// UPDATE
+userActions.update('UserInfo')
+    .set(user.name, dd.sql`${dd.input(user.name)}`)
+    .set(user.follower_count, dd.sql`${user.follower_count} + 1`)
+    .where(dd.sql`${user.id} = 1`);
 
-### Update
-```ts
-const updateUserFollower = dd.action('UserFollower')
-  .update(user)
-  .set(user.follower_count, dd.sql`${user.follower_count} + 1`)
-  .where(dd.sql`${user.id} = ${dd.input(user.id)}`);
-```
-
-### Insert
-```ts
-const addUser = dd.action('AddUser')
-  .insert(user)
-  .set(user.name, dd.sql`${dd.input(user.name)}}`)
-  .set(user.follower_count, dd.sql`${dd.input(user.follower_count)}}`)
+// INSERT
+userActions.update('UserInfo')
+  .set(user.name, dd.sql`${dd.input(user.name)}`)
+  .set(user.follower_count, dd.sql`${dd.input(user.follower_count)}`);
 ```
 
 ## Advanced Topics
