@@ -5,11 +5,10 @@ import { SQL } from './sql';
 import ColumnSetter from './columnSetter';
 
 export default class InsertAction extends Action {
-  table: Table|null = null;
   setters: ColumnSetter[] = [];
 
   constructor(name: string, table: Table) {
-    super(name);
+    super(name, table);
 
     throwIfFalsy(table, 'table');
     this.table = table;

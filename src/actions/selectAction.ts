@@ -4,25 +4,15 @@ import { Table, ColumnBase } from '../core/core';
 import { SQL } from './sql';
 
 export default class SelectAction extends Action {
-  table: Table|null = null;
   whereSQL: SQL|null = null;
 
-  constructor(name: string, public columns: ColumnBase[]) {
-    super(name);
+  constructor(name: string, table: Table, public columns: ColumnBase[]) {
+    super(name, table);
     throwIfFalsy(columns, 'columns');
   }
 
   prefix(): string {
     return 'Select';
-  }
-
-  from(table: Table): SelectAction {
-    throwIfFalsy(table, 'table');
-    if (this.table) {
-      throw new Error('"from" is called twice');
-    }
-    this.table = table;
-    return this;
   }
 
   where(sql: SQL): SelectAction {
