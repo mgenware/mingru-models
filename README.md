@@ -48,7 +48,6 @@ import user from './user';
 const userActions = dd.actions(user);
 // SELECT
 userActions.select('UserInfo', user.id, user.name)
-  .from(user)
   .where(dd.sql`${user.id} = 1`);
 
 // UPDATE

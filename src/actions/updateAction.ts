@@ -5,12 +5,11 @@ import { SQL } from './sql';
 import ColumnSetter from './columnSetter';
 
 export default class UpdateAction extends Action {
-  table: Table|null = null;
   whereSQL: SQL|null = null;
   setters: ColumnSetter[] = [];
 
   constructor(name: string, table: Table) {
-    super(name);
+    super(name, table);
 
     throwIfFalsy(table, 'table');
     this.table = table;

@@ -4,7 +4,6 @@ import user from '../models/user';
 test('Select and from', () => {
   const actions = dd.actions(user);
   const v = actions.select('t', user.id, user.name)
-    .from(user)
     .where(dd.sql`${user.id} = 1`);
 
   expect(v.name).toBe('SelectT');

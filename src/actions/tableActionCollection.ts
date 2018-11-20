@@ -15,7 +15,7 @@ export class TableActionCollection {
   }
 
   select(name: string, ...columns: ColumnBase[]): SelectView {
-    const action = new SelectView(name, columns);
+    const action = new SelectView(name, this.table, columns);
     this.addAction(action);
     return action;
   }
