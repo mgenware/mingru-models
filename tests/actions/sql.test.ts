@@ -14,11 +14,17 @@ test('SQL with input', () => {
 
 test('Input', () => {
   const input = dd.input(user.name);
-  expect(input.types).toBe(user.name.types);
+  expect(input.type).toBe(user.name);
 });
 
 test('Named input', () => {
   const input = dd.input(user.name, 'haha');
-  expect(input.types).toBe(user.name.types);
+  expect(input.type).toBe(user.name);
   expect(input.name).toBe('haha');
+});
+
+test('Raw type input', () => {
+  const input = dd.input('uint32', 'uid');
+  expect(input.type).toBe('uint32');
+  expect(input.name).toBe('uid');
 });
