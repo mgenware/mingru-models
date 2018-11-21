@@ -3,8 +3,10 @@ import { ColumnBase } from '../core/core';
 
 export class InputParam {
   constructor(
+    public name: string,
     public types: Set<string>,
   ) {
+    throwIfFalsy(name, 'name');
     throwIfFalsy(types, 'types');
   }
 
@@ -28,9 +30,13 @@ export class InputParam {
   }
 }
 
-export default function input(types: Set<string>|ColumnBase): InputParam {
+export default function input(types: Set<string>|ColumnBase, name?: string): InputParam {
   if (types instanceof ColumnBase) {
-    return new InputParam((types as ColumnBase).__getTargetColumn().types);
+    if (!name) {
+      name = (types as ColumnBase).__getInputName();
+    }
+    return new InputParam(name, (types as ColumnBase).__getTargetColumn().types);
   }
-  return new InputParam(types as Set<string>);
+  // The InputParam.ctor will throw if name is undefined
+  return new InputParam(name as string, types as Set<string>);
 }

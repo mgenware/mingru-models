@@ -1,4 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
+import { capitalizeFirstLetter } from '../lib/stringUtil';
 export { default as DataTypes } from './dt';
 
 const InternalPropPrefix = '__';
@@ -19,6 +20,10 @@ export class ColumnBase {
       return (this as JoinedColumn).selectedColumn.__getTargetColumn();
     }
     throw new Error(`Not supported column type: ${this}`);
+  }
+
+  __getInputName(): string {
+    return `${this.tableName}${capitalizeFirstLetter(this.__name)}`;
   }
 
   get tableName(): string {
