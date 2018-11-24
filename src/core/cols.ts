@@ -2,13 +2,6 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Column } from './core';
 import dt from './dt';
 
-export function pk(column?: Column): Column {
-  const col = column ? column : new Column(dt.bigInt);
-  col.pk = true;
-  col.unique = true;
-  return notNull(col);
-}
-
 export function varChar(length: number, defaultValue?: string): Column {
   const col = new Column(dt.varChar);
   col.length = length;
@@ -66,4 +59,16 @@ export function notNull(col: Column): Column {
   throwIfFalsy(col, 'col');
   col.notNull = true;
   return col;
+}
+
+export function unique(col: Column): Column {
+  throwIfFalsy(col, 'col');
+  col.unique = true;
+  return col;
+}
+
+export function pk(column?: Column): Column {
+  const col = column ? column : unsignedBigInt();
+  col.pk = true;
+  return unique(notNull(col));
 }

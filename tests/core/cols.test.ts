@@ -75,6 +75,7 @@ test('pk', () => {
   expect(c.types).toContain(dd.dt.bigInt);
   expect(c.unique).toBe(true);
   expect(c.notNull).toBe(true);
+  expect(c.unsigned).toBe(true);
 });
 
 test('pk(column)', () => {
@@ -93,4 +94,9 @@ test('null (default)', () => {
 test('notNull', () => {
   const c = dd.notNull(dd.int(123));
   expect(c.notNull).toBe(true);
+});
+
+test('unique', () => {
+  const c = dd.unique(dd.int(123));
+  expect(c.unique).toBe(true);
 });

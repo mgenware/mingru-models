@@ -22,6 +22,7 @@ export {
   unsignedSmallInt,
   unsignedTinyInt,
   varChar,
+  unique,
 } from './core/cols';
 
 export { default as SelectAction } from './actions/selectAction';
