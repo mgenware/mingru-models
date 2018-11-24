@@ -6,8 +6,8 @@ export class InputParam {
     public type: string | Column,
     public name: string,
   ) {
-    throwIfFalsy(name, 'name');
     throwIfFalsy(type, 'type');
+    throwIfFalsy(name, 'name');
   }
 }
 
@@ -19,5 +19,5 @@ export default function input(types: string|ColumnBase, name?: string): InputPar
     return new InputParam((types as ColumnBase).__getTargetColumn(), name);
   }
   // The InputParam.ctor will throw if name is undefined
-  return new InputParam(name as string, types as string);
+  return new InputParam(types as string, name as string);
 }
