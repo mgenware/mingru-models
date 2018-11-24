@@ -77,6 +77,14 @@ test('pk', () => {
   expect(c.notNull).toBe(true);
 });
 
+test('pk(column)', () => {
+  const charCol = dd.char(3);
+  const c = dd.pk(charCol);
+  expect(c).toBe(charCol);
+  expect(c.unique).toBe(true);
+  expect(c.notNull).toBe(true);
+});
+
 test('null (default)', () => {
   const c = dd.int(123);
   expect(c.notNull).toBe(false);

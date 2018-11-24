@@ -2,8 +2,8 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Column } from './core';
 import dt from './dt';
 
-export function pk(): Column {
-  const col = new Column(dt.bigInt);
+export function pk(column?: Column): Column {
+  const col = column ? column : new Column(dt.bigInt);
   col.pk = true;
   col.unique = true;
   return notNull(col);
