@@ -6,7 +6,12 @@ import { SQL } from './sql';
 export default class SelectAction extends Action {
   whereSQL: SQL|null = null;
 
-  constructor(name: string, table: Table, public columns: ColumnBase[]) {
+  constructor(
+    name: string,
+    table: Table,
+    public columns: ColumnBase[],
+    public selectAll: boolean,
+  ) {
     super(name, table);
     throwIfFalsy(columns, 'columns');
   }

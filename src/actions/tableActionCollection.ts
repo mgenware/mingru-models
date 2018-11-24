@@ -4,6 +4,7 @@ import UpdateAction from './updateAction';
 import InsertAction from './insertAction';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action } from './action';
+import SelectAction from './selectAction';
 
 export class TableActionCollection {
   map: Map<string, Action> = new Map<string, Action>();
@@ -14,10 +15,12 @@ export class TableActionCollection {
     throwIfFalsy(table, 'table');
   }
 
-  select(name: string, ...columns: ColumnBase[]): SelectView {
-    const action = new SelectView(name, this.table, columns);
-    this.addAction(action);
-    return action;
+  select(name: string, ...columns: ColumnBase[]): SelectAction {
+    return this.selectCore(name, false, columns);
+  }
+
+  selectAll(name: string, ...columns: ColumnBase[]): SelectAction {
+    return this.selectCore(name, true, columns);
   }
 
   update(name: string): UpdateAction {
@@ -28,6 +31,12 @@ export class TableActionCollection {
 
   insert(name: string): InsertAction {
     const action = new InsertAction(name, this.table);
+    this.addAction(action);
+    return action;
+  }
+
+  private selectCore(name: string, selectAll: boolean, columns: ColumnBase[]): SelectView {
+    const action = new SelectView(name, this.table, columns, selectAll);
     this.addAction(action);
     return action;
   }

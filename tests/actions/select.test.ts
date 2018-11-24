@@ -13,4 +13,13 @@ test('Select and from', () => {
   expect(v.columns[1]).toBe(user.name);
   expect(v.table).toBe(user);
   expect(v.whereSQL).not.toBeNull();
+  expect(v.selectAll).toBe(false);
+});
+
+test('SelectAll', () => {
+  const actions = dd.actions(user);
+  const v = actions.selectAll('t', user.id, user.name)
+    .where(dd.sql`${user.id} = 1`);
+
+  expect(v.selectAll).toBe(true);
 });
