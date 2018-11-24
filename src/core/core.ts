@@ -23,7 +23,13 @@ export class ColumnBase {
   }
 
   __getInputName(): string {
-    return `${this.tableName}${capitalizeFirstLetter(this.__name)}`;
+    let name = this.__name;
+    if (name === 'id') {
+      name = 'ID';
+    } else {
+      name = capitalizeFirstLetter(name);
+    }
+    return `${this.tableName}${name}`;
   }
 
   get tableName(): string {

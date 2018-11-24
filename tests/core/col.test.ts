@@ -18,3 +18,14 @@ test('Col types', () => {
   expect(user.id instanceof dd.Column).toBe(true);
   expect(post.user_id instanceof dd.ForeignColumn).toBe(true);
 });
+
+test('__getTargetColumn', () => {
+  expect(user.id.__getTargetColumn()).toBe(user.id);
+  expect(post.user_id.__getTargetColumn()).toBe(user.id);
+  expect(post.user_id.join(user).name.__getTargetColumn()).toBe(user.name);
+});
+
+test('__getInputName', () => {
+  expect(user.name.__getInputName()).toBe('userName');
+  expect(user.id.__getInputName()).toBe('userID');
+});
