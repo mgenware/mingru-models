@@ -10,10 +10,12 @@ test('ActionCollection', () => {
   expect(actions).toBeInstanceOf(dd.TableActionCollection);
   expect(actions.map.size).toBe(1);
   expect(actions.map.get('InsertT')).toBe(v1);
+  expect(v1.name).toBe('InsertT');
 
   const v2 = actions.select('t', user.id);
   expect(actions.map.size).toBe(2);
   expect(actions.map.get('SelectT')).toBe(v2);
+  expect(v2.name).toBe('SelectT');
 });
 
 test('Exception on duplicate names', () => {
