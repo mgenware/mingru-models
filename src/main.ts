@@ -23,6 +23,7 @@ export {
   unsignedTinyInt,
   varChar,
   unique,
+  setName,
 } from './core/cols';
 
 export { default as SelectAction } from './actions/selectAction';

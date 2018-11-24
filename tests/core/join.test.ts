@@ -1,7 +1,7 @@
 import * as dd from '../../';
 import user from '../models/user';
 import post from '../models/post';
-import cmt from '../models/cmt';
+import postCmt from '../models/postCmt';
 
 function testType(col: dd.ColumnBase) {
   expect(col instanceof dd.JoinedColumn).toBe(true);
@@ -13,7 +13,7 @@ function toJC(col: dd.ColumnBase): dd.JoinedColumn {
 
 test('Instance type', () => {
   testType(post.user_id.join(user).name);
-  testType(cmt.post_id.join(post).user_id.join(user).name);
+  testType(postCmt.post_id.join(post).user_id.join(user).name);
 });
 
 // jc.localColumn is not tested cuz it may be another JC if join is nested (see 'Nested JoinedColumn' below)
@@ -30,15 +30,15 @@ test('JoinedColumn', () => {
 });
 
 test('Nested JoinedColumn', () => {
-  const jc1 = toJC(cmt.post_id.join(post).user_id);
+  const jc1 = toJC(postCmt.post_id.join(post).user_id);
   const jc2 = toJC(jc1.join(user).name);
   expect(jc2.localColumn).toBe(jc1);
-  testJCCols(jc2, user.id, user.name, '[[[[cmt.post_id].[post.id]].user_id].[user.id]]');
+  testJCCols(jc2, user.id, user.name, '[[[[post_cmt.post_id].[post.id]].user_id].[user.id]]');
 
-  expect(jc1.localColumn).toBe(cmt.post_id);
-  testJCCols(jc1, post.id, post.user_id, '[[cmt.post_id].[post.id]]');
+  expect(jc1.localColumn).toBe(postCmt.post_id);
+  testJCCols(jc1, post.id, post.user_id, '[[post_cmt.post_id].[post.id]]');
 
-  const jc3 = toJC(cmt.post_id.join(post).user_id.join(user).id);
-  testJCCols(jc3, user.id, user.id, '[[[[cmt.post_id].[post.id]].user_id].[user.id]]');
+  const jc3 = toJC(postCmt.post_id.join(post).user_id.join(user).id);
+  testJCCols(jc3, user.id, user.id, '[[[[post_cmt.post_id].[post.id]].user_id].[user.id]]');
 
 });

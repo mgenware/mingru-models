@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { capitalizeFirstLetter } from '../lib/stringUtil';
-export { default as DataTypes } from './dt';
+import snakeCase = require('lodash.snakecase');
 
 const InternalPropPrefix = '__';
 
@@ -92,6 +92,7 @@ export class ForeignColumn extends ColumnBase {
 }
 
 export class Column extends ColumnBase {
+  __userName = '';
   pk = false;
   notNull = false;
   unsigned = false;
@@ -121,17 +122,23 @@ export class Table {
   __columns: ColumnBase[];
   __name!: string;
 
-  constructor() {
+  constructor(name?: string) {
     this.__columns = [];
+    if (name) {
+      this.__name = name;
+    }
   }
 }
 
 // tslint:disable-next-line
-export function table<T extends Table>(cls: { new(): T }): T {
+export function table<T extends Table>(cls: { new(name?: string): T }, name?: string): T {
   throwIfFalsy(cls, 'cls');
-  const tableObj = new cls();
+  const tableObj = new cls(name);
   const className = tableObj.constructor.name;
-  tableObj.__name = className.toLowerCase();
+  // table.__name can be in ctor
+  if (!tableObj.__name) {
+    tableObj.__name = snakeCase(className);
+  }
   const cols = tableObj.__columns;
   for (const pair of Object.entries(tableObj)) {
     const colName = pair[0] as string;
@@ -147,14 +154,16 @@ export function table<T extends Table>(cls: { new(): T }): T {
       throw new Error(`Invalid column at property "${colName}", expected a ColumnBase, got "${col}"`);
     }
 
-    if (col.__name) {
+    if (col.__table) {
       // Foreign column
       const fc = new ForeignColumn(colName, tableObj, col);
       // tslint:disable-next-line
       (tableObj as any)[colName] = fc;
       cols.push(fc);
     } else {
-      col.__name = colName;
+      if (!col.__name) { // column name can be set by setName
+        col.__name = snakeCase(colName);
+      }
       col.__table = tableObj;
       cols.push(col);
     }

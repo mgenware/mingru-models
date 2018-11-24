@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@types/jest": "^23.3.9",
+    "@types/lodash.snakecase": "^4.1.4",
     "@types/node": "^10.12.2",
     "jest": "^23.6.0",
     "rimraf": "^2.6.2",
@@ -46,6 +47,7 @@
     "typescript": "^3.1.6"
   },
   "dependencies": {
+    "lodash.snakecase": "^4.1.1",
     "throw-if-arg-empty": "^1.0.1"
   }
 }

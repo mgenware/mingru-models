@@ -72,3 +72,10 @@ export function pk(column?: Column): Column {
   col.pk = true;
   return unique(notNull(col));
 }
+
+export function setName(name: string, column: Column): Column {
+  throwIfFalsy(name, 'name');
+  throwIfFalsy(column, 'column');
+  column.__name = name;
+  return column;
+}
