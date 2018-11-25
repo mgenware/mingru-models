@@ -6,6 +6,7 @@ export {
   Table,
   table,
   SelectedColumn,
+  ColumnBaseType,
 } from './core/core';
 
 export { default as dt } from './core/dt';

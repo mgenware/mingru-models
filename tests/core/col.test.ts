@@ -16,8 +16,14 @@ test('Table and name', () => {
 });
 
 test('Col types', () => {
-  expect(user.id instanceof dd.Column).toBe(true);
-  expect(post.user_id instanceof dd.ForeignColumn).toBe(true);
+  expect(user.id).toBeInstanceOf(dd.Column);
+  expect(user.id.__type).toBe(dd.ColumnBaseType.Full);
+  expect(post.user_id).toBeInstanceOf(dd.ForeignColumn);
+  expect(post.user_id.__type).toBe(dd.ColumnBaseType.Foreign);
+  expect(post.user_id.join(user).name).toBeInstanceOf(dd.JoinedColumn);
+  expect(post.user_id.join(user).name.__type).toBe(dd.ColumnBaseType.Joined);
+  expect(post.user_id.as('haha')).toBeInstanceOf(dd.SelectedColumn);
+  expect(post.user_id.as('haha').__type).toBe(dd.ColumnBaseType.Selected);
 });
 
 test('__getTargetColumn', () => {
