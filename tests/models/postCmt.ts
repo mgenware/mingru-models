@@ -6,6 +6,7 @@ class PostCmt extends dd.Table {
   id = dd.pk();
   user_id = user.id;
   post_id = post.id;
+  snake_case_post_id = post.id;
 }
 
 export default dd.table(PostCmt);

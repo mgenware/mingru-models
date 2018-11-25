@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@types/jest": "^23.3.9",
+    "@types/lodash.camelcase": "^4.3.4",
     "@types/lodash.snakecase": "^4.1.4",
     "@types/node": "^10.12.2",
     "jest": "^23.6.0",
@@ -47,6 +48,7 @@
     "typescript": "^3.1.6"
   },
   "dependencies": {
+    "lodash.camelcase": "^4.3.0",
     "lodash.snakecase": "^4.1.1",
     "throw-if-arg-empty": "^1.0.1",
     "to-type-string": "^1.0.0"

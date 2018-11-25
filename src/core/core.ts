@@ -1,7 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { capitalizeFirstLetter } from '../lib/stringUtil';
+import { capitalizeColumnName, stripEndingSnakeID, toSnakeCase, toCamelCase } from '../lib/stringUtil';
 import toTypeString from 'to-type-string';
-import snakeCase = require('lodash.snakecase');
 
 const InternalPropPrefix = '__';
 
@@ -23,17 +22,11 @@ export class ColumnBase {
   }
 
   __getTargetColumn(): Column {
-    throw new Error(`Not supported column type "${toTypeString(this)}"`);
+    throw new Error('Not implemented yet');
   }
 
   __getInputName(): string {
-    let name = this.__name;
-    if (name === 'id') {
-      name = 'ID';
-    } else {
-      name = capitalizeFirstLetter(name);
-    }
-    return `${this.tableName}${name}`;
+    return `${this.tableName}${capitalizeColumnName(toCamelCase(this.__name))}`;
   }
 
   get tableName(): string {
@@ -153,7 +146,7 @@ export function table<T extends Table>(cls: { new(name?: string): T }, name?: st
   const className = tableObj.constructor.name;
   // table.__name can be in ctor
   if (!tableObj.__name) {
-    tableObj.__name = snakeCase(className);
+    tableObj.__name = toSnakeCase(className);
   }
   const cols = tableObj.__columns;
   for (const pair of Object.entries(tableObj)) {
@@ -178,7 +171,7 @@ export function table<T extends Table>(cls: { new(name?: string): T }, name?: st
       cols.push(fc);
     } else {
       if (!col.__name) { // column name can be set by setName
-        col.__name = snakeCase(colName);
+        col.__name = toSnakeCase(colName);
       }
       col.__table = tableObj;
       cols.push(col);
@@ -207,6 +200,20 @@ export class JoinedColumn extends ColumnBase {
 
   __getTargetColumn(): Column {
     return this.selectedColumn.__getTargetColumn();
+  }
+
+  __getInputName(): string {
+    const { localColumn } = this;
+    const curName = this.makeMiddleName(this.__name);
+    if (localColumn instanceof JoinedColumn) {
+      return (localColumn as JoinedColumn).__getInputName() + curName;
+    }
+    return toCamelCase(localColumn.tableName) + this.makeMiddleName(localColumn.__name) + curName;
+  }
+
+  // Generates a column name for a join, we call it a middle and we need to cut the ending `_id`, e.g. `SELECT post.user_id.join(user).name`, the `user_id` before the join is the middle name, the input name for this column is `postUserName`, note the `_id` of `user_id` is removed.
+  private makeMiddleName(s: string): string {
+    return capitalizeColumnName(toCamelCase(stripEndingSnakeID(s)));
   }
 }
 

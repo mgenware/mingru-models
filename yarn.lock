@@ -23,6 +23,13 @@
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.9.tgz#c16b55186ee73ae65e001fbee69d392c51337ad1"
   integrity sha512-wNMwXSUcwyYajtbayfPp55tSayuDVU6PfY5gzvRSj80UvxdXEJOVPnUVajaOp7NgXLm+1e2ZDLULmpsU9vDvQw==
 
+"@types/lodash.camelcase@^4.3.4":
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/@types/lodash.camelcase/-/lodash.camelcase-4.3.4.tgz#bdc60ff98f7727787d9ea593e398a3e9bf9f6180"
+  integrity sha512-yx+TmSP3QnhUGdcxkvwV3O++eI6kXKf5E89yJutHR8ebdr5f7KF5XmTBIWrbXFBLo2JIcaBz2axdpe7/WiOT2g==
+  dependencies:
+    "@types/lodash" "*"
+
 "@types/lodash.snakecase@^4.1.4":
   version "4.1.4"
   resolved "https://registry.yarnpkg.com/@types/lodash.snakecase/-/lodash.snakecase-4.1.4.tgz#58729021e111db6a4ff814d3ff16ac13ef7d0132"
@@ -2160,6 +2167,11 @@ locate-path@^2.0.0:
   dependencies:
     p-locate "^2.0.0"
     path-exists "^3.0.0"
+
+lodash.camelcase@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
+  integrity sha1-soqmKIorn8ZRA1x3EfZathkDMaY=
 
 lodash.snakecase@^4.1.1:
   version "4.1.1"
