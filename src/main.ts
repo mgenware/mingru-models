@@ -5,6 +5,7 @@ export {
   JoinedColumn,
   Table,
   table,
+  SelectedColumn,
 } from './core/core';
 
 export { default as dt } from './core/dt';

@@ -1,25 +1,29 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { capitalizeFirstLetter } from '../lib/stringUtil';
+import toTypeString from 'to-type-string';
 import snakeCase = require('lodash.snakecase');
 
 const InternalPropPrefix = '__';
+
+export enum ColumnBaseType {
+  Full, // Column
+  Foreign, // ForeignColumn
+  Joined, // JoinedColumn
+  Selected, // SelectedColumn
+}
 
 /** Core types */
 export class ColumnBase {
   __table!: Table;
   __name!: string;
+  __type: ColumnBaseType;
+
+  constructor(type: ColumnBaseType) {
+    this.__type = type;
+  }
 
   __getTargetColumn(): Column {
-    if (this instanceof Column) {
-      return this as Column;
-    }
-    if (this instanceof ForeignColumn) {
-      return (this as ForeignColumn).ref.__getTargetColumn();
-    }
-    if (this instanceof JoinedColumn) {
-      return (this as JoinedColumn).selectedColumn.__getTargetColumn();
-    }
-    throw new Error(`Not supported column type: ${this}`);
+    throw new Error(`Not supported column type "${toTypeString(this)}"`);
   }
 
   __getInputName(): string {
@@ -69,6 +73,10 @@ export class ColumnBase {
     });
   }
 
+  as(name: string): SelectedColumn {
+    return new SelectedColumn(this, name);
+  }
+
   private remoteColFromFCOrThrow(col?: ColumnBase): ColumnBase {
     col = col || this;
     if (col instanceof ForeignColumn) {
@@ -84,10 +92,14 @@ export class ForeignColumn extends ColumnBase {
     tbl: Table,
     public ref: ColumnBase,
   ) {
-    super();
+    super(ColumnBaseType.Foreign);
     throwIfFalsy(ref, 'ref');
     this.__name = name;
     this.__table = tbl;
+  }
+
+  __getTargetColumn(): Column {
+    return this.ref.__getTargetColumn();
   }
 }
 
@@ -105,7 +117,7 @@ export class Column extends ColumnBase {
   constructor(
     types: string[]|string,
   ) {
-    super();
+    super(ColumnBaseType.Full);
     throwIfFalsy(types, 'types');
 
     if (Array.isArray(types)) {
@@ -115,6 +127,10 @@ export class Column extends ColumnBase {
     } else {
       this.types.add(types as string);
     }
+  }
+
+  __getTargetColumn(): Column {
+    return this;
   }
 }
 
@@ -151,7 +167,7 @@ export function table<T extends Table>(cls: { new(name?: string): T }, name?: st
       throw new Error(`Empty column object at property "${colName}"`);
     }
     if (col instanceof ColumnBase === false) {
-      throw new Error(`Invalid column at property "${colName}", expected a ColumnBase, got "${col}"`);
+      throw new Error(`Invalid column at property "${colName}", expected a ColumnBase, got "${toTypeString(col)}"`);
     }
 
     if (col.__table) {
@@ -179,7 +195,7 @@ export class JoinedColumn extends ColumnBase {
     public remoteColumn: ColumnBase,
     public selectedColumn: ColumnBase,
   ) {
-    super();
+    super(ColumnBaseType.Joined);
 
     throwIfFalsy(localColumn, 'localColumn');
     throwIfFalsy(remoteColumn, 'remoteColumn');
@@ -187,5 +203,25 @@ export class JoinedColumn extends ColumnBase {
     // Both __table and __name point to the selected column
     this.__table = selectedColumn.__table;
     this.__name = selectedColumn.__name;
+  }
+
+  __getTargetColumn(): Column {
+    return this.selectedColumn.__getTargetColumn();
+  }
+}
+
+export class SelectedColumn extends ColumnBase {
+  constructor(
+    public column: ColumnBase,
+    public selectedName: string,
+  ) {
+    super(ColumnBaseType.Selected);
+
+    throwIfFalsy(column, 'column');
+    throwIfFalsy(selectedName, 'selectedName');
+  }
+
+  __getTargetColumn(): Column {
+    return this.column.__getTargetColumn();
   }
 }

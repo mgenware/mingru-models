@@ -23,3 +23,25 @@ test('SelectAll', () => {
 
   expect(v.selectAll).toBe(true);
 });
+
+test('as', () => {
+  const a = user.id.as('a');
+  const b = user.name.as('b');
+  const c = user.id.as('c');
+  const d = c.as('d');
+
+  expect(a).toBeInstanceOf(dd.SelectedColumn);
+  expect(a.selectedName).toBe('a');
+  expect(b.selectedName).toBe('b');
+  expect(c.selectedName).toBe('c');
+  expect(d.selectedName).toBe('d');
+});
+
+test('SelectedColumn', () => {
+  const a = user.id.as('a').as('b').as('c');
+  const b = new dd.SelectedColumn(a, 'b');
+  expect(a.selectedName).toBe('c');
+  expect(a.__getTargetColumn()).toBe(user.id);
+  expect(b.selectedName).toBe('b');
+  expect(b.__getTargetColumn()).toBe(user.id);
+});

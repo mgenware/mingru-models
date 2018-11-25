@@ -48,6 +48,7 @@
   },
   "dependencies": {
     "lodash.snakecase": "^4.1.1",
-    "throw-if-arg-empty": "^1.0.1"
+    "throw-if-arg-empty": "^1.0.1",
+    "to-type-string": "^1.0.0"
   }
 }
