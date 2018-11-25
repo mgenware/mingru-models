@@ -1,5 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { capitalizeColumnName, stripEndingSnakeID, toSnakeCase, toCamelCase } from '../lib/stringUtil';
+import utils from '../lib/utils';
 import toTypeString from 'to-type-string';
 
 const InternalPropPrefix = '__';
@@ -26,7 +26,7 @@ export class ColumnBase {
   }
 
   __getInputName(): string {
-    return `${this.tableName}${capitalizeColumnName(toCamelCase(this.__name))}`;
+    return `${this.tableName}${utils.capitalizeColumnName(utils.toCamelCase(this.__name))}`;
   }
 
   get tableName(): string {
@@ -146,7 +146,7 @@ export function table<T extends Table>(cls: { new(name?: string): T }, name?: st
   const className = tableObj.constructor.name;
   // table.__name can be in ctor
   if (!tableObj.__name) {
-    tableObj.__name = toSnakeCase(className);
+    tableObj.__name = utils.toSnakeCase(className);
   }
   const cols = tableObj.__columns;
   for (const pair of Object.entries(tableObj)) {
@@ -177,7 +177,7 @@ export function table<T extends Table>(cls: { new(name?: string): T }, name?: st
       cols.push(fc);
     } else {
       if (!col.__name) { // column name can be set by setName
-        col.__name = toSnakeCase(colName);
+        col.__name = utils.toSnakeCase(colName);
       }
       col.__table = tableObj;
       cols.push(col);
@@ -214,12 +214,12 @@ export class JoinedColumn extends ColumnBase {
     if (localColumn instanceof JoinedColumn) {
       return (localColumn as JoinedColumn).__getInputName() + curName;
     }
-    return toCamelCase(localColumn.tableName) + this.makeMiddleName(localColumn.__name) + curName;
+    return utils.toCamelCase(localColumn.tableName) + this.makeMiddleName(localColumn.__name) + curName;
   }
 
   // Generates a column name for a join, we call it a middle and we need to cut the ending `_id`, e.g. `SELECT post.user_id.join(user).name`, the `user_id` before the join is the middle name, the input name for this column is `postUserName`, note the `_id` of `user_id` is removed.
   private makeMiddleName(s: string): string {
-    return capitalizeColumnName(toCamelCase(stripEndingSnakeID(s)));
+    return utils.capitalizeColumnName(utils.toCamelCase(utils.stripTrailingSnakeID(s)));
   }
 }
 

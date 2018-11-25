@@ -1,5 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { capitalizeFirstLetter } from '../lib/stringUtil';
+import utils from '../lib/utils';
 import { Table } from '../core/core';
 
 export class Action {
@@ -10,7 +10,7 @@ export class Action {
     public table: Table,
   ) {
     throwIfFalsy(name, 'name');
-    this.name = this.prefix() + capitalizeFirstLetter(name);
+    this.name = this.prefix() + utils.capitalizeFirstLetter(name);
   }
 
   prefix(): string {

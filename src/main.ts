@@ -35,3 +35,4 @@ export { default as actions, TableActionCollection } from './actions/tableAction
 export { default as input, InputParam } from './actions/input';
 export { default as sql, SQL, SQLParam, SQLElement } from './actions/sql';
 export { default as ColumnSetter } from './actions/columnSetter';
+export { default as utils } from './lib/utils';
