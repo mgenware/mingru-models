@@ -30,6 +30,7 @@ test('__getTargetColumn', () => {
   expect(user.id.__getTargetColumn()).toBe(user.id);
   expect(post.user_id.__getTargetColumn()).toBe(user.id);
   expect(post.user_id.join(user).name.__getTargetColumn()).toBe(user.name);
+  expect(post.id.as('haha').__getTargetColumn()).toBe(post.id);
 });
 
 test('Column.__getInputName', () => {
@@ -46,4 +47,25 @@ test('JoinedColumn.__getInputName', () => {
   expect(post.snake_case_user_id.join(user).name.__getInputName()).toBe('postSnakeCaseUserName');
   expect(cmt.post_id.join(post).user_id.join(user).id.__getInputName()).toBe('postCmtPostUserID');
   expect(cmt.post_id.join(post).snake_case_user_id.join(user).name.__getInputName()).toBe('postCmtPostSnakeCaseUserName');
+});
+
+test('SelectedColumn.__getInputName', () => {
+  expect(user.id.as('__a_b').__getInputName()).toBe('__a_b');
+  expect(cmt.post_id.join(post).snake_case_user_id.join(user).name.as('haha').__getInputName()).toBe('haha');
+});
+
+class JCTable extends dd.Table {
+  jc = post.user_id.join(user).name;
+}
+
+test('JoinedColumn in table def', () => {
+  expect(() => dd.table(JCTable)).toThrow('JoinedColumn');
+});
+
+class SCTable extends dd.Table {
+  sc = dd.int().as('haha');
+}
+
+test('SelectedColumn in table def', () => {
+  expect(() => dd.table(SCTable)).toThrow('SelectedColumn');
 });

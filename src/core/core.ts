@@ -162,6 +162,12 @@ export function table<T extends Table>(cls: { new(name?: string): T }, name?: st
     if (col instanceof ColumnBase === false) {
       throw new Error(`Invalid column at property "${colName}", expected a ColumnBase, got "${toTypeString(col)}"`);
     }
+    if (col.__type === ColumnBaseType.Joined) {
+      throw new Error(`Unexpected ${toTypeString(col)} at property "${colName}", you should not use JoinedColumn in a table definition, JoinedColumn should be used in SELECT actions`);
+    }
+    if (col.__type === ColumnBaseType.Selected) {
+      throw new Error(`Unexpected ${toTypeString(col)} at property "${colName}", you should not use SelectedColumn in a table definition, SelectedColumn should be used in SELECT actions`);
+    }
 
     if (col.__table) {
       // Foreign column
@@ -230,5 +236,9 @@ export class SelectedColumn extends ColumnBase {
 
   __getTargetColumn(): Column {
     return this.column.__getTargetColumn();
+  }
+
+  __getInputName(): string {
+    return this.selectedName;
   }
 }
