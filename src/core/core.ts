@@ -67,6 +67,7 @@ export class ColumnBase {
   }
 
   as(name: string): SelectedColumn {
+    throwIfFalsy(name, 'name');
     return new SelectedColumn(this, name);
   }
 
