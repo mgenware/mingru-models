@@ -36,6 +36,7 @@ test('__getTargetColumn', () => {
 test('Column.__getInputName', () => {
   expect(user.id.__getInputName()).toBe('userID');
   expect(user.snake_case_name.__getInputName()).toBe('userSnakeCaseName');
+  expect(cmt.snake_case_post_id.__getInputName()).toBe('postCmtSnakeCasePostID');
 });
 
 test('ForeignColumn.__getInputName', () => {

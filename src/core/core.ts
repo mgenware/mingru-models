@@ -26,7 +26,7 @@ export class ColumnBase {
   }
 
   __getInputName(): string {
-    return `${this.tableName}${utils.capitalizeColumnName(utils.toCamelCase(this.__name))}`;
+    return `${utils.toCamelCase(this.tableName)}${utils.capitalizeColumnName(utils.toCamelCase(this.__name))}`;
   }
 
   get tableName(): string {
