@@ -31,6 +31,7 @@ test('__getTargetColumn', () => {
   expect(post.user_id.__getTargetColumn()).toBe(user.id);
   expect(post.user_id.join(user).name.__getTargetColumn()).toBe(user.name);
   expect(post.id.as('haha').__getTargetColumn()).toBe(post.id);
+  expect(post.user_id.join(user).name.as('haha').__getTargetColumn()).toBe(user.name);
 });
 
 test('Column.__getInputName', () => {
