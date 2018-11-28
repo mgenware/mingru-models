@@ -23,7 +23,6 @@ export {
   unsignedSmallInt,
   unsignedTinyInt,
   varChar,
-  unique,
   setName,
 } from './core/cols';
 

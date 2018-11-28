@@ -131,6 +131,11 @@ export class Column extends ColumnBase {
     return this;
   }
 
+  get unique(): Column {
+    this.props.unique = true;
+    return this;
+  }
+
   __getTargetColumn(): Column {
     return this;
   }

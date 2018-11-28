@@ -97,6 +97,11 @@ test('notNull', () => {
 });
 
 test('unique', () => {
-  const c = dd.unique(dd.int(123));
+  const c = dd.int(123).unique;
   expect(c.props.unique).toBe(true);
+});
+
+test('unique (default)', () => {
+  const c = dd.int(123);
+  expect(c.props.unique).toBe(false);
 });
