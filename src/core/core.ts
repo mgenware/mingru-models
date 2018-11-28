@@ -97,16 +97,19 @@ export class ForeignColumn extends ColumnBase {
   }
 }
 
-export class Column extends ColumnBase {
-  __userName = '';
+export class ColumnProps {
   pk = false;
   notNull = false;
   unsigned = false;
   unique = false;
   length = 0;
   default: unknown = undefined;
+}
 
+export class Column extends ColumnBase {
+  __userName = '';
   types = new Set<string>();
+  props = new ColumnProps();
 
   constructor(
     types: string[]|string,
@@ -121,6 +124,11 @@ export class Column extends ColumnBase {
     } else {
       this.types.add(types as string);
     }
+  }
+
+  get notNull(): Column {
+    this.props.notNull = true;
+    return this;
   }
 
   __getTargetColumn(): Column {

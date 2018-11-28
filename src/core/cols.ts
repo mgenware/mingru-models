@@ -4,22 +4,22 @@ import dt from './dt';
 
 export function varChar(length: number, defaultValue?: string): Column {
   const col = new Column(dt.varChar);
-  col.length = length;
-  col.default = defaultValue;
+  col.props.length = length;
+  col.props.default = defaultValue;
   return col;
 }
 
 export function char(length: number, defaultValue?: string): Column {
   const col = new Column(dt.char);
-  col.length = length;
-  col.default = defaultValue;
+  col.props.length = length;
+  col.props.default = defaultValue;
   return col;
 }
 
 function _int(type: string, unsigned: boolean, def?: number): Column {
   const col = new Column(type);
-  col.unsigned = unsigned;
-  col.default = def;
+  col.props.unsigned = unsigned;
+  col.props.default = def;
   return col;
 }
 
@@ -55,22 +55,16 @@ export function unsignedTinyInt(defaultValue?: number): Column {
   return _int(dt.tinyInt, true, defaultValue);
 }
 
-export function notNull(col: Column): Column {
-  throwIfFalsy(col, 'col');
-  col.notNull = true;
-  return col;
-}
-
 export function unique(col: Column): Column {
   throwIfFalsy(col, 'col');
-  col.unique = true;
+  col.props.unique = true;
   return col;
 }
 
 export function pk(column?: Column): Column {
   const col = column ? column : unsignedBigInt();
-  col.pk = true;
-  return unique(notNull(col));
+  col.props.pk = true;
+  return unique(col.notNull);
 }
 
 export function setName(name: string, column: Column): Column {

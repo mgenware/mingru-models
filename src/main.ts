@@ -15,7 +15,6 @@ export {
   bigInt,
   char,
   int,
-  notNull,
   pk,
   smallInt,
   tinyInt,
