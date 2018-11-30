@@ -8,7 +8,10 @@ test('Delete', () => {
 
   expect(v.name).toBe('DeleteT');
   expect(v.table).toBe(user);
+  expect(v).toBeInstanceOf(dd.DeleteAction);
+  expect(v).toBeInstanceOf(dd.Action);
   expect(v.whereSQL).not.toBeNull();
+  expect(v.type).toBe(dd.ActionType.delete);
 });
 
 test('Delete without where', () => {

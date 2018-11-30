@@ -1,4 +1,4 @@
-import { Action } from './action';
+import { Action, ActionType } from './action';
 import { Table, ColumnBase } from '../core/core';
 import { SQL } from './sql';
 import ColumnSetter from './columnSetter';
@@ -8,7 +8,7 @@ export default class UpdateAction extends Action {
   setters: ColumnSetter[] = [];
 
   constructor(name: string, table: Table) {
-    super(name, table, 'Update');
+    super(name, ActionType.update, table, 'Update');
   }
 
   set(column: ColumnBase, sql: SQL): UpdateAction {

@@ -1,5 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Action } from './action';
+import { Action, ActionType } from './action';
 import { Table, ColumnBase } from '../core/core';
 import { SQL } from './sql';
 
@@ -12,7 +12,7 @@ export default class SelectAction extends Action {
     public columns: ColumnBase[],
     public selectAll: boolean,
   ) {
-    super(name, table, 'Select');
+    super(name, ActionType.select, table, 'Select');
     throwIfFalsy(columns, 'columns');
   }
 

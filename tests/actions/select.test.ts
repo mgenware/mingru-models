@@ -8,12 +8,14 @@ test('Select and from', () => {
 
   expect(v.name).toBe('SelectT');
   expect(v).toBeInstanceOf(dd.SelectAction);
+  expect(v).toBeInstanceOf(dd.Action);
   expect(v.columns.length).toBe(2);
   expect(v.columns[0]).toBe(user.id);
   expect(v.columns[1]).toBe(user.name);
   expect(v.table).toBe(user);
   expect(v.whereSQL).not.toBeNull();
   expect(v.selectAll).toBe(false);
+  expect(v.type).toBe(dd.ActionType.select);
 });
 
 test('SelectAll', () => {

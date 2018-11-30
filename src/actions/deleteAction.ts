@@ -1,4 +1,4 @@
-import { Action } from './action';
+import { Action, ActionType } from './action';
 import { Table } from '../core/core';
 import { SQL } from './sql';
 
@@ -6,7 +6,7 @@ export default class DeleteAction extends Action {
   whereSQL: SQL|null = null;
 
   constructor(name: string, table: Table) {
-    super(name, table, 'Delete');
+    super(name, ActionType.delete, table, 'Delete');
   }
 
   where(sql: SQL): DeleteAction {
