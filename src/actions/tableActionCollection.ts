@@ -29,8 +29,8 @@ export class TableActionCollection {
     return action;
   }
 
-  insert(name: string): InsertAction {
-    const action = new InsertAction(name, this.table);
+  insert(name: string, ...columns: ColumnBase[]): InsertAction {
+    const action = new InsertAction(name, this.table, columns);
     this.addAction(action);
     return action;
   }

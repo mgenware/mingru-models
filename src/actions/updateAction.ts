@@ -1,4 +1,3 @@
-import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action } from './action';
 import { Table, ColumnBase } from '../core/core';
 import { SQL } from './sql';
@@ -9,16 +8,8 @@ export default class UpdateAction extends Action {
   setters: ColumnSetter[] = [];
 
   constructor(name: string, table: Table) {
-    super(name, table);
-
-    throwIfFalsy(table, 'table');
-    this.table = table;
+    super(name, table, 'Update');
   }
-
-  prefix(): string {
-    return 'Update';
-  }
-
   set(column: ColumnBase, sql: SQL): UpdateAction {
     const setter = new ColumnSetter(column, sql);
     this.setters.push(setter);

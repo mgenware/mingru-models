@@ -12,12 +12,8 @@ export default class SelectAction extends Action {
     public columns: ColumnBase[],
     public selectAll: boolean,
   ) {
-    super(name, table);
+    super(name, table, 'Select');
     throwIfFalsy(columns, 'columns');
-  }
-
-  prefix(): string {
-    return 'Select';
   }
 
   where(sql: SQL): SelectAction {

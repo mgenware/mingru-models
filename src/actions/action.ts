@@ -8,12 +8,10 @@ export class Action {
   constructor(
     name: string,
     public table: Table,
+    public prefix: string,
   ) {
     throwIfFalsy(name, 'name');
-    this.name = this.prefix() + utils.capitalizeFirstLetter(name);
-  }
-
-  prefix(): string {
-    throw new Error(`Not implemented yet`);
+    throwIfFalsy(table, 'table');
+    this.name = this.prefix + utils.capitalizeFirstLetter(name);
   }
 }
