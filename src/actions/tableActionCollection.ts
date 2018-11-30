@@ -2,6 +2,7 @@ import { ColumnBase, Table } from '../core/core';
 import SelectView from './selectAction';
 import UpdateAction from './updateAction';
 import InsertAction from './insertAction';
+import DeleteAction from './deleteAction';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action } from './action';
 import SelectAction from './selectAction';
@@ -31,6 +32,12 @@ export class TableActionCollection {
 
   insert(name: string, ...columns: ColumnBase[]): InsertAction {
     const action = new InsertAction(name, this.table, columns);
+    this.addAction(action);
+    return action;
+  }
+
+  delete(name: string): DeleteAction {
+    const action = new DeleteAction(name, this.table);
     this.addAction(action);
     return action;
   }

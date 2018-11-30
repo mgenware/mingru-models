@@ -4,12 +4,13 @@ import { SQL } from './sql';
 import ColumnSetter from './columnSetter';
 
 export default class UpdateAction extends Action {
-  whereSQL: SQL|null = null;
+  whereSQL: SQL | null = null;
   setters: ColumnSetter[] = [];
 
   constructor(name: string, table: Table) {
     super(name, table, 'Update');
   }
+
   set(column: ColumnBase, sql: SQL): UpdateAction {
     const setter = new ColumnSetter(column, sql);
     this.setters.push(setter);
