@@ -13,10 +13,8 @@ test('Delete', () => {
 
 test('Delete without where', () => {
   const actions = dd.actions(user);
-  const v = actions.delete('t')
-    .set(user.name, dd.sql`${dd.input(user.name)}`)
-    .set(user.follower_count, dd.sql`${user.follower_count} + 1`);
+  const v = actions.delete('t');
 
-  expect(v.name).toBe('UpdateT');
+  expect(v.name).toBe('DeleteT');
   expect(v.table).toBe(user);
 });
