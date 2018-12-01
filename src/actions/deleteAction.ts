@@ -3,7 +3,7 @@ import { Table } from '../core/core';
 import { SQL } from './sql';
 
 export default class DeleteAction extends Action {
-  whereSQL: SQL|null = null;
+  whereSQL: SQL | null = null;
 
   constructor(name: string, table: Table) {
     super(name, ActionType.delete, table, 'Delete');

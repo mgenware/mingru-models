@@ -3,7 +3,10 @@ import utils from '../lib/utils';
 import { Table } from '../core/core';
 
 export enum ActionType {
-  select, insert, update, delete,
+  select,
+  insert,
+  update,
+  delete,
 }
 
 export class Action {

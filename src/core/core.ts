@@ -26,7 +26,9 @@ export class ColumnBase {
   }
 
   __getInputName(): string {
-    return `${utils.toCamelCase(this.tableName)}${utils.capitalizeColumnName(utils.toCamelCase(this.__name))}`;
+    return `${utils.toCamelCase(this.tableName)}${utils.capitalizeColumnName(
+      utils.toCamelCase(this.__name),
+    )}`;
   }
 
   get tableName(): string {
@@ -38,13 +40,17 @@ export class ColumnBase {
     let rc: ColumnBase;
     if (remoteColumn) {
       if (remoteColumn.__table !== remoteTable) {
-        throw new Error(`The remote column "${remoteColumn}" does not belong to the remote table "${remoteTable}"`);
+        throw new Error(
+          `The remote column "${remoteColumn}" does not belong to the remote table "${remoteTable}"`,
+        );
       }
       rc = remoteColumn;
     } else {
       // See README.md (JoinedColumn for details)
       if (this instanceof JoinedColumn) {
-        rc = this.remoteColFromFCOrThrow(((this as unknown) as JoinedColumn).selectedColumn);
+        rc = this.remoteColFromFCOrThrow(
+          ((this as unknown) as JoinedColumn).selectedColumn,
+        );
       } else {
         rc = this.remoteColFromFCOrThrow();
       }
@@ -76,16 +82,14 @@ export class ColumnBase {
     if (col instanceof ForeignColumn) {
       return ((col as unknown) as ForeignColumn).ref;
     }
-    throw new Error(`Local column "${col}" is not a foreign column, you have to specify the "remoteColumn" argument`);
+    throw new Error(
+      `Local column "${col}" is not a foreign column, you have to specify the "remoteColumn" argument`,
+    );
   }
 }
 
 export class ForeignColumn extends ColumnBase {
-  constructor(
-    name: string,
-    tbl: Table,
-    public ref: ColumnBase,
-  ) {
+  constructor(name: string, tbl: Table, public ref: ColumnBase) {
     super(ColumnBaseType.Foreign);
     throwIfFalsy(ref, 'ref');
     this.__name = name;
@@ -111,9 +115,7 @@ export class Column extends ColumnBase {
   types = new Set<string>();
   props = new ColumnProps();
 
-  constructor(
-    types: string[]|string,
-  ) {
+  constructor(types: string[] | string) {
     super(ColumnBaseType.Full);
     throwIfFalsy(types, 'types');
 
@@ -154,7 +156,10 @@ export class Table {
 }
 
 // tslint:disable-next-line
-export function table<T extends Table>(cls: { new(name?: string): T }, name?: string): T {
+export function table<T extends Table>(
+  cls: { new (name?: string): T },
+  name?: string,
+): T {
   throwIfFalsy(cls, 'cls');
   const tableObj = new cls(name);
   const className = tableObj.constructor.name;
@@ -174,13 +179,25 @@ export function table<T extends Table>(cls: { new(name?: string): T }, name?: st
       throw new Error(`Empty column object at property "${colName}"`);
     }
     if (col instanceof ColumnBase === false) {
-      throw new Error(`Invalid column at property "${colName}", expected a ColumnBase, got "${toTypeString(col)}"`);
+      throw new Error(
+        `Invalid column at property "${colName}", expected a ColumnBase, got "${toTypeString(
+          col,
+        )}"`,
+      );
     }
     if (col.__type === ColumnBaseType.Joined) {
-      throw new Error(`Unexpected ${toTypeString(col)} at property "${colName}", you should not use JoinedColumn in a table definition, JoinedColumn should be used in SELECT actions`);
+      throw new Error(
+        `Unexpected ${toTypeString(
+          col,
+        )} at property "${colName}", you should not use JoinedColumn in a table definition, JoinedColumn should be used in SELECT actions`,
+      );
     }
     if (col.__type === ColumnBaseType.Selected) {
-      throw new Error(`Unexpected ${toTypeString(col)} at property "${colName}", you should not use SelectedColumn in a table definition, SelectedColumn should be used in SELECT actions`);
+      throw new Error(
+        `Unexpected ${toTypeString(
+          col,
+        )} at property "${colName}", you should not use SelectedColumn in a table definition, SelectedColumn should be used in SELECT actions`,
+      );
     }
 
     if (col.__table) {
@@ -190,7 +207,8 @@ export function table<T extends Table>(cls: { new(name?: string): T }, name?: st
       (tableObj as any)[colName] = fc;
       cols.push(fc);
     } else {
-      if (!col.__name) { // column name can be set by setName
+      if (!col.__name) {
+        // column name can be set by setName
         col.__name = utils.toSnakeCase(colName);
       }
       col.__table = tableObj;
@@ -228,20 +246,23 @@ export class JoinedColumn extends ColumnBase {
     if (localColumn instanceof JoinedColumn) {
       return (localColumn as JoinedColumn).__getInputName() + curName;
     }
-    return utils.toCamelCase(localColumn.tableName) + this.makeMiddleName(localColumn.__name) + curName;
+    return (
+      utils.toCamelCase(localColumn.tableName) +
+      this.makeMiddleName(localColumn.__name) +
+      curName
+    );
   }
 
   // Generates a column name for a join, we call it a middle and we need to cut the ending `_id`, e.g. `SELECT post.user_id.join(user).name`, the `user_id` before the join is the middle name, the input name for this column is `postUserName`, note the `_id` of `user_id` is removed.
   private makeMiddleName(s: string): string {
-    return utils.capitalizeColumnName(utils.toCamelCase(utils.stripTrailingSnakeID(s)));
+    return utils.capitalizeColumnName(
+      utils.toCamelCase(utils.stripTrailingSnakeID(s)),
+    );
   }
 }
 
 export class SelectedColumn extends ColumnBase {
-  constructor(
-    public column: ColumnBase,
-    public selectedName: string,
-  ) {
+  constructor(public column: ColumnBase, public selectedName: string) {
     super(ColumnBaseType.Selected);
 
     throwIfFalsy(column, 'column');

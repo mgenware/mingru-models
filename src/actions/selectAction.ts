@@ -4,7 +4,7 @@ import { Table, ColumnBase } from '../core/core';
 import { SQL } from './sql';
 
 export default class SelectAction extends Action {
-  whereSQL: SQL|null = null;
+  whereSQL: SQL | null = null;
 
   constructor(
     name: string,

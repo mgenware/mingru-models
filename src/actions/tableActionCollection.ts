@@ -10,9 +10,7 @@ import SelectAction from './selectAction';
 export class TableActionCollection {
   map: Map<string, Action> = new Map<string, Action>();
 
-  constructor(
-    public table: Table,
-  ) {
+  constructor(public table: Table) {
     throwIfFalsy(table, 'table');
   }
 
@@ -42,7 +40,11 @@ export class TableActionCollection {
     return action;
   }
 
-  private selectCore(name: string, selectAll: boolean, columns: ColumnBase[]): SelectView {
+  private selectCore(
+    name: string,
+    selectAll: boolean,
+    columns: ColumnBase[],
+  ): SelectView {
     const action = new SelectView(name, this.table, columns, selectAll);
     this.addAction(action);
     return action;

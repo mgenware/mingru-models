@@ -7,10 +7,7 @@ export type SQLElement = string | SQLParam;
 export class SQL {
   elements: SQLElement[];
 
-  constructor(
-    literals: TemplateStringsArray,
-    params: SQLParam[],
-  ) {
+  constructor(literals: TemplateStringsArray, params: SQLParam[]) {
     const elements: SQLElement[] = [];
     for (let i = 0; i < params.length; i++) {
       elements.push(literals[i]);
@@ -24,6 +21,9 @@ export class SQL {
   }
 }
 
-export default function sql(literals: TemplateStringsArray, ...params: SQLParam[]): SQL {
+export default function sql(
+  literals: TemplateStringsArray,
+  ...params: SQLParam[]
+): SQL {
   return new SQL(literals, params);
 }
