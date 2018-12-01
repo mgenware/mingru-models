@@ -3,7 +3,8 @@ import user from '../models/user';
 
 test('Update', () => {
   const actions = dd.actions(user);
-  const v = actions.update('t')
+  const v = actions
+    .update('t')
     .set(user.name, dd.sql`${dd.input(user.name)}`)
     .set(user.follower_count, dd.sql`${user.follower_count} + 1`)
     .where(dd.sql`${user.id} = 1`);
@@ -23,7 +24,8 @@ test('Update', () => {
 
 test('Update without where', () => {
   const actions = dd.actions(user);
-  const v = actions.update('t')
+  const v = actions
+    .update('t')
     .set(user.name, dd.sql`${dd.input(user.name)}`)
     .set(user.follower_count, dd.sql`${user.follower_count} + 1`);
 

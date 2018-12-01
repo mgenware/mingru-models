@@ -31,13 +31,20 @@ test('__getTargetColumn', () => {
   expect(post.user_id.__getTargetColumn()).toBe(user.id);
   expect(post.user_id.join(user).name.__getTargetColumn()).toBe(user.name);
   expect(post.id.as('haha').__getTargetColumn()).toBe(post.id);
-  expect(post.user_id.join(user).name.as('haha').__getTargetColumn()).toBe(user.name);
+  expect(
+    post.user_id
+      .join(user)
+      .name.as('haha')
+      .__getTargetColumn(),
+  ).toBe(user.name);
 });
 
 test('Column.__getInputName', () => {
   expect(user.id.__getInputName()).toBe('userID');
   expect(user.snake_case_name.__getInputName()).toBe('userSnakeCaseName');
-  expect(cmt.snake_case_post_id.__getInputName()).toBe('postCmtSnakeCasePostID');
+  expect(cmt.snake_case_post_id.__getInputName()).toBe(
+    'postCmtSnakeCasePostID',
+  );
 });
 
 test('ForeignColumn.__getInputName', () => {
@@ -45,15 +52,35 @@ test('ForeignColumn.__getInputName', () => {
 });
 
 test('JoinedColumn.__getInputName', () => {
-  expect(post.snake_case_user_id.join(user).id.__getInputName()).toBe('postSnakeCaseUserID');
-  expect(post.snake_case_user_id.join(user).name.__getInputName()).toBe('postSnakeCaseUserName');
-  expect(cmt.post_id.join(post).user_id.join(user).id.__getInputName()).toBe('postCmtPostUserID');
-  expect(cmt.post_id.join(post).snake_case_user_id.join(user).name.__getInputName()).toBe('postCmtPostSnakeCaseUserName');
+  expect(post.snake_case_user_id.join(user).id.__getInputName()).toBe(
+    'postSnakeCaseUserID',
+  );
+  expect(post.snake_case_user_id.join(user).name.__getInputName()).toBe(
+    'postSnakeCaseUserName',
+  );
+  expect(
+    cmt.post_id
+      .join(post)
+      .user_id.join(user)
+      .id.__getInputName(),
+  ).toBe('postCmtPostUserID');
+  expect(
+    cmt.post_id
+      .join(post)
+      .snake_case_user_id.join(user)
+      .name.__getInputName(),
+  ).toBe('postCmtPostSnakeCaseUserName');
 });
 
 test('SelectedColumn.__getInputName', () => {
   expect(user.id.as('__a_b').__getInputName()).toBe('__a_b');
-  expect(cmt.post_id.join(post).snake_case_user_id.join(user).name.as('haha').__getInputName()).toBe('haha');
+  expect(
+    cmt.post_id
+      .join(post)
+      .snake_case_user_id.join(user)
+      .name.as('haha')
+      .__getInputName(),
+  ).toBe('haha');
 });
 
 class JCTable extends dd.Table {

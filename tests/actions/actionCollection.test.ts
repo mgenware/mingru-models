@@ -3,7 +3,8 @@ import user from '../models/user';
 
 test('ActionCollection', () => {
   const actions = dd.actions(user);
-  const v1 = actions.update('t')
+  const v1 = actions
+    .update('t')
     .set(user.name, dd.sql`${dd.input(user.name)}`)
     .set(user.follower_count, dd.sql`${user.follower_count} + 1`);
 

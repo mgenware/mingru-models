@@ -17,7 +17,12 @@ test('Instance type', () => {
 });
 
 // jc.localColumn is not tested cuz it may be another JC if join is nested (see 'Nested JoinedColumn' below)
-function testJCCols(jc: dd.JoinedColumn, rc: dd.ColumnBase, sc: dd.ColumnBase, path: string) {
+function testJCCols(
+  jc: dd.JoinedColumn,
+  rc: dd.ColumnBase,
+  sc: dd.ColumnBase,
+  path: string,
+) {
   expect(jc.remoteColumn).toBe(rc);
   expect(jc.selectedColumn).toBe(sc);
   expect(jc.joinPath).toBe(path);
@@ -33,12 +38,21 @@ test('Nested JoinedColumn', () => {
   const jc1 = toJC(postCmt.post_id.join(post).user_id);
   const jc2 = toJC(jc1.join(user).name);
   expect(jc2.localColumn).toBe(jc1);
-  testJCCols(jc2, user.id, user.name, '[[[[post_cmt.post_id].[post.id]].user_id].[user.id]]');
+  testJCCols(
+    jc2,
+    user.id,
+    user.name,
+    '[[[[post_cmt.post_id].[post.id]].user_id].[user.id]]',
+  );
 
   expect(jc1.localColumn).toBe(postCmt.post_id);
   testJCCols(jc1, post.id, post.user_id, '[[post_cmt.post_id].[post.id]]');
 
   const jc3 = toJC(postCmt.post_id.join(post).user_id.join(user).id);
-  testJCCols(jc3, user.id, user.id, '[[[[post_cmt.post_id].[post.id]].user_id].[user.id]]');
-
+  testJCCols(
+    jc3,
+    user.id,
+    user.id,
+    '[[[[post_cmt.post_id].[post.id]].user_id].[user.id]]',
+  );
 });

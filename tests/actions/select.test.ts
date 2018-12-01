@@ -3,7 +3,8 @@ import user from '../models/user';
 
 test('Select and from', () => {
   const actions = dd.actions(user);
-  const v = actions.select('t', user.id, user.name)
+  const v = actions
+    .select('t', user.id, user.name)
     .where(dd.sql`${user.id} = 1`);
 
   expect(v.name).toBe('SelectT');
@@ -20,7 +21,8 @@ test('Select and from', () => {
 
 test('SelectAll', () => {
   const actions = dd.actions(user);
-  const v = actions.selectAll('t', user.id, user.name)
+  const v = actions
+    .selectAll('t', user.id, user.name)
     .where(dd.sql`${user.id} = 1`);
 
   expect(v.selectAll).toBe(true);
@@ -40,7 +42,10 @@ test('as', () => {
 });
 
 test('SelectedColumn', () => {
-  const a = user.id.as('a').as('b').as('c');
+  const a = user.id
+    .as('a')
+    .as('b')
+    .as('c');
   const b = new dd.SelectedColumn(a, 'b');
   expect(a.selectedName).toBe('c');
   expect(a.__getTargetColumn()).toBe(user.id);

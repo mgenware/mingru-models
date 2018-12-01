@@ -3,8 +3,7 @@ import user from '../models/user';
 
 test('Delete', () => {
   const actions = dd.actions(user);
-  const v = actions.delete('t')
-    .where(dd.sql`${user.id} = 1`);
+  const v = actions.delete('t').where(dd.sql`${user.id} = 1`);
 
   expect(v.name).toBe('DeleteT');
   expect(v.table).toBe(user);
