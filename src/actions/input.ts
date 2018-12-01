@@ -13,9 +13,10 @@ export default function input(
   type: string | ColumnBase,
   name?: string,
 ): InputParam {
-  if (type instanceof Column) {
+  if (type instanceof ColumnBase) {
+    const col = type as ColumnBase;
     if (!name) {
-      name = (type as Column).__getInputName();
+      name = col.__getInputName();
       if (!name) {
         throw new Error(
           `Unexpected empty input name for column "${toTypeString(type)}"`,
