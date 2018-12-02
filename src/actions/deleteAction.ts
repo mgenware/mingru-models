@@ -1,6 +1,5 @@
 import { Action, ActionType } from './action';
-import { Table } from '../core/core';
-import { SQL } from './sql';
+import { Table, SQL } from '../core/core';
 
 export default class DeleteAction extends Action {
   whereSQL: SQL | null = null;

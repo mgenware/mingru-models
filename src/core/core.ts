@@ -77,6 +77,26 @@ export class ColumnBase {
     return new SelectedColumn(this, name);
   }
 
+  toInput(name?: string): InputParam {
+    return input(this, name);
+  }
+
+  isEqualTo(valueSQL: SQL): SQL {
+    return sql`${this} = ${valueSQL}`;
+  }
+
+  isEqualToInput(name?: string): SQL {
+    return this.isEqualTo(sql`${this.toInput(name)}`);
+  }
+
+  isNotEqualTo(valueSQL: SQL): SQL {
+    return sql`${this} <> ${valueSQL}`;
+  }
+
+  isNotEqualToInput(name?: string): SQL {
+    return this.isNotEqualTo(sql`${this.toInput(name)}`);
+  }
+
   private remoteColFromFCOrThrow(col?: ColumnBase): ColumnBase {
     col = col || this;
     if (col instanceof ForeignColumn) {
@@ -276,4 +296,74 @@ export class SelectedColumn extends ColumnBase {
   __getInputName(): string {
     return this.selectedName;
   }
+}
+
+export class InputParam {
+  constructor(public type: string | Column, public name: string) {
+    throwIfFalsy(type, 'type');
+    throwIfFalsy(name, 'name');
+  }
+}
+
+export function input(type: string | ColumnBase, name?: string): InputParam {
+  if (type instanceof ColumnBase) {
+    const col = type as ColumnBase;
+    if (!name) {
+      name = col.__getInputName();
+      if (!name) {
+        throw new Error(
+          `Unexpected empty input name for column "${toTypeString(type)}"`,
+        );
+      }
+    }
+    return new InputParam((type as ColumnBase).__getTargetColumn(), name);
+  }
+  if (!name) {
+    throw new Error(`Unexpected empty input name for type "${type}"`);
+  }
+  return new InputParam(type as string, name as string);
+}
+
+export type SQLParam = ColumnBase | InputParam | SQL;
+export type SQLElement = string | ColumnBase | InputParam;
+
+export class SQL {
+  elements: SQLElement[];
+
+  constructor(literals: TemplateStringsArray, params: SQLParam[]) {
+    const elements: SQLElement[] = [];
+    for (let i = 0; i < params.length; i++) {
+      // Skip empty strings
+      if (literals[i]) {
+        elements.push(literals[i]);
+      }
+      const param = params[i];
+      if (param instanceof ColumnBase) {
+        elements.push(param as ColumnBase);
+      } else if (param instanceof InputParam) {
+        elements.push(param as InputParam);
+      } else if (param instanceof SQL) {
+        elements.push(...(param as SQL).elements);
+      } else {
+        throw new Error(
+          `Unsupported SQL parameter type "${toTypeString(param)}"`,
+        );
+      }
+    }
+
+    // push the last literal
+    const lastLiteral = literals[literals.length - 1];
+    if (lastLiteral) {
+      elements.push(lastLiteral);
+    }
+
+    this.elements = elements;
+  }
+}
+
+export function sql(
+  literals: TemplateStringsArray,
+  ...params: SQLParam[]
+): SQL {
+  return new SQL(literals, params);
 }

@@ -78,3 +78,45 @@ test('Embed another sql', () => {
     dd.input(user.name),
   ]);
 });
+
+test('toInput', () => {
+  const input = user.name.toInput();
+  expect(input.type).toBe(user.name);
+  expect(input.name).toBe('userName');
+});
+
+test('toInput(string)', () => {
+  const input = user.name.toInput('haha');
+  expect(input.type).toBe(user.name);
+  expect(input.name).toBe('haha');
+});
+
+test('isEqualTo', () => {
+  const sql = user.name.isEqualTo(dd.sql`"haha"`);
+  expect(sql.elements).toEqual([user.name, ' = ', '"haha"']);
+});
+
+test('isEqualToInput', () => {
+  const sql = user.name.isEqualToInput();
+  expect(sql.elements).toEqual([user.name, ' = ', user.name.toInput()]);
+});
+
+test('isEqualToInput(string)', () => {
+  const sql = user.name.isEqualToInput('haha');
+  expect(sql.elements).toEqual([user.name, ' = ', user.name.toInput('haha')]);
+});
+
+test('isNotEqualTo', () => {
+  const sql = user.name.isNotEqualTo(dd.sql`"haha"`);
+  expect(sql.elements).toEqual([user.name, ' <> ', '"haha"']);
+});
+
+test('isNotEqualToInput', () => {
+  const sql = user.name.isNotEqualToInput();
+  expect(sql.elements).toEqual([user.name, ' <> ', user.name.toInput()]);
+});
+
+test('isNotEqualToInput(string)', () => {
+  const sql = user.name.isNotEqualToInput('haha');
+  expect(sql.elements).toEqual([user.name, ' <> ', user.name.toInput('haha')]);
+});

@@ -1,6 +1,5 @@
 import { Action, ActionType } from './action';
-import { Table, ColumnBase } from '../core/core';
-import { SQL } from './sql';
+import { Table, ColumnBase, SQL } from '../core/core';
 import ColumnSetter from './columnSetter';
 
 export default class UpdateAction extends Action {

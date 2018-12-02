@@ -7,6 +7,12 @@ export {
   table,
   SelectedColumn,
   ColumnBaseType,
+  sql,
+  SQL,
+  SQLParam,
+  SQLElement,
+  input,
+  InputParam,
 } from './core/core';
 
 export { default as dt } from './core/dt';
@@ -39,7 +45,5 @@ export {
   default as actions,
   TableActionCollection,
 } from './actions/tableActionCollection';
-export { default as input, InputParam } from './actions/input';
-export { default as sql, SQL, SQLParam, SQLElement } from './actions/sql';
 export { default as ColumnSetter } from './actions/columnSetter';
 export { default as utils } from './lib/utils';

@@ -1,7 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action, ActionType } from './action';
-import { Table, ColumnBase } from '../core/core';
-import { SQL } from './sql';
+import { Table, ColumnBase, SQL } from '../core/core';
 
 export default class SelectAction extends Action {
   whereSQL: SQL | null = null;
