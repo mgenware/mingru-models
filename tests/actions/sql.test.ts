@@ -5,13 +5,11 @@ import post from '../models/post';
 test('SQL', () => {
   const sql = dd.sql`${user.id} = 1 OR ${user.name} = ${dd.input(user.name)}`;
   expect(sql.elements).toEqual([
-    '',
     user.id,
     ' = 1 OR ',
     user.name,
     ' = ',
     dd.input(user.name),
-    '',
   ]);
   expect(sql).toBeInstanceOf(dd.SQL);
 });
@@ -63,4 +61,20 @@ test('Raw type input', () => {
 
 test('Empty name for raw type input', () => {
   expect(() => dd.input('uint32')).toThrow('empty input name');
+});
+
+test('Embed another sql', () => {
+  const embedded = dd.sql`_${user.id} = ${dd.input(user.id)}`;
+  const sql = dd.sql`START${embedded} OR ${user.name} = ${dd.input(user.name)}`;
+  expect(sql.elements).toEqual([
+    'START',
+    '_',
+    user.id,
+    ' = ',
+    dd.input(user.id),
+    ' OR ',
+    user.name,
+    ' = ',
+    dd.input(user.name),
+  ]);
 });
