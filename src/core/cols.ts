@@ -55,6 +55,14 @@ export function unsignedTinyInt(defaultValue?: number): Column {
   return _int(dt.tinyInt, true, defaultValue);
 }
 
+export function float(defaultValue?: number): Column {
+  return _int(dt.float, true, defaultValue);
+}
+
+export function double(defaultValue?: number): Column {
+  return _int(dt.double, true, defaultValue);
+}
+
 export function unique(col: Column): Column {
   throwIfFalsy(col, 'col');
   col.props.unique = true;
@@ -72,4 +80,16 @@ export function setName(name: string, column: Column): Column {
   throwIfFalsy(column, 'column');
   column.__name = name;
   return column;
+}
+
+export function text(defaultValue?: string): Column {
+  const col = new Column(dt.text);
+  col.props.default = defaultValue;
+  return col;
+}
+
+export function bool(defaultValue?: boolean): Column {
+  const col = new Column(dt.bool);
+  col.props.default = defaultValue;
+  return col;
 }

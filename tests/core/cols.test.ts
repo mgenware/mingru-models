@@ -105,3 +105,27 @@ test('unique (default)', () => {
   const c = dd.int(123);
   expect(c.props.unique).toBe(false);
 });
+
+test('text', () => {
+  const c = dd.text('ha');
+  expect(c.types).toContain(dd.dt.text);
+  expect(c.props.default).toBe('ha');
+});
+
+test('double', () => {
+  const c = dd.double(20);
+  expect(c.types).toContain(dd.dt.double);
+  expect(c.props.default).toBe(20);
+});
+
+test('float', () => {
+  const c = dd.float(20);
+  expect(c.types).toContain(dd.dt.float);
+  expect(c.props.default).toBe(20);
+});
+
+test('bool', () => {
+  const c = dd.bool(true);
+  expect(c.types).toContain(dd.dt.bool);
+  expect(c.props.default).toBe(true);
+});

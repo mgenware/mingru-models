@@ -24,6 +24,10 @@ export {
   unsignedTinyInt,
   varChar,
   setName,
+  text,
+  float,
+  double,
+  bool,
 } from './core/cols';
 
 export { Action, ActionType } from './actions/action';
