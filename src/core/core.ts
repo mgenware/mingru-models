@@ -97,6 +97,14 @@ export class ColumnBase {
     return this.isNotEqualTo(sql`${this.toInput(name)}`);
   }
 
+  isNull(): SQL {
+    return sql`${this} IS NULL`;
+  }
+
+  isNotNull(): SQL {
+    return sql`${this} IS NOT NULL`;
+  }
+
   private remoteColFromFCOrThrow(col?: ColumnBase): ColumnBase {
     col = col || this;
     if (col instanceof ForeignColumn) {

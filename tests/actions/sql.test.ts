@@ -120,3 +120,13 @@ test('isNotEqualToInput(string)', () => {
   const sql = user.name.isNotEqualToInput('haha');
   expect(sql.elements).toEqual([user.name, ' <> ', user.name.toInput('haha')]);
 });
+
+test('isNull', () => {
+  const sql = user.name.isNull();
+  expect(sql.elements).toEqual([user.name, ' IS NULL']);
+});
+
+test('isNotNull', () => {
+  const sql = user.name.isNotNull();
+  expect(sql.elements).toEqual([user.name, ' IS NOT NULL']);
+});
