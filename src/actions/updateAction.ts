@@ -1,6 +1,7 @@
 import { Action, ActionType } from './action';
-import { Table, ColumnBase, SQL } from '../core/core';
+import { Table, ColumnBase, SQL, sql } from '../core/core';
 import ColumnSetter from './columnSetter';
+import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export default class UpdateAction extends Action {
   whereSQL: SQL | null = null;
@@ -14,6 +15,12 @@ export default class UpdateAction extends Action {
     const setter = new ColumnSetter(column, sql);
     this.setters.push(setter);
     return this;
+  }
+
+  setToInput(column: ColumnBase, name?: string): UpdateAction {
+    throwIfFalsy(column, 'column');
+    const inputSQL = sql`${column.toInput(name)}`;
+    return this.set(column, inputSQL);
   }
 
   where(sql: SQL): UpdateAction {
