@@ -11,23 +11,29 @@ export default class UpdateAction extends Action {
     super(name, ActionType.update, table, 'Update');
   }
 
-  set(column: ColumnBase, sql: SQL): UpdateAction {
-    const setter = new ColumnSetter(column, sql);
+  set(column: ColumnBase, valueSQL: SQL): UpdateAction {
+    throwIfFalsy(column, 'column');
+    throwIfFalsy(valueSQL, 'valueSQL');
+
+    const setter = new ColumnSetter(column, valueSQL);
     this.setters.push(setter);
     return this;
   }
 
   setToInput(column: ColumnBase, name?: string): UpdateAction {
     throwIfFalsy(column, 'column');
+
     const inputSQL = sql`${column.toInput(name)}`;
     return this.set(column, inputSQL);
   }
 
-  where(sql: SQL): UpdateAction {
+  where(condition: SQL): UpdateAction {
+    throwIfFalsy(condition, 'condition');
+
     if (this.whereSQL) {
       throw new Error('"where" is called twice');
     }
-    this.whereSQL = sql;
+    this.whereSQL = condition;
     return this;
   }
 }
