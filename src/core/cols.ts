@@ -93,3 +93,15 @@ export function bool(defaultValue?: boolean): Column {
   col.props.default = defaultValue;
   return col;
 }
+
+export function datetime(): Column {
+  return new Column(dt.datetime);
+}
+
+export function date(): Column {
+  return new Column(dt.date);
+}
+
+export function time(): Column {
+  return new Column(dt.time);
+}

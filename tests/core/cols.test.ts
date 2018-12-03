@@ -129,3 +129,18 @@ test('bool', () => {
   expect(c.types).toContain(dd.dt.bool);
   expect(c.props.default).toBe(true);
 });
+
+test('datetime', () => {
+  const c = dd.datetime();
+  expect(c.types).toContain(dd.dt.datetime);
+});
+
+test('date', () => {
+  const c = dd.date();
+  expect(c.types).toContain(dd.dt.date);
+});
+
+test('time', () => {
+  const c = dd.time();
+  expect(c.types).toContain(dd.dt.time);
+});

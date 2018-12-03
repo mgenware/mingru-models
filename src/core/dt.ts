@@ -13,6 +13,10 @@ export class DataTypes {
   text = Prefix + 'TEXT';
   float = Prefix + 'FLOAT';
   double = Prefix + 'DOUBLE';
+
+  datetime = Prefix + 'DATETIME';
+  date = Prefix + 'DATE';
+  time = Prefix + 'TIME';
 }
 
 export default new DataTypes();

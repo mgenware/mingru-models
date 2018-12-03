@@ -34,6 +34,9 @@ export {
   float,
   double,
   bool,
+  datetime,
+  date,
+  time,
 } from './core/cols';
 
 export { Action, ActionType } from './actions/action';
