@@ -24,7 +24,7 @@ test('Delete without where', () => {
 
 test('Delete row', () => {
   const actions = dd.actions(user);
-  const v = actions.deleteRow('t').where(dd.sql`${user.id} = 1`);
+  const v = actions.deleteOne('t').where(dd.sql`${user.id} = 1`);
 
   expect(v.checkAffectedRows).toBeTruthy();
 });

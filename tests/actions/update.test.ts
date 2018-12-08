@@ -65,7 +65,7 @@ test('setToInput', () => {
 
 test('Update row', () => {
   const actions = dd.actions(user);
-  const v = actions.updateRow('t').setToInput(user.snake_case_name);
+  const v = actions.updateOne('t').setToInput(user.snake_case_name);
 
   expect(v.checkAffectedRows).toBeTruthy();
 });

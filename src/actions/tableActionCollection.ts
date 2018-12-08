@@ -28,7 +28,7 @@ export class TableActionCollection {
     return action;
   }
 
-  updateRow(name: string): UpdateAction {
+  updateOne(name: string): UpdateAction {
     const action = new UpdateAction(name, this.table, true);
     this.addAction(action);
     return action;
@@ -46,7 +46,7 @@ export class TableActionCollection {
     return action;
   }
 
-  deleteRow(name: string): DeleteAction {
+  deleteOne(name: string): DeleteAction {
     const action = new DeleteAction(name, this.table, true);
     this.addAction(action);
     return action;
