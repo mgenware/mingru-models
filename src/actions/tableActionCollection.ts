@@ -23,39 +23,27 @@ export class TableActionCollection {
   }
 
   update(name: string): UpdateAction {
-    const action = new UpdateAction(name, this.table, false);
-    this.addAction(action);
-    return action;
+    return this.addAction(new UpdateAction(name, this.table, false));
   }
 
   updateOne(name: string): UpdateAction {
-    const action = new UpdateAction(name, this.table, true);
-    this.addAction(action);
-    return action;
+    return this.addAction(new UpdateAction(name, this.table, true));
   }
 
   insert(name: string, ...columns: ColumnBase[]): InsertAction {
-    const action = new InsertAction(name, this.table, columns, false);
-    this.addAction(action);
-    return action;
+    return this.addAction(new InsertAction(name, this.table, columns, false));
   }
 
   insertOne(name: string, ...columns: ColumnBase[]): InsertAction {
-    const action = new InsertAction(name, this.table, columns, true);
-    this.addAction(action);
-    return action;
+    return this.addAction(new InsertAction(name, this.table, columns, true));
   }
 
   delete(name: string): DeleteAction {
-    const action = new DeleteAction(name, this.table, false);
-    this.addAction(action);
-    return action;
+    return this.addAction(new DeleteAction(name, this.table, false));
   }
 
   deleteOne(name: string): DeleteAction {
-    const action = new DeleteAction(name, this.table, true);
-    this.addAction(action);
-    return action;
+    return this.addAction(new DeleteAction(name, this.table, true));
   }
 
   private selectCore(
@@ -68,7 +56,7 @@ export class TableActionCollection {
     return action;
   }
 
-  private addAction(action: Action): Action {
+  private addAction<T extends Action>(action: T): T {
     if (this.map.has(action.name)) {
       throw new Error(`The action "${action.name}" already exists`);
     }
