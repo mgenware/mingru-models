@@ -48,5 +48,4 @@ export {
   default as actions,
   TableActionCollection,
 } from './actions/tableActionCollection';
-export { default as ColumnSetter } from './actions/columnSetter';
 export { default as utils } from './lib/utils';

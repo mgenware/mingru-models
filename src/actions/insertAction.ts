@@ -1,13 +1,9 @@
-import { Action, ActionType } from './action';
-import { Table, ColumnBase } from '../core/core';
+import { ActionType } from './action';
+import { Table } from '../core/core';
+import CoreUpdateAction from './coreUpdateAction';
 
-export default class InsertAction extends Action {
-  constructor(
-    name: string,
-    table: Table,
-    public columns: ColumnBase[],
-    public fetchInsertedID: boolean,
-  ) {
+export default class InsertAction extends CoreUpdateAction {
+  constructor(name: string, table: Table, public fetchInsertedID: boolean) {
     super(name, ActionType.insert, table, 'Insert');
   }
 }

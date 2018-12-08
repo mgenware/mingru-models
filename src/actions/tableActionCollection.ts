@@ -30,12 +30,12 @@ export class TableActionCollection {
     return this.addAction(new UpdateAction(name, this.table, true));
   }
 
-  insert(name: string, ...columns: ColumnBase[]): InsertAction {
-    return this.addAction(new InsertAction(name, this.table, columns, false));
+  insert(name: string): InsertAction {
+    return this.addAction(new InsertAction(name, this.table, false));
   }
 
-  insertOne(name: string, ...columns: ColumnBase[]): InsertAction {
-    return this.addAction(new InsertAction(name, this.table, columns, true));
+  insertOne(name: string): InsertAction {
+    return this.addAction(new InsertAction(name, this.table, true));
   }
 
   delete(name: string): DeleteAction {

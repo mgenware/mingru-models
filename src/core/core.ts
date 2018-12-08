@@ -81,6 +81,10 @@ export class ColumnBase {
     return input(this, name);
   }
 
+  toInputSQL(name?: string): SQL {
+    return sql`${this.toInput(name)}`;
+  }
+
   isEqualTo(valueSQL: SQL): SQL {
     return sql`${this} = ${valueSQL}`;
   }

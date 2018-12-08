@@ -1,30 +1,13 @@
-import { Action, ActionType } from './action';
-import { Table, ColumnBase, SQL, sql } from '../core/core';
-import ColumnSetter from './columnSetter';
+import { ActionType } from './action';
+import { Table, SQL } from '../core/core';
 import { throwIfFalsy } from 'throw-if-arg-empty';
+import CoreUpdateAction from './coreUpdateAction';
 
-export default class UpdateAction extends Action {
+export default class UpdateAction extends CoreUpdateAction {
   whereSQL: SQL | null = null;
-  setters: ColumnSetter[] = [];
 
   constructor(name: string, table: Table, public checkAffectedRows: boolean) {
     super(name, ActionType.update, table, 'Update');
-  }
-
-  set(column: ColumnBase, valueSQL: SQL): UpdateAction {
-    throwIfFalsy(column, 'column');
-    throwIfFalsy(valueSQL, 'valueSQL');
-
-    const setter = new ColumnSetter(column, valueSQL);
-    this.setters.push(setter);
-    return this;
-  }
-
-  setToInput(column: ColumnBase, name?: string): UpdateAction {
-    throwIfFalsy(column, 'column');
-
-    const inputSQL = sql`${column.toInput(name)}`;
-    return this.set(column, inputSQL);
   }
 
   where(condition: SQL): UpdateAction {
