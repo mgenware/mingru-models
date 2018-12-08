@@ -31,6 +31,7 @@ test('Update without where', () => {
 
   expect(v.name).toBe('UpdateT');
   expect(v.table).toBe(user);
+  expect(v.checkAffectedRows).toBeFalsy();
   expect(v.setters.length).toBe(2);
   expect(v.setters[0].column).toBe(user.name);
   expect(v.setters[0].sql).not.toBeNull();
@@ -60,4 +61,11 @@ test('setToInput', () => {
   input = v.setters[1].sql.elements[0] as dd.InputParam;
   expect(input.name).toBe('userSnakeCaseName');
   expect(input.type).toBe(user.snake_case_name);
+});
+
+test('Update row', () => {
+  const actions = dd.actions(user);
+  const v = actions.updateRow('t').setToInput(user.snake_case_name);
+
+  expect(v.checkAffectedRows).toBeTruthy();
 });

@@ -4,7 +4,7 @@ import { Table, SQL } from '../core/core';
 export default class DeleteAction extends Action {
   whereSQL: SQL | null = null;
 
-  constructor(name: string, table: Table) {
+  constructor(name: string, table: Table, public checkAffectedRows: boolean) {
     super(name, ActionType.delete, table, 'Delete');
   }
 

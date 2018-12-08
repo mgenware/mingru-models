@@ -23,7 +23,13 @@ export class TableActionCollection {
   }
 
   update(name: string): UpdateAction {
-    const action = new UpdateAction(name, this.table);
+    const action = new UpdateAction(name, this.table, false);
+    this.addAction(action);
+    return action;
+  }
+
+  updateRow(name: string): UpdateAction {
+    const action = new UpdateAction(name, this.table, true);
     this.addAction(action);
     return action;
   }
@@ -35,7 +41,13 @@ export class TableActionCollection {
   }
 
   delete(name: string): DeleteAction {
-    const action = new DeleteAction(name, this.table);
+    const action = new DeleteAction(name, this.table, false);
+    this.addAction(action);
+    return action;
+  }
+
+  deleteRow(name: string): DeleteAction {
+    const action = new DeleteAction(name, this.table, true);
     this.addAction(action);
     return action;
   }
@@ -50,11 +62,12 @@ export class TableActionCollection {
     return action;
   }
 
-  private addAction(action: Action) {
+  private addAction(action: Action): Action {
     if (this.map.has(action.name)) {
       throw new Error(`The action "${action.name}" already exists`);
     }
     this.map.set(action.name, action);
+    return action;
   }
 }
 

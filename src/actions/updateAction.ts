@@ -7,7 +7,7 @@ export default class UpdateAction extends Action {
   whereSQL: SQL | null = null;
   setters: ColumnSetter[] = [];
 
-  constructor(name: string, table: Table) {
+  constructor(name: string, table: Table, public checkAffectedRows: boolean) {
     super(name, ActionType.update, table, 'Update');
   }
 

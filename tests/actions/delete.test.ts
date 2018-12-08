@@ -7,6 +7,7 @@ test('Delete', () => {
 
   expect(v.name).toBe('DeleteT');
   expect(v.table).toBe(user);
+  expect(v.checkAffectedRows).toBeFalsy();
   expect(v).toBeInstanceOf(dd.DeleteAction);
   expect(v).toBeInstanceOf(dd.Action);
   expect(v.whereSQL).not.toBeNull();
@@ -19,4 +20,11 @@ test('Delete without where', () => {
 
   expect(v.name).toBe('DeleteT');
   expect(v.table).toBe(user);
+});
+
+test('Delete row', () => {
+  const actions = dd.actions(user);
+  const v = actions.deleteRow('t').where(dd.sql`${user.id} = 1`);
+
+  expect(v.checkAffectedRows).toBeTruthy();
 });
