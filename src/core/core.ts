@@ -228,20 +228,23 @@ export function table<T extends Table>(
       );
     }
 
+    let columnToAdd: ColumnBase;
     if (col.__table) {
       // Foreign column
       const fc = new ForeignColumn(colName, tableObj, col);
       // tslint:disable-next-line
       (tableObj as any)[colName] = fc;
-      cols.push(fc);
+      columnToAdd = fc;
     } else {
       if (!col.__name) {
         // column name can be set by setName
         col.__name = utils.toSnakeCase(colName);
       }
       col.__table = tableObj;
-      cols.push(col);
+      columnToAdd = col;
     }
+    Object.freeze(columnToAdd);
+    cols.push(columnToAdd);
   }
   return (tableObj as unknown) as T;
 }
