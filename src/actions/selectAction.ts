@@ -9,7 +9,7 @@ export default class SelectAction extends Action {
     name: string,
     table: Table,
     public columns: ColumnBase[],
-    public selectAll: boolean,
+    public isSelectAll: boolean,
   ) {
     super(name, ActionType.select, table, 'Select');
     throwIfFalsy(columns, 'columns');
