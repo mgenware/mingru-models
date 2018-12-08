@@ -6,6 +6,7 @@ test('Insert', () => {
   const v = actions.insert('t', post.title, post.snake_case_user_id);
 
   expect(v.name).toBe('InsertT');
+  expect(v.fetchInsertedID).toBeFalsy();
   expect(v).toBeInstanceOf(dd.InsertAction);
   expect(v).toBeInstanceOf(dd.Action);
   expect(v.table).toBe(post);
@@ -13,4 +14,11 @@ test('Insert', () => {
   expect(v.columns[0]).toBe(post.title);
   expect(v.columns[1]).toBe(post.snake_case_user_id);
   expect(v.type).toBe(dd.ActionType.insert);
+});
+
+test('Insert one', () => {
+  const actions = dd.actions(post);
+  const v = actions.insertOne('t', post.title, post.snake_case_user_id);
+
+  expect(v.fetchInsertedID).toBeTruthy();
 });

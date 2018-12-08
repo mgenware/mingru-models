@@ -35,7 +35,13 @@ export class TableActionCollection {
   }
 
   insert(name: string, ...columns: ColumnBase[]): InsertAction {
-    const action = new InsertAction(name, this.table, columns);
+    const action = new InsertAction(name, this.table, columns, false);
+    this.addAction(action);
+    return action;
+  }
+
+  insertOne(name: string, ...columns: ColumnBase[]): InsertAction {
+    const action = new InsertAction(name, this.table, columns, true);
     this.addAction(action);
     return action;
   }

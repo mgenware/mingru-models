@@ -2,7 +2,12 @@ import { Action, ActionType } from './action';
 import { Table, ColumnBase } from '../core/core';
 
 export default class InsertAction extends Action {
-  constructor(name: string, table: Table, public columns: ColumnBase[]) {
+  constructor(
+    name: string,
+    table: Table,
+    public columns: ColumnBase[],
+    public fetchInsertedID: boolean,
+  ) {
     super(name, ActionType.insert, table, 'Insert');
   }
 }
