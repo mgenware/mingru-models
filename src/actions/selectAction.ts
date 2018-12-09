@@ -1,8 +1,9 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Action, ActionType } from './action';
+import { ActionType } from './action';
 import { Table, ColumnBase, SQL } from '../core/core';
+import CoreSelectAction from './coreSelectAction';
 
-export default class SelectAction extends Action {
+export default class SelectAction extends CoreSelectAction {
   whereSQL: SQL | null = null;
 
   constructor(
@@ -13,13 +14,5 @@ export default class SelectAction extends Action {
   ) {
     super(name, ActionType.select, table, 'Select');
     throwIfFalsy(columns, 'columns');
-  }
-
-  where(sql: SQL): SelectAction {
-    if (this.whereSQL) {
-      throw new Error('"where" is called twice');
-    }
-    this.whereSQL = sql;
-    return this;
   }
 }
