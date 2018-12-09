@@ -178,6 +178,7 @@ export class Column extends ColumnBase {
 export class Table {
   __columns: ColumnBase[];
   __name!: string;
+  __pks: Column[] = [];
 
   constructor(name?: string) {
     this.__columns = [];
@@ -245,6 +246,10 @@ export function table<T extends Table>(
         col.__name = utils.toSnakeCase(colName);
       }
       col.__table = tableObj;
+      // Check if it's a pk
+      if (col instanceof Column && (col as Column).props.pk) {
+        tableObj.__pks.push(col as Column);
+      }
       columnToAdd = col;
     }
     Object.freeze(columnToAdd);
