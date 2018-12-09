@@ -1,22 +1,31 @@
 import { ActionType } from './action';
 import { Table, SQL } from '../core/core';
-import { throwIfFalsy } from 'throw-if-arg-empty';
 import CoreUpdateAction from './coreUpdateAction';
+import CoreSelectAction from './coreSelectAction';
 
 export default class UpdateAction extends CoreUpdateAction {
-  whereSQL: SQL | null = null;
+  get whereSQL(): SQL | null {
+    return this.coreSelectAction.whereSQL;
+  }
+  private coreSelectAction: CoreSelectAction;
 
   constructor(name: string, table: Table, public checkAffectedRows: boolean) {
     super(name, ActionType.update, table, 'Update');
+    this.coreSelectAction = new CoreSelectAction(
+      name,
+      ActionType.select,
+      table,
+      'Update',
+    );
   }
 
-  where(condition: SQL): UpdateAction {
-    throwIfFalsy(condition, 'condition');
+  where(value: SQL): this {
+    this.coreSelectAction.where(value);
+    return this;
+  }
 
-    if (this.whereSQL) {
-      throw new Error('"where" is called twice');
-    }
-    this.whereSQL = condition;
+  byID(): this {
+    this.coreSelectAction.byID();
     return this;
   }
 }

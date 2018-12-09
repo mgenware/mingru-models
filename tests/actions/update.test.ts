@@ -62,3 +62,13 @@ test('Update row', () => {
 
   expect(v.checkAffectedRows).toBeTruthy();
 });
+
+test('ByID', () => {
+  const actions = dd.actions(user);
+  const v = actions
+    .updateOne('t')
+    .setInputs(user.snake_case_name)
+    .byID();
+
+  expect(v.whereSQL).toEqual(user.id.isEqualToInput());
+});

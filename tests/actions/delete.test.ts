@@ -22,9 +22,16 @@ test('Delete without where', () => {
   expect(v.table).toBe(user);
 });
 
-test('Delete row', () => {
+test('DeleteOne', () => {
   const actions = dd.actions(user);
   const v = actions.deleteOne('t').where(dd.sql`${user.id} = 1`);
 
   expect(v.checkAffectedRows).toBeTruthy();
+});
+
+test('ByID', () => {
+  const actions = dd.actions(user);
+  const v = actions.deleteOne('t').byID();
+
+  expect(v.whereSQL).toEqual(user.id.isEqualToInput());
 });

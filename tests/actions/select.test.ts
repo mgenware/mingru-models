@@ -52,3 +52,10 @@ test('SelectedColumn', () => {
   expect(b.selectedName).toBe('b');
   expect(b.__getTargetColumn()).toBe(user.id);
 });
+
+test('ByID', () => {
+  const actions = dd.actions(user);
+  const v = actions.select('t', user.name).byID();
+
+  expect(v.whereSQL).toEqual(user.id.isEqualToInput());
+});
