@@ -59,3 +59,11 @@ test('ByID', () => {
 
   expect(v.whereSQL).toEqual(user.id.isEqualToInput());
 });
+
+test('SelectField', () => {
+  const actions = dd.actions(user);
+  const v = actions.selectField('t', user.name).byID();
+
+  expect(v.isSelectAll).toBe(false);
+  expect(v.isSelectField).toBe(true);
+});

@@ -22,6 +22,13 @@ export class TableActionCollection {
     return this.selectCore(name, true, columns);
   }
 
+  selectField(name: string, column: ColumnBase): SelectAction {
+    throwIfFalsy(column, 'column');
+    const action = this.select(name, column);
+    action.isSelectField = true;
+    return action;
+  }
+
   update(name: string): UpdateAction {
     return this.addAction(new UpdateAction(name, this.table, false));
   }

@@ -5,6 +5,7 @@ import CoreSelectAction from './coreSelectAction';
 
 export default class SelectAction extends CoreSelectAction {
   whereSQL: SQL | null = null;
+  isSelectField = false;
 
   constructor(
     name: string,
