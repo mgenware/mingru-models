@@ -379,6 +379,24 @@ export class SQL {
 
     this.elements = elements;
   }
+
+  toString(): string {
+    let s = '';
+    for (const element of this.elements) {
+      if (typeof element === 'string') {
+        s += element as string;
+      } else if (element instanceof ColumnBase) {
+        s += '`' + (element as ColumnBase).__name + '`';
+      } else if (element instanceof InputParam) {
+        s += '?';
+      } else {
+        throw new Error(
+          `Unsupported SQL element type "${toTypeString(element)}"`,
+        );
+      }
+    }
+    return s;
+  }
 }
 
 export function sql(

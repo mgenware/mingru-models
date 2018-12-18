@@ -49,3 +49,4 @@ export {
   TableActionCollection,
 } from './actions/tableActionCollection';
 export { default as utils } from './lib/utils';
+export * from './sqlHelper';
