@@ -73,8 +73,8 @@ test('varChar', () => {
 test('pk', () => {
   const c = dd.pk();
   expect(c.types).toContain(dd.dt.bigInt);
-  expect(c.props.unique).toBe(true);
-  expect(c.props.notNull).toBe(true);
+  expect(c.props.unique).toBe(false);
+  expect(c.props.nullable).toBe(false);
   expect(c.props.unsigned).toBe(true);
 });
 
@@ -82,18 +82,18 @@ test('pk(column)', () => {
   const charCol = dd.char(3);
   const c = dd.pk(charCol);
   expect(c).toBe(charCol);
-  expect(c.props.unique).toBe(true);
-  expect(c.props.notNull).toBe(true);
+  expect(c.props.unique).toBe(false);
+  expect(c.props.nullable).toBe(false);
 });
 
-test('null (default)', () => {
+test('notNull (default)', () => {
   const c = dd.int(123);
-  expect(c.props.notNull).toBe(false);
+  expect(c.props.nullable).toBe(false);
 });
 
-test('notNull', () => {
-  const c = dd.int(123).notNull;
-  expect(c.props.notNull).toBe(true);
+test('nullable', () => {
+  const c = dd.int(123).nullable;
+  expect(c.props.nullable).toBe(true);
 });
 
 test('unique', () => {

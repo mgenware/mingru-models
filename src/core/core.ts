@@ -135,7 +135,7 @@ export class ForeignColumn extends ColumnBase {
 
 export class ColumnProps {
   pk = false;
-  notNull = false;
+  nullable = false;
   unsigned = false;
   unique = false;
   length = 0;
@@ -160,8 +160,8 @@ export class Column extends ColumnBase {
     }
   }
 
-  get notNull(): Column {
-    this.props.notNull = true;
+  get nullable(): Column {
+    this.props.nullable = true;
     return this;
   }
 

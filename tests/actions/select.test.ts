@@ -67,3 +67,19 @@ test('SelectField', () => {
   expect(v.isSelectAll).toBe(false);
   expect(v.isSelectField).toBe(true);
 });
+
+test('Order by', () => {
+  const actions = dd.actions(user);
+  const v = actions
+    .select('t', user.name, user.follower_count)
+    .byID()
+    .orderBy(user.name)
+    .orderByDesc(user.follower_count);
+
+  expect(v.orderByColumns.length).toBe(2);
+  expect(v.orderByColumns[0]).toBeInstanceOf(dd.OrderBy);
+  expect(v.orderByColumns[0].column).toBe(user.name);
+  expect(v.orderByColumns[0].desc).toBe(false);
+  expect(v.orderByColumns[1].column).toBe(user.follower_count);
+  expect(v.orderByColumns[1].desc).toBe(true);
+});
