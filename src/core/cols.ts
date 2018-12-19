@@ -72,7 +72,7 @@ export function unique(col: Column): Column {
 export function pk(column?: Column): Column {
   const col = column ? column : unsignedBigInt();
   col.props.pk = true;
-  return unique(col.notNull);
+  return col;
 }
 
 export function setName(name: string, column: Column): Column {
