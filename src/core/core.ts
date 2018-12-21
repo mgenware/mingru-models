@@ -188,9 +188,8 @@ export class Table {
   }
 }
 
-// tslint:disable-next-line
 export function table<T extends Table>(
-  cls: { new (name?: string): T },
+  cls: new (name?: string) => T,
   name?: string,
 ): T {
   throwIfFalsy(cls, 'cls');
