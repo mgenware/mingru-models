@@ -7,6 +7,10 @@
 
 Redefining database models using TypeScript.
 
+**Note that dd-models only helps you to define database models in a strong-typed way, it has nothing to do with how you gonna use these models, usually, you use other libraries to consume models defined by dd-models**, examples:
+
+* [mingru](https://github.com/mgenware/mingru) converts dd-models to Go code
+
 ## Installation
 
 ```sh
@@ -118,7 +122,7 @@ class Column extends ColumnBase {
 
 ### Joins
 
-Joins can be created by simply assign a foreign column to the target column, for example, let's say `post` table has a foreign key to `user` table at `user_id` column, here is what `user` looks like (`user.ts`):
+Joins can be created by simply assigning a foreign column to the target column, for example, let's say `post` table has a foreign key to `user` table at `user_id` column, here is what `user` looks like (`user.ts`):
 
 ```ts
 import * as dd from 'dd-models';
@@ -131,7 +135,7 @@ class User extends dd.Table {
 export default dd.table(User);
 ```
 
-Inside `post` table (`post.ts`), you need to import `user` table, and set `user.id` to the `user_id` column:
+To create a join to `user` table, inside `post` table (`post.ts`), you need to import `user` table, and set `user.id` to the `user_id` column:
 
 ```ts
 import * as dd from 'dd-models';
@@ -147,27 +151,63 @@ export default dd.table(Post);
 
 ## Actions
 
-Each table can create its own set of actions, e.g. `select`, `update`, `insert`.
+Each table can create its own set of actions, dd-models now supports the following types of actions:
+
+* `select`: selects a row
+* `selectAll`: selects all rows
+* `selectField`: selects a single field from a row
+* `update`: updates rows
+* `updateOne`: ensures only one row gets updated
+* `insert`: inserts a row
+* `insertOne`: ensures only one row gets inserted
+* `delete`: deletes rows
+* `deleteOne`: ensures only one row gets deleted
+
+Actions are created from a table action container, which can be obtained via `dd.actions`. Each action must be associated with a name, and actions are usually defined in a separate file with a suffix `TA` (table actions), for example, let's say you have a `user` table, you want to add two actions, you need to create a new file `userTA.ts` and import the user model:
 
 ```ts
 import * as dd from 'dd-models';
 import user from './user';
 
-const userActions = dd.actions(user);
-// SELECT
-userActions.select('UserInfo', user.id, user.name)
+// Create the table action container
+const userTA = dd.actions(user);
+
+// Add a SELECT action
+// Select a user profile by ID
+// 'UserProfile' is the action name
+userTA.select('UserProfile', user.id, user.name).byID();
+
+// Add a UPDATE action
+// Update a row
+// 'UserProfile' is the action name
+userTA
+  .update('UserProfile')
+  .setInputs(user.name, user.sig)
   .byID();
 
-// UPDATE
-userActions.update('UserInfo')
-    .set(user.name, dd.sql`${dd.input(user.name)}`)
-    .set(user.follower_count, dd.sql`${user.follower_count} + 1`)
-    .byID();
+// Add a DELETE action
+// Delete a row by ID
+// 'ByID' is the action name
+userTA.deleteOne('ByID').byID();
 
-// INSERT
-userActions.update('UserInfo')
-  .set(user.name, dd.sql`${dd.input(user.name)}`)
-  .set(user.follower_count, dd.sql`${dd.input(user.follower_count)}`);
+// Export the actions
+export default userTA;
+```
+
+Note that action name will have function name included and you don't need to type it, in the example above, a `select` with a name `UserProfile` would become `SelectUserProfile`, an `update` with a name `UserProfile` would become `UpdateUserProfile`, and a `deleteOne` with a name `ByID` would be `DeleteByID`.
+
+Belows are dd-model supported action methods:
+
+```ts
+select(name: string, ...columns: ColumnBase[]): SelectAction;
+selectAll(name: string, ...columns: ColumnBase[]): SelectAction;
+selectField(name: string, column: ColumnBase): SelectAction;
+update(name: string): UpdateAction;
+updateOne(name: string): UpdateAction;
+insert(name: string): InsertAction;
+insertOne(name: string): InsertAction;
+delete(name: string): DeleteAction;
+deleteOne(name: string): DeleteAction;
 ```
 
 ## Advanced Topics
