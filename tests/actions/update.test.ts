@@ -52,8 +52,8 @@ test('Order of setInputs and set', () => {
   const vName = v.columnValueMap.get(user.name) as dd.SQL;
   const vSnakeName = v.columnValueMap.get(user.snake_case_name) as dd.SQL;
 
-  expect(vName).toEqual(user.name.toInputSQL('b'));
-  expect(vSnakeName).toEqual(user.snake_case_name.toInputSQL());
+  expect(vName.toString()).toBe('<b: [name]>');
+  expect(vSnakeName.toString()).toBe('<userSnakeCaseName: [snake_case_name]>');
 });
 
 test('Update row', () => {
@@ -70,5 +70,5 @@ test('ByID', () => {
     .setInputs(user.snake_case_name)
     .byID();
 
-  expect(v.whereSQL).toEqual(user.id.isEqualToInput());
+  expect(v.whereSQL!.toString()).toBe('`id` = <userID: [id]>');
 });

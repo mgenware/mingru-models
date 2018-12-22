@@ -14,4 +14,4 @@ export {
 } from './actions/tableActionCollection';
 export { default as utils } from './lib/utils';
 export * from './sqlHelper';
-export * from './core/magicValue';
+export * from './core/sqlCall';

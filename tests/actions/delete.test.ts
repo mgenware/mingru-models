@@ -33,5 +33,5 @@ test('ByID', () => {
   const actions = dd.actions(user);
   const v = actions.deleteOne('t').byID();
 
-  expect(v.whereSQL).toEqual(user.id.isEqualToInput());
+  expect(v.whereSQL!.toString()).toBe('`id` = <userID: [id]>');
 });

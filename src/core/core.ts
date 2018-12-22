@@ -1,6 +1,7 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import utils from '../lib/utils';
 import toTypeString from 'to-type-string';
+import { SQLCall } from './sqlCall';
 
 const InternalPropPrefix = '__';
 
@@ -77,7 +78,7 @@ export class ColumnBase {
     return new SelectedColumn(this, name);
   }
 
-  toInput(name?: string): InputParam {
+  toInput(name?: string): SQLInput {
     return input(this, name);
   }
 
@@ -317,14 +318,25 @@ export class SelectedColumn extends ColumnBase {
   }
 }
 
-export class InputParam {
-  constructor(public type: string | Column, public name: string) {
-    throwIfFalsy(type, 'type');
+export class SQLInput {
+  constructor(public typeObject: string | Column, public name: string) {
+    throwIfFalsy(typeObject, 'typeObject');
     throwIfFalsy(name, 'name');
+  }
+
+  toString(): string {
+    const { typeObject } = this;
+    let type = '';
+    if (typeof typeObject === 'string') {
+      type = typeObject as string;
+    } else {
+      type = `[${(typeObject as Column).__name}]`;
+    }
+    return `${this.name}: ${type}`;
   }
 }
 
-export function input(type: string | ColumnBase, name?: string): InputParam {
+export function input(type: string | ColumnBase, name?: string): SQLInput {
   if (type instanceof ColumnBase) {
     const col = type as ColumnBase;
     if (!name) {
@@ -335,16 +347,43 @@ export function input(type: string | ColumnBase, name?: string): InputParam {
         );
       }
     }
-    return new InputParam((type as ColumnBase).__getTargetColumn(), name);
+    return new SQLInput((type as ColumnBase).__getTargetColumn(), name);
   }
   if (!name) {
     throw new Error(`Unexpected empty input name for type "${type}"`);
   }
-  return new InputParam(type as string, name as string);
+  return new SQLInput(type as string, name as string);
 }
 
-export type SQLParam = ColumnBase | InputParam | SQL;
-export type SQLElement = string | ColumnBase | InputParam;
+// Allowed types in dd.sql template strings
+export type SQLParam = ColumnBase | SQLInput | SQL | SQLCall;
+
+export enum SQLElementType {
+  rawString,
+  column,
+  input,
+  call,
+}
+
+export class SQLElement {
+  constructor(public type: SQLElementType, public value: unknown) {}
+
+  toRawString(): string {
+    return this.value as string;
+  }
+
+  toColumn(): ColumnBase {
+    return this.value as ColumnBase;
+  }
+
+  toInput(): SQLInput {
+    return this.value as SQLInput;
+  }
+
+  toCall(): SQLCall {
+    return this.value as SQLCall;
+  }
+}
 
 export class SQL {
   elements: SQLElement[];
@@ -354,13 +393,13 @@ export class SQL {
     for (let i = 0; i < params.length; i++) {
       // Skip empty strings
       if (literals[i]) {
-        elements.push(literals[i]);
+        elements.push(new SQLElement(SQLElementType.rawString, literals[i]));
       }
       const param = params[i];
       if (param instanceof ColumnBase) {
-        elements.push(param as ColumnBase);
-      } else if (param instanceof InputParam) {
-        elements.push(param as InputParam);
+        elements.push(new SQLElement(SQLElementType.column, param));
+      } else if (param instanceof SQLInput) {
+        elements.push(new SQLElement(SQLElementType.input, param));
       } else if (param instanceof SQL) {
         elements.push(...(param as SQL).elements);
       } else {
@@ -373,7 +412,7 @@ export class SQL {
     // push the last literal
     const lastLiteral = literals[literals.length - 1];
     if (lastLiteral) {
-      elements.push(lastLiteral);
+      elements.push(new SQLElement(SQLElementType.rawString, lastLiteral));
     }
 
     this.elements = elements;
@@ -382,16 +421,28 @@ export class SQL {
   toString(): string {
     let s = '';
     for (const element of this.elements) {
-      if (typeof element === 'string') {
-        s += element as string;
-      } else if (element instanceof ColumnBase) {
-        s += '`' + (element as ColumnBase).__name + '`';
-      } else if (element instanceof InputParam) {
-        s += '?';
-      } else {
-        throw new Error(
-          `Unsupported SQL element type "${toTypeString(element)}"`,
-        );
+      switch (element.type) {
+        case SQLElementType.rawString: {
+          s += element.toRawString();
+          break;
+        }
+        case SQLElementType.column: {
+          s += '`' + element.toColumn().__name + '`';
+          break;
+        }
+        case SQLElementType.input: {
+          s += `<${element.toInput().toString()}>`;
+          break;
+        }
+        case SQLElementType.call: {
+          s += `CALL(${element.toCall()})`;
+          break;
+        }
+        default: {
+          throw new Error(
+            `Unsupported SQL element type "${toTypeString(element)}"`,
+          );
+        }
       }
     }
     return s;
