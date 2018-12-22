@@ -402,6 +402,8 @@ export class SQL {
         elements.push(new SQLElement(SQLElementType.input, param));
       } else if (param instanceof SQL) {
         elements.push(...(param as SQL).elements);
+      } else if (param instanceof SQLCall) {
+        elements.push(new SQLElement(SQLElementType.call, param));
       } else {
         throw new Error(
           `Unsupported SQL parameter type "${toTypeString(param)}"`,
@@ -435,7 +437,7 @@ export class SQL {
           break;
         }
         case SQLElementType.call: {
-          s += `CALL(${element.toCall()})`;
+          s += `CALL(${element.toCall().type})`;
           break;
         }
         default: {
