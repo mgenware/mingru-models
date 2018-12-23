@@ -59,6 +59,11 @@ test('Embed another sql', () => {
   );
 });
 
+test('Embed string', () => {
+  const sql = dd.sql`${user.id} = ${'123'}`;
+  expect(sql.toString()).toBe('`id` = 123');
+});
+
 test('toInput', () => {
   const input = user.name.toInput();
   expect(input.typeObject).toBe(user.name);

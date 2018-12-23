@@ -356,7 +356,7 @@ export function input(type: string | ColumnBase, name?: string): SQLInput {
 }
 
 // Allowed types in dd.sql template strings
-export type SQLParam = ColumnBase | SQLInput | SQL | SQLCall;
+export type SQLParam = string | ColumnBase | SQLInput | SQL | SQLCall;
 
 export enum SQLElementType {
   rawString,
@@ -396,7 +396,11 @@ export class SQL {
         elements.push(new SQLElement(SQLElementType.rawString, literals[i]));
       }
       const param = params[i];
-      if (param instanceof ColumnBase) {
+      if (typeof param === 'string') {
+        elements.push(
+          new SQLElement(SQLElementType.rawString, param as string),
+        );
+      } else if (param instanceof ColumnBase) {
         elements.push(new SQLElement(SQLElementType.column, param));
       } else if (param instanceof SQLInput) {
         elements.push(new SQLElement(SQLElementType.input, param));
