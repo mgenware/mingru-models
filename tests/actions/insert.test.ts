@@ -42,4 +42,25 @@ test('Insert one', () => {
     .setInputs(post.title, post.snake_case_user_id);
 
   expect(v.fetchInsertedID).toBeTruthy();
+  expect(v.withDefaults).toBeFalsy();
+});
+
+test('Insert with defaults', () => {
+  const actions = dd.actions(post);
+  const v = actions
+    .insertWithDefaults('t')
+    .setInputs(post.title, post.snake_case_user_id);
+
+  expect(v.fetchInsertedID).toBeFalsy();
+  expect(v.withDefaults).toBeTruthy();
+});
+
+test('Insert one with defaults', () => {
+  const actions = dd.actions(post);
+  const v = actions
+    .insertOneWithDefaults('t')
+    .setInputs(post.title, post.snake_case_user_id);
+
+  expect(v.fetchInsertedID).toBeTruthy();
+  expect(v.withDefaults).toBeTruthy();
 });

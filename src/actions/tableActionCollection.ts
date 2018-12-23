@@ -38,11 +38,19 @@ export class TableActionCollection {
   }
 
   insert(name: string): InsertAction {
-    return this.addAction(new InsertAction(name, this.table, false));
+    return this.addAction(new InsertAction(name, this.table, false, false));
   }
 
   insertOne(name: string): InsertAction {
-    return this.addAction(new InsertAction(name, this.table, true));
+    return this.addAction(new InsertAction(name, this.table, true, false));
+  }
+
+  insertWithDefaults(name: string): InsertAction {
+    return this.addAction(new InsertAction(name, this.table, false, true));
+  }
+
+  insertOneWithDefaults(name: string): InsertAction {
+    return this.addAction(new InsertAction(name, this.table, true, true));
   }
 
   delete(name: string): DeleteAction {
