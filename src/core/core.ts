@@ -177,6 +177,23 @@ export class Column extends ColumnBase {
 }
 
 export class Table {
+  static forEach(table: Table, cb: (column: ColumnBase, prop: string) => void) {
+    throwIfFalsy(table, 'table');
+    if (!cb) {
+      return;
+    }
+
+    for (const pair of Object.entries(table)) {
+      const prop = pair[0] as string;
+      // Ignore internal props
+      if (prop.startsWith(InternalPropPrefix)) {
+        continue;
+      }
+      const col = pair[1] as ColumnBase;
+      cb(col, prop);
+    }
+  }
+
   __columns: ColumnBase[];
   __name!: string;
   __pks: Column[] = [];
@@ -201,13 +218,7 @@ export function table<T extends Table>(
     tableObj.__name = utils.toSnakeCase(className);
   }
   const cols = tableObj.__columns;
-  for (const pair of Object.entries(tableObj)) {
-    const colName = pair[0] as string;
-    // Ignore internal props
-    if (colName.startsWith(InternalPropPrefix)) {
-      continue;
-    }
-    const col = pair[1] as ColumnBase;
+  Table.forEach(tableObj, (col, colName) => {
     if (!col) {
       throw new Error(`Empty column object at property "${colName}"`);
     }
@@ -254,7 +265,7 @@ export function table<T extends Table>(
     }
     Object.freeze(columnToAdd);
     cols.push(columnToAdd);
-  }
+  });
   return (tableObj as unknown) as T;
 }
 
