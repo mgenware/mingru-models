@@ -177,13 +177,16 @@ export class Column extends ColumnBase {
 }
 
 export class Table {
-  static forEach(table: Table, cb: (column: ColumnBase, prop: string) => void) {
-    throwIfFalsy(table, 'table');
+  static forEach(
+    tableObject: Table,
+    cb: (column: ColumnBase, prop: string) => void,
+  ) {
+    throwIfFalsy(tableObject, 'tableObject');
     if (!cb) {
       return;
     }
 
-    for (const pair of Object.entries(table)) {
+    for (const pair of Object.entries(tableObject)) {
       const prop = pair[0] as string;
       // Ignore internal props
       if (prop.startsWith(InternalPropPrefix)) {
