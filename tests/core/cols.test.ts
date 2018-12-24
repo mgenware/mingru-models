@@ -131,16 +131,25 @@ test('bool', () => {
 });
 
 test('datetime', () => {
-  const c = dd.datetime();
+  let c = dd.datetime();
   expect(c.types).toContain(dd.dt.datetime);
+
+  c = dd.datetime(true);
+  expect(c.props.default).toEqual(dd.datetimeNow());
 });
 
 test('date', () => {
-  const c = dd.date();
+  let c = dd.date();
   expect(c.types).toContain(dd.dt.date);
+
+  c = dd.date(true);
+  expect(c.props.default).toEqual(dd.dateNow());
 });
 
 test('time', () => {
-  const c = dd.time();
+  let c = dd.time();
   expect(c.types).toContain(dd.dt.time);
+
+  c = dd.time(true);
+  expect(c.props.default).toEqual(dd.timeNow());
 });

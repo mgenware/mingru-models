@@ -1,6 +1,7 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Column } from './core';
 import dt from './dt';
+import * as call from './sqlCall';
 
 export function varChar(length: number, defaultValue?: string): Column {
   const col = new Column(dt.varChar);
@@ -94,14 +95,26 @@ export function bool(defaultValue?: boolean): Column {
   return col;
 }
 
-export function datetime(): Column {
-  return new Column(dt.datetime);
+export function datetime(defaultsToNow = false): Column {
+  const col = new Column(dt.datetime);
+  if (defaultsToNow) {
+    col.props.default = call.datetimeNow();
+  }
+  return col;
 }
 
-export function date(): Column {
-  return new Column(dt.date);
+export function date(defaultsToNow = false): Column {
+  const col = new Column(dt.date);
+  if (defaultsToNow) {
+    col.props.default = call.dateNow();
+  }
+  return col;
 }
 
-export function time(): Column {
-  return new Column(dt.time);
+export function time(defaultsToNow = false): Column {
+  const col = new Column(dt.time);
+  if (defaultsToNow) {
+    col.props.default = call.timeNow();
+  }
+  return col;
 }

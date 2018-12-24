@@ -166,6 +166,7 @@ Each table can create its own set of actions, dd-models now supports the followi
 Actions are created from a table action container, which can be obtained via `dd.actions`. Each action must be associated with a name, and actions are usually defined in a separate file with a suffix `TA` (table actions), for example, let's say you have a `user` table, you want to add two actions, you need to create a new file `userTA.ts` and import the user model:
 
 ```ts
+// --- UserTA.ts ---
 import * as dd from 'dd-models';
 import user from './user';
 
@@ -194,7 +195,7 @@ userTA.deleteOne('ByID').byID();
 export default userTA;
 ```
 
-Note that action name will have function name included and you don't need to type it, in the example above, a `select` with a name `UserProfile` would become `SelectUserProfile`, an `update` with a name `UserProfile` would become `UpdateUserProfile`, and a `deleteOne` with a name `ByID` would be `DeleteByID`.
+Note that action name will have function name included and you don't need to type it, in the example above, a `select` action with a name of `UserProfile` would become `SelectUserProfile`, an `update` action with a name of `UserProfile` would become `UpdateUserProfile`, and a `deleteOne` action with a name of `ByID` would be `DeleteByID`.
 
 Belows are dd-model supported action methods:
 
