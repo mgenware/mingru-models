@@ -22,6 +22,11 @@ export default class UpdateAction extends CoreUpdateAction {
       table,
       'Update',
     );
+    this.coreSelectAction.whereValidator = () => {
+      if (this.updateAll) {
+        throw new Error('You cannot set a WHERE clause in updateAll');
+      }
+    };
   }
 
   where(value: SQL): this {

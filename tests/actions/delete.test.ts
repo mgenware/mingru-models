@@ -36,11 +36,16 @@ test('DeleteOne', () => {
 
 test('DeleteAll', () => {
   const actions = dd.actions(user);
-  const v = actions.deleteAll('t').where(dd.sql`${user.id} = 1`);
+  const v = actions.deleteAll('t');
 
   // extra props
   expect(v.checkAffectedRows).toBe(false);
   expect(v.deleteAll).toBe(true);
+});
+
+test('DeleteAll and where', () => {
+  const actions = dd.actions(user);
+  expect(() => actions.deleteAll('t').byID()).toThrow('cannot');
 });
 
 test('ByID', () => {

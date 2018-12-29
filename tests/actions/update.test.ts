@@ -77,6 +77,11 @@ test('updateAll', () => {
   expect(v.updateAll).toBe(true);
 });
 
+test('updateAll and where', () => {
+  const actions = dd.actions(user);
+  expect(() => actions.updateAll('t').byID()).toThrow('cannot');
+});
+
 test('ByID', () => {
   const actions = dd.actions(user);
   const v = actions

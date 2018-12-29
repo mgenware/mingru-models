@@ -4,9 +4,13 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export default class CoreSelectAction extends Action {
   whereSQL: SQL | null = null;
+  whereValidator: ((value: SQL) => void) | null = null;
 
   where(value: SQL): this {
     throwIfFalsy(value, 'value');
+    if (this.whereValidator) {
+      this.whereValidator(value);
+    }
 
     if (this.whereSQL) {
       throw new Error('"where" is called twice');
