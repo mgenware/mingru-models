@@ -9,7 +9,12 @@ export default class UpdateAction extends CoreUpdateAction {
   }
   private coreSelectAction: CoreSelectAction;
 
-  constructor(name: string, table: Table, public checkAffectedRows: boolean) {
+  constructor(
+    name: string,
+    table: Table,
+    public updateAll: boolean,
+    public checkAffectedRows: boolean,
+  ) {
     super(name, ActionType.update, table, 'Update');
     this.coreSelectAction = new CoreSelectAction(
       name,

@@ -14,9 +14,12 @@ test('Update', () => {
   expect(v).toBeInstanceOf(dd.UpdateAction);
   expect(v).toBeInstanceOf(dd.Action);
   expect(v.table).toBe(user);
-  expect(v.checkAffectedRows).toBeFalsy();
   expect(v.whereSQL).not.toBeNull();
   expect(v.columnValueMap.size).toBe(2);
+
+  // extra props
+  expect(v.checkAffectedRows).toBe(false);
+  expect(v.updateAll).toBe(false);
 
   const vName = v.columnValueMap.get(user.name) as dd.SQL;
   const vSnakeName = v.columnValueMap.get(user.snake_case_name) as dd.SQL;
@@ -56,11 +59,22 @@ test('Order of setInputs and set', () => {
   expect(vSnakeName.toString()).toBe('<userSnakeCaseName: [snake_case_name]>');
 });
 
-test('Update row', () => {
+test('updateOne', () => {
   const actions = dd.actions(user);
   const v = actions.updateOne('t').setInputs(user.snake_case_name);
 
-  expect(v.checkAffectedRows).toBeTruthy();
+  // extra props
+  expect(v.checkAffectedRows).toBe(true);
+  expect(v.updateAll).toBe(false);
+});
+
+test('updateAll', () => {
+  const actions = dd.actions(user);
+  const v = actions.updateAll('t').setInputs(user.snake_case_name);
+
+  // extra props
+  expect(v.checkAffectedRows).toBe(false);
+  expect(v.updateAll).toBe(true);
 });
 
 test('ByID', () => {

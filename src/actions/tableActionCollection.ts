@@ -30,11 +30,15 @@ export class TableActionCollection {
   }
 
   update(name: string): UpdateAction {
-    return this.addAction(new UpdateAction(name, this.table, false));
+    return this.addAction(new UpdateAction(name, this.table, false, false));
   }
 
   updateOne(name: string): UpdateAction {
-    return this.addAction(new UpdateAction(name, this.table, true));
+    return this.addAction(new UpdateAction(name, this.table, false, true));
+  }
+
+  updateAll(name: string): UpdateAction {
+    return this.addAction(new UpdateAction(name, this.table, true, false));
   }
 
   insert(name: string): InsertAction {
@@ -54,11 +58,15 @@ export class TableActionCollection {
   }
 
   delete(name: string): DeleteAction {
-    return this.addAction(new DeleteAction(name, this.table, false));
+    return this.addAction(new DeleteAction(name, this.table, false, false));
   }
 
   deleteOne(name: string): DeleteAction {
-    return this.addAction(new DeleteAction(name, this.table, true));
+    return this.addAction(new DeleteAction(name, this.table, false, true));
+  }
+
+  deleteAll(name: string): DeleteAction {
+    return this.addAction(new DeleteAction(name, this.table, true, false));
   }
 
   private selectCore(

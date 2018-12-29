@@ -5,7 +5,12 @@ import CoreSelectAction from './coreSelectAction';
 export default class DeleteAction extends CoreSelectAction {
   whereSQL: SQL | null = null;
 
-  constructor(name: string, table: Table, public checkAffectedRows: boolean) {
+  constructor(
+    name: string,
+    table: Table,
+    public deleteAll: boolean,
+    public checkAffectedRows: boolean,
+  ) {
     super(name, ActionType.delete, table, 'Delete');
   }
 }
