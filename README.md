@@ -151,19 +151,9 @@ export default dd.table(Post);
 
 ## Actions
 
-Each table can create its own set of actions, dd-models now supports the following types of actions:
+### Overview
 
-* `select`: selects a row
-* `selectAll`: selects all rows
-* `selectField`: selects a single field from a row
-* `update`: updates rows
-* `updateOne`: ensures only one row gets updated
-* `insert`: inserts a row
-* `insertOne`: ensures only one row gets inserted
-* `delete`: deletes rows
-* `deleteOne`: ensures only one row gets deleted
-
-Actions are created from a table action container, which can be obtained via `dd.actions`. Each action must be associated with a name, and actions are usually defined in a separate file with a suffix `TA` (table actions), for example, let's say you have a `user` table, you want to add two actions, you need to create a new file `userTA.ts` and import the user model:
+Each table can create its own set of actions, and an action is created from a table action container, which can be obtained via `dd.actions`. Each action must be associated with a name, and actions are usually defined in a separate file with a suffix `TA` (table actions), for example, let's say you have a `user` table, you want to add two actions, you need to create a new file `userTA.ts` and import the user model:
 
 ```ts
 // --- UserTA.ts ---
@@ -178,11 +168,11 @@ const userTA = dd.actions(user);
 // 'UserProfile' is the action name
 userTA.select('UserProfile', user.id, user.name).byID();
 
-// Add a UPDATE action
+// Add an UPDATE action
 // Update a row
 // 'UserProfile' is the action name
 userTA
-  .update('UserProfile')
+  .updateOne('UserProfile')
   .setInputs(user.name, user.sig)
   .byID();
 
@@ -195,20 +185,68 @@ userTA.deleteOne('ByID').byID();
 export default userTA;
 ```
 
-Note that action name will have function name included and you don't need to type it, in the example above, a `select` action with a name of `UserProfile` would become `SelectUserProfile`, an `update` action with a name of `UserProfile` would become `UpdateUserProfile`, and a `deleteOne` action with a name of `ByID` would be `DeleteByID`.
+Note that action name will have function name included and you don't need to re-type it, in the example above, a `select` action with a name of `UserProfile` would become `SelectUserProfile`, an `updateOne` action with a name of `UserProfile` would become `UpdateUserProfile`, and a `deleteOne` action with a name of `ByID` would be `DeleteByID`.
 
-Belows are dd-model supported action methods:
+### Select Actions
+
+dd-models supports the following kinds of select actions:
 
 ```ts
-select(name: string, ...columns: ColumnBase[]): SelectAction;
-selectAll(name: string, ...columns: ColumnBase[]): SelectAction;
-selectField(name: string, column: ColumnBase): SelectAction;
-update(name: string): UpdateAction;
-updateOne(name: string): UpdateAction;
-insert(name: string): InsertAction;
-insertOne(name: string): InsertAction;
-delete(name: string): DeleteAction;
-deleteOne(name: string): DeleteAction;
+class TableActionCollection {
+  /* Select Actions */
+
+  // Selects a row
+  select(name: string, ...columns: ColumnBase[]): SelectAction;
+
+  // Selects all rows
+  selectAll(name: string, ...columns: ColumnBase[]): SelectAction;
+
+  // Selects a single field of a specific row
+  selectField(name: string, column: ColumnBase): SelectAction;
+}
+```
+
+The differences are implementation dependent, normally, they differ from return values:
+
+* `select` returns an row object containing all selected columns
+* `selectAll` returns an array of row objects each containing all selected columns
+* `selectField` returns the single selected field
+
+For example, in [mingru](https://github.com/mgenware/mingru), consider the following models and actions:
+
+```ts
+// ----------- user table model (user.ts) -----------
+import * as dd from 'dd-models';
+
+class User extends dd.Table {
+  id = dd.pk();
+  name = dd.varChar(100);
+  sig = dd.text().nullable;
+}
+
+export default dd.table(User);
+
+// ----------- user table actions (userTA.ts) -----------
+const userTA = dd.actions(user);
+// Select a user profile by ID
+userTA.select('UserProfile', user.id, user.name, user.sig).byID();
+// Select all user profiles
+userTA.selectAll('AllUserProfiles', user.id, user.name, user.sig);
+// Select the sig field by ID
+userTA.selectField('Sig', user.sig).byID();
+
+export default userTA;
+```
+
+It would generate the following Go code (only function headers shown for simplicity):
+
+```go
+// SelectUserProfile ...
+func (da *TableTypeUser) SelectUserProfile(queryable sqlx.Queryable, userID uint64) (*SelectUserProfileResult, error)
+// SelectAllUserProfiles ...
+func (da *TableTypeUser) SelectAllUserProfiles(queryable sqlx.Queryable) ([]*SelectAllUserProfilesResult, error)
+// SelectSig ...
+func (da *TableTypeUser) SelectSig(queryable sqlx.Queryable, userID uint64) (*string, error)
 ```
 
 ## Advanced Topics
