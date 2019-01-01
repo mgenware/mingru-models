@@ -250,7 +250,7 @@ func (da *TableTypeUser) SelectSig(queryable sqlx.Queryable, userID uint64) (*st
 
 ## `WHERE` and Raw SQL Expressions
 
-We haved used any `WHERE` clause in the `SELECT` actions above, to add a `WHERE` clause, we have to construct a raw SQL expression using `dd.sql`, which uses TypeScript/JavaScript template string and enables us to write any SQL.
+We haven't used any `WHERE` clause in the `SELECT` actions above, to add a `WHERE` clause, we have to construct a raw SQL expression using `dd.sql`, which uses TypeScript/JavaScript template string and enables us to write any SQL.
 
 You can pass a column object to template string, it will be converted to a column name in SQL, for example:
 
