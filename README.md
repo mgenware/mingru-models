@@ -187,14 +187,12 @@ export default userTA;
 
 Note that action name will have function name included and you don't need to re-type it, in the example above, a `select` action with a name of `UserProfile` would become `SelectUserProfile`, an `updateOne` action with a name of `UserProfile` would become `UpdateUserProfile`, and a `deleteOne` action with a name of `ByID` would be `DeleteByID`.
 
-### Select Actions
+### `SELECT` Actions
 
-dd-models supports the following kinds of select actions:
+dd-models supports the following kinds of `SELECT` actions:
 
 ```ts
 class TableActionCollection {
-  /* Select Actions */
-
   // Selects a row
   select(name: string, ...columns: ColumnBase[]): SelectAction;
 
@@ -211,6 +209,7 @@ The differences are implementation dependent, normally, they differ from return 
 * `select` returns an row object containing all selected columns
 * `selectAll` returns an array of row objects each containing all selected columns
 * `selectField` returns the single selected field
+
 
 For example, in [mingru](https://github.com/mgenware/mingru), consider the following models and actions:
 
@@ -248,6 +247,65 @@ func (da *TableTypeUser) SelectAllUserProfiles(queryable sqlx.Queryable) ([]*Sel
 // SelectSig ...
 func (da *TableTypeUser) SelectSig(queryable sqlx.Queryable, userID uint64) (*string, error)
 ```
+
+## `WHERE` and Raw SQL Expressions
+
+We haved used any `WHERE` clause in the `SELECT` actions above, to add a `WHERE` clause, we have to construct a raw SQL expression using `dd.sql`, which uses TypeScript/JavaScript template string and enables us to write any SQL.
+
+You can pass a column object to template string, it will be converted to a column name in SQL, for example:
+
+```ts
+userTA
+    .select('UserProfile', user.id, user.name, user.sig)
+    .where(dd.sql`${user.id} = 1`);
+```
+
+[mingru](https://github.com/mgenware/mingru) translates this into:
+
+```sql
+SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1
+```
+
+And more complex queries:
+
+```ts
+userTA
+    .select('UserProfile', user.id, user.name, user.sig)
+    .where(dd.sql`${user.id} = 1 AND ${user.sig} <> 'haha'`);
+```
+
+[mingru](https://github.com/mgenware/mingru) translates to:
+
+```sql
+SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1 AND `sig` <> 'haha'
+```
+
+### Adding Input Parameters
+
+Your actions often require user input parameters, e.g. to select a single profile from user table, we need a `userID` which can uniquely identify an user record. Use `dd.input`:
+
+```ts
+userTA
+    .select('UserProfile', user.id, user.name, user.sig)
+    .where(dd.sql`${user.id} = ${dd.input(user.id)}`);
+```
+
+[mingru](https://github.com/mgenware/mingru) translates to the following Go code:
+
+```go
+// SelectUserProfile ...
+func (da *TableTypeUser) SelectUserProfile(queryable sqlx.Queryable, userID uint64) (*SelectUserProfileResult, error) {
+	result := &SelectUserProfileResult{}
+	err := queryable.QueryRow("SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = ?", userID).Scan(&result.UserID, &result.UserName, &result.UserSig)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+```
+
+The `userID` is in function arguments and passed to SQL query function.
+
 
 ## Advanced Topics
 
