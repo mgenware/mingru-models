@@ -250,7 +250,7 @@ func (da *TableTypeUser) SelectSig(queryable sqlx.Queryable, userID uint64) (*st
 
 ## `WHERE` and Raw SQL Expressions
 
-We haven't used any `WHERE` clause in the `SELECT` actions above, to add a `WHERE` clause, we have to construct a raw SQL expression using `dd.sql`, which uses TypeScript/JavaScript template string and enables us to write any SQL.
+We haven't used any `WHERE` clause in the `SELECT` actions above, to add a `WHERE` clause, we have to construct a raw SQL expression using `dd.sql`, which uses TypeScript/JavaScript template string and enables us to write arbitrary SQL expressions.
 
 You can pass a column object to template string, it will be converted to a column name in SQL, for example:
 
@@ -266,7 +266,7 @@ userTA
 SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1
 ```
 
-And more complex queries:
+More complex queries:
 
 ```ts
 userTA
@@ -274,7 +274,7 @@ userTA
     .where(dd.sql`${user.id} = 1 AND ${user.sig} <> 'haha'`);
 ```
 
-[mingru](https://github.com/mgenware/mingru) translates to:
+[mingru](https://github.com/mgenware/mingru) translates it to:
 
 ```sql
 SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1 AND `sig` <> 'haha'
