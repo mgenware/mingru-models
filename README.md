@@ -299,12 +299,94 @@ func (da *TableTypeUser) SelectUserProfile(queryable sqlx.Queryable, userID uint
 	err := queryable.QueryRow("SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = ?", userID).Scan(&result.UserID, &result.UserName, &result.UserSig)
 	if err != nil {
 		return nil, err
-	}
+
 	return result, nil
 }
 ```
 
-The `userID` is in function arguments and passed to SQL query function.
+The `userID` is included in function arguments and passed to SQL query function. If you don't like to automatically inferred name, can use the second optional `name` parameter:
+
+```ts
+userTA
+    .select('UserProfile', user.id, user.name, user.sig)
+    .where(dd.sql`${user.id} = ${dd.input(user.id, 'uid')}`);
+```
+
+This way `uid` instead of inferred `userID` would be used in generated code.
+
+### SQL Expression Helpers
+
+Writing `dd.input`s in `dd.sql` can be tedious, dd-models comes with some handy helpers to quick construct some commonly used expressions.
+
+#### `Column.toInput(column, optionalName): SQLInput`
+
+Shortcut to `dd.input(column, optionalName)`:
+
+```ts
+userTA.select('UserProfile', user.id, user.name, user.sig)
+  .where(dd.sql`${user.id} = ${user.id.toInput()}`);
+```
+
+#### `Column.isEqualTo(sql): SQL`
+
+```ts
+userTA.select('Admin', user.id, user.name, user.sig)
+  .where(user.name.isEqualTo(dd.sql`"Admin"`));
+```
+
+Is equivalent to:
+
+```ts
+userTA.select('Admin', user.id, user.name, user.sig)
+  .where(dd.sql`${user.name} = "Admin"`);
+```
+
+#### `Column.isEqualToInput(optionalName): SQL`
+
+```ts
+userTA.select('Admin', user.id, user.name, user.sig)
+  .where(user.name.isEqualToInput());
+```
+
+Is equivalent to:
+
+```ts
+userTA.select('Admin', user.id, user.name, user.sig)
+  .where(dd.sql`${user.name} = ${dd.input(user.name)}`);
+```
+
+#### `Column.isNotEqualTo` and `Column.isNotEqualToInput`
+
+Similar to `isEqualTo` and `isEqualToInput`, uses `<>`(not equal to operator) instead.
+
+### `.ByID()`
+
+```ts
+userTA.select('UserProfile', user.id, user.name, user.sig).byID();
+```
+
+Is equivalent to 2 expressions listed below:
+
+```ts
+// 1
+userTA.select('UserProfile', user.id, user.name, user.sig)
+  .where(`${user.id} = ${user.id.toInput()}`);
+// 2
+userTA.select('UserProfile', user.id, user.name, user.sig)
+  .where(user.id.isEqualTo(user.id.toInput()));
+// 3
+userTA.select('UserProfile', user.id, user.name, user.sig)
+  .where(user.id.isEqualToInput());
+```
+
+#### `Column.toInputSQL(column, optionalName)`
+
+Shortcut `dd.sql(dd.input(column, optionalName))`, useful in expression with only one input inside, e.g. setters in `UPDATE` action (`UPDATE` action is covered below):
+
+```ts
+userTA.update('Sig')
+  .set(user.sig, user.sig.toInputSQL())
+```
 
 
 ## Advanced Topics
