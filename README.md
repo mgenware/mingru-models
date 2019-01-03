@@ -389,6 +389,98 @@ userTA.update('Sig')
 ```
 
 
+### `UPDATE` Actions
+
+dd-models supports the following kinds of `UPDATE` actions:
+
+```ts
+class TableActionCollection {
+  // Update a row and checks rows affected to make sure one row must be updated
+  // Implementations should throw an error if used without a WHERE clause
+  updateOne(name: string): UpdateAction;
+
+  // Update rows
+  updateAll(name: string): UpdateAction;
+
+  // (Not recommended, prefer `updateOne`) Update a row
+  // Implementations should throw an error if used without a WHERE clause
+  update(name: string): UpdateAction;
+}
+```
+
+To set individual column values, use `UpdateAction.set(column, sql)`, e.g. set an `user.sig` to a random string:
+
+```ts
+userTA
+  .updateOne('UserSig')
+  .set(user.sig, dd.sql`'My signature'`)
+  .byID();
+```
+
+Or, use user input as column value:
+
+```ts
+userTA
+  .updateOne('UserSig')
+  .set(user.sig, user.sig.toInputSQL())
+  .byID();
+```
+
+Note that we are using `Column.toInputSQL` instead of `Column.toInput` in the example above, it's because the value of a column (the 2nd argument of `UpdateAction.set`) is an SQL object, `Column.toInput` returns an SQLInput object, while `Column.toInputSQL` will wrap the SQLInput object into an SQL object, so the following two lines are equivalent:
+
+```ts
+dd.sql`${user.name.toInput()}`;
+user.name.toInputSQL();
+```
+
+To set multiple columns, just call `set` one by one:
+
+```ts
+userTA
+  .updateOne('UserSig')
+  .set(user.sig, user.sig.toInputSQL())
+  .set(user.name, dd.sql`'Random name'`)
+  .byID();
+```
+
+#### `setInputs`
+
+Most of the time, you will be using `UPDATE` action with user inputs, so you probably always end up with this:
+
+```ts
+userTA
+  .updateOne('ManyColumns')
+  .set(user.sig, user.sig.toInputSQL())
+  .set(user.name, user.name.toInputSQL())
+  .set(user.age, user.age.toInputSQL())
+  .set(user.gender, user.gender.toInputSQL())
+  .byID();
+```
+
+To simplify this kind of code, `UpdateAction` also has method called `setInputs`, you can pass an array of columns, all of which are considered inputs, so the above code could be rewritten as:
+
+```ts
+userTA
+  .updateOne('ManyColumns')
+  .setInputs(user.sig, user.name, user.age, user.gender)
+  .byID();
+```
+
+You can also mix this with the `set` method mentioned above:
+
+```ts
+userTA
+  .updateOne('ManyColumns')
+  .set(user.type, dd.sql`1`)
+  .set(user.age, dd.sql`1`) 
+  .setInputs(user.sig, user.name, user.age, user.gender)
+  .set(user.age, dd.sql`18`)
+  .byID();
+```
+
+Notice `user.age` has been set for three times in the code above, the latter always takes precedence, so `user.age` would be set a `18`.
+
+
 ## Advanced Topics
 
 ### JoinedColumn
