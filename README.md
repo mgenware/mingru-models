@@ -187,7 +187,7 @@ export default userTA;
 
 Note that action name will have function name included and you don't need to re-type it, in the example above, a `select` action with a name of `UserProfile` would become `SelectUserProfile`, an `updateOne` action with a name of `UserProfile` would become `UpdateUserProfile`, and a `deleteOne` action with a name of `ByID` would be `DeleteByID`.
 
-### `SELECT` Actions
+### `SELECT` Actions Basics
 
 dd-models supports the following kinds of `SELECT` actions:
 
@@ -248,7 +248,7 @@ func (da *TableTypeUser) SelectAllUserProfiles(queryable sqlx.Queryable) ([]*Sel
 func (da *TableTypeUser) SelectSig(queryable sqlx.Queryable, userID uint64) (*string, error)
 ```
 
-## `WHERE` and Raw SQL Expressions
+### `WHERE` and Raw SQL Expressions
 
 We haven't used any `WHERE` clause in the `SELECT` actions above, to add a `WHERE` clause, we have to construct a raw SQL expression using `dd.sql`, which uses TypeScript/JavaScript template string and enables us to write arbitrary SQL expressions.
 
@@ -359,7 +359,7 @@ userTA.select('Admin', user.id, user.name, user.sig)
 
 Similar to `isEqualTo` and `isEqualToInput`, uses `<>`(not equal to operator) instead.
 
-### `.ByID()`
+#### `.ByID()`
 
 ```ts
 userTA.select('UserProfile', user.id, user.name, user.sig).byID();
@@ -388,6 +388,18 @@ userTA.update('Sig')
   .set(user.sig, user.sig.toInputSQL())
 ```
 
+### More on `SELECT` Actions
+
+We have looked on `SELECT` action basics and `WHERE` clauses, let's add more constructs to `SELECT` Actions.
+
+#### `orderBy` and `orderByDesc`
+
+```ts
+userTA.select('t', user.name, user.age)
+  .byID()
+  .orderBy(user.name)
+  .orderByDesc(user.age);
+```
 
 ### `UPDATE` Actions
 
