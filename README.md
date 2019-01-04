@@ -210,7 +210,6 @@ The differences are implementation dependent, normally, they differ from return 
 * `selectAll` returns an array of row objects each containing all selected columns
 * `selectField` returns the single selected field
 
-
 For example, in [mingru](https://github.com/mgenware/mingru), consider the following models and actions:
 
 ```ts
@@ -255,9 +254,8 @@ We haven't used any `WHERE` clause in the `SELECT` actions above, to add a `WHER
 You can pass a column object to template string, it will be converted to a column name in SQL, for example:
 
 ```ts
-userTA
-    .select('UserProfile', user.id, user.name, user.sig)
-    .where(dd.sql`${user.id} = 1`);
+userTA.select('UserProfile', user.id, user.name, user.sig)
+  .where(dd.sql`${user.id} = 1`);
 ```
 
 [mingru](https://github.com/mgenware/mingru) translates this into:
@@ -269,9 +267,8 @@ SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1
 More complex queries:
 
 ```ts
-userTA
-    .select('UserProfile', user.id, user.name, user.sig)
-    .where(dd.sql`${user.id} = 1 AND ${user.sig} <> 'haha'`);
+userTA.select('UserProfile', user.id, user.name, user.sig)
+  .where(dd.sql`${user.id} = 1 AND ${user.sig} <> 'haha'`);
 ```
 
 [mingru](https://github.com/mgenware/mingru) translates it to:
@@ -285,9 +282,8 @@ SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1 AND `sig` <> 'haha'
 Your actions often require user input parameters, e.g. to select a single profile from user table, we need a `userID` which can uniquely identify an user record. Use `dd.input`:
 
 ```ts
-userTA
-    .select('UserProfile', user.id, user.name, user.sig)
-    .where(dd.sql`${user.id} = ${dd.input(user.id)}`);
+userTA.select('UserProfile', user.id, user.name, user.sig)
+  .where(dd.sql`${user.id} = ${dd.input(user.id)}`);
 ```
 
 [mingru](https://github.com/mgenware/mingru) translates to the following Go code:
@@ -307,9 +303,8 @@ func (da *TableTypeUser) SelectUserProfile(queryable sqlx.Queryable, userID uint
 The `userID` is included in function arguments and passed to SQL query function. If you don't like to automatically inferred name, can use the second optional `name` parameter:
 
 ```ts
-userTA
-    .select('UserProfile', user.id, user.name, user.sig)
-    .where(dd.sql`${user.id} = ${dd.input(user.id, 'uid')}`);
+userTA.select('UserProfile', user.id, user.name, user.sig)
+  .where(dd.sql`${user.id} = ${dd.input(user.id, 'uid')}`);
 ```
 
 This way `uid` instead of inferred `userID` would be used in generated code.
@@ -390,8 +385,6 @@ userTA.update('Sig')
 
 ### More on `SELECT` Actions
 
-We have looked on `SELECT` action basics and `WHERE` clauses, let's add more constructs to `SELECT` Actions.
-
 #### `orderBy` and `orderByDesc`
 
 ```ts
@@ -407,14 +400,14 @@ dd-models supports the following kinds of `UPDATE` actions:
 
 ```ts
 class TableActionCollection {
-  // Update a row and checks rows affected to make sure one row must be updated
+  // Updates a row and checks rows affected to make sure one row must be updated
   // Implementations should throw an error if used without a WHERE clause
   updateOne(name: string): UpdateAction;
 
-  // Update rows
+  // Updates rows
   updateAll(name: string): UpdateAction;
 
-  // (Not recommended, prefer `updateOne`) Update a row
+  // (Not recommended, prefer `updateOne`) Updates a row
   // Implementations should throw an error if used without a WHERE clause
   update(name: string): UpdateAction;
 }
@@ -423,8 +416,7 @@ class TableActionCollection {
 To set individual column values, use `UpdateAction.set(column, sql)`, e.g. set an `user.sig` to a random string:
 
 ```ts
-userTA
-  .updateOne('UserSig')
+userTA.updateOne('UserSig')
   .set(user.sig, dd.sql`'My signature'`)
   .byID();
 ```
@@ -432,8 +424,7 @@ userTA
 Or, use user input as column value:
 
 ```ts
-userTA
-  .updateOne('UserSig')
+userTA.updateOne('UserSig')
   .set(user.sig, user.sig.toInputSQL())
   .byID();
 ```
@@ -469,7 +460,7 @@ userTA
   .byID();
 ```
 
-To simplify this kind of code, `UpdateAction` also has method called `setInputs`, you can pass an array of columns, all of which are considered inputs, so the above code could be rewritten as:
+To simplify this, `UpdateAction` also has a method called `setInputs`, you can pass an array of columns, all them will be considered inputs. The above code could be rewritten as using `setInputs`:
 
 ```ts
 userTA
@@ -484,14 +475,13 @@ You can also mix this with the `set` method mentioned above:
 userTA
   .updateOne('ManyColumns')
   .set(user.type, dd.sql`1`)
-  .set(user.age, dd.sql`1`) 
+  .set(user.age, dd.sql`1`)
   .setInputs(user.sig, user.name, user.age, user.gender)
   .set(user.age, dd.sql`18`)
   .byID();
 ```
 
 Notice `user.age` has been set for three times in the code above, the latter always takes precedence, so `user.age` would be set a `18`.
-
 
 ## Advanced Topics
 
