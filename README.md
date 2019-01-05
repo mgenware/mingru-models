@@ -400,14 +400,14 @@ dd-models supports the following kinds of `UPDATE` actions:
 
 ```ts
 class TableActionCollection {
-  // Updates a row and checks rows affected to make sure one row must be updated
+  // Updates a row and checks rows affected to make sure only one row is updated
   // Implementations should throw an error if used without a WHERE clause
   updateOne(name: string): UpdateAction;
 
   // Updates rows
   updateAll(name: string): UpdateAction;
 
-  // (Not recommended, prefer `updateOne`) Updates a row
+  // (Not recommended, prefer `updateOne`) Updates rows
   // Implementations should throw an error if used without a WHERE clause
   update(name: string): UpdateAction;
 }
@@ -482,6 +482,90 @@ userTA
 ```
 
 Notice `user.age` has been set for three times in the code above, the latter always takes precedence, so `user.age` would be set a `18`.
+
+### `INSERT` actions
+
+```ts
+class TableActionCollection {
+  // Inserts a new row, and returns inserted ID
+  insertOne(name: string): InsertAction;
+  // Inserts a new row
+  insert(name: string): InsertAction;
+
+  // Inserts a new row, and returns inserted ID. Use column default value for unset columns
+  insertOneWithDefaults(name: string): InsertAction;
+  // Inserts a new row. Use column default value for unset columns
+  insertWithDefaults(name: string): InsertAction;
+}
+```
+
+Example:
+
+```ts
+// Insert a new user
+userTA
+  .insertOne('User')
+  .set(user.sig, dd.sql`''`)
+  .set(user.name, user.name.toInputSQL())
+  .set(user.age, user.age.toInputSQL());
+```
+
+`INSERT` action can also use `setInputs` like in `UPDATE` action:
+
+```ts
+// Insert a new user
+userTA
+  .insertOne('User')
+  .set(user.sig, dd.sql`''`)
+  .setInputs(user.name, user.age);
+```
+
+#### `insertOneWithDefaults` and `insertWithDefaults`
+
+`insertOneWithDefaults` and `insertWithDefaults` suffix will auto use column's default value it has been set, example:
+
+```ts
+// Insert a new user
+userTA
+  .insertOneWithDefaults('User')
+  .set(user.sig, dd.sql`''`)
+  .setInputs(user.name);
+
+// user.sig = ''
+// user.name = <input>
+// the remaining columns of user will have be set as their defaults
+```
+
+### `DELETE` actions
+```ts
+class TableActionCollection {
+  // Deletes a row and checks rows affected to make sure only one row is updated
+  // Implementations should throw an error if used without a WHERE clause
+  deleteOne(name: string): DeleteAction;
+
+  // Deletes rows
+  deleteAll(name: string): DeleteAction;
+
+  // (Not recommended, prefer `deleteOne`) Delete rows
+  // Implementations should throw an error if used without a WHERE clause
+  delete(name: string): DeleteAction {
+    return this.addAction(new DeleteAction(name, this.table, false, false));
+  }
+}
+```
+
+Like `SELECT` and `UPDATE` actions, `DELETE` action should have a `WHERE` clause unless you need to delete all rows using `deleteAll`.
+
+```ts
+// Delete an user by ID
+userTA.deleteOne('ByID').byID();
+
+// Delete all users by a specified name
+userTA.delete('ByName').where(user.name.isEqualToInput());
+
+// Delete all users
+userTA.deleteAll('All');
+```
 
 ## Advanced Topics
 
