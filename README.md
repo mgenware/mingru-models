@@ -61,14 +61,33 @@ age = dd.int(); // `age` is `INT`
 name = dd.varChar(100); // `name` is `VARCHAR(100)`
 ```
 
-You can also set a default value for a column:
+Each column creation helper may have its own way of setting a default value:
 
 ```ts
+// `dd.int` accepts an optional number as default value
 age = dd.int(18); // `age` defaults to 18
+
+// `dd.varChar` accepts an optional string as default value
 name = dd.varChar(100, 'Liu'); // `name` defaults to "Liu"
+
+// `dd.datetime` `dd.date`, and `dd.time` accept an optional boolean indicating if defaults to current date/time
+datetime_updated = dd.datetime(true);
+date_updated dd.date(true);
+time_updated = dd.time(true);
 ```
 
-Below is a full list of helper methods:
+Note that to fully customized a default value, you can call `Column.setDefault`, you can pass an SQL expression (covered in [Raw SQL Expressions](#where-and-raw-sql-expressions) below):
+
+```ts
+// Set it to an custom SQL expression once inserted
+age = dd.int(18).setDefault(dd.sql`FLOOR(RAND() * 401) + 100`)
+
+// These two lines are equivalent
+datetime_updated = dd.datetime(true);
+datetime_updated = dd.datetime().setDefault(dd.sql`${dd.datetimeNow()}`);
+```
+
+Here is a full list of column creation helper methods:
 
 ```ts
 function varChar(length: number, defaultValue?: string): Column;
@@ -85,7 +104,6 @@ function float(defaultValue?: number): Column;
 function double(defaultValue?: number): Column;
 function unique(col: Column): Column;
 function pk(column?: Column): Column;
-function setName(name: string, column: Column): Column;
 function text(defaultValue?: string): Column;
 function bool(defaultValue?: boolean): Column;
 function datetime(): Column;
@@ -93,14 +111,14 @@ function date(): Column;
 function time(): Column;
 ```
 
-Starting with dd-models 0.5.0, all column helper methods are **`NOT NULL`** by default, to create nullable (`NULL`) column, use the extra `nullable` property, e.g.:
+NOTE: Starting with dd-models 0.5.0, all column helper methods are **`NOT NULL`** by default, to create nullable (`NULL`) column, use the extra `nullable` property, e.g.:
 
 ```ts
 name = dd.varChar(100);     // `name` is NOT NULL
 sig = dd.text().nullable;   // `sig` is NULL
 ```
 
-#### Column Object
+#### Column Objects
 
 You can create column objects manually if column helper methods don't fit your needs, a column object consists of a bunch of properties describing different traits of a column.
 
