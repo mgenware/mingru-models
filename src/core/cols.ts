@@ -76,13 +76,6 @@ export function pk(column?: Column): Column {
   return col;
 }
 
-export function setName(name: string, column: Column): Column {
-  throwIfFalsy(name, 'name');
-  throwIfFalsy(column, 'column');
-  column.__name = name;
-  return column;
-}
-
 export function text(defaultValue?: string): Column {
   const col = new Column(dt.text);
   col.props.default = defaultValue;

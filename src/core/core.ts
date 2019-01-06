@@ -110,6 +110,12 @@ export class ColumnBase {
     return sql`${this} IS NOT NULL`;
   }
 
+  setName(name: string): this {
+    throwIfFalsy(name, 'name');
+    this.__name = name;
+    return this;
+  }
+
   private remoteColFromFCOrThrow(col?: ColumnBase): ColumnBase {
     col = col || this;
     if (col instanceof ForeignColumn) {

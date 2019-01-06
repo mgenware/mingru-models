@@ -3,7 +3,7 @@ import * as dd from '../../';
 class ABCTable extends dd.Table {
   StatusString = dd.varChar(10);
   statusType = dd.varChar(10);
-  statusID = dd.setName('customName', dd.int());
+  statusID = dd.int().setName('customName');
 }
 
 class DEFTable extends dd.Table {}
