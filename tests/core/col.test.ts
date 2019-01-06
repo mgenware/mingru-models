@@ -15,6 +15,34 @@ test('Table and name', () => {
   expect(ref.__table).toBe(user);
 });
 
+test('notNull (default)', () => {
+  const c = dd.int(123);
+  expect(c.props.nullable).toBe(false);
+});
+
+test('nullable', () => {
+  const c = dd.int(123).nullable;
+  expect(c.props.nullable).toBe(true);
+});
+
+test('unique', () => {
+  const c = dd.int(123).unique;
+  expect(c.props.unique).toBe(true);
+});
+
+test('unique (default)', () => {
+  const c = dd.int(123);
+  expect(c.props.unique).toBe(false);
+});
+
+test('setDefault', () => {
+  let c = dd.int(123).setDefault('omg');
+  expect(c.props.default).toBe('omg');
+
+  c = dd.int(123).setDefault(null);
+  expect(c.props.default).toBe(null);
+});
+
 test('Col types', () => {
   expect(user.id).toBeInstanceOf(dd.Column);
   expect(user.id.__type).toBe(dd.ColumnBaseType.Full);

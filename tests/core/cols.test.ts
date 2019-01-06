@@ -86,26 +86,6 @@ test('pk(column)', () => {
   expect(c.props.nullable).toBe(false);
 });
 
-test('notNull (default)', () => {
-  const c = dd.int(123);
-  expect(c.props.nullable).toBe(false);
-});
-
-test('nullable', () => {
-  const c = dd.int(123).nullable;
-  expect(c.props.nullable).toBe(true);
-});
-
-test('unique', () => {
-  const c = dd.int(123).unique;
-  expect(c.props.unique).toBe(true);
-});
-
-test('unique (default)', () => {
-  const c = dd.int(123);
-  expect(c.props.unique).toBe(false);
-});
-
 test('text', () => {
   const c = dd.text('ha');
   expect(c.types).toContain(dd.dt.text);

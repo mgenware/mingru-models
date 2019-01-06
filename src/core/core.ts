@@ -177,6 +177,11 @@ export class Column extends ColumnBase {
     return this;
   }
 
+  setDefault(value: unknown): this {
+    this.props.default = value;
+    return this;
+  }
+
   __getTargetColumn(): Column {
     return this;
   }
