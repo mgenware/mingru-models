@@ -277,7 +277,7 @@ userTA.select('UserProfile', user.id, user.name, user.sig)
 SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1 AND `sig` <> 'haha'
 ```
 
-### Adding Input Parameters
+#### Input Parameters
 
 Your actions often require user input parameters, e.g. to select a single profile from user table, we need a `userID` which can uniquely identify an user record. Use `dd.input`:
 
@@ -309,11 +309,11 @@ userTA.select('UserProfile', user.id, user.name, user.sig)
 
 This way `uid` instead of inferred `userID` would be used in generated code.
 
-### SQL Expression Helpers
+#### SQL Expression Helpers
 
 Writing `dd.input`s in `dd.sql` can be tedious, dd-models comes with some handy helpers to quick construct some commonly used expressions.
 
-#### `Column.toInput(column, optionalName): SQLInput`
+##### `Column.toInput(column, optionalName): SQLInput`
 
 Shortcut to `dd.input(column, optionalName)`:
 
@@ -322,7 +322,7 @@ userTA.select('UserProfile', user.id, user.name, user.sig)
   .where(dd.sql`${user.id} = ${user.id.toInput()}`);
 ```
 
-#### `Column.isEqualTo(sql): SQL`
+##### `Column.isEqualTo(sql): SQL`
 
 ```ts
 userTA.select('Admin', user.id, user.name, user.sig)
@@ -336,7 +336,7 @@ userTA.select('Admin', user.id, user.name, user.sig)
   .where(dd.sql`${user.name} = "Admin"`);
 ```
 
-#### `Column.isEqualToInput(optionalName): SQL`
+##### `Column.isEqualToInput(optionalName): SQL`
 
 ```ts
 userTA.select('Admin', user.id, user.name, user.sig)
@@ -350,11 +350,11 @@ userTA.select('Admin', user.id, user.name, user.sig)
   .where(dd.sql`${user.name} = ${dd.input(user.name)}`);
 ```
 
-#### `Column.isNotEqualTo` and `Column.isNotEqualToInput`
+##### `Column.isNotEqualTo` and `Column.isNotEqualToInput`
 
 Similar to `isEqualTo` and `isEqualToInput`, uses `<>`(not equal to operator) instead.
 
-#### `.ByID()`
+##### `.ByID()`
 
 ```ts
 userTA.select('UserProfile', user.id, user.name, user.sig).byID();
@@ -374,7 +374,7 @@ userTA.select('UserProfile', user.id, user.name, user.sig)
   .where(user.id.isEqualToInput());
 ```
 
-#### `Column.toInputSQL(column, optionalName)`
+##### `Column.toInputSQL(column, optionalName)`
 
 Shortcut `dd.sql(dd.input(column, optionalName))`, useful in expression with only one input inside, e.g. setters in `UPDATE` action (`UPDATE` action is covered below):
 
@@ -382,6 +382,38 @@ Shortcut `dd.sql(dd.input(column, optionalName))`, useful in expression with onl
 userTA.update('Sig')
   .set(user.sig, user.sig.toInputSQL())
 ```
+
+#### Predefined System Calls
+Since raw SQL expression gives you the ability to write any SQL, you may write this for a `DATETIME` column:
+
+```ts
+userTA.update('LastLogin')
+  .set(user.lastLogin, dd.sql`NOW()`)
+```
+
+While these system calls are commonly used, dd-models supports them as predefined system calls listed below:
+
+```ts
+enum SQLCallType {
+  datetimeNow,  // returns current date and time
+  dateNow,      // returns current date
+  timeNow,      // returns current time
+}
+```
+
+You can embed a predefined system call in `dd.sql`:
+
+```ts
+// These two are equivalent
+userTA.update('LastLogin')
+  .set(user.lastLogin, dd.sql`NOW()`);
+
+userTA.update('LastLogin')
+  .set(user.lastLogin, dd.sql`${dd.datetimeNow()}`)
+```
+
+The latter is preferred for type safety as well as portability.
+
 
 ### More on `SELECT` Actions
 
