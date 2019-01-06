@@ -135,7 +135,7 @@ test('datetime', () => {
   expect(c.types).toContain(dd.dt.datetime);
 
   c = dd.datetime(true);
-  expect(c.props.default).toEqual(dd.datetimeNow());
+  expect((c.props.default as object).toString()).toBe('CALL(0)');
 });
 
 test('date', () => {
@@ -143,7 +143,7 @@ test('date', () => {
   expect(c.types).toContain(dd.dt.date);
 
   c = dd.date(true);
-  expect(c.props.default).toEqual(dd.dateNow());
+  expect((c.props.default as object).toString()).toBe('CALL(1)');
 });
 
 test('time', () => {
@@ -151,5 +151,5 @@ test('time', () => {
   expect(c.types).toContain(dd.dt.time);
 
   c = dd.time(true);
-  expect(c.props.default).toEqual(dd.timeNow());
+  expect((c.props.default as object).toString()).toBe('CALL(2)');
 });

@@ -1,5 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Column } from './core';
+import { Column, sql } from './core';
 import dt from './dt';
 import * as call from './sqlCall';
 
@@ -98,7 +98,7 @@ export function bool(defaultValue?: boolean): Column {
 export function datetime(defaultsToNow = false): Column {
   const col = new Column(dt.datetime);
   if (defaultsToNow) {
-    col.props.default = call.datetimeNow();
+    col.props.default = sql`${call.datetimeNow()}`;
   }
   return col;
 }
@@ -106,7 +106,7 @@ export function datetime(defaultsToNow = false): Column {
 export function date(defaultsToNow = false): Column {
   const col = new Column(dt.date);
   if (defaultsToNow) {
-    col.props.default = call.dateNow();
+    col.props.default = sql`${call.dateNow()}`;
   }
   return col;
 }
@@ -114,7 +114,7 @@ export function date(defaultsToNow = false): Column {
 export function time(defaultsToNow = false): Column {
   const col = new Column(dt.time);
   if (defaultsToNow) {
-    col.props.default = call.timeNow();
+    col.props.default = sql`${call.timeNow()}`;
   }
   return col;
 }
