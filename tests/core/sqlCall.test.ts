@@ -11,3 +11,13 @@ test('Embed', () => {
     `haha CALL(${dd.SQLCallType.datetimeNow}) CALL(${dd.SQLCallType.dateNow})`,
   );
 });
+
+test('Embed (raw)', () => {
+  expect(
+    dd.sql`haha ${new dd.SQLCall(dd.SQLCallType.datetimeNow)} ${new dd.SQLCall(
+      dd.SQLCallType.dateNow,
+    )}`.toString(),
+  ).toBe(
+    `haha CALL(${dd.SQLCallType.datetimeNow}) CALL(${dd.SQLCallType.dateNow})`,
+  );
+});
