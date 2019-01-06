@@ -118,6 +118,17 @@ name = dd.varChar(100);     // `name` is NOT NULL
 sig = dd.text().nullable;   // `sig` is NULL
 ```
 
+#### Column Name
+By default, property name reflects the column name, if you need a different name from property name, can use `Column.setName`:
+
+```ts
+// Column name defaults to property name: "cmt_count"
+cmt_count = dd.varChar(100);
+
+// Column name is now "cmt_c"
+cmt_count = dd.varChar(100).setName('cmt_c');
+```
+
 #### Column Objects
 
 You can create column objects manually if column helper methods don't fit your needs, a column object consists of a bunch of properties describing different traits of a column.
@@ -442,6 +453,18 @@ userTA.select('t', user.name, user.age)
   .byID()
   .orderBy(user.name)
   .orderByDesc(user.age);
+```
+
+#### Alias via `as`
+Can use `Column.as` to add the SQL `AS` alias to a selected column:
+```ts
+userTA.select('t', user.name, user.post_count.as('count'));
+```
+
+Generates the following SQL:
+
+```sql
+SELECT `name`, `post_count` AS `count` from user;
 ```
 
 ### `UPDATE` Actions
