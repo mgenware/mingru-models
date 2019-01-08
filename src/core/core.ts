@@ -5,6 +5,7 @@ import { SQLCall } from './sqlCall';
 
 const InternalPropPrefix = '__';
 
+// Represents all possible ColumnBase types.
 export enum ColumnBaseType {
   Full, // Column
   Foreign, // ForeignColumn
@@ -12,7 +13,7 @@ export enum ColumnBaseType {
   Selected, // SelectedColumn
 }
 
-/** Core types */
+// Base column type.
 export class ColumnBase {
   __table!: Table;
   __name!: string;
@@ -110,12 +111,6 @@ export class ColumnBase {
     return sql`${this} IS NOT NULL`;
   }
 
-  setName(name: string): this {
-    throwIfFalsy(name, 'name');
-    this.__name = name;
-    return this;
-  }
-
   private remoteColFromFCOrThrow(col?: ColumnBase): ColumnBase {
     col = col || this;
     if (col instanceof ForeignColumn) {
@@ -179,6 +174,12 @@ export class Column extends ColumnBase {
 
   setDefault(value: unknown): this {
     this.props.default = value;
+    return this;
+  }
+
+  setName(name: string): this {
+    throwIfFalsy(name, 'name');
+    this.__name = name;
     return this;
   }
 
