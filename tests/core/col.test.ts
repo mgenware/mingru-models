@@ -111,6 +111,11 @@ test('SelectedColumn.__getInputName', () => {
   ).toBe('haha');
 });
 
+test('IsFrozen', () => {
+  expect(Object.isFrozen(post.user_id)).toBe(true);
+  expect(Object.isFrozen(post.title)).toBe(true);
+});
+
 class JCTable extends dd.Table {
   jc = post.user_id.join(user).name;
 }
