@@ -1,6 +1,8 @@
 export * from './core/core';
 export { default as dt } from './core/dt';
 export * from './core/cols';
+export * from './core/fk';
+export * from './core/table';
 
 export { Action, ActionType } from './actions/action';
 export { default as SelectAction } from './actions/selectAction';

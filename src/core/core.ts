@@ -3,75 +3,95 @@ import utils from '../lib/utils';
 import toTypeString from 'to-type-string';
 import { SQLCall } from './sqlCall';
 
-const InternalPropPrefix = '__';
+export class ColumnProps {
+  types = new Set<string>();
+  pk = false;
+  nullable = false;
+  unsigned = false;
+  unique = false;
+  length = 0;
+  default: unknown = undefined;
+  name!: string;
+  table!: Table | JoinedTable;
+  foreignColumn: Column | null = null;
 
-// Represents all possible ColumnBase types.
-export enum ColumnBaseType {
-  Full, // Column
-  Foreign, // ForeignColumn
-  Joined, // JoinedColumn
-  Selected, // SelectedColumn
-}
-
-// Base column type.
-export class ColumnBase {
-  __table!: Table;
-  __name!: string;
-  __type: ColumnBaseType;
-
-  constructor(type: ColumnBaseType) {
-    this.__type = type;
-  }
-
-  __getTargetColumn(): Column {
-    throw new Error('Not implemented yet');
-  }
-
-  __getInputName(): string {
-    return `${utils.toCamelCase(this.tableName)}${utils.capitalizeColumnName(
-      utils.toCamelCase(this.__name),
+  getInputName(): string {
+    return `${utils.toCamelCase(this.tableName())}${utils.capitalizeColumnName(
+      utils.toCamelCase(this.name),
     )}`;
   }
 
-  get tableName(): string {
-    return this.__table.__name;
+  tableName(): string {
+    const { table } = this;
+    if (table instanceof Table) {
+      return this.castToTable().__name;
+    }
+    // JoinedTable
+    return this.castToJoinedTable().name();
   }
 
-  join<T extends Table>(remoteTable: T, remoteColumn?: ColumnBase): T {
-    const localColumn = this;
-    let rc: ColumnBase;
-    if (remoteColumn) {
-      if (remoteColumn.__table !== remoteTable) {
-        throw new Error(
-          `The remote column "${remoteColumn}" does not belong to the remote table "${remoteTable}"`,
-        );
+  isJoinedColumn(): boolean {
+    return this.table instanceof JoinedTable;
+  }
+
+  castToTable(): Table {
+    return this.table as Table;
+  }
+
+  castToJoinedTable(): JoinedTable {
+    return this.table as JoinedTable;
+  }
+}
+
+export class Column {
+  static fromTypes(types: string[] | string): Column {
+    throwIfFalsy(types, 'types');
+
+    const res = new Column();
+    const { props } = res;
+    if (Array.isArray(types)) {
+      for (const t of types) {
+        props.types.add(t);
       }
-      rc = remoteColumn;
     } else {
-      // See README.md (JoinedColumn for details)
-      if (this instanceof JoinedColumn) {
-        rc = this.remoteColFromFCOrThrow(
-          ((this as unknown) as JoinedColumn).selectedColumn,
-        );
-      } else {
-        rc = this.remoteColFromFCOrThrow();
-      }
+      props.types.add(types as string);
     }
-    return new Proxy<T>(remoteTable, {
-      get(target, propKey, receiver) {
-        const targetColumn = Reflect.get(target, propKey, receiver) as Column;
-        let localPath: string;
-        if (localColumn instanceof JoinedColumn) {
-          const colPath = ((localColumn as unknown) as JoinedColumn).joinPath;
-          localPath = `[${colPath}.${localColumn.__name}]`;
-        } else {
-          localPath = `[${localColumn.__table.__name}.${localColumn.__name}]`;
-        }
-        const remotePath = `[${rc.__table.__name}.${rc.__name}]`;
-        const path = `[${localPath}.${remotePath}]`;
-        return new JoinedColumn(path, localColumn, rc, targetColumn);
-      },
-    });
+    return res;
+  }
+
+  static fromColumn(column: Column): Column {
+    throwIfFalsy(column, 'column');
+
+    const res = new Column();
+    res.props = new ColumnProps();
+    Object.assign(res.props, column.props);
+    const { props } = res;
+    // Deep copy values
+    props.types = new Set<string>(column.props.types);
+    return res;
+  }
+
+  props = new ColumnProps();
+
+  get nullable(): Column {
+    this.props.nullable = true;
+    return this;
+  }
+
+  get unique(): Column {
+    this.props.unique = true;
+    return this;
+  }
+
+  setDefault(value: unknown): this {
+    this.props.default = value;
+    return this;
+  }
+
+  setName(name: string): this {
+    throwIfFalsy(name, 'name');
+    this.props.name = name;
+    return this;
   }
 
   as(name: string): SelectedColumn {
@@ -111,105 +131,53 @@ export class ColumnBase {
     return sql`${this} IS NOT NULL`;
   }
 
-  private remoteColFromFCOrThrow(col?: ColumnBase): ColumnBase {
-    col = col || this;
-    if (col instanceof ForeignColumn) {
-      return ((col as unknown) as ForeignColumn).ref;
+  inputName(): string {
+    const { props } = this;
+    if (props.table instanceof Table) {
+      return `${utils.toCamelCase(
+        props.tableName(),
+      )}${utils.capitalizeColumnName(utils.toCamelCase(props.name))}`;
     }
-    throw new Error(
-      `Local column "${col}" is not a foreign column, you have to specify the "remoteColumn" argument`,
-    );
-  }
-}
-
-export class ForeignColumn extends ColumnBase {
-  constructor(name: string, tbl: Table, public ref: ColumnBase) {
-    super(ColumnBaseType.Foreign);
-    throwIfFalsy(ref, 'ref');
-    this.__name = name;
-    this.__table = tbl;
+    // JoinedTable
+    const curName = makeMiddleName(props.name);
+    return (props.table as JoinedTable).name() + curName;
   }
 
-  __getTargetColumn(): Column {
-    return this.ref.__getTargetColumn();
-  }
-}
+  join<T extends Table>(destTable: T): T {
+    const localColumn = this;
+    // source column + dest table + dest column = joined table
+    // Simple case: post.user_id.join(user): since post.user_id is a FK to user.id, so dest column here is implicitly user.id
 
-export class ColumnProps {
-  pk = false;
-  nullable = false;
-  unsigned = false;
-  unique = false;
-  length = 0;
-  default: unknown = undefined;
-}
-
-export class Column extends ColumnBase {
-  __userName = '';
-  types = new Set<string>();
-  props = new ColumnProps();
-
-  constructor(types: string[] | string) {
-    super(ColumnBaseType.Full);
-    throwIfFalsy(types, 'types');
-
-    if (Array.isArray(types)) {
-      for (const t of types) {
-        this.types.add(t);
-      }
-    } else {
-      this.types.add(types as string);
+    // Complex case: cmt.post_id.join(post).user_id.join(user): the current object(`this`) is a joined column(`cmt.post_id.join(post).user_id`), and also a FK.
+    const { props } = this;
+    if (!props.foreignColumn) {
+      throw new Error(
+        `You cannot call "join" on this column of type "${toTypeString(
+          this,
+        )}", because it's not a foreign column`,
+      );
     }
-  }
+    // `this` is FK here
+    const destColumn = props.foreignColumn;
 
-  get nullable(): Column {
-    this.props.nullable = true;
-    return this;
-  }
-
-  get unique(): Column {
-    this.props.unique = true;
-    return this;
-  }
-
-  setDefault(value: unknown): this {
-    this.props.default = value;
-    return this;
-  }
-
-  setName(name: string): this {
-    throwIfFalsy(name, 'name');
-    this.__name = name;
-    return this;
-  }
-
-  __getTargetColumn(): Column {
-    return this;
+    // Join returns a proxy, each property access first retrieves the original column from original joined table, then it constructs a new copied column with `props.table` set to a newly created JoinedTable
+    const joinedTable = new JoinedTable(this, destTable, destColumn);
+    return new Proxy<T>(destTable, {
+      get(target, propKey, receiver) {
+        const selectedColumn = Reflect.get(target, propKey, receiver) as Column;
+        // returns a joined column
+        const jc = Column.fromColumn(selectedColumn);
+        jc.props.table = joinedTable;
+        // joined column is also a foreign column, it references the selected column
+        jc.props.foreignColumn = selectedColumn;
+        return jc;
+      },
+    });
   }
 }
 
 export class Table {
-  static forEach(
-    tableObject: Table,
-    cb: (column: ColumnBase, prop: string) => void,
-  ) {
-    throwIfFalsy(tableObject, 'tableObject');
-    if (!cb) {
-      return;
-    }
-
-    for (const pair of Object.entries(tableObject)) {
-      const prop = pair[0] as string;
-      // Ignore internal props
-      if (prop.startsWith(InternalPropPrefix)) {
-        continue;
-      }
-      const col = pair[1] as ColumnBase;
-      cb(col, prop);
-    }
-  }
-
-  __columns: ColumnBase[];
+  __columns: Column[];
   __name!: string;
   __pks: Column[] = [];
 
@@ -221,70 +189,43 @@ export class Table {
   }
 }
 
-export function table<T extends Table>(
-  cls: new (name?: string) => T,
-  name?: string,
-): T {
-  throwIfFalsy(cls, 'cls');
-  const tableObj = new cls(name);
-  const className = tableObj.constructor.name;
-  // table.__name can be in ctor
-  if (!tableObj.__name) {
-    tableObj.__name = utils.toSnakeCase(className);
-  }
-  const cols = tableObj.__columns;
-  Table.forEach(tableObj, (col, colName) => {
-    if (!col) {
-      throw new Error(`Empty column object at property "${colName}"`);
-    }
-    if (col instanceof ColumnBase === false) {
-      throw new Error(
-        `Invalid column at property "${colName}", expected a ColumnBase, got "${toTypeString(
-          col,
-        )}"`,
-      );
-    }
-    if (col.__type === ColumnBaseType.Joined) {
-      throw new Error(
-        `Unexpected ${toTypeString(
-          col,
-        )} at property "${colName}", you should not use JoinedColumn in a table definition, JoinedColumn should be used in SELECT actions`,
-      );
-    }
-    if (col.__type === ColumnBaseType.Selected) {
-      throw new Error(
-        `Unexpected ${toTypeString(
-          col,
-        )} at property "${colName}", you should not use SelectedColumn in a table definition, SelectedColumn should be used in SELECT actions`,
-      );
+export class JoinedTable {
+  // keyPath is useful to detect duplicate joins, if multiple JoinedTable instances are created with same columns and tables, they'd have same `keyPath`s.
+  keyPath: string;
+
+  constructor(
+    public srcColumn: Column,
+    public destTable: Table,
+    public destColumn: Column,
+  ) {
+    const { props } = srcColumn;
+
+    let localPath: string;
+    if (props.isJoinedColumn()) {
+      // source column is a joined column
+      const srcTableKeyPath = props.castToJoinedTable().keyPath;
+      localPath = `[${srcTableKeyPath}.${props.name}]`;
+    } else {
+      localPath = `[${props.castToTable().__name}.${props.name}]`;
     }
 
-    let columnToAdd: ColumnBase;
-    if (col.__table) {
-      // Foreign column
-      const fc = new ForeignColumn(colName, tableObj, col);
-      // tslint:disable-next-line
-      (tableObj as any)[colName] = fc;
-      columnToAdd = fc;
-    } else {
-      if (!col.__name) {
-        // column name can be set by setName
-        col.__name = utils.toSnakeCase(colName);
-      }
-      col.__table = tableObj;
-      // Check if it's a pk
-      if (col instanceof Column && (col as Column).props.pk) {
-        tableObj.__pks.push(col as Column);
-      }
-      columnToAdd = col;
-    }
-    Object.freeze(columnToAdd);
-    cols.push(columnToAdd);
-  });
-  return (tableObj as unknown) as T;
+    const remotePath = `[${destColumn.props.tableName()}.${
+      destColumn.props.name
+    }]`;
+    this.keyPath = `[${localPath}.${remotePath}]`;
+  }
+
+  name(): string {
+    const { srcColumn } = this;
+    // e.g. (post).user_id.join(user), returns "postUser"
+    return (
+      utils.toCamelCase(srcColumn.props.tableName()) +
+      makeMiddleName(srcColumn.props.name)
+    );
+  }
 }
 
-export class JoinedColumn extends ColumnBase {
+export class JoinedColumn {
   constructor(
     /** Note that joinPath does not include the selected column name. */
     public joinPath: string,
@@ -316,13 +257,6 @@ export class JoinedColumn extends ColumnBase {
       utils.toCamelCase(localColumn.tableName) +
       this.makeMiddleName(localColumn.__name) +
       curName
-    );
-  }
-
-  // Generates a column name for a join, we call it a middle and we need to cut the ending `_id`, e.g. `SELECT post.user_id.join(user).name`, the `user_id` before the join is the middle name, the input name for this column is `postUserName`, note the `_id` of `user_id` is removed.
-  private makeMiddleName(s: string): string {
-    return utils.capitalizeColumnName(
-      utils.toCamelCase(utils.stripTrailingSnakeID(s)),
     );
   }
 }
@@ -486,4 +420,11 @@ export function sql(
   ...params: SQLParam[]
 ): SQL {
   return new SQL(literals, params);
+}
+
+// Generates a column name for a join, we call it a middle and we need to cut the ending `_id`, e.g. `SELECT post.user_id.join(user).name`, the `user_id` before the join is the middle name, the input name for this column is `postUserName`, note the `_id` of `user_id` is removed.
+function makeMiddleName(s: string): string {
+  return utils.capitalizeColumnName(
+    utils.toCamelCase(utils.stripTrailingSnakeID(s)),
+  );
 }
