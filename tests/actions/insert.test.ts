@@ -16,7 +16,9 @@ test('Insert', () => {
   const vTitle = v.columnValueMap.get(post.title) as dd.SQL;
   const vUserID = v.columnValueMap.get(post.snake_case_user_id) as dd.SQL;
   expect(vTitle.toString()).toBe('<postTitle: [title]>');
-  expect(vUserID.toString()).toBe('<postSnakeCaseUserID: [id]>');
+  expect(vUserID.toString()).toBe(
+    '<postSnakeCaseUserID: [snake_case_user_id]>',
+  );
 });
 
 test('Order of setInputs and set', () => {
