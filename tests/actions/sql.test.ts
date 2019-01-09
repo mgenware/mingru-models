@@ -1,6 +1,7 @@
 import * as dd from '../../';
 import user from '../models/user';
 import post from '../models/post';
+import { Column } from '../../';
 
 test('SQL', () => {
   const sql = dd.sql`${user.id} = 1 OR ${user.name} = ${dd.input(user.name)}`;
@@ -31,13 +32,13 @@ test('Named input', () => {
 
 test('Input (foreign key)', () => {
   const input = dd.input(post.user_id);
-  expect(input.typeObject).toBe(user.id);
+  expect((input.typeObject as Column).props.foreignColumn).toBe(user.id);
   expect(input.name).toBe('postUserID');
 });
 
 test('Input (joined key)', () => {
   const input = dd.input(post.user_id.join(user).name);
-  expect(input.typeObject).toBe(user.name);
+  expect((input.typeObject as dd.Column).props.mirroredColumn).toBe(user.name);
   expect(input.name).toBe('postUserName');
 });
 

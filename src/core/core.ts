@@ -284,7 +284,7 @@ export function input(type: string | Column, name?: string): SQLInput {
         );
       }
     }
-    return new SQLInput(col.props.inputName(), name);
+    return new SQLInput(col, name);
   }
   if (!name) {
     throw new Error(`Unexpected empty input name for type "${type}"`);
