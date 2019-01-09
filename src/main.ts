@@ -5,7 +5,7 @@ export * from './core/fk';
 export * from './core/table';
 
 export { Action, ActionType } from './actions/action';
-export { default as SelectAction } from './actions/selectAction';
+export * from './actions/selectAction';
 export { default as UpdateAction } from './actions/updateAction';
 export { default as InsertAction } from './actions/insertAction';
 export { default as DeleteAction } from './actions/deleteAction';

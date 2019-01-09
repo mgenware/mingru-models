@@ -4,21 +4,21 @@ import dt from './dt';
 import * as call from './sqlCall';
 
 export function varChar(length: number, defaultValue?: string): Column {
-  const col = new Column(dt.varChar);
+  const col = Column.fromTypes(dt.varChar);
   col.props.length = length;
   col.props.default = defaultValue;
   return col;
 }
 
 export function char(length: number, defaultValue?: string): Column {
-  const col = new Column(dt.char);
+  const col = Column.fromTypes(dt.char);
   col.props.length = length;
   col.props.default = defaultValue;
   return col;
 }
 
 function _int(type: string, unsigned: boolean, def?: number): Column {
-  const col = new Column(type);
+  const col = Column.fromTypes(type);
   col.props.unsigned = unsigned;
   col.props.default = def;
   return col;
@@ -77,19 +77,19 @@ export function pk(column?: Column): Column {
 }
 
 export function text(defaultValue?: string): Column {
-  const col = new Column(dt.text);
+  const col = Column.fromTypes(dt.text);
   col.props.default = defaultValue;
   return col;
 }
 
 export function bool(defaultValue?: boolean): Column {
-  const col = new Column(dt.bool);
+  const col = Column.fromTypes(dt.bool);
   col.props.default = defaultValue;
   return col;
 }
 
 export function datetime(defaultsToNow = false): Column {
-  const col = new Column(dt.datetime);
+  const col = Column.fromTypes(dt.datetime);
   if (defaultsToNow) {
     col.props.default = sql`${call.datetimeNow()}`;
   }
@@ -97,7 +97,7 @@ export function datetime(defaultsToNow = false): Column {
 }
 
 export function date(defaultsToNow = false): Column {
-  const col = new Column(dt.date);
+  const col = Column.fromTypes(dt.date);
   if (defaultsToNow) {
     col.props.default = sql`${call.dateNow()}`;
   }
@@ -105,7 +105,7 @@ export function date(defaultsToNow = false): Column {
 }
 
 export function time(defaultsToNow = false): Column {
-  const col = new Column(dt.time);
+  const col = Column.fromTypes(dt.time);
   if (defaultsToNow) {
     col.props.default = sql`${call.timeNow()}`;
   }

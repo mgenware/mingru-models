@@ -1,23 +1,12 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import {
-  Table,
-  ColumnBase,
-  ColumnBaseType,
-  ForeignColumn,
-  Column,
-} from './core';
+import { Table, Column } from './core';
 import { utils } from '../main';
 import toTypeString from 'to-type-string';
-import { FKWrapper } from './fk';
 import * as defs from './defs';
-
-function isValidColumn(col: unknown): boolean {
-  return col instanceof Column || col instanceof FKWrapper;
-}
 
 export function enumerateColumns(
   tableObject: Table,
-  cb: (column: ColumnBase, prop: string) => void,
+  cb: (column: Column, prop: string) => void,
 ) {
   throwIfFalsy(tableObject, 'tableObject');
   if (!cb) {
@@ -25,13 +14,24 @@ export function enumerateColumns(
   }
 
   for (const pair of Object.entries(tableObject)) {
-    const prop = pair[0] as string;
-    // Ignore internal props
-    if (prop.startsWith(defs.InternalPropPrefix)) {
+    const name = pair[0] as string;
+    const value = pair[1];
+    // Ignore internal props and functions
+    if (
+      name.startsWith(defs.InternalPropPrefix) ||
+      typeof value === 'function'
+    ) {
       continue;
     }
-    const col = pair[1] as ColumnBase;
-    cb(col, prop);
+    if (value instanceof Column === false) {
+      throw new Error(
+        `The property "${name}" is not a Column object, got "${toTypeString(
+          value,
+        )}"`,
+      );
+    }
+    const col = value as Column;
+    cb(col, name);
   }
 }
 
@@ -47,59 +47,44 @@ export function table<T extends Table>(
     tableObj.__name = utils.toSnakeCase(className);
   }
   const cols = tableObj.__columns;
-  enumerateColumns(tableObj, (col, colName) => {
+  enumerateColumns(tableObj, (col, propName) => {
     if (!col) {
-      throw new Error(`Empty column object at property "${colName}"`);
+      throw new Error(`Expected empty column object at property "${propName}"`);
     }
-    if (!isValidColumn(col)) {
-      throw new Error(
-        `Invalid column at property "${colName}", expected a ColumnBase, got "${toTypeString(
-          col,
-        )}"`,
-      );
-    }
-    if (col.__type === ColumnBaseType.Joined) {
+    if (col.props.isJoinedColumn()) {
       throw new Error(
         `Unexpected ${toTypeString(
           col,
-        )} at property "${colName}", you should not use JoinedColumn in a table definition, JoinedColumn should be used in SELECT actions`,
-      );
-    }
-    if (col.__type === ColumnBaseType.Selected) {
-      throw new Error(
-        `Unexpected ${toTypeString(
-          col,
-        )} at property "${colName}", you should not use SelectedColumn in a table definition, SelectedColumn should be used in SELECT actions`,
+        )} at property "${propName}", you should not use JoinedColumn in a table definition, JoinedColumn should be used in SELECT actions`,
       );
     }
 
-    let columnToAdd: ColumnBase;
-    if (col.__table) {
-      // A foreign column can be detected using any of the following
-      // * col.__table is not empty
-      // * Object.isFrozen(col)
-      // * Additionally, some mutated FKs are of type FKWrapper
-
-      let referenced: Column;
-      if (col instanceof FKWrapper) {
-        referenced;
-      }
-      const fc = new ForeignColumn(colName, tableObj, col);
-      // tslint:disable-next-line
-      (tableObj as any)[colName] = fc;
-      columnToAdd = fc;
+    let columnToAdd: Column;
+    // A frozen column indicates an implicit foreign key, note: `dd.fk` can set up an explicit foreign key
+    if (Object.isFrozen(col)) {
+      // Copy the frozen column
+      columnToAdd = Column.spawn(col);
+      columnToAdd.props.foreignColumn = col;
+      // Reset column name to current prop name instead of inherited name
+      columnToAdd.props.name = propName;
     } else {
-      if (!col.__name) {
-        // column name can be set by setName
-        col.__name = utils.toSnakeCase(colName);
-      }
-      col.__table = tableObj;
-      // Check if it's a pk
-      if (col instanceof Column && (col as Column).props.pk) {
-        tableObj.__pks.push(col as Column);
-      }
       columnToAdd = col;
     }
+
+    // Populate column props
+    const { props } = columnToAdd;
+    if (!props.name) {
+      // column name can be set by setName
+      props.name = utils.toSnakeCase(propName);
+    }
+    props.table = tableObj;
+    // Check if it's a pk
+    if (props.pk) {
+      tableObj.__pks.push(col);
+    }
+
+    // tslint:disable-next-line
+    (tableObj as any)[propName] = columnToAdd;
     Object.freeze(columnToAdd);
     cols.push(columnToAdd);
   });

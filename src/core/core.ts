@@ -11,11 +11,20 @@ export class ColumnProps {
   unique = false;
   length = 0;
   default: unknown = undefined;
+  // Auto set to property name after dd.table(), cleared after `Column.spawn`
   name!: string;
+  // Auto set to target table after dd.table(), cleared after `Column.spawn`
   table!: Table | JoinedTable;
   foreignColumn: Column | null = null;
 
-  getInputName(): string {
+  // See `Column.join` for details
+  mirroredColumn: Column | null = null;
+
+  inputName(): string {
+    if (this.isJoinedColumn()) {
+      const curName = makeMiddleName(this.name);
+      return this.castToJoinedTable().name() + curName;
+    }
     return `${utils.toCamelCase(this.tableName())}${utils.capitalizeColumnName(
       utils.toCamelCase(this.name),
     )}`;
@@ -59,19 +68,29 @@ export class Column {
     return res;
   }
 
-  static fromColumn(column: Column): Column {
+  static spawn(column: Column): Column {
     throwIfFalsy(column, 'column');
 
     const res = new Column();
-    res.props = new ColumnProps();
+    res.__props = new ColumnProps();
     Object.assign(res.props, column.props);
     const { props } = res;
     // Deep copy values
     props.types = new Set<string>(column.props.types);
+    // Reset values
+    props.pk = false;
+    // tslint:disable-next-line no-any
+    (props as any).name = undefined;
+    // tslint:disable-next-line no-any
+    (props as any).table = undefined;
     return res;
   }
 
-  props = new ColumnProps();
+  __props = new ColumnProps();
+
+  get props(): ColumnProps {
+    return this.__props;
+  }
 
   get nullable(): Column {
     this.props.nullable = true;
@@ -83,6 +102,11 @@ export class Column {
     return this;
   }
 
+  freeze() {
+    Object.freeze(this.props);
+    Object.freeze(this);
+  }
+
   setDefault(value: unknown): this {
     this.props.default = value;
     return this;
@@ -92,11 +116,6 @@ export class Column {
     throwIfFalsy(name, 'name');
     this.props.name = name;
     return this;
-  }
-
-  as(name: string): SelectedColumn {
-    throwIfFalsy(name, 'name');
-    return new SelectedColumn(this, name);
   }
 
   toInput(name?: string): SQLInput {
@@ -131,26 +150,12 @@ export class Column {
     return sql`${this} IS NOT NULL`;
   }
 
-  inputName(): string {
-    const { props } = this;
-    if (props.table instanceof Table) {
-      return `${utils.toCamelCase(
-        props.tableName(),
-      )}${utils.capitalizeColumnName(utils.toCamelCase(props.name))}`;
-    }
-    // JoinedTable
-    const curName = makeMiddleName(props.name);
-    return (props.table as JoinedTable).name() + curName;
-  }
-
   join<T extends Table>(destTable: T): T {
-    const localColumn = this;
     // source column + dest table + dest column = joined table
     // Simple case: post.user_id.join(user): since post.user_id is a FK to user.id, so dest column here is implicitly user.id
 
     // Complex case: cmt.post_id.join(post).user_id.join(user): the current object(`this`) is a joined column(`cmt.post_id.join(post).user_id`), and also a FK.
-    const { props } = this;
-    if (!props.foreignColumn) {
+    if (!this.props.foreignColumn) {
       throw new Error(
         `You cannot call "join" on this column of type "${toTypeString(
           this,
@@ -158,21 +163,39 @@ export class Column {
       );
     }
     // `this` is FK here
-    const destColumn = props.foreignColumn;
+    const destColumn = this.props.foreignColumn;
 
     // Join returns a proxy, each property access first retrieves the original column from original joined table, then it constructs a new copied column with `props.table` set to a newly created JoinedTable
     const joinedTable = new JoinedTable(this, destTable, destColumn);
     return new Proxy<T>(destTable, {
       get(target, propKey, receiver) {
-        const selectedColumn = Reflect.get(target, propKey, receiver) as Column;
+        const selectedColumn = Reflect.get(target, propKey, receiver) as
+          | Column
+          | undefined;
+
+        if (!selectedColumn) {
+          throw new Error(
+            `The column "${propKey.toString()}" does not exist on table ${toTypeString(
+              target,
+            )}`,
+          );
+        }
         // returns a joined column
-        const jc = Column.fromColumn(selectedColumn);
-        jc.props.table = joinedTable;
-        // joined column is also a foreign column, it references the selected column
-        jc.props.foreignColumn = selectedColumn;
-        return jc;
+        const copied = Column.spawn(selectedColumn);
+        const { props } = copied;
+        props.mirroredColumn = selectedColumn;
+        // props.name and table are reset after spawn
+        props.table = joinedTable;
+        props.name = selectedColumn.props.name;
+
+        return copied;
       },
     });
+  }
+
+  as(name: string): SelectedColumn {
+    throwIfFalsy(name, 'name');
+    return new SelectedColumn(this, name);
   }
 }
 
@@ -189,6 +212,13 @@ export class Table {
   }
 }
 
+/*
+ post.user_id.join(user) -> this creates a intermediate joined table
+
+ srcColumn: post.user_id
+ destTable: user
+ destColumn: user.id
+*/
 export class JoinedTable {
   // keyPath is useful to detect duplicate joins, if multiple JoinedTable instances are created with same columns and tables, they'd have same `keyPath`s.
   keyPath: string;
@@ -225,59 +255,6 @@ export class JoinedTable {
   }
 }
 
-export class JoinedColumn {
-  constructor(
-    /** Note that joinPath does not include the selected column name. */
-    public joinPath: string,
-    public localColumn: ColumnBase,
-    public remoteColumn: ColumnBase,
-    public selectedColumn: ColumnBase,
-  ) {
-    super(ColumnBaseType.Joined);
-
-    throwIfFalsy(localColumn, 'localColumn');
-    throwIfFalsy(remoteColumn, 'remoteColumn');
-    throwIfFalsy(selectedColumn, 'selectedColumn');
-    // Both __table and __name point to the selected column
-    this.__table = selectedColumn.__table;
-    this.__name = selectedColumn.__name;
-  }
-
-  __getTargetColumn(): Column {
-    return this.selectedColumn.__getTargetColumn();
-  }
-
-  __getInputName(): string {
-    const { localColumn } = this;
-    const curName = this.makeMiddleName(this.__name);
-    if (localColumn instanceof JoinedColumn) {
-      return (localColumn as JoinedColumn).__getInputName() + curName;
-    }
-    return (
-      utils.toCamelCase(localColumn.tableName) +
-      this.makeMiddleName(localColumn.__name) +
-      curName
-    );
-  }
-}
-
-export class SelectedColumn extends ColumnBase {
-  constructor(public column: ColumnBase, public selectedName: string) {
-    super(ColumnBaseType.Selected);
-
-    throwIfFalsy(column, 'column');
-    throwIfFalsy(selectedName, 'selectedName');
-  }
-
-  __getTargetColumn(): Column {
-    return this.column.__getTargetColumn();
-  }
-
-  __getInputName(): string {
-    return this.selectedName;
-  }
-}
-
 export class SQLInput {
   constructor(public typeObject: string | Column, public name: string) {
     throwIfFalsy(typeObject, 'typeObject');
@@ -290,24 +267,24 @@ export class SQLInput {
     if (typeof typeObject === 'string') {
       type = typeObject as string;
     } else {
-      type = `[${(typeObject as Column).__name}]`;
+      type = `[${(typeObject as Column).props.name}]`;
     }
     return `${this.name}: ${type}`;
   }
 }
 
-export function input(type: string | ColumnBase, name?: string): SQLInput {
-  if (type instanceof ColumnBase) {
-    const col = type as ColumnBase;
+export function input(type: string | Column, name?: string): SQLInput {
+  if (type instanceof Column) {
+    const col = type as Column;
     if (!name) {
-      name = col.__getInputName();
+      name = col.props.inputName();
       if (!name) {
         throw new Error(
           `Unexpected empty input name for column "${toTypeString(type)}"`,
         );
       }
     }
-    return new SQLInput((type as ColumnBase).__getTargetColumn(), name);
+    return new SQLInput(col.props.inputName(), name);
   }
   if (!name) {
     throw new Error(`Unexpected empty input name for type "${type}"`);
@@ -316,7 +293,7 @@ export function input(type: string | ColumnBase, name?: string): SQLInput {
 }
 
 // Allowed types in dd.sql template strings
-export type SQLParam = string | ColumnBase | SQLInput | SQL | SQLCall;
+export type SQLParam = string | Column | SQLInput | SQL | SQLCall;
 
 export enum SQLElementType {
   rawString,
@@ -332,8 +309,8 @@ export class SQLElement {
     return this.value as string;
   }
 
-  toColumn(): ColumnBase {
-    return this.value as ColumnBase;
+  toColumn(): Column {
+    return this.value as Column;
   }
 
   toInput(): SQLInput {
@@ -360,7 +337,7 @@ export class SQL {
         elements.push(
           new SQLElement(SQLElementType.rawString, param as string),
         );
-      } else if (param instanceof ColumnBase) {
+      } else if (param instanceof Column) {
         elements.push(new SQLElement(SQLElementType.column, param));
       } else if (param instanceof SQLInput) {
         elements.push(new SQLElement(SQLElementType.input, param));
@@ -393,7 +370,7 @@ export class SQL {
           break;
         }
         case SQLElementType.column: {
-          s += '`' + element.toColumn().__name + '`';
+          s += '`' + element.toColumn().props.name + '`';
           break;
         }
         case SQLElementType.input: {
@@ -422,8 +399,18 @@ export function sql(
   return new SQL(literals, params);
 }
 
+export class SelectedColumn {
+  constructor(public column: Column, public selectedName: string) {
+    throwIfFalsy(column, 'column');
+    throwIfFalsy(selectedName, 'selectedName');
+  }
+}
+
 // Generates a column name for a join, we call it a middle and we need to cut the ending `_id`, e.g. `SELECT post.user_id.join(user).name`, the `user_id` before the join is the middle name, the input name for this column is `postUserName`, note the `_id` of `user_id` is removed.
 function makeMiddleName(s: string): string {
+  if (!s) {
+    throw new Error(`Unexpected empty value in "makeMiddleName"`);
+  }
   return utils.capitalizeColumnName(
     utils.toCamelCase(utils.stripTrailingSnakeID(s)),
   );

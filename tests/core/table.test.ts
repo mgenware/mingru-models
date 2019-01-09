@@ -6,8 +6,8 @@ test('Table name', () => {
 });
 
 test('Table.forEach', () => {
-  const cols: dd.ColumnBase[] = [];
-  dd.Table.forEach(user, col => cols.push(col));
+  const cols: dd.Column[] = [];
+  dd.enumerateColumns(user, col => cols.push(col));
   expect(cols).toEqual([
     user.id,
     user.name,

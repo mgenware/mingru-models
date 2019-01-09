@@ -1,18 +1,18 @@
 import { Action } from './action';
-import { ColumnBase, SQL } from '../core/core';
+import { Column, SQL } from '../core/core';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export default class CoreUpdateAction extends Action {
-  columnValueMap = new Map<ColumnBase, SQL>();
+  columnValueMap = new Map<Column, SQL>();
 
-  set(column: ColumnBase, value: SQL): this {
+  set(column: Column, value: SQL): this {
     throwIfFalsy(column, 'column');
     throwIfFalsy(value, 'value');
     this.columnValueMap.set(column, value);
     return this;
   }
 
-  setInputs(...columns: ColumnBase[]): this {
+  setInputs(...columns: Column[]): this {
     throwIfFalsy(columns, 'columns');
     for (const col of columns) {
       this.columnValueMap.set(col, col.toInputSQL());

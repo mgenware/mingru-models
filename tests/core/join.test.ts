@@ -2,57 +2,79 @@ import * as dd from '../../';
 import user from '../models/user';
 import post from '../models/post';
 import postCmt from '../models/postCmt';
+import { Column } from '../../dist/main';
 
-function testType(col: dd.ColumnBase) {
-  expect(col instanceof dd.JoinedColumn).toBe(true);
-}
-
-function toJC(col: dd.ColumnBase): dd.JoinedColumn {
-  return (col as unknown) as dd.JoinedColumn;
+function testType(col: dd.Column, name: string) {
+  const { props } = col;
+  expect(props.isJoinedColumn()).toBe(true);
+  expect(props.name).toBe(name);
 }
 
 test('Instance type', () => {
-  testType(post.user_id.join(user).name);
-  testType(postCmt.post_id.join(post).user_id.join(user).name);
+  testType(post.user_id.join(user).name, 'name');
+  testType(postCmt.post_id.join(post).user_id.join(user).name, 'name');
 });
 
-// jc.localColumn is not tested cuz it may be another JC if join is nested (see 'Nested JoinedColumn' below)
 function testJCCols(
-  jc: dd.JoinedColumn,
-  rc: dd.ColumnBase,
-  sc: dd.ColumnBase,
+  jc: dd.Column,
+  destTable: dd.Table,
+  destColumn: dd.Column,
+  selectedColumn: dd.Column,
+  srcColumn: Column,
   path: string,
 ) {
-  expect(jc.remoteColumn).toBe(rc);
-  expect(jc.selectedColumn).toBe(sc);
-  expect(jc.joinPath).toBe(path);
+  const { props } = jc;
+  expect(props.mirroredColumn).toBe(selectedColumn);
+  const jt = props.table as dd.JoinedTable;
+  expect(jt.destTable).toBe(destTable);
+  expect(jt.destColumn).toBe(destColumn);
+  expect(jt.srcColumn).toBe(srcColumn);
+  expect(jt.keyPath).toBe(path);
 }
 
 test('JoinedColumn', () => {
-  const jc = toJC(post.user_id.join(user).name);
-  expect(jc.localColumn).toBe(post.user_id);
-  testJCCols(jc, user.id, user.name, '[[post.user_id].[user.id]]');
+  const jc = post.user_id.join(user).name;
+  testJCCols(
+    jc,
+    user,
+    user.id,
+    user.name,
+    post.user_id,
+    '[[post.user_id].[user.id]]',
+  );
 });
 
 test('Nested JoinedColumn', () => {
-  const jc1 = toJC(postCmt.post_id.join(post).user_id);
-  const jc2 = toJC(jc1.join(user).name);
-  expect(jc2.localColumn).toBe(jc1);
+  const jc1 = postCmt.post_id.join(post).user_id;
+  const jc2 = jc1.join(user).name;
+
+  testJCCols(
+    jc1,
+    post,
+    post.id,
+    post.user_id,
+    postCmt.post_id,
+    '[[post_cmt.post_id].[post.id]]',
+  );
+
   testJCCols(
     jc2,
+    user,
     user.id,
     user.name,
+    jc1,
     '[[[[post_cmt.post_id].[post.id]].user_id].[user.id]]',
   );
 
-  expect(jc1.localColumn).toBe(postCmt.post_id);
-  testJCCols(jc1, post.id, post.user_id, '[[post_cmt.post_id].[post.id]]');
-
-  const jc3 = toJC(postCmt.post_id.join(post).user_id.join(user).id);
+  // like jc2, but select user.id instead of user.name
+  const jc3 = postCmt.post_id.join(post).user_id;
+  const jc4 = jc3.join(user).id;
   testJCCols(
+    jc4,
+    user,
+    user.id,
+    user.id,
     jc3,
-    user.id,
-    user.id,
     '[[[[post_cmt.post_id].[post.id]].user_id].[user.id]]',
   );
 });

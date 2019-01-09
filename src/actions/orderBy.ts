@@ -1,5 +1,7 @@
-import { ColumnBase } from '../core/core';
+import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export default class OrderBy {
-  constructor(public column: ColumnBase, public desc = false) {}
+  constructor(public columnName: string, public desc = false) {
+    throwIfFalsy(columnName, 'columnName');
+  }
 }
