@@ -14,14 +14,14 @@ export class ColumnName {
 }
 
 function getColumnName(col: SelectActionColumnNames): string {
+  if (typeof col === 'string') {
+    return col as string;
+  }
   if (col instanceof Column) {
     return (col as Column).props.name;
   }
   if (col instanceof SelectedColumn) {
     return (col as SelectedColumn).selectedName;
-  }
-  if (typeof col === 'string') {
-    return col as string;
   }
   throw new Error(
     `Unsupported column type "${toTypeString(col)}", value "${col}"`,
