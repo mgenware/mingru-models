@@ -5,7 +5,7 @@ import CoreSelectAction from './coreSelectAction';
 import toTypeString from 'to-type-string';
 
 export type SelectActionColumns = Column | SelectedColumn;
-export type OrderByColumns = SelectActionColumns | string;
+export type SelectActionColumnNames = SelectActionColumns | string;
 
 export class ColumnName {
   constructor(public columnName: string, public desc = false) {
@@ -13,7 +13,7 @@ export class ColumnName {
   }
 }
 
-function getColumnName(col: OrderByColumns): string {
+function getColumnName(col: SelectActionColumnNames): string {
   if (col instanceof Column) {
     return (col as Column).props.name;
   }
@@ -32,6 +32,7 @@ export class SelectAction extends CoreSelectAction {
   whereSQL: SQL | null = null;
   isSelectField = false;
   orderByColumns: ColumnName[] = [];
+  groupByColumns: ColumnName[] = [];
 
   constructor(
     name: string,
@@ -43,14 +44,20 @@ export class SelectAction extends CoreSelectAction {
     throwIfFalsy(columns, 'columns');
   }
 
-  orderBy(column: OrderByColumns): this {
+  orderBy(column: SelectActionColumnNames): this {
     throwIfFalsy(column, 'column');
     return this.orderByCore(getColumnName(column), false);
   }
 
-  orderByDesc(column: OrderByColumns): this {
+  orderByDesc(column: SelectActionColumnNames): this {
     throwIfFalsy(column, 'column');
     return this.orderByCore(getColumnName(column), true);
+  }
+
+  groupBy(column: SelectActionColumnNames): this {
+    throwIfFalsy(column, 'column');
+    this.groupByColumns.push(new ColumnName(getColumnName(column)));
+    return this;
   }
 
   private orderByCore(columnName: string, desc: boolean): this {

@@ -78,3 +78,15 @@ test('Order by', () => {
   expect(v.orderByColumns[1].columnName).toBe('follower_count');
   expect(v.orderByColumns[1].desc).toBe(true);
 });
+
+test('Group by', () => {
+  const actions = dd.actions(user);
+  const v = actions
+    .select('t', user.name, user.follower_count)
+    .byID()
+    .groupBy(user.name);
+
+  expect(v.groupByColumns.length).toBe(1);
+  expect(v.groupByColumns[0]).toBeInstanceOf(dd.ColumnName);
+  expect(v.groupByColumns[0].columnName).toBe('name');
+});
