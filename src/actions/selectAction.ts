@@ -2,11 +2,16 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { ActionType } from './action';
 import { Table, Column, SelectedColumn, SQL } from '../core/core';
 import CoreSelectAction from './coreSelectAction';
-import OrderBy from './orderBy';
 import toTypeString from 'to-type-string';
 
 export type SelectActionColumns = Column | SelectedColumn;
 export type OrderByColumns = SelectActionColumns | string;
+
+export class ColumnName {
+  constructor(public columnName: string, public desc = false) {
+    throwIfFalsy(columnName, 'columnName');
+  }
+}
 
 function getColumnName(col: OrderByColumns): string {
   if (col instanceof Column) {
@@ -26,7 +31,7 @@ function getColumnName(col: OrderByColumns): string {
 export class SelectAction extends CoreSelectAction {
   whereSQL: SQL | null = null;
   isSelectField = false;
-  orderByColumns: OrderBy[] = [];
+  orderByColumns: ColumnName[] = [];
 
   constructor(
     name: string,
@@ -49,7 +54,7 @@ export class SelectAction extends CoreSelectAction {
   }
 
   private orderByCore(columnName: string, desc: boolean): this {
-    this.orderByColumns.push(new OrderBy(columnName, desc));
+    this.orderByColumns.push(new ColumnName(columnName, desc));
     return this;
   }
 }

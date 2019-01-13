@@ -72,7 +72,7 @@ test('Order by', () => {
     .orderByDesc(user.follower_count);
 
   expect(v.orderByColumns.length).toBe(2);
-  expect(v.orderByColumns[0]).toBeInstanceOf(dd.OrderBy);
+  expect(v.orderByColumns[0]).toBeInstanceOf(dd.ColumnName);
   expect(v.orderByColumns[0].columnName).toBe('name');
   expect(v.orderByColumns[0].desc).toBe(false);
   expect(v.orderByColumns[1].columnName).toBe('follower_count');
