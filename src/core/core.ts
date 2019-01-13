@@ -400,8 +400,8 @@ export function sql(
 }
 
 export class SelectedColumn {
-  constructor(public column: Column, public selectedName: string) {
-    throwIfFalsy(column, 'column');
+  constructor(public core: Column | SQL, public selectedName: string) {
+    throwIfFalsy(core, 'core');
     throwIfFalsy(selectedName, 'selectedName');
   }
 }
