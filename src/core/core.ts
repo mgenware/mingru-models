@@ -400,7 +400,7 @@ export function sql(
 }
 
 export class SelectedColumn {
-  constructor(public core: Column | SQL, public selectedName: string) {
+  constructor(public core: Column | SQL, public selectedName: string, public types?: Set<string>) {
     throwIfFalsy(core, 'core');
     throwIfFalsy(selectedName, 'selectedName');
   }

@@ -57,6 +57,17 @@ test('SelectedColumn (raw SQL)', () => {
   expect(b.core.toString()).toBe('COUNT(`name`)');
 });
 
+test('SelectedColumn (types)', () => {
+  const a = new dd.SelectedColumn(
+    dd.sql`123`,
+    'x',
+    new Set<string>(['t1', 't2']),
+  );
+  expect(a.selectedName).toBe('x');
+  expect(a.core.toString()).toBe('123');
+  expect(a.types).toEqual(new Set<string>(['t1', 't2']));
+});
+
 test('ByID', () => {
   const actions = dd.actions(user);
   const v = actions.select('t', user.name).byID();
