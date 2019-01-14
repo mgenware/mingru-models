@@ -61,11 +61,11 @@ test('SelectedColumn (types)', () => {
   const a = new dd.SelectedColumn(
     dd.sql`123`,
     'x',
-    new Set<string>(['t1', 't2']),
+    new dd.ColumnProps(new Set<string>(['t1', 't2'])),
   );
   expect(a.selectedName).toBe('x');
   expect(a.core.toString()).toBe('123');
-  expect(a.types).toEqual(new Set<string>(['t1', 't2']));
+  expect(a.props).toEqual(new dd.ColumnProps(new Set<string>(['t1', 't2'])));
 });
 
 test('ByID', () => {

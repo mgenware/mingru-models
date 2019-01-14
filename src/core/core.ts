@@ -4,7 +4,6 @@ import toTypeString from 'to-type-string';
 import { SQLCall } from './sqlCall';
 
 export class ColumnProps {
-  types = new Set<string>();
   pk = false;
   nullable = false;
   unsigned = false;
@@ -19,6 +18,8 @@ export class ColumnProps {
 
   // See `Column.join` for details
   mirroredColumn: Column | null = null;
+
+  constructor(public types = new Set<string>()) {}
 
   inputName(): string {
     if (this.isJoinedColumn()) {
@@ -400,7 +401,11 @@ export function sql(
 }
 
 export class SelectedColumn {
-  constructor(public core: Column | SQL, public selectedName: string, public types?: Set<string>) {
+  constructor(
+    public core: Column | SQL,
+    public selectedName: string,
+    public props?: ColumnProps,
+  ) {
     throwIfFalsy(core, 'core');
     throwIfFalsy(selectedName, 'selectedName');
   }
