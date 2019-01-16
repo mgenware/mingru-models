@@ -194,9 +194,9 @@ export class Column {
     });
   }
 
-  as(name: string): SelectedColumn {
+  as(name: string): CalculatedColumn {
     throwIfFalsy(name, 'name');
-    return new SelectedColumn(this, name);
+    return new CalculatedColumn(this, name);
   }
 }
 
@@ -400,7 +400,7 @@ export function sql(
   return new SQL(literals, params);
 }
 
-export class SelectedColumn {
+export class CalculatedColumn {
   constructor(
     public core: Column | SQL,
     public selectedName: string,

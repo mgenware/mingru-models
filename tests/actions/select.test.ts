@@ -33,32 +33,32 @@ test('as', () => {
   const b = user.name.as('b');
   const c = user.id.as('c');
 
-  expect(a).toBeInstanceOf(dd.SelectedColumn);
+  expect(a).toBeInstanceOf(dd.CalculatedColumn);
   expect(a.selectedName).toBe('a');
   expect(b.selectedName).toBe('b');
   expect(c.selectedName).toBe('c');
 });
 
-test('SelectedColumn', () => {
+test('CalculatedColumn', () => {
   const a = user.id.as('x');
-  const b = new dd.SelectedColumn(user.id, 'y');
+  const b = new dd.CalculatedColumn(user.id, 'y');
   expect(a.selectedName).toBe('x');
   expect(a.core).toBe(user.id);
   expect(b.selectedName).toBe('y');
   expect(b.core).toBe(user.id);
 });
 
-test('SelectedColumn (raw SQL)', () => {
-  const a = new dd.SelectedColumn(dd.sql`123`, 'x');
-  const b = new dd.SelectedColumn(dd.sql`COUNT(${user.name})`, 'y');
+test('CalculatedColumn (raw SQL)', () => {
+  const a = new dd.CalculatedColumn(dd.sql`123`, 'x');
+  const b = new dd.CalculatedColumn(dd.sql`COUNT(${user.name})`, 'y');
   expect(a.selectedName).toBe('x');
   expect(a.core.toString()).toBe('123');
   expect(b.selectedName).toBe('y');
   expect(b.core.toString()).toBe('COUNT(`name`)');
 });
 
-test('SelectedColumn (types)', () => {
-  const a = new dd.SelectedColumn(
+test('CalculatedColumn (types)', () => {
+  const a = new dd.CalculatedColumn(
     dd.sql`123`,
     'x',
     new dd.ColumnProps(new Set<string>(['t1', 't2'])),

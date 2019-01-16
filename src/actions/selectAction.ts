@@ -1,10 +1,10 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { ActionType } from './action';
-import { Table, Column, SelectedColumn, SQL } from '../core/core';
+import { Table, Column, CalculatedColumn, SQL } from '../core/core';
 import CoreSelectAction from './coreSelectAction';
 import toTypeString from 'to-type-string';
 
-export type SelectActionColumns = Column | SelectedColumn;
+export type SelectActionColumns = Column | CalculatedColumn;
 export type SelectActionColumnNames = SelectActionColumns | string;
 
 export class ColumnName {
@@ -20,8 +20,8 @@ function getColumnName(col: SelectActionColumnNames): string {
   if (col instanceof Column) {
     return (col as Column).props.name;
   }
-  if (col instanceof SelectedColumn) {
-    return (col as SelectedColumn).selectedName;
+  if (col instanceof CalculatedColumn) {
+    return (col as CalculatedColumn).selectedName;
   }
   throw new Error(
     `Unsupported column type "${toTypeString(col)}", value "${col}"`,

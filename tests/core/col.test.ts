@@ -148,6 +148,6 @@ class SCTable extends dd.Table {
   sc = dd.int().as('haha');
 }
 
-test('SelectedColumn in table def', () => {
-  expect(() => dd.table(SCTable)).toThrow('SelectedColumn');
+test('CalculatedColumn in table def', () => {
+  expect(() => dd.table(SCTable)).toThrow('CalculatedColumn');
 });
