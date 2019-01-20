@@ -1,6 +1,6 @@
 export * from './core/core';
 export { default as dt } from './core/dt';
-export * from './core/cols';
+export * from './core/columnHelper';
 export * from './core/fk';
 export * from './core/table';
 
