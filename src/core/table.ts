@@ -85,7 +85,7 @@ export function table<T extends Table>(
 
     // tslint:disable-next-line
     (tableObj as any)[propName] = columnToAdd;
-    Object.freeze(columnToAdd);
+    columnToAdd.freeze();
     cols.push(columnToAdd);
   });
   return (tableObj as unknown) as T;
