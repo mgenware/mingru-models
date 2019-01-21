@@ -116,11 +116,13 @@ export class Column {
   }
 
   get nullable(): Column {
+    this.checkMutability();
     this.props.nullable = true;
     return this;
   }
 
   get unique(): Column {
+    this.checkMutability();
     this.props.unique = true;
     return this;
   }
@@ -131,12 +133,14 @@ export class Column {
   }
 
   setDefault(value: unknown): this {
+    this.checkMutability();
     this.props.default = value;
     return this;
   }
 
   setName(name: string): this {
     throwIfFalsy(name, 'name');
+    this.checkMutability();
     this.props.name = name;
     return this;
   }
@@ -215,6 +219,16 @@ export class Column {
   as(name: string): CalculatedColumn {
     throwIfFalsy(name, 'name');
     return new CalculatedColumn(this, name);
+  }
+
+  private checkMutability() {
+    if (Object.isFrozen(this)) {
+      throw new Error(
+        `The current column "${this.props.name}" of type ${toTypeString(
+          this,
+        )} cannot be modified, it is frozen. It is mostly likely because you are modifying a column from another table`,
+      );
+    }
   }
 }
 
