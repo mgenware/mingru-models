@@ -7,7 +7,7 @@ class ABCTable extends dd.Table {
   statusID = dd.int().setName('customName');
   uid1 = user.id;
   uid2 = user.id;
-  uid3 = user.id.setName('ID3');
+  uid3 = dd.fk(user.id).setName('ID3');
 }
 
 class DEFTable extends dd.Table {}
@@ -24,7 +24,7 @@ test('Capitalized to snake_case', () => {
 });
 
 test('Rename a FK', () => {
-  expect(abcTable.uid1.props.name).toBe('uid1');
-  expect(abcTable.uid2.props.name).toBe('uid2');
+  expect(abcTable.uid1.props.name).toBe('uid_1');
+  expect(abcTable.uid2.props.name).toBe('uid_2');
   expect(abcTable.uid3.props.name).toBe('ID3');
 });

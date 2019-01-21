@@ -86,7 +86,13 @@ export class Column {
   }
 
   static spawnJoinedColumn(mirroredColumn: Column, table: JoinedTable): Column {
-    return Column._spawn(mirroredColumn, table, mirroredColumn.props.name);
+    const copied = Column._spawn(
+      mirroredColumn,
+      table,
+      mirroredColumn.props.name,
+    );
+    copied.props.mirroredColumn = mirroredColumn;
+    return copied;
   }
 
   private static _spawn(
@@ -208,10 +214,7 @@ export class Column {
           );
         }
         // returns a joined column
-        const copied = Column.spawnJoinedColumn(selectedColumn, joinedTable);
-        const { props } = copied;
-        props.mirroredColumn = selectedColumn;
-        return copied;
+        return Column.spawnJoinedColumn(selectedColumn, joinedTable);
       },
     });
   }

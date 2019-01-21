@@ -57,7 +57,6 @@ test('Column.spawnForeignColumn', () => {
   expect(b.props.name).toBeNull();
   // Value being reset
   expect(b.props.pk).toBe(false);
-  expect(b.props.name).toBe(a.props.name);
   expect(b.props.table).toBe(post);
   // props is copied
   expect(b.props).not.toBe(a.props);
@@ -69,10 +68,6 @@ test('Column.spawnForeignColumn', () => {
   expect(a.props.types).toEqual(b.props.types);
   expect(a.props.nullable).toBe(b.props.nullable);
   expect(a.props.unique).toBe(b.props.unique);
-
-  // newName param
-  b = Column.spawnForeignColumn(a, post);
-  expect(b.props.name).toBe('haha');
 });
 
 test('Column.spawnJoinedColumn', () => {
