@@ -50,7 +50,7 @@ test('freeze', () => {
 
 test('Column.spawnForeignColumn', () => {
   const a = user.id;
-  let b = Column.spawnForeignColumn(a, post);
+  const b = Column.spawnForeignColumn(a, post);
   // FK
   expect(b.props.foreignColumn).toBe(a);
   // name is cleared
