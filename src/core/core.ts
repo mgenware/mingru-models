@@ -10,9 +10,9 @@ export class ColumnProps {
   unique = false;
   length = 0;
   default: unknown = undefined;
-  // Auto set to property name after dd.table(), cleared after `Column.spawn`
+  // Auto set to property name after dd.table()
   name!: string;
-  // Auto set to target table after dd.table(), cleared after `Column.spawn`
+  // Auto set to target table after dd.table()
   table!: Table | JoinedTable;
   foreignColumn: Column | null = null;
 
@@ -69,9 +69,31 @@ export class Column {
     return res;
   }
 
-  static spawn(column: Column): Column {
+  static spawnForeignColumn(
+    column: Column,
+    table: Table | null, // can be nullable, used by dd.fk which doesn't have a table
+  ): Column {
     throwIfFalsy(column, 'column');
 
+    // Just to mute tslint
+    const tb = table as Table;
+    const copied = Column._spawn(column, tb, null);
+    copied.props.foreignColumn = column;
+    // Unlike spawnJoinedColumn, name will be inherited
+    // tslint:disable-next-line no-any
+    (copied.props.name as any) = null;
+    return copied;
+  }
+
+  static spawnJoinedColumn(mirroredColumn: Column, table: JoinedTable): Column {
+    return Column._spawn(mirroredColumn, table, mirroredColumn.props.name);
+  }
+
+  private static _spawn(
+    column: Column,
+    table: Table | JoinedTable,
+    newName: string | null,
+  ): Column {
     const res = new Column();
     res.__props = new ColumnProps();
     Object.assign(res.props, column.props);
@@ -80,10 +102,10 @@ export class Column {
     props.types = new Set<string>(column.props.types);
     // Reset values
     props.pk = false;
-    // tslint:disable-next-line no-any
-    (props as any).name = undefined;
-    // tslint:disable-next-line no-any
-    (props as any).table = undefined;
+    props.table = table;
+    if (newName) {
+      props.name = newName;
+    }
     return res;
   }
 
@@ -182,13 +204,9 @@ export class Column {
           );
         }
         // returns a joined column
-        const copied = Column.spawn(selectedColumn);
+        const copied = Column.spawnJoinedColumn(selectedColumn, joinedTable);
         const { props } = copied;
         props.mirroredColumn = selectedColumn;
-        // props.name and table are reset after spawn
-        props.table = joinedTable;
-        props.name = selectedColumn.props.name;
-
         return copied;
       },
     });

@@ -63,10 +63,7 @@ export function table<T extends Table>(
     // A frozen column indicates an implicit foreign key, note: `dd.fk` can set up an explicit foreign key
     if (Object.isFrozen(col)) {
       // Copy the frozen column
-      columnToAdd = Column.spawn(col);
-      columnToAdd.props.foreignColumn = col;
-      // Reset column name to current prop name instead of inherited name
-      columnToAdd.props.name = propName;
+      columnToAdd = Column.spawnForeignColumn(col, tableObj);
     } else {
       columnToAdd = col;
     }

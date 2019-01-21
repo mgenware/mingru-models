@@ -2,6 +2,19 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Column, sql } from './core';
 import dt from './dt';
 import * as call from './sqlCall';
+import toTypeString from 'to-type-string';
+
+export function fk(column: Column): Column {
+  throwIfFalsy(column, 'column');
+  if (!Object.isFrozen(column)) {
+    throw new Error(
+      `The column "${toTypeString(
+        column,
+      )}" doesn't seem to be a valid column because it is frozen`,
+    );
+  }
+  return Column.spawnForeignColumn(column, null);
+}
 
 export function varChar(length: number, defaultValue?: string): Column {
   const col = Column.fromTypes(dt.varChar);

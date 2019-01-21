@@ -48,21 +48,49 @@ test('freeze', () => {
   expect(Object.isFrozen(col.props)).toBe(true);
 });
 
-test('Column.spawn', () => {
-  let a = dd.pk();
-  let b = Column.spawn(a);
+test('Column.spawnForeignColumn', () => {
+  const a = user.id;
+  let b = Column.spawnForeignColumn(a, post);
+  // FK
+  expect(b.props.foreignColumn).toBe(a);
+  // name is cleared
+  expect(b.props.name).toBeNull();
   // Value being reset
   expect(b.props.pk).toBe(false);
-  expect(b.props.name).toBe(undefined);
-  expect(b.props.table).toBe(undefined);
+  expect(b.props.name).toBe(a.props.name);
+  expect(b.props.table).toBe(post);
   // props is copied
   expect(b.props).not.toBe(a.props);
   // props.types is copied
   expect(b.props.types).not.toBe(a.props.types);
 
   // Check equality
-  a = dd.int(123).nullable;
-  b = Column.spawn(a);
+  expect(a.props.default).toBe(b.props.default);
+  expect(a.props.types).toEqual(b.props.types);
+  expect(a.props.nullable).toBe(b.props.nullable);
+  expect(a.props.unique).toBe(b.props.unique);
+
+  // newName param
+  b = Column.spawnForeignColumn(a, post);
+  expect(b.props.name).toBe('haha');
+});
+
+test('Column.spawnJoinedColumn', () => {
+  const t = (post.user_id.join(user) as unknown) as dd.JoinedTable;
+  const a = user.name;
+  const b = Column.spawnJoinedColumn(a, t);
+  // mirroredColumn
+  expect(b.props.mirroredColumn).toBe(a);
+  // Value being reset
+  expect(b.props.pk).toBe(false);
+  expect(b.props.name).toBe(a.props.name);
+  expect(b.props.table).toBe(t);
+  // props is copied
+  expect(b.props).not.toBe(a.props);
+  // props.types is copied
+  expect(b.props.types).not.toBe(a.props.types);
+
+  // Check equality
   expect(a.props.default).toBe(b.props.default);
   expect(a.props.types).toEqual(b.props.types);
   expect(a.props.nullable).toBe(b.props.nullable);
