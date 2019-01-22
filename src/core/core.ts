@@ -398,33 +398,33 @@ export class SQL {
   }
 
   toString(): string {
-    let s = '';
-    for (const element of this.elements) {
-      switch (element.type) {
-        case SQLElementType.rawString: {
-          s += element.toRawString();
-          break;
-        }
-        case SQLElementType.column: {
-          s += '`' + element.toColumn().props.name + '`';
-          break;
-        }
-        case SQLElementType.input: {
-          s += `<${element.toInput().toString()}>`;
-          break;
-        }
-        case SQLElementType.call: {
-          s += `CALL(${element.toCall().type})`;
-          break;
-        }
-        default: {
-          throw new Error(
-            `Unsupported SQL element type "${toTypeString(element)}"`,
-          );
-        }
+    return this.elements.map(e => this.formatElement(e)).join('');
+  }
+
+  private formatElement(element: SQLElement): string {
+    switch (element.type) {
+      case SQLElementType.rawString: {
+        return element.toRawString();
+      }
+      case SQLElementType.column: {
+        return '`' + element.toColumn().props.name + '`';
+      }
+      case SQLElementType.input: {
+        return `<${element.toInput().toString()}>`;
+      }
+      case SQLElementType.call: {
+        const call = element.toCall();
+        const pas = call.params.length
+          ? call.params.map(p => `, ${(p as object).toString()}`).join('')
+          : '';
+        return `CALL(${call.type}${pas})`;
+      }
+      default: {
+        throw new Error(
+          `Unsupported SQL element type "${toTypeString(element)}"`,
+        );
       }
     }
-    return s;
   }
 }
 
