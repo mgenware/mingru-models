@@ -446,6 +446,14 @@ export class CalculatedColumn {
   }
 }
 
+export function select(
+  core: Column | SQL,
+  selectedName: string,
+  props?: ColumnProps,
+): CalculatedColumn {
+  return new CalculatedColumn(core, selectedName, props);
+}
+
 // Generates a column name for a join, we call it a middle and we need to cut the ending `_id`, e.g. `SELECT post.user_id.join(user).name`, the `user_id` before the join is the middle name, the input name for this column is `postUserName`, note the `_id` of `user_id` is removed.
 function makeMiddleName(s: string): string {
   if (!s) {
