@@ -1,5 +1,6 @@
 import { Action } from './action';
-import { Column, SQL } from '../core/core';
+import { Column } from '../core/core';
+import { SQL } from '../core/sql';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export default class CoreUpdateAction extends Action {

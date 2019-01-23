@@ -1,5 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Column, sql } from './core';
+import { Column } from './core';
+import { sql } from '../core/sql';
 import dt from './dt';
 import * as call from './sqlCall';
 import toTypeString from 'to-type-string';

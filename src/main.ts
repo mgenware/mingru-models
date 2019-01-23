@@ -2,6 +2,11 @@ export * from './core/core';
 export { default as dt } from './core/dt';
 export * from './core/columnHelper';
 export * from './core/table';
+export * from './core/sql';
+
+// Extensions
+import './core/columnSQLExtensions';
+import './actions/columnSelectExtensions';
 
 export { Action, ActionType } from './actions/action';
 export * from './actions/selectAction';

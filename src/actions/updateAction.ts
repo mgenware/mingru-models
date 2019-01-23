@@ -1,5 +1,6 @@
 import { ActionType } from './action';
-import { Table, SQL } from '../core/core';
+import { Table } from '../core/core';
+import { SQL } from '../core/sql';
 import CoreUpdateAction from './coreUpdateAction';
 import CoreSelectAction from './coreSelectAction';
 

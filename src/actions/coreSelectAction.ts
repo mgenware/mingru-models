@@ -1,5 +1,5 @@
 import { Action } from './action';
-import { SQL } from '../core/core';
+import { SQL } from '../core/sql';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export default class CoreSelectAction extends Action {
