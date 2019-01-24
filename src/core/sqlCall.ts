@@ -1,3 +1,5 @@
+import { SQL, toSQL, SQLParam } from './sql';
+
 export enum SQLCallType {
   datetimeNow,
   dateNow,
@@ -8,9 +10,9 @@ export enum SQLCallType {
 }
 
 export class SQLCall {
-  params: Array<unknown>;
-  constructor(public type: SQLCallType, params?: Array<unknown>) {
-    this.params = params || [];
+  params: SQL[];
+  constructor(public type: SQLCallType, params?: SQLParam[]) {
+    this.params = params ? params.map(p => toSQL(p)) : [];
   }
 }
 
@@ -26,6 +28,6 @@ export function dateNow() {
   return new SQLCall(SQLCallType.dateNow);
 }
 
-export function count(column: unknown) {
+export function count(column: SQLParam) {
   return new SQLCall(SQLCallType.count, [column]);
 }

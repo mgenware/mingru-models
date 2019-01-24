@@ -122,3 +122,13 @@ test('isNotNull', () => {
   const sql = user.name.isNotNull();
   expect(sql.toString()).toBe('`name` IS NOT NULL');
 });
+
+test('makeSQL', () => {
+  const s = dd.sql`haha`;
+  expect(dd.toSQL(s)).toBe(s);
+  expect(dd.toSQL('haha').toString()).toBe('haha');
+  expect(dd.toSQL(post.user_id).toString()).toBe('`user_id`');
+  expect(dd.toSQL(dd.count(post.user_id)).toString()).toBe(
+    'CALL(3, `user_id`)',
+  );
+});

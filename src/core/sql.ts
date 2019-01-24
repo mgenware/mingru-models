@@ -146,3 +146,10 @@ export function sql(
 ): SQL {
   return new SQL(literals, params);
 }
+
+export function toSQL(element: SQLParam): SQL {
+  if (element instanceof SQL) {
+    return element as SQL;
+  }
+  return sql`${element}`;
+}
