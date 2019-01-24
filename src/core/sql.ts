@@ -41,7 +41,7 @@ export function input(type: string | Column, name?: string): SQLInput {
 }
 
 // Allowed types in dd.sql template strings
-export type SQLParam = string | Column | SQLInput | SQL | SQLCall;
+export type SQLConvertible = string | Column | SQLInput | SQL | SQLCall;
 
 export enum SQLElementType {
   rawString,
@@ -73,7 +73,7 @@ export class SQLElement {
 export class SQL {
   elements: SQLElement[];
 
-  constructor(literals: TemplateStringsArray, params: SQLParam[]) {
+  constructor(literals: TemplateStringsArray, params: SQLConvertible[]) {
     const elements: SQLElement[] = [];
     for (let i = 0; i < params.length; i++) {
       // Skip empty strings
@@ -142,12 +142,12 @@ export class SQL {
 
 export function sql(
   literals: TemplateStringsArray,
-  ...params: SQLParam[]
+  ...params: SQLConvertible[]
 ): SQL {
   return new SQL(literals, params);
 }
 
-export function toSQL(element: SQLParam): SQL {
+export function toSQL(element: SQLConvertible): SQL {
   if (element instanceof SQL) {
     return element as SQL;
   }
