@@ -61,22 +61,18 @@ test('CalculatedColumn (types)', () => {
   const a = new dd.CalculatedColumn(
     dd.sql`123`,
     'x',
-    new dd.ColumnProps(new Set<string>(['t1', 't2'])),
+    new dd.ColumnType(['t1', 't2']),
   );
   expect(a.selectedName).toBe('x');
   expect(a.core.toString()).toBe('123');
-  expect(a.props).toEqual(new dd.ColumnProps(new Set<string>(['t1', 't2'])));
+  expect(a.type).toEqual(new dd.ColumnType(['t1', 't2']));
 });
 
 test('dd.select (types)', () => {
-  const a = dd.select(
-    dd.sql`123`,
-    'x',
-    new dd.ColumnProps(new Set<string>(['t1', 't2'])),
-  );
+  const a = dd.select(dd.sql`123`, 'x', new dd.ColumnType(['t1', 't2']));
   expect(a.selectedName).toBe('x');
   expect(a.core.toString()).toBe('123');
-  expect(a.props).toEqual(new dd.ColumnProps(new Set<string>(['t1', 't2'])));
+  expect(a.type).toEqual(new dd.ColumnType(['t1', 't2']));
 });
 
 test('ByID', () => {

@@ -2,12 +2,64 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import utils from '../lib/utils';
 import toTypeString from 'to-type-string';
 
-export class ColumnProps {
+export class ColumnType {
   pk = false;
   nullable = false;
   unsigned = false;
   unique = false;
   length = 0;
+
+  constructor(public types: string[]) {
+    throwIfFalsy(types, 'types');
+  }
+}
+
+export class Column {
+  static fromTypes(types: string | string[]): Column {
+    types = typeof types === 'string' ? [types] : types;
+    return new Column(new ColumnType(types));
+  }
+
+  static spawnForeignColumn(
+    column: Column,
+    table: Table | null, // can be nullable, used by dd.fk which doesn't have a table
+  ): Column {
+    throwIfFalsy(column, 'column');
+
+    // Just to mute tslint
+    const tb = table as Table;
+    const copied = Column._spawn(column, tb, null);
+    copied.foreignColumn = column;
+    // Unlike spawnJoinedColumn, name will be inherited
+    // tslint:disable-next-line no-any
+    (copied.name as any) = null;
+    return copied;
+  }
+
+  static spawnJoinedColumn(mirroredColumn: Column, table: JoinedTable): Column {
+    const copied = Column._spawn(mirroredColumn, table, mirroredColumn.name);
+    copied.mirroredColumn = mirroredColumn;
+    return copied;
+  }
+
+  private static _spawn(
+    column: Column,
+    table: Table | JoinedTable,
+    newName: string | null,
+  ): Column {
+    const res = new Column(column.type);
+    // Copy values
+    res.default = column.default;
+    res.name = newName || column.name;
+    res.table = table;
+    res.foreignColumn = column.foreignColumn;
+    res.mirroredColumn = column.mirroredColumn;
+    // Reset value
+    res.type.pk = false;
+    return res;
+  }
+
+  type: ColumnType;
   default: unknown = undefined;
   // Auto set to property name after dd.table()
   name!: string;
@@ -18,7 +70,85 @@ export class ColumnProps {
   // See `Column.join` for details
   mirroredColumn: Column | null = null;
 
-  constructor(public types = new Set<string>()) {}
+  constructor(type: ColumnType) {
+    throwIfFalsy(type, 'type');
+    // Copy if frozen
+    if (Object.isFrozen(type)) {
+      const t = new ColumnType(type.types);
+      Object.assign(t, type);
+      // Deep copy types
+      t.types = [...type.types];
+      this.type = t;
+    } else {
+      this.type = type;
+    }
+  }
+
+  get nullable(): Column {
+    this.checkMutability();
+    this.type.nullable = true;
+    return this;
+  }
+
+  get unique(): Column {
+    this.checkMutability();
+    this.type.unique = true;
+    return this;
+  }
+
+  freeze() {
+    Object.freeze(this.type);
+    Object.freeze(this);
+  }
+
+  setDefault(value: unknown): this {
+    this.checkMutability();
+    this.default = value;
+    return this;
+  }
+
+  setName(name: string): this {
+    throwIfFalsy(name, 'name');
+    this.checkMutability();
+    this.name = name;
+    return this;
+  }
+
+  join<T extends Table>(destTable: T): T {
+    // source column + dest table + dest column = joined table
+    // Simple case: post.user_id.join(user): since post.user_id is a FK to user.id, so dest column here is implicitly user.id
+
+    // Complex case: cmt.post_id.join(post).user_id.join(user): the current object(`this`) is a joined column(`cmt.post_id.join(post).user_id`), and also a FK.
+    if (!this.foreignColumn) {
+      throw new Error(
+        `You cannot call "join" on this column of type "${toTypeString(
+          this,
+        )}", because it's not a foreign column`,
+      );
+    }
+    // `this` is FK here
+    const destColumn = this.foreignColumn;
+
+    // Join returns a proxy, each property access first retrieves the original column from original joined table, then it constructs a new copied column with `props.table` set to a newly created JoinedTable
+    const joinedTable = new JoinedTable(this, destTable, destColumn);
+    return new Proxy<T>(destTable, {
+      get(target, propKey, receiver) {
+        const selectedColumn = Reflect.get(target, propKey, receiver) as
+          | Column
+          | undefined;
+
+        if (!selectedColumn) {
+          throw new Error(
+            `The column "${propKey.toString()}" does not exist on table ${toTypeString(
+              target,
+            )}`,
+          );
+        }
+        // returns a joined column
+        return Column.spawnJoinedColumn(selectedColumn, joinedTable);
+      },
+    });
+  }
 
   inputName(): string {
     if (this.isJoinedColumn()) {
@@ -50,146 +180,11 @@ export class ColumnProps {
   castToJoinedTable(): JoinedTable {
     return this.table as JoinedTable;
   }
-}
-
-export class Column {
-  static fromTypes(types: string[] | string): Column {
-    throwIfFalsy(types, 'types');
-
-    const res = new Column();
-    const { props } = res;
-    if (Array.isArray(types)) {
-      for (const t of types) {
-        props.types.add(t);
-      }
-    } else {
-      props.types.add(types as string);
-    }
-    return res;
-  }
-
-  static spawnForeignColumn(
-    column: Column,
-    table: Table | null, // can be nullable, used by dd.fk which doesn't have a table
-  ): Column {
-    throwIfFalsy(column, 'column');
-
-    // Just to mute tslint
-    const tb = table as Table;
-    const copied = Column._spawn(column, tb, null);
-    copied.props.foreignColumn = column;
-    // Unlike spawnJoinedColumn, name will be inherited
-    // tslint:disable-next-line no-any
-    (copied.props.name as any) = null;
-    return copied;
-  }
-
-  static spawnJoinedColumn(mirroredColumn: Column, table: JoinedTable): Column {
-    const copied = Column._spawn(
-      mirroredColumn,
-      table,
-      mirroredColumn.props.name,
-    );
-    copied.props.mirroredColumn = mirroredColumn;
-    return copied;
-  }
-
-  private static _spawn(
-    column: Column,
-    table: Table | JoinedTable,
-    newName: string | null,
-  ): Column {
-    const res = new Column();
-    res.__props = new ColumnProps();
-    Object.assign(res.props, column.props);
-    const { props } = res;
-    // Deep copy values
-    props.types = new Set<string>(column.props.types);
-    // Reset values
-    props.pk = false;
-    props.table = table;
-    if (newName) {
-      props.name = newName;
-    }
-    return res;
-  }
-
-  __props = new ColumnProps();
-
-  get props(): ColumnProps {
-    return this.__props;
-  }
-
-  get nullable(): Column {
-    this.checkMutability();
-    this.props.nullable = true;
-    return this;
-  }
-
-  get unique(): Column {
-    this.checkMutability();
-    this.props.unique = true;
-    return this;
-  }
-
-  freeze() {
-    Object.freeze(this.props);
-    Object.freeze(this);
-  }
-
-  setDefault(value: unknown): this {
-    this.checkMutability();
-    this.props.default = value;
-    return this;
-  }
-
-  setName(name: string): this {
-    throwIfFalsy(name, 'name');
-    this.checkMutability();
-    this.props.name = name;
-    return this;
-  }
-
-  join<T extends Table>(destTable: T): T {
-    // source column + dest table + dest column = joined table
-    // Simple case: post.user_id.join(user): since post.user_id is a FK to user.id, so dest column here is implicitly user.id
-
-    // Complex case: cmt.post_id.join(post).user_id.join(user): the current object(`this`) is a joined column(`cmt.post_id.join(post).user_id`), and also a FK.
-    if (!this.props.foreignColumn) {
-      throw new Error(
-        `You cannot call "join" on this column of type "${toTypeString(
-          this,
-        )}", because it's not a foreign column`,
-      );
-    }
-    // `this` is FK here
-    const destColumn = this.props.foreignColumn;
-
-    // Join returns a proxy, each property access first retrieves the original column from original joined table, then it constructs a new copied column with `props.table` set to a newly created JoinedTable
-    const joinedTable = new JoinedTable(this, destTable, destColumn);
-    return new Proxy<T>(destTable, {
-      get(target, propKey, receiver) {
-        const selectedColumn = Reflect.get(target, propKey, receiver) as
-          | Column
-          | undefined;
-
-        if (!selectedColumn) {
-          throw new Error(
-            `The column "${propKey.toString()}" does not exist on table ${toTypeString(
-              target,
-            )}`,
-          );
-        }
-        // returns a joined column
-        return Column.spawnJoinedColumn(selectedColumn, joinedTable);
-      },
-    });
-  }
 
   private checkMutability() {
     if (Object.isFrozen(this)) {
       throw new Error(
-        `The current column "${this.props.name}" of type ${toTypeString(
+        `The current column "${this.name}" of type ${toTypeString(
           this,
         )} cannot be modified, it is frozen. It is mostly likely because you are modifying a column from another table`,
       );
@@ -226,20 +221,16 @@ export class JoinedTable {
     public destTable: Table,
     public destColumn: Column,
   ) {
-    const { props } = srcColumn;
-
     let localPath: string;
-    if (props.isJoinedColumn()) {
+    if (srcColumn.isJoinedColumn()) {
       // source column is a joined column
-      const srcTableKeyPath = props.castToJoinedTable().keyPath;
-      localPath = `[${srcTableKeyPath}.${props.name}]`;
+      const srcTableKeyPath = srcColumn.castToJoinedTable().keyPath;
+      localPath = `[${srcTableKeyPath}.${srcColumn.name}]`;
     } else {
-      localPath = `[${props.castToTable().__name}.${props.name}]`;
+      localPath = `[${srcColumn.castToTable().__name}.${srcColumn.name}]`;
     }
 
-    const remotePath = `[${destColumn.props.tableName()}.${
-      destColumn.props.name
-    }]`;
+    const remotePath = `[${destColumn.tableName()}.${destColumn.name}]`;
     this.keyPath = `[${localPath}.${remotePath}]`;
   }
 
@@ -247,8 +238,7 @@ export class JoinedTable {
     const { srcColumn } = this;
     // e.g. (post).user_id.join(user), returns "postUser"
     return (
-      utils.toCamelCase(srcColumn.props.tableName()) +
-      makeMiddleName(srcColumn.props.name)
+      utils.toCamelCase(srcColumn.tableName()) + makeMiddleName(srcColumn.name)
     );
   }
 }

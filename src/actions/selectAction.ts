@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { ActionType } from './action';
-import { Table, Column, ColumnProps } from '../core/core';
+import { Table, Column, ColumnType } from '../core/core';
 import { SQL, SQLConvertible, toSQL } from '../core/sql';
 import CoreSelectAction from './coreSelectAction';
 import toTypeString from 'to-type-string';
@@ -18,7 +18,7 @@ export class CalculatedColumn {
   constructor(
     public core: Column | SQL,
     public selectedName: string,
-    public props?: ColumnProps,
+    public type?: ColumnType,
   ) {
     throwIfFalsy(core, 'core');
     throwIfFalsy(selectedName, 'selectedName');
@@ -28,9 +28,9 @@ export class CalculatedColumn {
 export function select(
   sql: SQLConvertible,
   selectedName: string,
-  props?: ColumnProps,
+  type?: ColumnType,
 ): CalculatedColumn {
-  return new CalculatedColumn(toSQL(sql), selectedName, props);
+  return new CalculatedColumn(toSQL(sql), selectedName, type);
 }
 
 function getColumnName(col: SelectActionColumnNames): string {
@@ -38,7 +38,7 @@ function getColumnName(col: SelectActionColumnNames): string {
     return col as string;
   }
   if (col instanceof Column) {
-    return (col as Column).props.name;
+    return (col as Column).name;
   }
   if (col instanceof CalculatedColumn) {
     return (col as CalculatedColumn).selectedName;

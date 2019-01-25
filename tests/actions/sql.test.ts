@@ -32,13 +32,13 @@ test('Named input', () => {
 
 test('Input (foreign key)', () => {
   const input = dd.input(post.user_id);
-  expect((input.typeObject as Column).props.foreignColumn).toBe(user.id);
+  expect((input.typeObject as Column).foreignColumn).toBe(user.id);
   expect(input.name).toBe('postUserID');
 });
 
 test('Input (joined key)', () => {
   const input = dd.input(post.user_id.join(user).name);
-  expect((input.typeObject as dd.Column).props.mirroredColumn).toBe(user.name);
+  expect((input.typeObject as dd.Column).mirroredColumn).toBe(user.name);
   expect(input.name).toBe('postUserName');
 });
 

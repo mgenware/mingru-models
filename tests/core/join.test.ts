@@ -5,9 +5,8 @@ import postCmt from '../models/postCmt';
 import { Column } from '../../dist/main';
 
 function testType(col: dd.Column, name: string) {
-  const { props } = col;
-  expect(props.isJoinedColumn()).toBe(true);
-  expect(props.name).toBe(name);
+  expect(col.isJoinedColumn()).toBe(true);
+  expect(col.name).toBe(name);
 }
 
 test('Instance type', () => {
@@ -23,9 +22,8 @@ function testJCCols(
   srcColumn: Column,
   path: string,
 ) {
-  const { props } = jc;
-  expect(props.mirroredColumn).toBe(selectedColumn);
-  const jt = props.table as dd.JoinedTable;
+  expect(jc.mirroredColumn).toBe(selectedColumn);
+  const jt = jc.table as dd.JoinedTable;
   expect(jt.destTable).toBe(destTable);
   expect(jt.destColumn).toBe(destColumn);
   expect(jt.srcColumn).toBe(srcColumn);

@@ -15,7 +15,7 @@ export class SQLInput {
     if (typeof typeObject === 'string') {
       type = typeObject as string;
     } else {
-      type = `[${(typeObject as Column).props.name}]`;
+      type = `[${(typeObject as Column).name}]`;
     }
     return `${this.name}: ${type}`;
   }
@@ -25,7 +25,7 @@ export function input(type: string | Column, name?: string): SQLInput {
   if (type instanceof Column) {
     const col = type as Column;
     if (!name) {
-      name = col.props.inputName();
+      name = col.inputName();
       if (!name) {
         throw new Error(
           `Unexpected empty input name for column "${toTypeString(type)}"`,
@@ -119,7 +119,7 @@ export class SQL {
         return element.toRawString();
       }
       case SQLElementType.column: {
-        return '`' + element.toColumn().props.name + '`';
+        return '`' + element.toColumn().name + '`';
       }
       case SQLElementType.input: {
         return `<${element.toInput().toString()}>`;

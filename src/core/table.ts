@@ -51,7 +51,7 @@ export function table<T extends Table>(
     if (!col) {
       throw new Error(`Expected empty column object at property "${propName}"`);
     }
-    if (col.props.isJoinedColumn()) {
+    if (col.isJoinedColumn()) {
       throw new Error(
         `Unexpected ${toTypeString(
           col,
@@ -69,14 +69,13 @@ export function table<T extends Table>(
     }
 
     // Populate column props
-    const { props } = columnToAdd;
-    if (!props.name) {
+    if (!columnToAdd.name) {
       // column name can be set by setName
-      props.name = utils.toSnakeCase(propName);
+      columnToAdd.name = utils.toSnakeCase(propName);
     }
-    props.table = tableObj;
+    columnToAdd.table = tableObj;
     // Check if it's a pk
-    if (props.pk) {
+    if (columnToAdd.type.pk) {
       tableObj.__pks.push(col);
     }
 
