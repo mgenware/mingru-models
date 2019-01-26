@@ -3,14 +3,17 @@ import utils from '../lib/utils';
 import toTypeString from 'to-type-string';
 
 export class ColumnType {
+  types: string[];
   pk = false;
   nullable = false;
   unsigned = false;
   unique = false;
   length = 0;
 
-  constructor(public types: string[]) {
+  constructor(types: string | string[]) {
     throwIfFalsy(types, 'types');
+    types = typeof types === 'string' ? [types] : types;
+    this.types = types;
   }
 }
 

@@ -1,5 +1,6 @@
 import * as dd from '../../';
 import user from '../models/user';
+import post from '../models/post';
 
 test('Select and from', () => {
   const actions = dd.actions(user);
@@ -66,6 +67,20 @@ test('CalculatedColumn (types)', () => {
   expect(a.selectedName).toBe('x');
   expect(a.core.toString()).toBe('123');
   expect(a.type).toEqual(new dd.ColumnType(['t1', 't2']));
+});
+
+test('CalculatedColumn (count)', () => {
+  const actions = dd.actions(post);
+  const v = actions.select(
+    't',
+    dd.select(
+      dd.sql`${dd.count(dd.sql`${post.user_id.join(user).name}`)}`,
+      'count',
+    ),
+  );
+  const cc = v.columns[0] as dd.CalculatedColumn;
+  expect(cc.selectedName).toBe('count');
+  expect(cc.core.toString()).toBe('CALL(3, `name`)');
 });
 
 test('dd.select (types)', () => {

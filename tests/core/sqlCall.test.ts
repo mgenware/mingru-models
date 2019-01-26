@@ -1,11 +1,28 @@
 import * as dd from '../../';
 import post from '../models/post';
-import user from '../models/user';
+
+const { dt } = dd;
+function dtc(dtString: string): dd.ColumnType {
+  return new dd.ColumnType(dtString);
+}
 
 test('SQL calls', () => {
-  expect(dd.datetimeNow().type).toBe(dd.SQLCallType.datetimeNow);
-  expect(dd.dateNow().type).toBe(dd.SQLCallType.dateNow);
-  expect(dd.timeNow().type).toBe(dd.SQLCallType.timeNow);
+  let t: dd.SQLCall;
+  t = dd.datetimeNow();
+  expect(t.type).toBe(dd.SQLCallType.datetimeNow);
+  expect(t.returnType).toEqual(dtc(dt.datetime));
+
+  t = dd.dateNow();
+  expect(t.type).toBe(dd.SQLCallType.dateNow);
+  expect(t.returnType).toEqual(dtc(dt.date));
+
+  t = dd.timeNow();
+  expect(t.type).toBe(dd.SQLCallType.timeNow);
+  expect(t.returnType).toEqual(dtc(dt.time));
+
+  t = dd.count(post.id);
+  expect(t.type).toBe(dd.SQLCallType.count);
+  expect(t.returnType).toEqual(dtc(dt.int));
 });
 
 test('Embed', () => {
@@ -16,24 +33,14 @@ test('Embed', () => {
 
 test('Embed (raw)', () => {
   expect(
-    dd.sql`haha ${new dd.SQLCall(dd.SQLCallType.datetimeNow)} ${new dd.SQLCall(
+    dd.sql`haha ${new dd.SQLCall(
+      dd.SQLCallType.datetimeNow,
+      new dd.ColumnType('c1'),
+    )} ${new dd.SQLCall(
       dd.SQLCallType.dateNow,
+      new dd.ColumnType('c2'),
     )}`.toString(),
   ).toBe(
     `haha CALL(${dd.SQLCallType.datetimeNow}) CALL(${dd.SQLCallType.dateNow})`,
   );
-});
-
-test('Count', () => {
-  const actions = dd.actions(post);
-  const v = actions.select(
-    't',
-    dd.select(
-      dd.sql`${dd.count(dd.sql`${post.user_id.join(user).name}`)}`,
-      'count',
-    ),
-  );
-  const cc = v.columns[0] as dd.CalculatedColumn;
-  expect(cc.selectedName).toBe('count');
-  expect(cc.core.toString()).toBe('CALL(3, `name`)');
 });
