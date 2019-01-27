@@ -38,14 +38,14 @@
     "testRegex": "/dist_tests/.*(\\.|/)(test|spec)\\.jsx?$"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.12",
+    "@types/jest": "^23.3.13",
     "@types/lodash.camelcase": "^4.3.4",
     "@types/lodash.snakecase": "^4.1.4",
     "@types/node": "^10.12.18",
-    "jest": "^23.6.0",
+    "jest": "^24.0.0",
     "rimraf": "^2.6.3",
     "tslint": "^5.12.1",
-    "typescript": "^3.2.2"
+    "typescript": "^3.2.4"
   },
   "dependencies": {
     "lodash.camelcase": "^4.3.0",
