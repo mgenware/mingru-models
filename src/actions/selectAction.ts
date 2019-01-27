@@ -15,13 +15,20 @@ export class ColumnName {
 }
 
 export class CalculatedColumn {
+  core: Column | SQL;
+
   constructor(
-    public core: Column | SQL,
+    core: SQLConvertible,
     public selectedName: string,
     public type?: ColumnType,
   ) {
     throwIfFalsy(core, 'core');
     throwIfFalsy(selectedName, 'selectedName');
+    if (core instanceof Column) {
+      this.core = core;
+    } else {
+      this.core = toSQL(core);
+    }
   }
 }
 

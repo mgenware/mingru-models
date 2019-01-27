@@ -1,6 +1,7 @@
 import * as dd from '../../';
 import user from '../models/user';
 import post from '../models/post';
+import { CalculatedColumn } from '../../dist/main';
 
 test('Select and from', () => {
   const actions = dd.actions(user);
@@ -81,6 +82,16 @@ test('CalculatedColumn (count)', () => {
   const cc = v.columns[0] as dd.CalculatedColumn;
   expect(cc.selectedName).toBe('count');
   expect(cc.core.toString()).toBe('CALL(3, `name`)');
+});
+
+test('CalculatedColumn (SQLConvertable)', () => {
+  let cc = new CalculatedColumn(post.user_id, 't');
+  // Column should not be wrapped in SQL
+  expect(cc.core).toBe(post.user_id);
+  cc = new CalculatedColumn('str', 't');
+  expect(cc.core.toString()).toBe('str');
+  cc = new CalculatedColumn(dd.count(post.id), 't');
+  expect(cc.core.toString()).toBe('CALL(3, `id`)');
 });
 
 test('dd.select (types)', () => {
