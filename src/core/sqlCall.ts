@@ -4,13 +4,13 @@ import dt from './dt';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export enum SQLCallType {
-  datetimeNow,
-  dateNow,
-  timeNow,
-  count,
-  avg,
-  sum,
-  coalese,
+  datetimeNow, // NOW() for DATETIME
+  dateNow, // NOW() for DATE
+  timeNow, // NOW() for TIME
+  count, // COUNT()
+  avg, // AVG()
+  sum, // SUM()
+  coalese, // COALESE()
 }
 
 export class SQLCall {

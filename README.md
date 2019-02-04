@@ -413,7 +413,7 @@ userTA.update('Sig')
 ```
 
 #### Predefined System Calls
-Since raw SQL expression gives you the ability to write any SQL, you may write this for a `DATETIME` column:
+As raw SQL expressions enable you to write any SQL, you may do this for a `DATETIME` column to set it to current time when inserted:
 
 ```ts
 userTA.update('LastLogin')
@@ -424,25 +424,29 @@ While these system calls are commonly used, dd-models supports them as predefine
 
 ```ts
 enum SQLCallType {
-  datetimeNow,  // returns current date and time
-  dateNow,      // returns current date
-  timeNow,      // returns current time
+  datetimeNow, // NOW() for DATETIME
+  dateNow, // NOW() for DATE
+  timeNow, // NOW() for TIME
+  count, // COUNT()
+  avg, // AVG()
+  sum, // SUM()
+  coalese, // COALESE()
 }
 ```
 
-You can embed a predefined system call in `dd.sql`:
+All predefined system calls are under the root `dd` namespace:
 
 ```ts
-// These two are equivalent
+// These three are equivalent
 userTA.update('LastLogin')
   .set(user.lastLogin, dd.sql`NOW()`);
 
 userTA.update('LastLogin')
   .set(user.lastLogin, dd.sql`${dd.datetimeNow()}`)
+
+userTA.update('LastLogin')
+  .set(user.lastLogin, dd.datetimeNow())
 ```
-
-The latter is preferred for type safety as well as portability.
-
 
 ### More on `SELECT` Actions
 
