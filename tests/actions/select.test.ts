@@ -84,7 +84,7 @@ test('CalculatedColumn (count)', () => {
   expect(cc.core.toString()).toBe('CALL(3, `name`)');
 });
 
-test('CalculatedColumn (SQLConvertable)', () => {
+test('CalculatedColumn (SQLConvertible)', () => {
   let cc = new CalculatedColumn(post.user_id, 't');
   // Column should not be wrapped in SQL
   expect(cc.core).toBe(post.user_id);

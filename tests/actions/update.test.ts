@@ -15,14 +15,14 @@ test('Update', () => {
   expect(v).toBeInstanceOf(dd.Action);
   expect(v.table).toBe(user);
   expect(v.whereSQL).not.toBeNull();
-  expect(v.columnValueMap.size).toBe(2);
+  expect(v.setters.size).toBe(2);
 
   // extra props
   expect(v.checkAffectedRows).toBe(false);
   expect(v.updateAll).toBe(false);
 
-  const vName = v.columnValueMap.get(user.name) as dd.SQL;
-  const vSnakeName = v.columnValueMap.get(user.snake_case_name) as dd.SQL;
+  const vName = v.setters.get(user.name) as dd.SQL;
+  const vSnakeName = v.setters.get(user.snake_case_name) as dd.SQL;
   expect(vName).not.toBeNull();
   expect(vSnakeName).not.toBeNull();
 });
@@ -36,8 +36,8 @@ test('Update without where', () => {
 
   expect(v.name).toBe('UpdateT');
   expect(v.table).toBe(user);
-  const vName = v.columnValueMap.get(user.name) as dd.SQL;
-  const vSnakeName = v.columnValueMap.get(user.snake_case_name) as dd.SQL;
+  const vName = v.setters.get(user.name) as dd.SQL;
+  const vSnakeName = v.setters.get(user.snake_case_name) as dd.SQL;
   expect(vName).not.toBeNull();
   expect(vSnakeName).not.toBeNull();
 });
@@ -50,10 +50,10 @@ test('Order of setInputs and set', () => {
     .setInputs(user.snake_case_name, user.name)
     .set(user.name, user.name.toInputSQL('b'));
 
-  expect(v.columnValueMap.size).toBe(2);
+  expect(v.setters.size).toBe(2);
 
-  const vName = v.columnValueMap.get(user.name) as dd.SQL;
-  const vSnakeName = v.columnValueMap.get(user.snake_case_name) as dd.SQL;
+  const vName = v.setters.get(user.name) as dd.SQL;
+  const vSnakeName = v.setters.get(user.snake_case_name) as dd.SQL;
 
   expect(vName.toString()).toBe('<b: [name]>');
   expect(vSnakeName.toString()).toBe('<userSnakeCaseName: [snake_case_name]>');
@@ -90,4 +90,10 @@ test('ByID', () => {
     .byID();
 
   expect(v.whereSQL!.toString()).toBe('`id` = <userID: [id]>');
+});
+
+test('SQLConvertible value', () => {
+  const actions = dd.actions(user);
+  const v = actions.updateOne('t').set(user.name, dd.dateNow());
+  expect(v.setters.get(user.name)!.toString()).toBe('CALL(1)');
 });
