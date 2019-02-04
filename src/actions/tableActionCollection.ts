@@ -6,22 +6,32 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action } from './action';
 import { SelectAction, SelectActionColumns } from './selectAction';
 
-export class TableActionCollection {
+export type SelectActionCompound<T extends Table> =
+  | SelectActionColumns
+  | ((table: T) => SelectActionColumns[]);
+
+export class TableActionCollection<T extends Table> {
   map: Map<string, Action> = new Map<string, Action>();
 
-  constructor(public table: Table) {
+  constructor(public table: T) {
     throwIfFalsy(table, 'table');
   }
 
-  select(name: string, ...columns: SelectActionColumns[]): SelectAction {
+  select(
+    name: string,
+    ...columns: Array<SelectActionCompound<T>>
+  ): SelectAction<T> {
     return this.selectCore(name, false, columns);
   }
 
-  selectAll(name: string, ...columns: SelectActionColumns[]): SelectAction {
+  selectAll(
+    name: string,
+    ...columns: Array<SelectActionCompound<T>>
+  ): SelectAction<T> {
     return this.selectCore(name, true, columns);
   }
 
-  selectField(name: string, column: Column): SelectAction {
+  selectField(name: string, column: Column): SelectAction<T> {
     throwIfFalsy(column, 'column');
     const action = this.select(name, column);
     action.isSelectField = true;
@@ -71,14 +81,29 @@ export class TableActionCollection {
   private selectCore(
     name: string,
     selectAll: boolean,
-    columns: SelectActionColumns[],
-  ): SelectAction {
-    const action = new SelectAction(name, this.table, columns, selectAll);
+    cols: Array<SelectActionCompound<T>>,
+  ): SelectAction<T> {
+    const columnsObjects: SelectActionColumns[] = [];
+    for (const col of cols) {
+      if (typeof col === 'function') {
+        columnsObjects.push(
+          ...(col as ((table: T) => SelectActionColumns[]))(this.table),
+        );
+      } else {
+        columnsObjects.push(col as SelectActionColumns);
+      }
+    }
+    const action = new SelectAction(
+      name,
+      this.table,
+      columnsObjects,
+      selectAll,
+    );
     this.addAction(action);
     return action;
   }
 
-  private addAction<T extends Action>(action: T): T {
+  private addAction<A extends Action>(action: A): A {
     if (this.map.has(action.name)) {
       throw new Error(`The action "${action.name}" already exists`);
     }
@@ -87,6 +112,8 @@ export class TableActionCollection {
   }
 }
 
-export default function actions(table: Table): TableActionCollection {
+export default function actions<T extends Table>(
+  table: T,
+): TableActionCollection<T> {
   return new TableActionCollection(table);
 }

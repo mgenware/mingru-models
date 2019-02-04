@@ -55,7 +55,7 @@ function getColumnName(col: SelectActionColumnNames): string {
   );
 }
 
-export class SelectAction extends CoreSelectAction {
+export class SelectAction<T extends Table> extends CoreSelectAction {
   whereSQL: SQL | null = null;
   isSelectField = false;
   orderByColumns: ColumnName[] = [];
@@ -63,7 +63,7 @@ export class SelectAction extends CoreSelectAction {
 
   constructor(
     name: string,
-    table: Table,
+    table: T,
     public columns: SelectActionColumns[],
     public isSelectAll: boolean,
   ) {

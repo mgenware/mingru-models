@@ -143,3 +143,36 @@ test('Group by', () => {
   expect(v.groupByColumns[0]).toBeInstanceOf(dd.ColumnName);
   expect(v.groupByColumns[0].columnName).toBe('name');
 });
+
+test('Select (arrow func)', () => {
+  const actions = dd.actions(user);
+  const v = actions
+    .select('t', t => [t.id, t.name], user.follower_count, t => [
+      t.snake_case_name,
+    ])
+    .byID();
+
+  expect(v.columns).toEqual([
+    user.id,
+    user.name,
+    user.follower_count,
+    user.snake_case_name,
+  ]);
+});
+
+test('SelectAll (arrow func)', () => {
+  const actions = dd.actions(user);
+  const v = actions.selectAll(
+    't',
+    t => [t.id, t.name],
+    user.follower_count,
+    t => [t.snake_case_name],
+  );
+
+  expect(v.columns).toEqual([
+    user.id,
+    user.name,
+    user.follower_count,
+    user.snake_case_name,
+  ]);
+});
