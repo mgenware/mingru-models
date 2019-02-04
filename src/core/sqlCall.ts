@@ -22,18 +22,18 @@ export class SQLCall {
   }
 }
 
-export function datetimeNow() {
+export function datetimeNow(): SQLCall {
   return new SQLCall(SQLCallType.datetimeNow, new ColumnType(dt.datetime));
 }
 
-export function timeNow() {
+export function timeNow(): SQLCall {
   return new SQLCall(SQLCallType.timeNow, new ColumnType(dt.time));
 }
 
-export function dateNow() {
+export function dateNow(): SQLCall {
   return new SQLCall(SQLCallType.dateNow, new ColumnType(dt.date));
 }
 
-export function count(column: SQLConvertible) {
+export function count(column: SQLConvertible): SQLCall {
   return new SQLCall(SQLCallType.count, new ColumnType(dt.int), [column]);
 }
