@@ -1,6 +1,7 @@
 import { SQL, toSQL, SQLConvertible } from './sql';
-import { ColumnType } from './core';
+import { ColumnType, Column } from './core';
 import dt from './dt';
+import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export enum SQLCallType {
   datetimeNow,
@@ -9,6 +10,7 @@ export enum SQLCallType {
   count,
   avg,
   sum,
+  coalese,
 }
 
 export class SQLCall {
@@ -36,4 +38,19 @@ export function dateNow(): SQLCall {
 
 export function count(column: SQLConvertible): SQLCall {
   return new SQLCall(SQLCallType.count, new ColumnType(dt.int), [column]);
+}
+
+export function coalesce(columns: SQLConvertible[]): SQLCall {
+  throwIfFalsy(columns, 'columns');
+  let type: ColumnType | null = null;
+  for (const col of columns) {
+    if (col instanceof Column) {
+      type = (col as Column).type;
+      break;
+    }
+  }
+  if (!type) {
+    throw new Error(`Cannot infer a type from all columns provided`);
+  }
+  return new SQLCall(SQLCallType.coalese, type, columns);
 }
