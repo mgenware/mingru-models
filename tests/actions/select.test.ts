@@ -147,14 +147,18 @@ test('Group by', () => {
 test('Select (arrow func)', () => {
   const actions = dd.actions(user);
   const v = actions
-    .select('t', t => [t.id, t.name], user.follower_count, t => [
-      t.snake_case_name,
-    ])
+    .select(
+      't',
+      t => [t.id, t.name, dd.select(dd.coalesce(t.name, ''), 'name2')],
+      user.follower_count,
+      t => [t.snake_case_name],
+    )
     .byID();
 
   expect(v.columns).toEqual([
     user.id,
     user.name,
+    dd.select(dd.coalesce(user.name, ''), 'name2'),
     user.follower_count,
     user.snake_case_name,
   ]);

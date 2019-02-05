@@ -1,4 +1,4 @@
-import { SQL, toSQL, SQLConvertible } from './sql';
+import { SQL, convertToSQL, SQLConvertible } from './sql';
 import { ColumnType, Column } from './core';
 import dt from './dt';
 import { throwIfFalsy } from 'throw-if-arg-empty';
@@ -20,7 +20,7 @@ export class SQLCall {
     public returnType: ColumnType,
     params?: SQLConvertible[],
   ) {
-    this.params = params ? params.map(p => toSQL(p)) : [];
+    this.params = params ? params.map(p => convertToSQL(p)) : [];
   }
 }
 

@@ -1,7 +1,7 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { ActionType } from './action';
 import { Table, Column, ColumnType } from '../core/core';
-import { SQL, SQLConvertible, toSQL } from '../core/sql';
+import { SQL, SQLConvertible, convertToSQL } from '../core/sql';
 import CoreSelectAction from './coreSelectAction';
 import toTypeString from 'to-type-string';
 
@@ -27,7 +27,7 @@ export class CalculatedColumn {
     if (core instanceof Column) {
       this.core = core;
     } else {
-      this.core = toSQL(core);
+      this.core = convertToSQL(core);
     }
   }
 }
@@ -37,7 +37,7 @@ export function select(
   selectedName: string,
   type?: ColumnType,
 ): CalculatedColumn {
-  return new CalculatedColumn(toSQL(sql), selectedName, type);
+  return new CalculatedColumn(convertToSQL(sql), selectedName, type);
 }
 
 function getColumnName(col: SelectActionColumnNames): string {

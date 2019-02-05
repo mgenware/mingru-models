@@ -147,7 +147,7 @@ export function sql(
   return new SQL(literals, params);
 }
 
-export function toSQL(element: SQLConvertible): SQL {
+export function convertToSQL(element: SQLConvertible): SQL {
   if (element instanceof SQL) {
     return element as SQL;
   }

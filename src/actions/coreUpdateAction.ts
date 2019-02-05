@@ -1,6 +1,6 @@
 import { Action } from './action';
 import { Column } from '../core/core';
-import { SQL, SQLConvertible, toSQL } from '../core/sql';
+import { SQL, SQLConvertible, convertToSQL } from '../core/sql';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export default class CoreUpdateAction extends Action {
@@ -9,7 +9,7 @@ export default class CoreUpdateAction extends Action {
   set(column: Column, value: SQLConvertible): this {
     throwIfFalsy(column, 'column');
     throwIfFalsy(value, 'value');
-    this.setters.set(column, toSQL(value));
+    this.setters.set(column, convertToSQL(value));
     return this;
   }
 
