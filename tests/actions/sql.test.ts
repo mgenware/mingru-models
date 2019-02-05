@@ -132,3 +132,12 @@ test('makeSQL', () => {
     'CALL(3, `user_id`)',
   );
 });
+
+test('findColumn', () => {
+  let s = dd.sql`haha`;
+  expect(s.findColumn()).toBeNull();
+  s = dd.sql`kaokdjdf ${user.name}`;
+  expect(s.findColumn()).toBe(user.name);
+  s = dd.sql`${dd.coalesce('haha', user.name)}`;
+  expect(s.findColumn()).toBe(user.name);
+});

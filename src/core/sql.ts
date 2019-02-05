@@ -113,6 +113,24 @@ export class SQL {
     return this.elements.map(e => this.formatElement(e)).join('');
   }
 
+  findColumn(): Column | null {
+    for (const element of this.elements) {
+      if (element.type === SQLElementType.column) {
+        return element.toColumn();
+      }
+      if (element.type === SQLElementType.call) {
+        const call = element.toCall();
+        for (const arg of call.params) {
+          const col = arg.findColumn();
+          if (col) {
+            return col;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   private formatElement(element: SQLElement): string {
     switch (element.type) {
       case SQLElementType.rawString: {
