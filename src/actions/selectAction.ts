@@ -15,26 +15,43 @@ export class ColumnName {
 }
 
 export class CalculatedColumn {
+  // This is guaranteed not to be empty/null in ctor
+  selectedName = '';
   core: Column | SQL;
 
   constructor(
     core: SQLConvertible,
-    public selectedName: string,
+    selectedName?: string,
     public type?: ColumnType,
   ) {
     throwIfFalsy(core, 'core');
-    throwIfFalsy(selectedName, 'selectedName');
     if (core instanceof Column) {
-      this.core = core;
+      const col = core as Column;
+      this.core = col;
+      this.selectedName = selectedName || col.name;
     } else {
-      this.core = convertToSQL(core);
+      const expr = convertToSQL(core);
+      this.core = expr;
+      if (selectedName) {
+        this.selectedName = selectedName;
+      } else {
+        // Try to extract a column name from SQL expression
+        const col = expr.findColumn();
+        if (col) {
+          this.selectedName = col.name;
+        } else {
+          throw new Error(
+            'The argument "selectedName" is required for an SQL expression without any columns inside',
+          );
+        }
+      }
     }
   }
 }
 
 export function select(
   sql: SQLConvertible,
-  selectedName: string,
+  selectedName?: string,
   type?: ColumnType,
 ): CalculatedColumn {
   return new CalculatedColumn(convertToSQL(sql), selectedName, type);

@@ -94,6 +94,13 @@ test('CalculatedColumn (SQLConvertible)', () => {
   expect(cc.core.toString()).toBe('CALL(3, `id`)');
 });
 
+test('CalculatedColumn (infer name from columns)', () => {
+  let cc = dd.select(user.name);
+  expect(cc.selectedName).toBe('name');
+  cc = new CalculatedColumn(dd.coalesce('a', user.name, user.snake_case_name));
+  expect(cc.selectedName).toBe('name');
+});
+
 test('dd.select (types)', () => {
   const a = dd.select(dd.sql`123`, 'x', new dd.ColumnType(['t1', 't2']));
   expect(a.selectedName).toBe('x');
@@ -149,7 +156,12 @@ test('Select (arrow func)', () => {
   const v = actions
     .select(
       't',
-      t => [t.id, t.name, dd.select(dd.coalesce(t.name, ''), 'name2')],
+      t => [
+        t.id,
+        t.name,
+        dd.select(dd.coalesce(t.name, ''), 'name2'),
+        dd.select(dd.coalesce(user.follower_count, user.name)), // name will be extracted from the first column in expression
+      ],
       user.follower_count,
       t => [t.snake_case_name],
     )
@@ -159,6 +171,7 @@ test('Select (arrow func)', () => {
     user.id,
     user.name,
     dd.select(dd.coalesce(user.name, ''), 'name2'),
+    dd.select(dd.coalesce(user.follower_count, user.name)),
     user.follower_count,
     user.snake_case_name,
   ]);
