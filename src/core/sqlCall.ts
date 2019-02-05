@@ -10,7 +10,7 @@ export enum SQLCallType {
   count, // COUNT()
   avg, // AVG()
   sum, // SUM()
-  coalese, // COALESE()
+  coalesce, // COALESE()
 }
 
 export class SQLCall {
@@ -52,5 +52,5 @@ export function coalesce(...columns: SQLConvertible[]): SQLCall {
   if (!type) {
     throw new Error(`Cannot infer a type from all columns provided`);
   }
-  return new SQLCall(SQLCallType.coalese, type, columns);
+  return new SQLCall(SQLCallType.coalesce, type, columns);
 }

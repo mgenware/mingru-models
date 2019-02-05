@@ -25,7 +25,7 @@ test('SQL calls', () => {
   expect(t.returnType).toEqual(dtc(dt.int));
 
   t = dd.coalesce(dd.sql`haha`, post.title, post.user_id);
-  expect(t.type).toBe(dd.SQLCallType.coalese);
+  expect(t.type).toBe(dd.SQLCallType.coalesce);
   expect(t.returnType).toEqual(dd.varChar(100).type);
 });
 
