@@ -20,6 +20,7 @@ export class Action {
   ) {
     throwIfFalsy(name, 'name');
     throwIfFalsy(table, 'table');
-    this.name = this.prefix + utils.capitalizeFirstLetter(name);
+    this.name =
+      this.prefix + utils.toPascalCase(table.__name) + utils.toPascalCase(name);
   }
 }
