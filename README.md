@@ -194,12 +194,12 @@ const userTA = dd.actions(user);
 
 // Add a SELECT action
 // Select a user profile by ID
-// Action name is 'SelectUserProfile'
+// Action name is 'SelectProfile'
 userTA.select('Profile', user.id, user.name).byID();
 
 // Add an UPDATE action
 // Update a row
-// Action name is 'UpdateUserProfile'
+// Action name is 'UpdateProfile'
 userTA
   .updateOne('UserProfile')
   .setInputs(user.name, user.sig)
@@ -207,14 +207,14 @@ userTA
 
 // Add a DELETE action
 // Delete a row by ID
-// Action name is 'DeleteUserByID'
+// Action name is 'DeleteByID'
 userTA.deleteOne('ByID').byID();
 
 // Export the actions
 export default userTA;
 ```
 
-Note that action name will have action type and table name included and you don't need to re-type it in the `name` argument, like the example above, a `select` action of user table with a name of `Profile` would have a action name as `SelectUserProfile`, similarly, an `delete` action of user table with a name of `ByID` would set the action name to `DeleteUserByID` automatically.
+Note that action name will have action type included and you don't need to re-type it in the `name` argument, like the example above, a `select` action with a name of `Profile` would have a action name as `SelectProfile`, similarly, a `delete` action with a name of `ByID` would set the action name to `DeleteByID` automatically.
 
 ### `SELECT` Actions Basics
 

@@ -41,4 +41,8 @@ export default class Utils {
   static toCamelCase(s: string): string {
     return Utils.makeTrailingIDAllCaps(camelCase(s));
   }
+
+  static toPascalCase(s: string): string {
+    return Utils.capitalizeFirstLetter(Utils.toCamelCase(s));
+  }
 }
