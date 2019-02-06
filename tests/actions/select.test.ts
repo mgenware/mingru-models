@@ -9,7 +9,7 @@ test('Select and from', () => {
     .select('t', user.id, user.name)
     .where(dd.sql`${user.id} = 1`);
 
-  expect(v.name).toBe('SelectUserT');
+  expect(v.name).toBe('SelectT');
   expect(v).toBeInstanceOf(dd.SelectAction);
   expect(v).toBeInstanceOf(dd.Action);
   expect(v.columns.length).toBe(2);

@@ -7,7 +7,7 @@ test('Insert', () => {
   const v = actions.insert('t').setInputs(post.title, post.snake_case_user_id);
 
   expect(v.type).toBe(dd.ActionType.insert);
-  expect(v.name).toBe('InsertPostT');
+  expect(v.name).toBe('InsertT');
   expect(v.fetchInsertedID).toBeFalsy();
   expect(v).toBeInstanceOf(dd.InsertAction);
   expect(v.table).toBe(post);

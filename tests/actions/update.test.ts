@@ -10,7 +10,7 @@ test('Update', () => {
     .where(dd.sql`${user.id} = 1`);
 
   expect(v.type).toBe(dd.ActionType.update);
-  expect(v.name).toBe('UpdateUserT');
+  expect(v.name).toBe('UpdateT');
   expect(v).toBeInstanceOf(dd.UpdateAction);
   expect(v).toBeInstanceOf(dd.Action);
   expect(v.table).toBe(user);
@@ -34,7 +34,7 @@ test('Update without where', () => {
     .set(user.name, dd.sql`${dd.input(user.name)}`)
     .set(user.follower_count, dd.sql`${user.follower_count} + 1`);
 
-  expect(v.name).toBe('UpdateUserT');
+  expect(v.name).toBe('UpdateT');
   expect(v.table).toBe(user);
   const vName = v.setters.get(user.name) as dd.SQL;
   const vSnakeName = v.setters.get(user.snake_case_name) as dd.SQL;
