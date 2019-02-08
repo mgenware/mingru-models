@@ -5,7 +5,7 @@ import { Column } from '../../';
 
 test('SQL', () => {
   const sql = dd.sql`${user.id} = 1 OR ${user.name} = ${dd.input(user.name)}`;
-  expect(sql.toString()).toBe('`id` = 1 OR `name` = <userName: [name]>');
+  expect(sql.toString()).toBe('`id` = 1 OR `name` = <name: [name]>');
   expect(sql).toBeInstanceOf(dd.SQL);
 });
 
@@ -13,15 +13,13 @@ test('SQL with input', () => {
   const sql = dd.sql`START${user.id} = 1 OR ${user.name} = ${dd.input(
     user.name,
   )}END`;
-  expect(sql.toString()).toBe(
-    'START`id` = 1 OR `name` = <userName: [name]>END',
-  );
+  expect(sql.toString()).toBe('START`id` = 1 OR `name` = <name: [name]>END');
 });
 
 test('Input', () => {
   const input = dd.input(user.name);
   expect(input.typeObject).toBe(user.name);
-  expect(input.name).toBe('userName');
+  expect(input.name).toBe('name');
 });
 
 test('Named input', () => {
@@ -33,7 +31,7 @@ test('Named input', () => {
 test('Input (foreign key)', () => {
   const input = dd.input(post.user_id);
   expect((input.typeObject as Column).foreignColumn).toBe(user.id);
-  expect(input.name).toBe('postUserID');
+  expect(input.name).toBe('userID');
 });
 
 test('Input (joined key)', () => {
@@ -56,7 +54,7 @@ test('Embed another sql', () => {
   const embedded = dd.sql`_${user.id} = ${dd.input(user.id)}`;
   const sql = dd.sql`START${embedded} OR ${user.name} = ${dd.input(user.name)}`;
   expect(sql.toString()).toBe(
-    'START_`id` = <userID: [id]> OR `name` = <userName: [name]>',
+    'START_`id` = <id: [id]> OR `name` = <name: [name]>',
   );
 });
 
@@ -68,7 +66,7 @@ test('Embed string', () => {
 test('toInput', () => {
   const input = user.name.toInput();
   expect(input.typeObject).toBe(user.name);
-  expect(input.name).toBe('userName');
+  expect(input.name).toBe('name');
 });
 
 test('toInput(string)', () => {
@@ -90,7 +88,7 @@ test('isEqualTo', () => {
 
 test('isEqualToInput', () => {
   const sql = user.name.isEqualToInput();
-  expect(sql.toString()).toBe('`name` = <userName: [name]>');
+  expect(sql.toString()).toBe('`name` = <name: [name]>');
 });
 
 test('isEqualToInput(string)', () => {
@@ -105,7 +103,7 @@ test('isNotEqualTo', () => {
 
 test('isNotEqualToInput', () => {
   const sql = user.name.isNotEqualToInput();
-  expect(sql.toString()).toBe('`name` <> <userName: [name]>');
+  expect(sql.toString()).toBe('`name` <> <name: [name]>');
 });
 
 test('isNotEqualToInput(string)', () => {

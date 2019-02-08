@@ -154,13 +154,14 @@ export class Column {
   }
 
   inputName(): string {
+    const curName = utils.toCamelCase(this.name);
     if (this.isJoinedColumn()) {
-      const curName = utils.capitalizeColumnName(utils.toCamelCase(this.name));
-      return this.castToJoinedTable().tableInputName() + curName;
+      return (
+        this.castToJoinedTable().tableInputName() +
+        utils.capitalizeColumnName(curName)
+      );
     }
-    return `${utils.toCamelCase(this.tableName())}${utils.capitalizeColumnName(
-      utils.toCamelCase(this.name),
-    )}`;
+    return curName;
   }
 
   tableName(): string {

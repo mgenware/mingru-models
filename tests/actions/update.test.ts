@@ -56,7 +56,7 @@ test('Order of setInputs and set', () => {
   const vSnakeName = v.setters.get(user.snake_case_name) as dd.SQL;
 
   expect(vName.toString()).toBe('<b: [name]>');
-  expect(vSnakeName.toString()).toBe('<userSnakeCaseName: [snake_case_name]>');
+  expect(vSnakeName.toString()).toBe('<snakeCaseName: [snake_case_name]>');
 });
 
 test('updateOne', () => {
@@ -89,7 +89,7 @@ test('ByID', () => {
     .setInputs(user.snake_case_name)
     .byID();
 
-  expect(v.whereSQL!.toString()).toBe('`id` = <userID: [id]>');
+  expect(v.whereSQL!.toString()).toBe('`id` = <id: [id]>');
 });
 
 test('SQLConvertible value', () => {

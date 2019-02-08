@@ -112,7 +112,7 @@ test('ByID', () => {
   const actions = dd.actions(user);
   const v = actions.select('t', user.name).byID();
 
-  expect(v.whereSQL!.toString()).toBe('`id` = <userID: [id]>');
+  expect(v.whereSQL!.toString()).toBe('`id` = <id: [id]>');
 });
 
 test('SelectField', () => {

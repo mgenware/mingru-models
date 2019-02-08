@@ -127,13 +127,13 @@ test('setDefault', () => {
 });
 
 test('Column.inputName', () => {
-  expect(user.id.inputName()).toBe('userID');
-  expect(user.snake_case_name.inputName()).toBe('userSnakeCaseName');
-  expect(cmt.snake_case_post_id.inputName()).toBe('postCmtSnakeCasePostID');
+  expect(user.id.inputName()).toBe('id');
+  expect(user.snake_case_name.inputName()).toBe('snakeCaseName');
+  expect(cmt.snake_case_post_id.inputName()).toBe('snakeCasePostID');
 });
 
 test('ForeignColumn.inputName', () => {
-  expect(post.snake_case_user_id.inputName()).toBe('postSnakeCaseUserID');
+  expect(post.snake_case_user_id.inputName()).toBe('snakeCaseUserID');
 });
 
 test('JoinedColumn.inputName', () => {

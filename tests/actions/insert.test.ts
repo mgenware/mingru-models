@@ -15,10 +15,8 @@ test('Insert', () => {
 
   const vTitle = v.setters.get(post.title) as dd.SQL;
   const vUserID = v.setters.get(post.snake_case_user_id) as dd.SQL;
-  expect(vTitle.toString()).toBe('<postTitle: [title]>');
-  expect(vUserID.toString()).toBe(
-    '<postSnakeCaseUserID: [snake_case_user_id]>',
-  );
+  expect(vTitle.toString()).toBe('<title: [title]>');
+  expect(vUserID.toString()).toBe('<snakeCaseUserID: [snake_case_user_id]>');
 });
 
 test('Order of setInputs and set', () => {
@@ -34,7 +32,7 @@ test('Order of setInputs and set', () => {
   const vSnakeName = v.setters.get(user.snake_case_name) as dd.SQL;
 
   expect(vName.toString()).toBe('<b: [name]>');
-  expect(vSnakeName.toString()).toBe('<userSnakeCaseName: [snake_case_name]>');
+  expect(vSnakeName.toString()).toBe('<snakeCaseName: [snake_case_name]>');
 });
 
 test('Insert one', () => {
