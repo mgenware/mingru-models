@@ -138,23 +138,23 @@ test('ForeignColumn.inputName', () => {
 
 test('JoinedColumn.inputName', () => {
   expect(post.snake_case_user_id.join(user).id.inputName()).toBe(
-    'postSnakeCaseUserID',
+    'snakeCaseUserID',
   );
   expect(post.snake_case_user_id.join(user).name.inputName()).toBe(
-    'postSnakeCaseUserName',
+    'snakeCaseUserName',
   );
   expect(
     cmt.post_id
       .join(post)
       .user_id.join(user)
       .id.inputName(),
-  ).toBe('postCmtPostUserID');
+  ).toBe('postUserID');
   expect(
     cmt.post_id
       .join(post)
       .snake_case_user_id.join(user)
       .name.inputName(),
-  ).toBe('postCmtPostSnakeCaseUserName');
+  ).toBe('postSnakeCaseUserName');
 });
 
 class JCTable extends dd.Table {

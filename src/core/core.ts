@@ -155,8 +155,8 @@ export class Column {
 
   inputName(): string {
     if (this.isJoinedColumn()) {
-      const curName = makeMiddleName(this.name);
-      return this.castToJoinedTable().name() + curName;
+      const curName = utils.capitalizeColumnName(utils.toCamelCase(this.name));
+      return this.castToJoinedTable().tableInputName() + curName;
     }
     return `${utils.toCamelCase(this.tableName())}${utils.capitalizeColumnName(
       utils.toCamelCase(this.name),
@@ -169,7 +169,7 @@ export class Column {
       return this.castToTable().__name;
     }
     // JoinedTable
-    return this.castToJoinedTable().name();
+    return this.castToJoinedTable().tableInputName();
   }
 
   isJoinedColumn(): boolean {
@@ -211,9 +211,9 @@ export class Table {
 /*
  post.user_id.join(user) -> this creates a intermediate joined table
 
- srcColumn: post.user_id
- destTable: user
- destColumn: user.id
+ srcColumn: post.user_id (Column | JoinedColumn)
+ destTable: user (Table)
+ destColumn: user.id (Column)
 */
 export class JoinedTable {
   // keyPath is useful to detect duplicate joins, if multiple JoinedTable instances are created with same columns and tables, they'd have same `keyPath`s.
@@ -237,21 +237,25 @@ export class JoinedTable {
     this.keyPath = `[${localPath}.${remotePath}]`;
   }
 
-  name(): string {
+  tableInputName(): string {
     const { srcColumn } = this;
-    // e.g. (post).user_id.join(user), returns "postUser"
-    return (
-      utils.toCamelCase(srcColumn.tableName()) + makeMiddleName(srcColumn.name)
-    );
+    const curName = makeMiddleName(srcColumn.name);
+    if (srcColumn.isJoinedColumn()) {
+      // If srcColumn is a joined column, e.g. cmt.post_id.join(post).user_id.join(user), returns 'postUser' in this case
+      return (
+        srcColumn.castToJoinedTable().tableInputName() +
+        utils.capitalizeFirstLetter(curName)
+      );
+    }
+    // If srcColumn is not a joined column, omit the table name, e.g. (post).user_id.join(user), returns "user"
+    return curName;
   }
 }
 
-// Generates a column name for a join, we call it a middle and we need to cut the ending `_id`, e.g. `SELECT post.user_id.join(user).name`, the `user_id` before the join is the middle name, the input name for this column is `postUserName`, note the `_id` of `user_id` is removed.
+// Generates a column name for a join, we call it a middle and we need to cut the trailing `_id`, e.g. `SELECT post.user_id.join(user).name`, the `user_id` before the join is the middle name, the input name for this column is `userName`.
 function makeMiddleName(s: string): string {
   if (!s) {
     throw new Error(`Unexpected empty value in "makeMiddleName"`);
   }
-  return utils.capitalizeColumnName(
-    utils.toCamelCase(utils.stripTrailingSnakeID(s)),
-  );
+  return utils.toCamelCase(utils.stripTrailingSnakeID(s));
 }

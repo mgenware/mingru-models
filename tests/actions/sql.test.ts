@@ -39,7 +39,7 @@ test('Input (foreign key)', () => {
 test('Input (joined key)', () => {
   const input = dd.input(post.user_id.join(user).name);
   expect((input.typeObject as dd.Column).mirroredColumn).toBe(user.name);
-  expect(input.name).toBe('postUserName');
+  expect(input.name).toBe('userName');
 });
 
 test('Raw type input', () => {

@@ -16,6 +16,7 @@ test('Instance type', () => {
 
 function testJCCols(
   jc: dd.Column,
+  tableInputName: string,
   destTable: dd.Table,
   destColumn: dd.Column,
   selectedColumn: dd.Column,
@@ -24,6 +25,7 @@ function testJCCols(
 ) {
   expect(jc.mirroredColumn).toBe(selectedColumn);
   const jt = jc.table as dd.JoinedTable;
+  expect(jt.tableInputName()).toBe(tableInputName);
   expect(jt.destTable).toBe(destTable);
   expect(jt.destColumn).toBe(destColumn);
   expect(jt.srcColumn).toBe(srcColumn);
@@ -34,6 +36,7 @@ test('JoinedColumn', () => {
   const jc = post.user_id.join(user).name;
   testJCCols(
     jc,
+    'user',
     user,
     user.id,
     user.name,
@@ -48,6 +51,7 @@ test('Nested JoinedColumn', () => {
 
   testJCCols(
     jc1,
+    'post',
     post,
     post.id,
     post.user_id,
@@ -57,6 +61,7 @@ test('Nested JoinedColumn', () => {
 
   testJCCols(
     jc2,
+    'postUser',
     user,
     user.id,
     user.name,
@@ -69,6 +74,7 @@ test('Nested JoinedColumn', () => {
   const jc4 = jc3.join(user).id;
   testJCCols(
     jc4,
+    'postUser',
     user,
     user.id,
     user.id,
