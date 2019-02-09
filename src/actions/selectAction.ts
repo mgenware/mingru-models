@@ -86,6 +86,22 @@ export class SelectAction<T extends Table> extends CoreSelectAction {
   ) {
     super(name, ActionType.select, table, 'Select');
     throwIfFalsy(columns, 'columns');
+    // Validate individual column
+    columns.forEach((col, idx) => {
+      if (!col) {
+        throw new Error(`The column at index ${idx} is null`);
+      }
+      if (
+        col instanceof Column === false &&
+        col instanceof CalculatedColumn === false
+      ) {
+        throw new Error(
+          `The column at index ${idx} is not a valid column, got a "${toTypeString(
+            col,
+          )}"`,
+        );
+      }
+    });
   }
 
   orderBy(column: SelectActionColumnNames): this {

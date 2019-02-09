@@ -193,3 +193,21 @@ test('SelectAll (arrow func)', () => {
     user.snake_case_name,
   ]);
 });
+
+test('Validate columns', () => {
+  const actions = dd.actions(user);
+  expect(() =>
+    actions.selectAll('t', t => [
+      t.name,
+      (null as unknown) as dd.Column,
+      t.follower_count,
+    ]),
+  ).toThrow('null');
+  expect(() =>
+    actions.selectAll('t', t => [
+      t.name,
+      (32 as unknown) as dd.Column,
+      t.follower_count,
+    ]),
+  ).toThrow('not a valid');
+});
