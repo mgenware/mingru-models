@@ -75,6 +75,7 @@ function getColumnName(col: SelectActionColumnNames): string {
 export class SelectAction<T extends Table> extends CoreSelectAction {
   whereSQL: SQL | null = null;
   isSelectField = false;
+  pagination = false;
   orderByColumns: ColumnName[] = [];
   groupByColumns: ColumnName[] = [];
 
@@ -119,6 +120,11 @@ export class SelectAction<T extends Table> extends CoreSelectAction {
   groupBy(column: SelectActionColumnNames): this {
     throwIfFalsy(column, 'column');
     this.groupByColumns.push(new ColumnName(getColumnName(column)));
+    return this;
+  }
+
+  paginate(): this {
+    this.pagination = true;
     return this;
   }
 
