@@ -66,6 +66,7 @@ export class Column {
   default: unknown = undefined;
   // Auto set to property name after dd.table()
   name!: string;
+  dbName: string | null = null;
   // Auto set to target table after dd.table()
   table!: Table | JoinedTable;
   foreignColumn: Column | null = null;
@@ -110,10 +111,10 @@ export class Column {
     return this;
   }
 
-  setName(name: string): this {
+  setDBName(name: string): this {
     throwIfFalsy(name, 'name');
     this.checkMutability();
-    this.name = name;
+    this.dbName = name;
     return this;
   }
 
