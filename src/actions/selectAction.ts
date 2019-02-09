@@ -89,7 +89,9 @@ export class SelectAction<T extends Table> extends CoreSelectAction {
     // Validate individual column
     columns.forEach((col, idx) => {
       if (!col) {
-        throw new Error(`The column at index ${idx} is null`);
+        throw new Error(
+          `The column at index ${idx} is null, action name "${name}"`,
+        );
       }
       if (
         col instanceof Column === false &&
@@ -98,7 +100,7 @@ export class SelectAction<T extends Table> extends CoreSelectAction {
         throw new Error(
           `The column at index ${idx} is not a valid column, got a "${toTypeString(
             col,
-          )}"`,
+          )}", action name "${name}"`,
         );
       }
     });
