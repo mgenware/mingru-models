@@ -118,6 +118,10 @@ export class Column {
     return this;
   }
 
+  getDBName(): string {
+    return this.dbName || this.name;
+  }
+
   join<T extends Table>(destTable: T): T {
     // source column + dest table + dest column = joined table
     // Simple case: post.user_id.join(user): since post.user_id is a FK to user.id, so dest column here is implicitly user.id

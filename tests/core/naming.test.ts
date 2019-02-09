@@ -27,8 +27,11 @@ test('Capitalized to snake_case', () => {
 test('Rename a FK', () => {
   expect(abcTable.uid1.name).toBe('uid_1');
   expect(abcTable.uid1.dbName).toBe(null);
+  expect(abcTable.uid1.getDBName()).toBe('uid_1');
   expect(abcTable.uid2.name).toBe('uid_2');
   expect(abcTable.uid2.dbName).toBe(null);
+  expect(abcTable.uid2.getDBName()).toBe('uid_2');
   expect(abcTable.uid3.name).toBe('uid_3');
   expect(abcTable.uid3.dbName).toBe('UID3');
+  expect(abcTable.uid3.getDBName()).toBe('UID3');
 });
