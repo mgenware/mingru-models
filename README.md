@@ -119,14 +119,14 @@ sig = dd.text().nullable;   // `sig` is NULL
 ```
 
 #### Column Name
-By default, property name reflects the column name, if you need a different name from property name, can use `Column.setName`:
+By default, property name reflects the column name, if you need a different name from property name, can use `Column.setDBName`:
 
 ```ts
 // Column name defaults to property name: "cmt_count"
 cmt_count = dd.varChar(100);
 
 // Column name is now "cmt_c"
-cmt_count = dd.varChar(100).setName('cmt_c');
+cmt_count = dd.varChar(100).setDBName('cmt_c');
 ```
 
 #### Column Objects
