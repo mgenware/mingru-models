@@ -117,10 +117,14 @@ test('ByID', () => {
 
 test('SelectField', () => {
   const actions = dd.actions(user);
-  const v = actions.selectField('t', user.name).byID();
-
+  let v = actions.selectField('t', user.name).byID();
   expect(v.isSelectAll).toBe(false);
   expect(v.isSelectField).toBe(true);
+  expect(v.columns[0]).toBe(user.name);
+
+  const sc = dd.select(dd.count('*'), 'c');
+  v = actions.selectField('t2', sc);
+  expect(v.columns[0]).toEqual(sc);
 });
 
 test('Order by', () => {

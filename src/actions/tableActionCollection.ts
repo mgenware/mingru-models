@@ -1,4 +1,4 @@
-import { Column, Table } from '../core/core';
+import { Table } from '../core/core';
 import UpdateAction from './updateAction';
 import InsertAction from './insertAction';
 import DeleteAction from './deleteAction';
@@ -6,7 +6,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action } from './action';
 import { SelectAction, SelectActionColumns } from './selectAction';
 
-export type SelectActionCompound<T extends Table> =
+export type SelectActionAcceptedParams<T extends Table> =
   | SelectActionColumns
   | ((table: T) => SelectActionColumns[]);
 
@@ -19,19 +19,19 @@ export class TableActionCollection<T extends Table> {
 
   select(
     name: string,
-    ...columns: Array<SelectActionCompound<T>>
+    ...columns: Array<SelectActionAcceptedParams<T>>
   ): SelectAction<T> {
     return this.selectCore(name, false, columns);
   }
 
   selectAll(
     name: string,
-    ...columns: Array<SelectActionCompound<T>>
+    ...columns: Array<SelectActionAcceptedParams<T>>
   ): SelectAction<T> {
     return this.selectCore(name, true, columns);
   }
 
-  selectField(name: string, column: Column): SelectAction<T> {
+  selectField(name: string, column: SelectActionColumns): SelectAction<T> {
     throwIfFalsy(column, 'column');
     const action = this.select(name, column);
     action.isSelectField = true;
@@ -81,7 +81,7 @@ export class TableActionCollection<T extends Table> {
   private selectCore(
     name: string,
     selectAll: boolean,
-    cols: Array<SelectActionCompound<T>>,
+    cols: Array<SelectActionAcceptedParams<T>>,
   ): SelectAction<T> {
     const columnsObjects: SelectActionColumns[] = [];
     for (const col of cols) {
