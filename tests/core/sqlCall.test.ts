@@ -27,6 +27,8 @@ test('SQL calls', () => {
   t = dd.coalesce(dd.sql`haha`, post.title, post.user_id);
   expect(t.type).toBe(dd.SQLCallType.coalesce);
   expect(t.returnType).toEqual(dd.varChar(100).type);
+
+  expect(dd.countAll()).toEqual(dd.count('*'));
 });
 
 test('Embed', () => {

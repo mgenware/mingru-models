@@ -40,6 +40,10 @@ export function count(column: SQLConvertible): SQLCall {
   return new SQLCall(SQLCallType.count, new ColumnType(dt.int), [column]);
 }
 
+export function countAll(): SQLCall {
+  return count('*');
+}
+
 export function coalesce(...columns: SQLConvertible[]): SQLCall {
   throwIfFalsy(columns, 'columns');
   let type: ColumnType | null = null;
