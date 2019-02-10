@@ -450,20 +450,6 @@ userTA.update('LastLogin')
 
 ### More on `SELECT` Actions
 
-#### Select columns via functions
-
-These two are equivalent:
-```ts
-// Manually pass all columns
-userTA.select('Admin', user.id, user.name, user.sig)
-  .where(user.name.isEqualToInput());
-
-// Use an arrow function to return an array of columns
-// `t` represents the underlying table, in this case, the user table
-userTA.select('Admin', t => t.id, t.name, t.sig)
-  .where(user.name.isEqualToInput());
-```
-
 #### `orderBy` and `orderByDesc`
 
 ```ts

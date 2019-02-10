@@ -155,63 +155,23 @@ test('Group by', () => {
   expect(v.groupByColumns[0].columnName).toBe('name');
 });
 
-test('Select (arrow func)', () => {
-  const actions = dd.actions(user);
-  const v = actions
-    .select(
-      't',
-      t => [
-        t.id,
-        t.name,
-        dd.select(dd.coalesce(t.name, ''), 'name2'),
-        dd.select(dd.coalesce(user.follower_count, user.name)), // name will be extracted from the first column in expression
-      ],
-      user.follower_count,
-      t => [t.snake_case_name],
-    )
-    .byID();
-
-  expect(v.columns).toEqual([
-    user.id,
-    user.name,
-    dd.select(dd.coalesce(user.name, ''), 'name2'),
-    dd.select(dd.coalesce(user.follower_count, user.name)),
-    user.follower_count,
-    user.snake_case_name,
-  ]);
-});
-
-test('SelectAll (arrow func)', () => {
-  const actions = dd.actions(user);
-  const v = actions.selectAll(
-    't',
-    t => [t.id, t.name],
-    user.follower_count,
-    t => [t.snake_case_name],
-  );
-
-  expect(v.columns).toEqual([
-    user.id,
-    user.name,
-    user.follower_count,
-    user.snake_case_name,
-  ]);
-});
-
 test('Validate columns', () => {
   const actions = dd.actions(user);
+  const t = user;
   expect(() =>
-    actions.selectAll('t', t => [
+    actions.selectAll(
+      't',
       t.name,
       (null as unknown) as dd.Column,
       t.follower_count,
-    ]),
+    ),
   ).toThrow('null');
   expect(() =>
-    actions.selectAll('t', t => [
+    actions.selectAll(
+      't',
       t.name,
       (32 as unknown) as dd.Column,
       t.follower_count,
-    ]),
+    ),
   ).toThrow('not a valid');
 });

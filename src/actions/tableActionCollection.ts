@@ -6,10 +6,6 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action } from './action';
 import { SelectAction, SelectActionColumns } from './selectAction';
 
-export type SelectActionAcceptedParams<T extends Table> =
-  | SelectActionColumns
-  | ((table: T) => SelectActionColumns[]);
-
 export class TableActionCollection<T extends Table> {
   map: Map<string, Action> = new Map<string, Action>();
 
@@ -17,17 +13,11 @@ export class TableActionCollection<T extends Table> {
     throwIfFalsy(table, 'table');
   }
 
-  select(
-    name: string,
-    ...columns: Array<SelectActionAcceptedParams<T>>
-  ): SelectAction<T> {
+  select(name: string, ...columns: SelectActionColumns[]): SelectAction<T> {
     return this.selectCore(name, false, columns);
   }
 
-  selectAll(
-    name: string,
-    ...columns: Array<SelectActionAcceptedParams<T>>
-  ): SelectAction<T> {
+  selectAll(name: string, ...columns: SelectActionColumns[]): SelectAction<T> {
     return this.selectCore(name, true, columns);
   }
 
@@ -81,7 +71,7 @@ export class TableActionCollection<T extends Table> {
   private selectCore(
     name: string,
     selectAll: boolean,
-    cols: Array<SelectActionAcceptedParams<T>>,
+    cols: SelectActionColumns[],
   ): SelectAction<T> {
     const columnsObjects: SelectActionColumns[] = [];
     for (const col of cols) {
