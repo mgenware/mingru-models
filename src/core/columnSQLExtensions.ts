@@ -4,7 +4,6 @@ import { SQL, SQLInput, input, sql } from './sql';
 declare module './core' {
   interface Column {
     toInput(name?: string): SQLInput;
-    toInputSQL(name?: string): SQL;
     isEqualTo(valueSQL: SQL): SQL;
     isEqualToInput(name?: string): SQL;
     isNotEqualTo(valueSQL: SQL): SQL;
@@ -16,10 +15,6 @@ declare module './core' {
 
 Column.prototype.toInput = function(name?: string) {
   return input(this, name);
-};
-
-Column.prototype.toInputSQL = function(name?: string) {
-  return sql`${this.toInput(name)}`;
 };
 
 Column.prototype.isEqualTo = function(valueSQL: SQL) {

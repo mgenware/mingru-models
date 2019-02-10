@@ -403,15 +403,6 @@ userTA.select('UserProfile', user.id, user.name, user.sig)
   .where(user.id.isEqualToInput());
 ```
 
-##### `Column.toInputSQL(column, optionalName)`
-
-Shortcut `dd.sql(dd.input(column, optionalName))`, useful in expression with only one input inside, e.g. setters in `UPDATE` action (`UPDATE` action is covered below):
-
-```ts
-userTA.update('Sig')
-  .set(user.sig, user.sig.toInputSQL())
-```
-
 #### Predefined System Calls
 As raw SQL expressions enable you to write any SQL, you may do this for a `DATETIME` column to set it to current time when inserted:
 
@@ -502,15 +493,8 @@ Or, use user input as column value:
 
 ```ts
 userTA.updateOne('UserSig')
-  .set(user.sig, user.sig.toInputSQL())
+  .set(user.sig, user.sig.toInput())
   .byID();
-```
-
-Note that we are using `Column.toInputSQL` instead of `Column.toInput` in the example above, it's because the value of a column (the 2nd argument of `UpdateAction.set`) is an SQL object, `Column.toInput` returns an SQLInput object, while `Column.toInputSQL` will wrap the SQLInput object into an SQL object, so the following two lines are equivalent:
-
-```ts
-dd.sql`${user.name.toInput()}`;
-user.name.toInputSQL();
 ```
 
 To set multiple columns, just call `set` one by one:
@@ -518,7 +502,7 @@ To set multiple columns, just call `set` one by one:
 ```ts
 userTA
   .updateOne('UserSig')
-  .set(user.sig, user.sig.toInputSQL())
+  .set(user.sig, user.sig.toInput())
   .set(user.name, dd.sql`'Random name'`)
   .byID();
 ```
@@ -530,10 +514,10 @@ Most of the time, you will be using `UPDATE` action with user inputs, so you pro
 ```ts
 userTA
   .updateOne('ManyColumns')
-  .set(user.sig, user.sig.toInputSQL())
-  .set(user.name, user.name.toInputSQL())
-  .set(user.age, user.age.toInputSQL())
-  .set(user.gender, user.gender.toInputSQL())
+  .set(user.sig, user.sig.toInput())
+  .set(user.name, user.name.toInput())
+  .set(user.age, user.age.toInput())
+  .set(user.gender, user.gender.toInput())
   .byID();
 ```
 
@@ -583,8 +567,8 @@ Example:
 userTA
   .insertOne('User')
   .set(user.sig, dd.sql`''`)
-  .set(user.name, user.name.toInputSQL())
-  .set(user.age, user.age.toInputSQL());
+  .set(user.name, user.name.toInput())
+  .set(user.age, user.age.toInput());
 ```
 
 `INSERT` action can also use `setInputs` like in `UPDATE` action:

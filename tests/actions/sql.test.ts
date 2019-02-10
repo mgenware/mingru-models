@@ -75,12 +75,6 @@ test('toInput(string)', () => {
   expect(input.name).toBe('haha');
 });
 
-test('toInputSQL(string)', () => {
-  const sql = user.name.toInputSQL('haha');
-  expect(sql).toBeInstanceOf(dd.SQL);
-  expect(sql.toString()).toBe('<haha: [name]>');
-});
-
 test('isEqualTo', () => {
   const sql = user.name.isEqualTo(dd.sql`"haha"`);
   expect(sql.toString()).toBe('`name` = "haha"');

@@ -1,6 +1,6 @@
 import { Action } from './action';
 import { Column } from '../core/core';
-import { SQL, SQLConvertible, convertToSQL } from '../core/sql';
+import { SQL, SQLConvertible, convertToSQL, sql } from '../core/sql';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export default class CoreUpdateAction extends Action {
@@ -16,7 +16,7 @@ export default class CoreUpdateAction extends Action {
   setInputs(...columns: Column[]): this {
     throwIfFalsy(columns, 'columns');
     for (const col of columns) {
-      this.setters.set(col, col.toInputSQL());
+      this.setters.set(col, sql`${col.toInput()}`);
     }
     return this;
   }

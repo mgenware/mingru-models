@@ -46,9 +46,9 @@ test('Order of setInputs and set', () => {
   const actions = dd.actions(user);
   const v = actions
     .update('t')
-    .set(user.name, user.name.toInputSQL('a'))
+    .set(user.name, user.name.toInput('a'))
     .setInputs(user.snake_case_name, user.name)
-    .set(user.name, user.name.toInputSQL('b'));
+    .set(user.name, user.name.toInput('b'));
 
   expect(v.setters.size).toBe(2);
 
