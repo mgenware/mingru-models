@@ -22,7 +22,7 @@ test('int', () => {
 });
 
 test('unsignedInt', () => {
-  const c = dd.unsignedInt(123);
+  const c = dd.uInt(123);
   expect(c.type.types).toContain(dd.dt.int);
   expect(c.default).toBe(123);
   expect(c.type.unsigned).toBe(true);

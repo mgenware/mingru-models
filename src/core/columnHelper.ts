@@ -42,7 +42,7 @@ export function int(defaultValue?: number): Column {
   return _int(dt.int, false, defaultValue);
 }
 
-export function unsignedInt(defaultValue?: number): Column {
+export function uInt(defaultValue?: number): Column {
   return _int(dt.int, true, defaultValue);
 }
 
