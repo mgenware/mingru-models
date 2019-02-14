@@ -9,8 +9,8 @@ export type SelectActionColumns = Column | CalculatedColumn;
 export type SelectActionColumnNames = SelectActionColumns | string;
 
 export class ColumnName {
-  constructor(public columnName: string, public desc = false) {
-    throwIfFalsy(columnName, 'columnName');
+  constructor(public column: SelectActionColumnNames, public desc = false) {
+    throwIfFalsy(column, 'column');
   }
 }
 
@@ -57,21 +57,6 @@ export function select(
   return new CalculatedColumn(convertToSQL(sql), selectedName, type);
 }
 
-function getColumnName(col: SelectActionColumnNames): string {
-  if (typeof col === 'string') {
-    return col as string;
-  }
-  if (col instanceof Column) {
-    return (col as Column).name;
-  }
-  if (col instanceof CalculatedColumn) {
-    return (col as CalculatedColumn).selectedName;
-  }
-  throw new Error(
-    `Unsupported column type "${toTypeString(col)}", value "${col}"`,
-  );
-}
-
 export class SelectAction<T extends Table> extends CoreSelectAction {
   whereSQL: SQL | null = null;
   isSelectField = false;
@@ -109,17 +94,17 @@ export class SelectAction<T extends Table> extends CoreSelectAction {
 
   orderBy(column: SelectActionColumnNames): this {
     throwIfFalsy(column, 'column');
-    return this.orderByCore(getColumnName(column), false);
+    return this.orderByCore(column, false);
   }
 
   orderByDesc(column: SelectActionColumnNames): this {
     throwIfFalsy(column, 'column');
-    return this.orderByCore(getColumnName(column), true);
+    return this.orderByCore(column, true);
   }
 
   groupBy(column: SelectActionColumnNames): this {
     throwIfFalsy(column, 'column');
-    this.groupByColumns.push(new ColumnName(getColumnName(column)));
+    this.groupByColumns.push(new ColumnName(column));
     return this;
   }
 
@@ -128,8 +113,8 @@ export class SelectAction<T extends Table> extends CoreSelectAction {
     return this;
   }
 
-  private orderByCore(columnName: string, desc: boolean): this {
-    this.orderByColumns.push(new ColumnName(columnName, desc));
+  private orderByCore(column: SelectActionColumnNames, desc: boolean): this {
+    this.orderByColumns.push(new ColumnName(column, desc));
     return this;
   }
 }
