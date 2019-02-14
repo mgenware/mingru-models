@@ -73,22 +73,7 @@ export class TableActionCollection<T extends Table> {
     selectAll: boolean,
     cols: SelectActionColumns[],
   ): SelectAction<T> {
-    const columnsObjects: SelectActionColumns[] = [];
-    for (const col of cols) {
-      if (typeof col === 'function') {
-        columnsObjects.push(
-          ...(col as ((table: T) => SelectActionColumns[]))(this.table),
-        );
-      } else {
-        columnsObjects.push(col as SelectActionColumns);
-      }
-    }
-    const action = new SelectAction(
-      name,
-      this.table,
-      columnsObjects,
-      selectAll,
-    );
+    const action = new SelectAction(name, this.table, cols, selectAll);
     this.addAction(action);
     return action;
   }
