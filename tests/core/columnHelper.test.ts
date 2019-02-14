@@ -8,7 +8,7 @@ test('bigInt', () => {
 });
 
 test('unsignedBigInt', () => {
-  const c = dd.unsignedBigInt(123);
+  const c = dd.uBigInt(123);
   expect(c.type.types).toContain(dd.dt.bigInt);
   expect(c.default).toBe(123);
   expect(c.type.unsigned).toBe(true);
@@ -36,7 +36,7 @@ test('smallInt', () => {
 });
 
 test('unsignedSmallInt', () => {
-  const c = dd.unsignedSmallInt(123);
+  const c = dd.uSmallInt(123);
   expect(c.type.types).toContain(dd.dt.smallInt);
   expect(c.default).toBe(123);
   expect(c.type.unsigned).toBe(true);
@@ -50,7 +50,7 @@ test('tinyInt', () => {
 });
 
 test('unsignedTinyInt', () => {
-  const c = dd.unsignedTinyInt(123);
+  const c = dd.uTinyInt(123);
   expect(c.type.types).toContain(dd.dt.tinyInt);
   expect(c.default).toBe(123);
   expect(c.type.unsigned).toBe(true);

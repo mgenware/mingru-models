@@ -50,7 +50,7 @@ export function bigInt(defaultValue?: number): Column {
   return _int(dt.bigInt, false, defaultValue);
 }
 
-export function unsignedBigInt(defaultValue?: number): Column {
+export function uBigInt(defaultValue?: number): Column {
   return _int(dt.bigInt, true, defaultValue);
 }
 
@@ -58,7 +58,7 @@ export function smallInt(defaultValue?: number): Column {
   return _int(dt.smallInt, false, defaultValue);
 }
 
-export function unsignedSmallInt(defaultValue?: number): Column {
+export function uSmallInt(defaultValue?: number): Column {
   return _int(dt.smallInt, true, defaultValue);
 }
 
@@ -66,7 +66,7 @@ export function tinyInt(defaultValue?: number): Column {
   return _int(dt.tinyInt, false, defaultValue);
 }
 
-export function unsignedTinyInt(defaultValue?: number): Column {
+export function uTinyInt(defaultValue?: number): Column {
   return _int(dt.tinyInt, true, defaultValue);
 }
 
@@ -85,7 +85,7 @@ export function unique(col: Column): Column {
 }
 
 export function pk(column?: Column): Column {
-  const col = column ? column : unsignedBigInt();
+  const col = column ? column : uBigInt();
   col.type.pk = true;
   return col;
 }
