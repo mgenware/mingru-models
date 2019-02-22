@@ -7,6 +7,8 @@
 
 Redefining database models using TypeScript.
 
+**All APIs are subject to change before 1.0.0**
+
 **Note that dd-models only helps you define database models in a strong-typed way, it has nothing to do with how these models are going to be used, usually, you use other libraries to consume your models**, examples:
 
 * [mingru](https://github.com/mgenware/mingru) converts dd-models to Go code
