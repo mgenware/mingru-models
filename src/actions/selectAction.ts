@@ -58,7 +58,8 @@ export function select(
 }
 
 export class SelectAction<T extends Table> extends CoreSelectAction {
-  whereSQL: SQL | null = null;
+  havingSQL: SQL | null = null;
+  havingValidator: ((value: SQL) => void) | null = null;
   isSelectField = false;
   pagination = false;
   orderByColumns: ColumnName[] = [];
@@ -110,6 +111,22 @@ export class SelectAction<T extends Table> extends CoreSelectAction {
 
   paginate(): this {
     this.pagination = true;
+    return this;
+  }
+
+  having(value: SQL): this {
+    throwIfFalsy(value, 'value');
+    if (!this.groupByColumns) {
+      throw new Error('You have to call `having` after `groupBy`');
+    }
+    if (this.havingValidator) {
+      this.havingValidator(value);
+    }
+
+    if (this.havingSQL) {
+      throw new Error('`having` is called twice');
+    }
+    this.havingSQL = value;
     return this;
   }
 

@@ -16,7 +16,7 @@ test('Select and from', () => {
   expect(v.columns[0]).toBe(user.id);
   expect(v.columns[1]).toBe(user.name);
   expect(v.table).toBe(user);
-  expect(v.whereSQL).not.toBeNull();
+  expect(v.whereSQL!.toString()).toBe('`id` = 1');
   expect(v.isSelectAll).toBe(false);
   expect(v.type).toBe(dd.ActionType.select);
 });
@@ -165,4 +165,16 @@ test('Validate columns', () => {
       t.follower_count,
     ),
   ).toThrow('not a valid');
+});
+
+test('having', () => {
+  const actions = dd.actions(user);
+  const v = actions
+    .selectAll('t', user.id, user.name)
+    .groupBy(user.name)
+    .having(dd.sql`${dd.count(user.name)} > 2`);
+
+  expect(v.groupByColumns.length).toBe(1);
+  expect(v.groupByColumns[0].column).toBe(user.name);
+  expect(v.havingSQL!.toString()).toBe('CALL(3, `name`) > 2');
 });
