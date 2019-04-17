@@ -706,5 +706,32 @@ const cols = [
 ];
 ```
 
----------
-Working in progress...
+## Troubleshooting
+### Error when defining table actions
+Error: Exported variable 'ta' has or is using name 'User' from external module "./user" but cannot be named.ts:
+```ts
+import * as dd from 'dd-models';
+import user from './user';
+
+const ta = dd.actions(user);
+// This line emits the following error:
+// Exported variable 'ta' has or is using name 'User' from external module "./user" but cannot be named.ts(4023)
+
+ta.select('SigSrc', user.sig_src.as('src')).byID();
+
+export default ta;
+```
+
+This is usually because you didn't export the `User` type in `user.ts`:
+```diff
+import * as dd from 'dd-models';
+
+-class User extends dd.Table {
++export class User extends dd.Table {
+}
+
+export default dd.table(User);
+```
+
+-----------
+**Work in progress**
