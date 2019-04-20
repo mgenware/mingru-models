@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { ActionType } from './action';
-import { Table, Column, ColumnType } from '../core/core';
+import { ActionType } from './ta';
+import { Column, ColumnType } from '../core/core';
 import { SQL, SQLConvertible, convertToSQL } from '../core/sql';
 import CoreSelectAction from './coreSelectAction';
 import toTypeString from 'to-type-string';
@@ -49,7 +49,7 @@ export class CalculatedColumn {
   }
 }
 
-export function select(
+export function column(
   sql: SQLConvertible,
   selectedName?: string,
   type?: ColumnType,
@@ -57,7 +57,7 @@ export function select(
   return new CalculatedColumn(convertToSQL(sql), selectedName, type);
 }
 
-export class SelectAction<T extends Table> extends CoreSelectAction {
+export class SelectAction extends CoreSelectAction {
   havingSQL: SQL | null = null;
   havingValidator: ((value: SQL) => void) | null = null;
   isSelectField = false;
@@ -66,18 +66,16 @@ export class SelectAction<T extends Table> extends CoreSelectAction {
   groupByColumns: ColumnName[] = [];
 
   constructor(
-    name: string,
-    table: T,
     public columns: SelectActionColumns[],
     public isSelectAll: boolean,
   ) {
-    super(name, ActionType.select, table, 'Select');
+    super(ActionType.select);
     throwIfFalsy(columns, 'columns');
     // Validate individual column
     columns.forEach((col, idx) => {
       if (!col) {
         throw new Error(
-          `The column at index ${idx} is null, action name "${name}"`,
+          `The column at index ${idx} is null, action name "${this.name}"`,
         );
       }
       if (
@@ -87,7 +85,7 @@ export class SelectAction<T extends Table> extends CoreSelectAction {
         throw new Error(
           `The column at index ${idx} is not a valid column, got a "${toTypeString(
             col,
-          )}", action name "${name}"`,
+          )}", action name "${this.name}"`,
         );
       }
     });

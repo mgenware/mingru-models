@@ -8,15 +8,13 @@ export * from './core/sql';
 import './core/columnSQLExtensions';
 import './actions/columnSelectExtensions';
 
-export { Action, ActionType } from './actions/action';
+// Table actions
+export * from './actions/ta';
+export * from './actions/actionHelper';
 export * from './actions/selectAction';
 export { default as UpdateAction } from './actions/updateAction';
 export { default as InsertAction } from './actions/insertAction';
 export { default as DeleteAction } from './actions/deleteAction';
-export {
-  default as actions,
-  TableActionCollection,
-} from './actions/tableActionCollection';
 export { default as utils } from './lib/utils';
 export * from './sqlHelper';
 export * from './core/sqlCall';

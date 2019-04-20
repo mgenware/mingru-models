@@ -1,4 +1,4 @@
-import { Action } from './action';
+import { Action } from './ta';
 import { SQL } from '../core/sql';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 

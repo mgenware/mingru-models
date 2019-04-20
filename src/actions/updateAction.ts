@@ -1,5 +1,4 @@
-import { ActionType } from './action';
-import { Table } from '../core/core';
+import { ActionType } from './ta';
 import { SQL } from '../core/sql';
 import CoreUpdateAction from './coreUpdateAction';
 import CoreSelectAction from './coreSelectAction';
@@ -10,19 +9,9 @@ export default class UpdateAction extends CoreUpdateAction {
   }
   private coreSelectAction: CoreSelectAction;
 
-  constructor(
-    name: string,
-    table: Table,
-    public updateAll: boolean,
-    public checkAffectedRows: boolean,
-  ) {
-    super(name, ActionType.update, table, 'Update');
-    this.coreSelectAction = new CoreSelectAction(
-      name,
-      ActionType.select,
-      table,
-      'Update',
-    );
+  constructor(public updateAll: boolean, public checkAffectedRows: boolean) {
+    super(ActionType.update);
+    this.coreSelectAction = new CoreSelectAction(ActionType.select);
     this.coreSelectAction.whereValidator = () => {
       if (this.updateAll) {
         throw new Error('You cannot set a WHERE clause in updateAll');
