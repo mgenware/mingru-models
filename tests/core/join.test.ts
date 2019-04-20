@@ -6,7 +6,7 @@ import { Column } from '../../dist/main';
 
 function testType(col: dd.Column, name: string) {
   expect(col.isJoinedColumn()).toBe(true);
-  expect(col.name).toBe(name);
+  expect(col.__name).toBe(name);
 }
 
 test('Instance type', () => {
@@ -24,7 +24,7 @@ function testJCCols(
   path: string,
 ) {
   expect(jc.mirroredColumn).toBe(selectedColumn);
-  const jt = jc.table as dd.JoinedTable;
+  const jt = jc.__table as dd.JoinedTable;
   expect(jt.tableInputName()).toBe(tableInputName);
   expect(jt.destTable).toBe(destTable);
   expect(jt.destColumn).toBe(destColumn);

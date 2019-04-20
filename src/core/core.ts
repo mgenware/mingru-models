@@ -53,6 +53,9 @@ export class Column extends CoreProperty {
 
     const copied = Column.copyFrom(srcColumn, table, null);
     copied.foreignColumn = srcColumn;
+    // For foreign column, `__name` is reset to null
+    // tslint:disable-next-line no-any
+    (copied.__name as any) = null;
     return copied;
   }
 

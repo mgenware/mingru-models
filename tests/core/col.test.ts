@@ -11,22 +11,22 @@ test('Frozen after dd.table', () => {
 });
 
 test('Normal col', () => {
-  expect(post.id.name).toBe('id');
-  expect(post.id.table).toBe(post);
+  expect(post.id.__name).toBe('id');
+  expect(post.id.__table).toBe(post);
 });
 
 test('Implicit FK', () => {
   const col = post.user_id;
-  expect(col.table).toBe(post);
-  expect(col.name).toBe('user_id');
+  expect(col.__table).toBe(post);
+  expect(col.__name).toBe('user_id');
   expect(col.foreignColumn).toBe(user.id);
   expect(col.type).not.toBe(user.id.type);
 });
 
 test('Explicit FK', () => {
   const col = post.e_user_id_n;
-  expect(col.table).toBe(post);
-  expect(col.name).toBe('e_user_id_n');
+  expect(col.__table).toBe(post);
+  expect(col.__name).toBe('e_user_id_n');
   expect(col.foreignColumn).toBe(user.id);
   expect(col).not.toBe(user.id.type);
   expect(col.type.nullable).toBe(true);
@@ -34,8 +34,8 @@ test('Explicit FK', () => {
 
 test('Explicit FK (untouched)', () => {
   const col = post.e_user_id;
-  expect(col.table).toBe(post);
-  expect(col.name).toBe('e_user_id');
+  expect(col.__table).toBe(post);
+  expect(col.__name).toBe('e_user_id');
   expect(col.foreignColumn).toBe(user.id);
   expect(col.type).not.toBe(user.id.type);
   expect(col.type.nullable).toBe(false);
@@ -48,16 +48,16 @@ test('freeze', () => {
   expect(Object.isFrozen(col.type)).toBe(true);
 });
 
-test('Column.spawnForeignColumn', () => {
+test('Column.newForeignColumn', () => {
   const a = user.id;
-  const b = Column.spawnForeignColumn(a, post);
+  const b = Column.newForeignColumn(a, post);
   // FK
   expect(b.foreignColumn).toBe(a);
   // name is cleared
-  expect(b.name).toBeNull();
+  expect(b.__name).toBeNull();
   // Value being reset
   expect(b.type.pk).toBe(false);
-  expect(b.table).toBe(post);
+  expect(b.__table).toBe(post);
   // props is copied
   expect(b.type).not.toBe(a.type);
   // props.types is copied
@@ -70,16 +70,16 @@ test('Column.spawnForeignColumn', () => {
   expect(a.type.unique).toBe(b.type.unique);
 });
 
-test('Column.spawnJoinedColumn', () => {
+test('Column.newJoinedColumn', () => {
   const t = (post.user_id.join(user) as unknown) as dd.JoinedTable;
   const a = user.name;
-  const b = Column.spawnJoinedColumn(a, t);
+  const b = Column.newJoinedColumn(a, t);
   // mirroredColumn
   expect(b.mirroredColumn).toBe(a);
   // Value being reset
   expect(b.type.pk).toBe(false);
-  expect(b.name).toBe(a.name);
-  expect(b.table).toBe(t);
+  expect(b.__name).toBe(a.__name);
+  expect(b.__table).toBe(t);
   // props is copied
   expect(b.type).not.toBe(a.type);
   // props.types is copied
@@ -171,4 +171,22 @@ class SCTable extends dd.Table {
 
 test('CalculatedColumn in table def', () => {
   expect(() => dd.table(SCTable)).toThrow('CalculatedColumn');
+});
+
+test('Register property callback', () => {
+  let counter = 0;
+  const cb = () => counter++;
+  const col = new dd.Column(new dd.ColumnType('abc'));
+  // Register the callback twice
+  dd.CoreProperty.registerHandler(col, cb);
+  dd.CoreProperty.registerHandler(col, cb);
+  class User extends dd.Table {
+    t = col;
+  }
+
+  expect(col.__handlers.length).toBe(2);
+  expect(counter).toBe(0);
+  dd.table(User);
+  expect(col.__handlers.length).toBe(0);
+  expect(counter).toBe(2);
 });
