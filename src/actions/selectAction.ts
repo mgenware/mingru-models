@@ -28,7 +28,7 @@ export class CalculatedColumn {
     if (core instanceof Column) {
       const col = core as Column;
       this.core = col;
-      this.selectedName = selectedName || col.name;
+      this.selectedName = selectedName || col.__name;
     } else {
       const expr = convertToSQL(core);
       this.core = expr;
@@ -38,7 +38,7 @@ export class CalculatedColumn {
         // Try to extract a column name from SQL expression
         const col = expr.findColumn();
         if (col) {
-          this.selectedName = col.name;
+          this.selectedName = col.__name;
         } else {
           throw new Error(
             'The argument "selectedName" is required for an SQL expression without any columns inside',
@@ -49,7 +49,7 @@ export class CalculatedColumn {
   }
 }
 
-export function column(
+export function sel(
   sql: SQLConvertible,
   selectedName?: string,
   type?: ColumnType,
@@ -75,7 +75,7 @@ export class SelectAction extends CoreSelectAction {
     columns.forEach((col, idx) => {
       if (!col) {
         throw new Error(
-          `The column at index ${idx} is null, action name "${this.name}"`,
+          `The column at index ${idx} is null, action name "${this.__name}"`,
         );
       }
       if (
@@ -85,7 +85,7 @@ export class SelectAction extends CoreSelectAction {
         throw new Error(
           `The column at index ${idx} is not a valid column, got a "${toTypeString(
             col,
-          )}", action name "${this.name}"`,
+          )}", action name "${this.__name}"`,
         );
       }
     });

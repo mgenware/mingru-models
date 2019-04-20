@@ -15,7 +15,7 @@ export class SQLInput {
     if (typeof typeObject === 'string') {
       type = typeObject as string;
     } else {
-      type = `[${(typeObject as Column).name}]`;
+      type = `[${(typeObject as Column).__name}]`;
     }
     return `${this.name}: ${type}`;
   }
@@ -137,7 +137,7 @@ export class SQL {
         return element.toRawString();
       }
       case SQLElementType.column: {
-        return '`' + element.toColumn().name + '`';
+        return '`' + element.toColumn().__name + '`';
       }
       case SQLElementType.input: {
         return `<${element.toInput().toString()}>`;

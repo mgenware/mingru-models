@@ -1,4 +1,4 @@
-import { Table } from '../core/core';
+import { Table, CoreProperty } from '../core/core';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import * as defs from '../core/defs';
 import toTypeString from 'to-type-string';
@@ -14,11 +14,13 @@ export enum ActionType {
   delete,
 }
 
-export class Action {
-  name!: string;
-  table!: Table;
+export class Action extends CoreProperty {
+  // Will be set in dd.ta
+  __table!: Table;
 
-  constructor(public actionType: ActionType) {}
+  constructor(public actionType: ActionType) {
+    super();
+  }
 }
 
 export function enumerateActions<T extends TA>(
@@ -59,8 +61,11 @@ export function ta<T extends Table, A extends TA>(
   throwIfFalsy(table, 'table');
   const group = new taCls();
   group.__table = table;
-  enumerateActions(group, (act, prop) => {
-    act.name = prop;
+  enumerateActions(group, (action, prop) => {
+    action.__name = prop;
+    action.__table = table;
+    // After all properties are set, run property handlers
+    CoreProperty.runHandlers(action);
   });
   return group;
 }

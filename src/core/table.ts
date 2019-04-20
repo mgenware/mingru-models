@@ -1,5 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Table, Column } from './core';
+import { Table, Column, CoreProperty } from './core';
 import { utils } from '../main';
 import toTypeString from 'to-type-string';
 import * as defs from './defs';
@@ -63,26 +63,29 @@ export function table<T extends Table>(
     // A frozen column indicates an implicit foreign key, note: `dd.fk` can set up an explicit foreign key
     if (Object.isFrozen(col)) {
       // Copy the frozen column
-      columnToAdd = Column.spawnForeignColumn(col, tableObj);
+      columnToAdd = Column.newForeignColumn(col, tableObj);
     } else {
       columnToAdd = col;
     }
 
     // Populate column props
-    if (!columnToAdd.name) {
+    if (!columnToAdd.__name) {
       // column name can be set by setName
-      columnToAdd.name = utils.toSnakeCase(propName);
+      columnToAdd.__name = utils.toSnakeCase(propName);
     }
-    columnToAdd.table = tableObj;
+    columnToAdd.__table = tableObj;
     // Check if it's a pk
     if (columnToAdd.type.pk) {
       tableObj.__pks.push(col);
     }
 
+    cols.push(columnToAdd);
     // tslint:disable-next-line
     (tableObj as any)[propName] = columnToAdd;
+    // After all properties are set, run property handlers
+    CoreProperty.runHandlers(columnToAdd);
+
     columnToAdd.freeze();
-    cols.push(columnToAdd);
   });
   return (tableObj as unknown) as T;
 }

@@ -7,10 +7,5 @@ export default class DeleteAction extends CoreSelectAction {
 
   constructor(public deleteAll: boolean, public checkAffectedRows: boolean) {
     super(ActionType.delete);
-    this.whereValidator = () => {
-      if (this.deleteAll) {
-        throw new Error('You cannot set a WHERE clause in deleteAll');
-      }
-    };
   }
 }

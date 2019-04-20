@@ -14,7 +14,7 @@ export function fk(column: Column): Column {
       )}" doesn't seem to be a valid column because it is frozen`,
     );
   }
-  return Column.spawnForeignColumn(column, null);
+  return Column.newForeignColumn(column, null);
 }
 
 export function varChar(length: number, defaultValue?: string): Column {

@@ -17,44 +17,69 @@ export class ColumnType {
   }
 }
 
-export class Column {
+export type CorePropertyHandler = () => void;
+
+export class CoreProperty {
+  static registerHandler(property: CoreProperty, handler: CorePropertyHandler) {
+    throwIfFalsy(property, 'property');
+    throwIfFalsy(handler, 'handler');
+    property.__handlers.push(handler);
+  }
+
+  static runHandlers(property: CoreProperty) {
+    throwIfFalsy(property, 'property');
+    for (const handler of property.__handlers) {
+      handler();
+    }
+    // Remove all handlers cuz handlers are meant to be run only once
+    property.__handlers = [];
+  }
+
+  __handlers: CorePropertyHandler[] = [];
+  __name!: string;
+}
+
+export class Column extends CoreProperty {
   static fromTypes(types: string | string[]): Column {
     types = typeof types === 'string' ? [types] : types;
     return new Column(new ColumnType(types));
   }
 
-  static spawnForeignColumn(
-    column: Column,
-    table: Table | null, // can be nullable, used by dd.fk which doesn't have a table
+  static newForeignColumn(
+    srcColumn: Column,
+    table: Table | null, // can be nullable, used by dd.fk which doesn't have a table param
   ): Column {
-    throwIfFalsy(column, 'column');
+    throwIfFalsy(srcColumn, 'srcColumn');
 
-    // Just to mute tslint
-    const tb = table as Table;
-    const copied = Column._spawn(column, tb, null);
-    copied.foreignColumn = column;
-    // Unlike spawnJoinedColumn, name will be inherited
-    // tslint:disable-next-line no-any
-    (copied.name as any) = null;
+    const copied = Column.copyFrom(srcColumn, table, null);
+    copied.foreignColumn = srcColumn;
     return copied;
   }
 
-  static spawnJoinedColumn(mirroredColumn: Column, table: JoinedTable): Column {
-    const copied = Column._spawn(mirroredColumn, table, mirroredColumn.name);
+  static newJoinedColumn(mirroredColumn: Column, table: JoinedTable): Column {
+    const copied = Column.copyFrom(
+      mirroredColumn,
+      table,
+      mirroredColumn.__name,
+    );
     copied.mirroredColumn = mirroredColumn;
     return copied;
   }
 
-  private static _spawn(
+  private static copyFrom(
     column: Column,
-    table: Table | JoinedTable,
+    newTable: Table | JoinedTable | null,
     newName: string | null,
   ): Column {
     const res = new Column(column.type);
     // Copy values
     res.default = column.default;
-    res.name = newName || column.name;
-    res.table = table;
+    if (newTable) {
+      res.__table = newTable;
+    }
+    if (newName) {
+      res.__name = newName;
+    }
     res.foreignColumn = column.foreignColumn;
     res.mirroredColumn = column.mirroredColumn;
     // Reset value
@@ -64,17 +89,19 @@ export class Column {
 
   type: ColumnType;
   default: unknown = undefined;
-  // Auto set to property name after dd.table()
-  name!: string;
-  dbName: string | null = null;
-  // Auto set to target table after dd.table()
-  table!: Table | JoinedTable;
+
+  // __ properties will be set after dd.table()
+  __dbName: string | null = null;
+  __table!: Table | JoinedTable;
+
   foreignColumn: Column | null = null;
 
   // See `Column.join` for details
   mirroredColumn: Column | null = null;
 
   constructor(type: ColumnType) {
+    super();
+
     throwIfFalsy(type, 'type');
     // Copy if frozen
     if (Object.isFrozen(type)) {
@@ -114,12 +141,12 @@ export class Column {
   setDBName(name: string): this {
     throwIfFalsy(name, 'name');
     this.checkMutability();
-    this.dbName = name;
+    this.__dbName = name;
     return this;
   }
 
   getDBName(): string {
-    return this.dbName || this.name;
+    return this.__dbName || this.__name;
   }
 
   join<T extends Table>(destTable: T): T {
@@ -153,13 +180,13 @@ export class Column {
           );
         }
         // returns a joined column
-        return Column.spawnJoinedColumn(selectedColumn, joinedTable);
+        return Column.newJoinedColumn(selectedColumn, joinedTable);
       },
     });
   }
 
   inputName(): string {
-    const curName = utils.toCamelCase(this.name);
+    const curName = utils.toCamelCase(this.__name);
     if (this.isJoinedColumn()) {
       return (
         this.castToJoinedTable().tableInputName() +
@@ -170,7 +197,7 @@ export class Column {
   }
 
   tableName(): string {
-    const { table } = this;
+    const { __table: table } = this;
     if (table instanceof Table) {
       return this.castToTable().__name;
     }
@@ -179,21 +206,21 @@ export class Column {
   }
 
   isJoinedColumn(): boolean {
-    return this.table instanceof JoinedTable;
+    return this.__table instanceof JoinedTable;
   }
 
   castToTable(): Table {
-    return this.table as Table;
+    return this.__table as Table;
   }
 
   castToJoinedTable(): JoinedTable {
-    return this.table as JoinedTable;
+    return this.__table as JoinedTable;
   }
 
   private checkMutability() {
     if (Object.isFrozen(this)) {
       throw new Error(
-        `The current column "${this.name}" of type ${toTypeString(
+        `The current column "${this.__name}" of type ${toTypeString(
           this,
         )} cannot be modified, it is frozen. It is mostly likely because you are modifying a column from another table`,
       );
@@ -234,18 +261,18 @@ export class JoinedTable {
     if (srcColumn.isJoinedColumn()) {
       // source column is a joined column
       const srcTableKeyPath = srcColumn.castToJoinedTable().keyPath;
-      localPath = `[${srcTableKeyPath}.${srcColumn.name}]`;
+      localPath = `[${srcTableKeyPath}.${srcColumn.__name}]`;
     } else {
-      localPath = `[${srcColumn.castToTable().__name}.${srcColumn.name}]`;
+      localPath = `[${srcColumn.castToTable().__name}.${srcColumn.__name}]`;
     }
 
-    const remotePath = `[${destColumn.tableName()}.${destColumn.name}]`;
+    const remotePath = `[${destColumn.tableName()}.${destColumn.__name}]`;
     this.keyPath = `[${localPath}.${remotePath}]`;
   }
 
   tableInputName(): string {
     const { srcColumn } = this;
-    const curName = makeMiddleName(srcColumn.name);
+    const curName = makeMiddleName(srcColumn.__name);
     if (srcColumn.isJoinedColumn()) {
       // If srcColumn is a joined column, e.g. cmt.post_id.join(post).user_id.join(user), returns 'postUser' in this case
       return (

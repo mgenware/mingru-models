@@ -3,14 +3,15 @@ import user from '../models/user';
 import post from '../models/post';
 
 test('Insert', () => {
-  const actions = dd.actions(post);
-  const v = actions.insert('t').setInputs(post.title, post.snake_case_user_id);
+  class UserTA extends dd.TA {
+    t = dd.insert().setInputs(post.title, post.snake_case_user_id);
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
 
-  expect(v.type).toBe(dd.ActionType.insert);
-  expect(v.name).toBe('InsertT');
+  expect(v.actionType).toBe(dd.ActionType.insert);
   expect(v.fetchInsertedID).toBeFalsy();
   expect(v).toBeInstanceOf(dd.InsertAction);
-  expect(v.table).toBe(post);
   expect(v.setters.size).toBe(2);
 
   const vTitle = v.setters.get(post.title) as dd.SQL;
@@ -20,12 +21,15 @@ test('Insert', () => {
 });
 
 test('Order of setInputs and set', () => {
-  const actions = dd.actions(user);
-  const v = actions
-    .insert('t')
-    .set(user.name, user.name.toInput('a'))
-    .setInputs(user.snake_case_name, user.name)
-    .set(user.name, user.name.toInput('b'));
+  class UserTA extends dd.TA {
+    t = dd
+      .insert()
+      .set(user.name, user.name.toInput('a'))
+      .setInputs(user.snake_case_name, user.name)
+      .set(user.name, user.name.toInput('b'));
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
 
   expect(v.setters.size).toBe(2);
   const vName = v.setters.get(user.name) as dd.SQL;
@@ -36,37 +40,45 @@ test('Order of setInputs and set', () => {
 });
 
 test('Insert one', () => {
-  const actions = dd.actions(post);
-  const v = actions
-    .insertOne('t')
-    .setInputs(post.title, post.snake_case_user_id);
+  class UserTA extends dd.TA {
+    t = dd.insertOne().setInputs(post.title, post.snake_case_user_id);
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
 
   expect(v.fetchInsertedID).toBeTruthy();
   expect(v.withDefaults).toBeFalsy();
 });
 
 test('Insert with defaults', () => {
-  const actions = dd.actions(post);
-  const v = actions
-    .insertWithDefaults('t')
-    .setInputs(post.title, post.snake_case_user_id);
+  class UserTA extends dd.TA {
+    t = dd.insertWithDefaults().setInputs(post.title, post.snake_case_user_id);
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
 
   expect(v.fetchInsertedID).toBeFalsy();
   expect(v.withDefaults).toBeTruthy();
 });
 
 test('Insert one with defaults', () => {
-  const actions = dd.actions(post);
-  const v = actions
-    .insertOneWithDefaults('t')
-    .setInputs(post.title, post.snake_case_user_id);
+  class UserTA extends dd.TA {
+    t = dd
+      .insertOneWithDefaults()
+      .setInputs(post.title, post.snake_case_user_id);
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
 
   expect(v.fetchInsertedID).toBeTruthy();
   expect(v.withDefaults).toBeTruthy();
 });
 
 test('SQLConvertible value', () => {
-  const actions = dd.actions(post);
-  const v = actions.insertOneWithDefaults('t').set(post.title, dd.dateNow());
+  class UserTA extends dd.TA {
+    t = dd.insertOneWithDefaults().set(post.title, dd.dateNow());
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
   expect(v.setters.get(post.title)!.toString()).toBe('CALL(1)');
 });
