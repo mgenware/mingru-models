@@ -5,7 +5,7 @@ test('Table name', () => {
   expect(user.__name).toBe('user');
 });
 
-test('Table.forEach', () => {
+test('enumerateColumns', () => {
   const cols: dd.Column[] = [];
   dd.enumerateColumns(user, col => cols.push(col));
   expect(cols).toEqual([

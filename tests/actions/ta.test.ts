@@ -42,3 +42,18 @@ test('Register property callback', () => {
   expect(action.__handlers.length).toBe(0);
   expect(counter).toBe(2);
 });
+
+test('enumerateActions', () => {
+  class UserTA extends dd.TA {
+    upd = dd
+      .update()
+      .set(user.name, dd.sql`${dd.input(user.name)}`)
+      .set(user.follower_count, dd.sql`${user.follower_count} + 1`);
+    sel = dd.select(user.id);
+  }
+  const ta = dd.ta(user, UserTA);
+
+  const actions: dd.Action[] = [];
+  dd.enumerateActions(ta, a => actions.push(a));
+  expect(actions).toEqual([ta.upd, ta.sel]);
+});
