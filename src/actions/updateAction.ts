@@ -9,7 +9,7 @@ export default class UpdateAction extends CoreUpdateAction {
   whereSQL: SQL | null = null;
   whereValidator: ((value: SQL) => void) | null = null;
 
-  constructor(public updateAll: boolean, public checkAffectedRows: boolean) {
+  constructor(public allowNoWhere: boolean, public checkAffectedRows: boolean) {
     super(ActionType.update);
   }
 
@@ -24,5 +24,14 @@ export default class UpdateAction extends CoreUpdateAction {
       byIDUnsafe(this);
     });
     return this;
+  }
+
+  validate() {
+    super.validate();
+    if (!this.allowNoWhere && !this.whereSQL) {
+      throw new Error(
+        `'allowNoWhere' is set to false, you must define an WHERE clause. Otherwise, use 'unsafeUpdateAll'`,
+      );
+    }
   }
 }

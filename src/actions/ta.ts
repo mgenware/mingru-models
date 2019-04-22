@@ -21,6 +21,11 @@ export class Action extends CoreProperty {
   constructor(public actionType: ActionType) {
     super();
   }
+
+  // After action is fully initialized, `dd.ta` will call `Action.validate`
+  validate() {
+    // Implemented by sub-classes
+  }
 }
 
 export function enumerateActions<T extends TA>(
@@ -66,6 +71,8 @@ export function ta<T extends Table, A extends TA>(
     action.__table = table;
     // After all properties are set, run property handlers
     CoreProperty.runHandlers(action);
+    // Validate this action
+    action.validate();
   });
   return group;
 }

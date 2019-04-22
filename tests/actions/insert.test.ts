@@ -82,3 +82,12 @@ test('SQLConvertible value', () => {
   const v = ta.t;
   expect(v.setters.get(post.title)!.toString()).toBe('CALL(1)');
 });
+
+test('No setters', () => {
+  expect(() => {
+    class PostTA extends dd.TA {
+      t = dd.insert();
+    }
+    dd.ta(post, PostTA);
+  }).toThrow('setter');
+});

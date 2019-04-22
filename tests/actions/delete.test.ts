@@ -13,34 +13,54 @@ test('DeleteAction', () => {
   expect(v.actionType).toBe(dd.ActionType.delete);
 });
 
-test('DeleteOne', () => {
+test('deleteOne', () => {
   class UserTA extends dd.TA {
     t = dd.deleteOne().where(dd.sql`${user.id} = 1`);
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
+
   // extra props
   expect(v.checkAffectedRows).toBe(true);
-  expect(v.deleteAll).toBe(false);
+  expect(v.allowNoWhere).toBe(false);
+
+  // Throw error when WHERE is empty
+  expect(() => {
+    class TA extends dd.TA {
+      t = dd.deleteOne();
+    }
+    dd.ta(user, TA);
+  }).toThrow('unsafeDeleteAll');
 });
 
-test('DeleteAll', () => {
+test('deleteSome', () => {
   class UserTA extends dd.TA {
-    t = dd.deleteAll();
+    t = dd.deleteSome().where(dd.sql`${user.id} = 1`);
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
   // extra props
   expect(v.checkAffectedRows).toBe(false);
-  expect(v.deleteAll).toBe(true);
+  expect(v.allowNoWhere).toBe(false);
+
+  // Throw error when WHERE is empty
+  expect(() => {
+    class TA extends dd.TA {
+      t = dd.deleteSome();
+    }
+    dd.ta(user, TA);
+  }).toThrow('unsafeDeleteAll');
 });
 
-test('DeleteAll and where', () => {
-  expect(() => {
-    class UserTA extends dd.TA {
-      t = dd.deleteAll();
-    }
-    dd.ta(user, UserTA);
-  }).not.toThrow();
+test('unsafeDeleteAll', () => {
+  class UserTA extends dd.TA {
+    t = dd.unsafeDeleteAll();
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+
+  // extra props
+  expect(v.checkAffectedRows).toBe(false);
+  expect(v.allowNoWhere).toBe(true);
 });

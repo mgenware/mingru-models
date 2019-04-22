@@ -20,4 +20,11 @@ export default class CoreUpdateAction extends Action {
     }
     return this;
   }
+
+  validate() {
+    super.validate();
+    if (!this.setters.size) {
+      throw new Error(`No setters in action "${this.__name}"`);
+    }
+  }
 }

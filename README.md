@@ -484,14 +484,14 @@ dd-models supports the following kinds of `UPDATE` actions:
 ```ts
 // Updates a row and checks rows affected to make sure only one row is updated
 // Implementations should throw an error if used without a WHERE clause
-function updateOne(name: string): UpdateAction;
+function updateOne(): UpdateAction;
 
-// Updates rows
-function updateAll(name: string): UpdateAction;
-
-// (Not recommended, prefer `updateOne`) Updates rows
+// Updates rows base on some conditions
 // Implementations should throw an error if used without a WHERE clause
-function update(name: string): UpdateAction;
+function updateSome(): UpdateAction;
+
+// Updates all rows
+function unsafeUpdateAll(): UpdateAction;
 ```
 
 To set individual column values, use `UpdateAction.set(column, sql)`, e.g. set an `user.sig` to a random string:
@@ -557,14 +557,14 @@ Notice `user.age` has been set for three times in the code above, the latter alw
 
 ```ts
 // Inserts a new row, and returns inserted ID
-function insertOne(name: string): InsertAction;
+function insertOne(): InsertAction;
 // Inserts a new row
-function insert(name: string): InsertAction;
+function insert(): InsertAction;
 
 // Inserts a new row, and returns inserted ID. Use column default value for unset columns
-function insertOneWithDefaults(name: string): InsertAction;
+function insertOneWithDefaults(): InsertAction;
 // Inserts a new row. Use column default value for unset columns
-function insertWithDefaults(name: string): InsertAction;
+function insertWithDefaults(): InsertAction;
 }
 ```
 
@@ -606,14 +606,14 @@ insertUser = dd.insertOneWithDefaults()
 ```ts
 // Deletes a row and checks rows affected to make sure only one row is updated
 // Implementations should throw an error if used without a WHERE clause
-function deleteOne(name: string): DeleteAction;
+function deleteOne(): DeleteAction;
 
-// Deletes rows
-function deleteAll(name: string): DeleteAction;
-
-// (Not recommended, prefer `deleteOne`) Delete rows
+// Deletes rows based on some conditions
 // Implementations should throw an error if used without a WHERE clause
-function delete(name: string): DeleteAction;
+function deleteSome(): DeleteAction;
+
+// Delete all rows
+function unsafeDeleteAll(): DeleteAction;
 ```
 
 Like `SELECT` and `UPDATE` actions, `DELETE` action should have a `WHERE` clause unless you need to delete all rows using `deleteAll`.

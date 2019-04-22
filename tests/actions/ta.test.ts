@@ -4,7 +4,7 @@ import user from '../models/user';
 test('ta', () => {
   class UserTA extends dd.TA {
     upd = dd
-      .update()
+      .unsafeUpdateAll()
       .set(user.name, dd.sql`${dd.input(user.name)}`)
       .set(user.follower_count, dd.sql`${user.follower_count} + 1`);
     sel = dd.select(user.id);
@@ -46,7 +46,7 @@ test('Register property callback', () => {
 test('enumerateActions', () => {
   class UserTA extends dd.TA {
     upd = dd
-      .update()
+      .unsafeUpdateAll()
       .set(user.name, dd.sql`${dd.input(user.name)}`)
       .set(user.follower_count, dd.sql`${user.follower_count} + 1`);
     sel = dd.select(user.id);

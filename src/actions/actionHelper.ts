@@ -22,16 +22,16 @@ export function selectField(column: SelectActionColumns): SelectAction {
   return action;
 }
 
-export function update(): UpdateAction {
-  return new UpdateAction(false, false);
+export function unsafeUpdateAll(): UpdateAction {
+  return new UpdateAction(true, false);
 }
 
 export function updateOne(): UpdateAction {
   return new UpdateAction(false, true);
 }
 
-export function updateAll(): UpdateAction {
-  return new UpdateAction(true, false);
+export function updateSome(): UpdateAction {
+  return new UpdateAction(false, false);
 }
 
 export function insert(): InsertAction {
@@ -58,6 +58,6 @@ export function deleteOne(): DeleteAction {
   return new DeleteAction(false, true);
 }
 
-export function deleteAll(): DeleteAction {
+export function unsafeDeleteAll(): DeleteAction {
   return new DeleteAction(true, false);
 }
