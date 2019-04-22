@@ -1,14 +1,14 @@
 import { Column } from '../core/core';
-import { CalculatedColumn } from './selectAction';
+import { RawColumn } from './selectAction';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
 declare module '../core/core' {
   interface Column {
-    as(name: string): CalculatedColumn;
+    as(name: string): RawColumn;
   }
 }
 
 Column.prototype.as = function(name: string) {
   throwIfFalsy(name, 'name');
-  return new CalculatedColumn(this, name);
+  return new RawColumn(this, name);
 };

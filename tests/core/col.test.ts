@@ -169,8 +169,8 @@ class SCTable extends dd.Table {
   sc = dd.int().as('haha');
 }
 
-test('CalculatedColumn in table def', () => {
-  expect(() => dd.table(SCTable)).toThrow('CalculatedColumn');
+test('RawColumn in table def', () => {
+  expect(() => dd.table(SCTable)).toThrow('RawColumn');
 });
 
 test('Register property callback', () => {

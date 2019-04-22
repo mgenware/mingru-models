@@ -5,7 +5,7 @@ import { SQL, SQLConvertible, convertToSQL } from '../core/sql';
 import CoreSelectAction from './coreSelectAction';
 import toTypeString from 'to-type-string';
 
-export type SelectActionColumns = Column | CalculatedColumn;
+export type SelectActionColumns = Column | RawColumn;
 export type SelectActionColumnNames = SelectActionColumns | string;
 
 export class ColumnName {
@@ -14,7 +14,7 @@ export class ColumnName {
   }
 }
 
-export class CalculatedColumn {
+export class RawColumn {
   // This is guaranteed not to be empty/null in ctor
   selectedName = '';
   core: Column | SQL;
@@ -53,8 +53,8 @@ export function sel(
   sql: SQLConvertible,
   selectedName?: string,
   type?: ColumnType,
-): CalculatedColumn {
-  return new CalculatedColumn(convertToSQL(sql), selectedName, type);
+): RawColumn {
+  return new RawColumn(convertToSQL(sql), selectedName, type);
 }
 
 export class SelectAction extends CoreSelectAction {
@@ -80,7 +80,7 @@ export class SelectAction extends CoreSelectAction {
       }
       if (
         col instanceof Column === false &&
-        col instanceof CalculatedColumn === false
+        col instanceof RawColumn === false
       ) {
         throw new Error(
           `The column at index ${idx} is not a valid column, got a "${toTypeString(

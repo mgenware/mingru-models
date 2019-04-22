@@ -1,7 +1,7 @@
 import * as dd from '../../';
 import user from '../models/user';
 import post from '../models/post';
-import { CalculatedColumn } from '../../dist/main';
+import { RawColumn } from '../../dist/main';
 
 test('Select and from', () => {
   class UserTA extends dd.TA {
@@ -34,42 +34,38 @@ test('as', () => {
   const b = user.name.as('b');
   const c = user.id.as('c');
 
-  expect(a).toBeInstanceOf(dd.CalculatedColumn);
+  expect(a).toBeInstanceOf(dd.RawColumn);
   expect(a.selectedName).toBe('a');
   expect(b.selectedName).toBe('b');
   expect(c.selectedName).toBe('c');
 });
 
-test('CalculatedColumn', () => {
+test('RawColumn', () => {
   const a = user.id.as('x');
-  const b = new dd.CalculatedColumn(user.id, 'y');
+  const b = new dd.RawColumn(user.id, 'y');
   expect(a.selectedName).toBe('x');
   expect(a.core).toBe(user.id);
   expect(b.selectedName).toBe('y');
   expect(b.core).toBe(user.id);
 });
 
-test('CalculatedColumn (raw SQL)', () => {
-  const a = new dd.CalculatedColumn(dd.sql`123`, 'x');
-  const b = new dd.CalculatedColumn(dd.sql`COUNT(${user.name})`, 'y');
+test('RawColumn (raw SQL)', () => {
+  const a = new dd.RawColumn(dd.sql`123`, 'x');
+  const b = new dd.RawColumn(dd.sql`COUNT(${user.name})`, 'y');
   expect(a.selectedName).toBe('x');
   expect(a.core.toString()).toBe('123');
   expect(b.selectedName).toBe('y');
   expect(b.core.toString()).toBe('COUNT(`name`)');
 });
 
-test('CalculatedColumn (types)', () => {
-  const a = new dd.CalculatedColumn(
-    dd.sql`123`,
-    'x',
-    new dd.ColumnType(['t1', 't2']),
-  );
+test('RawColumn (types)', () => {
+  const a = new dd.RawColumn(dd.sql`123`, 'x', new dd.ColumnType(['t1', 't2']));
   expect(a.selectedName).toBe('x');
   expect(a.core.toString()).toBe('123');
   expect(a.type).toEqual(new dd.ColumnType(['t1', 't2']));
 });
 
-test('CalculatedColumn (count)', () => {
+test('RawColumn (count)', () => {
   class UserTA extends dd.TA {
     t = dd.select(
       dd.sel(
@@ -81,25 +77,25 @@ test('CalculatedColumn (count)', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  const cc = v.columns[0] as dd.CalculatedColumn;
+  const cc = v.columns[0] as dd.RawColumn;
   expect(cc.selectedName).toBe('count');
   expect(cc.core.toString()).toBe('CALL(3, `name`)');
 });
 
-test('CalculatedColumn (SQLConvertible)', () => {
-  let cc = new CalculatedColumn(post.user_id, 't');
+test('RawColumn (SQLConvertible)', () => {
+  let cc = new RawColumn(post.user_id, 't');
   // Column should not be wrapped in SQL
   expect(cc.core).toBe(post.user_id);
-  cc = new CalculatedColumn('str', 't');
+  cc = new RawColumn('str', 't');
   expect(cc.core.toString()).toBe('str');
-  cc = new CalculatedColumn(dd.count(post.id), 't');
+  cc = new RawColumn(dd.count(post.id), 't');
   expect(cc.core.toString()).toBe('CALL(3, `id`)');
 });
 
-test('CalculatedColumn (infer name from columns)', () => {
+test('RawColumn (infer name from columns)', () => {
   let cc = dd.sel(user.name);
   expect(cc.selectedName).toBe('name');
-  cc = new CalculatedColumn(dd.coalesce('a', user.name, user.snake_case_name));
+  cc = new RawColumn(dd.coalesce('a', user.name, user.snake_case_name));
   expect(cc.selectedName).toBe('name');
 });
 
