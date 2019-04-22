@@ -224,7 +224,7 @@ export class UserTA extends dd.TA {
     .setInputs(user.name, user.sig)
     .byID();
   // delete an user by ID
-  deleteUser = dd.delete().byID();
+  deleteUser = dd.deleteOne().byID();
 }
 // Export a table actions object
 export default dd.ta(user, UserTA);
@@ -422,8 +422,9 @@ userTA.select('UserProfile', user.id, user.name, user.sig)
 As raw SQL expressions enable you to write any SQL, you may do this for a `DATETIME` column to set it to current time when inserted:
 
 ```ts
-updateLastLogin = dd.update()
+updateLastLogin = dd.updateOne()
   .set(user.lastLogin, dd.sql`NOW()`)
+  .byID();
 ```
 
 As these system calls are commonly used, dd-models supports them as predefined system calls listed below:
@@ -444,14 +445,17 @@ All predefined system calls are under the root `dd` namespace:
 
 ```ts
 // These three are equivalent
-updateLastLogin = dd.update()
-  .set(user.lastLogin, dd.sql`NOW()`);
+updateLastLogin = dd.updateOne()
+  .set(user.lastLogin, dd.sql`NOW()`)
+  .byID();
 
-updateLastLogin = dd.update()
+updateLastLogin = dd.updateOne()
   .set(user.lastLogin, dd.sql`${dd.datetimeNow()}`)
+  .byID();
 
-updateLastLogin = dd.update()
+updateLastLogin = dd.updateOne()
   .set(user.lastLogin, dd.datetimeNow())
+  .byID();
 ```
 
 ### More on `SELECT` Actions
@@ -616,17 +620,17 @@ function deleteSome(): DeleteAction;
 function unsafeDeleteAll(): DeleteAction;
 ```
 
-Like `SELECT` and `UPDATE` actions, `DELETE` action should have a `WHERE` clause unless you need to delete all rows using `deleteAll`.
+Example:
 
 ```ts
 // Delete an user by ID
 deleteByID = dd.deleteOne().byID();
 
 // Delete all users by a specified name
-deleteByName = dd.delete().where(user.name.isEqualToInput());
+deleteByName = dd.deleteSome().where(user.name.isEqualToInput());
 
 // Delete all users
-deleteAll = dd.deleteAll();
+deleteAll = dd.unsafeDeleteAll();
 ```
 
 ## Advanced Topics
