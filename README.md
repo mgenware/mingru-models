@@ -23,15 +23,15 @@ yarn install dd-models
 
 ## Defining Models
 
-### Table Type and Table Object
+### Tables
 
-You create a model with the following steps:
+To create a table:
 
-1. Create a class inheriting from `dd.Table`: this class is called a table type, and the `dd.Table` class is the base class required for representing a table in dd-models.
-2. Add table columns as instance properties of the table type.
-3. Export a table object created from table type via `dd.table`.
+1. Create a class inheriting from `dd.Table`.
+2. Add table columns as instance properties.
+3. Export a table object via `dd.table`.
 
-Here's an example user table with 2 columns, `id` and `name` (`user.ts`):
+For example, a table named `User` with 2 columns, `id` and `name`:
 
 ```ts
 import * as dd from 'dd-models';
@@ -44,7 +44,7 @@ class User extends dd.Table {
 export default dd.table(User);
 ```
 
-You may wonder why the two-step process, why not export the table type directly? well, there are several reasons:
+You may wonder why a two-step process, why not export the table type directly? well, there are several reasons:
 
 * Exporting the class would require user to define columns as `static` properties.
 * When calling `dd.table`, dd-models will look through all columns and do some validation as well as preprocessing work like setting up foreign keys, which is definitely suited for an object.
@@ -53,7 +53,7 @@ You may wonder why the two-step process, why not export the table type directly?
 
 #### Column Helper Methods
 
-Columns are `dd.Column` objects, you can create a column using `new dd.Column()` but you seldom need to do this since dd-models comes with a set of helper methods to create commonly used column types.
+Columns are nothing but `dd.Column` objects, but we actually seldom need to manually create columns by `new dd.Column(...)`. Instead, we use column helper methods to create commonly used columns.
 
 For example:
 
@@ -63,13 +63,13 @@ age = dd.int(); // `age` is `INT`
 name = dd.varChar(100); // `name` is `VARCHAR(100)`
 ```
 
-Each column creation helper may have its own way of setting a default value:
+In the code above, `dd.pk`, `dd.int` and `dd.varChar` are all column helper methods. You can also set a default value in most of the column helper methods, e.g.:
 
 ```ts
 // `dd.int` accepts an optional number as default value
 age = dd.int(18); // `age` defaults to 18
 
-// `dd.varChar` accepts an optional string as default value
+// `dd.varChar` accepts an optional string as default value, the first param `100` indicates the `VARCHAR` length
 name = dd.varChar(100, 'Liu'); // `name` defaults to "Liu"
 
 // `dd.datetime` `dd.date`, and `dd.time` accept an optional boolean indicating if defaults to current date/time
@@ -78,7 +78,7 @@ date_updated dd.date(true);
 time_updated = dd.time(true);
 ```
 
-Note that to fully customized a default value, you can call `Column.setDefault`, you can pass an SQL expression (covered in [Raw SQL Expressions](#where-and-raw-sql-expressions) below):
+Sometimes, we need to fully customize a default value, e.g. an SQL expression, then we can call `Column.setDefault` and pass an SQL expression (will be covered in [Raw SQL Expressions](#where-and-raw-sql-expressions) below):
 
 ```ts
 // Set it to an custom SQL expression once inserted
@@ -92,28 +92,49 @@ datetime_updated = dd.datetime().setDefault(dd.sql`${dd.datetimeNow()}`);
 Here is a full list of column creation helper methods:
 
 ```ts
-function varChar(length: number, defaultValue?: string): Column;
-function char(length: number, defaultValue?: string): Column;
-function int(defaultValue?: number): Column;
-function unsignedInt(defaultValue?: number): Column;
-function bigInt(defaultValue?: number): Column;
-function unsignedBigInt(defaultValue?: number): Column;
-function smallInt(defaultValue?: number): Column;
-function unsignedSmallInt(defaultValue?: number): Column;
-function tinyInt(defaultValue?: number): Column;
-function unsignedTinyInt(defaultValue?: number): Column;
-function float(defaultValue?: number): Column;
-function double(defaultValue?: number): Column;
-function unique(col: Column): Column;
+// Primary key
 function pk(column?: Column): Column;
+// Foreign key
+function fk(column: Column): Column;
+// VARCHAR column
+function varChar(length: number, defaultValue?: string): Column;
+// CHAR column
+function char(length: number, defaultValue?: string): Column;
+// INT column
+function int(defaultValue?: number): Column;
+// unsigned INT column
+function uInt(defaultValue?: number): Column;
+// BIGINT column
+function bigInt(defaultValue?: number): Column;
+// unsigned BIGINT column
+function uBigInt(defaultValue?: number): Column;
+// SMALLINT column
+function smallInt(defaultValue?: number): Column;
+// unsigned SMALLINT column
+function uSmallInt(defaultValue?: number): Column;
+// TINYINT column
+function tinyInt(defaultValue?: number): Column;
+// unsigned TINYINT column
+function uTinyInt(defaultValue?: number): Column;
+// FLOAT column
+function float(defaultValue?: number): Column;
+// DOUBLE column
+function double(defaultValue?: number): Column;
+// Adds UNIQUE constraint to a column
+function unique(col: Column): Column;
+// TEXT column
 function text(defaultValue?: string): Column;
+// BOOL column
 function bool(defaultValue?: boolean): Column;
-function datetime(): Column;
-function date(): Column;
-function time(): Column;
+// DATETIME column
+function datetime(defaultsToNow?: boolean): Column;
+// DATE column
+function date(defaultsToNow?: boolean): Column;
+// TIME column
+function time(defaultsToNow?: boolean): Column;
 ```
 
-NOTE: Starting with dd-models 0.5.0, all column helper methods are **`NOT NULL`** by default, to create nullable (`NULL`) column, use the extra `nullable` property, e.g.:
+NOTE: columns created by column helper methods are **`NOT NULL`** by default, to create nullable (`NULL`) column, use the extra `nullable` property:
 
 ```ts
 name = dd.varChar(100);     // `name` is NOT NULL
@@ -121,7 +142,7 @@ sig = dd.text().nullable;   // `sig` is NULL
 ```
 
 #### Column Name
-By default, property name reflects the column name, if you need a different name from property name, can use `Column.setDBName`:
+By default, property name reflects the column name, if you need a different name from property name, use `Column.setDBName` method:
 
 ```ts
 // Column name defaults to property name: "cmt_count"
@@ -136,20 +157,22 @@ cmt_count = dd.varChar(100).setDBName('cmt_c');
 You can create column objects manually if column helper methods don't fit your needs, a column object consists of a bunch of properties describing different traits of a column.
 
 ```ts
-class ColumnProps {
+class ColumnType {
+    types: string[];
     pk: boolean;
     nullable: boolean;
     unsigned: boolean;
     unique: boolean;
     length: number;
-    default: unknown;
+    constructor(types: string | string[]);
 }
 
 class Column extends ColumnBase {
-    types: Set<string>;
-    props: ColumnProps;
+    type: ColumnType;
 }
 ```
+
+<TODO: Add example code>
 
 ### Joins
 
@@ -184,58 +207,45 @@ export default dd.table(Post);
 
 ### Overview
 
-Each table can create its own set of actions, and an action is created from a table action container, which can be obtained via `dd.actions`. Each action must be associated with a name, and actions are usually defined in a separate file with a suffix `TA` (table actions), for example, let's say you have a `user` table, you want to add two actions, you need to create a new file `userTA.ts` and import the user model:
+Similar to defining a table, to define table actions, we need declare a class inheriting from `dd.TA` (**TA** stands for **t**able **a**ctions), and define actions as properties, finally export a single table actions object via `dd.ta`.
 
 ```ts
-// --- UserTA.ts ---
-import * as dd from 'dd-models';
+// Import the underlying table object
 import user from './user';
 
-// Create the table action container
-const userTA = dd.actions(user);
-
-// Add a SELECT action
-// Select a user profile by ID
-// Action name is 'SelectProfile'
-userTA.select('Profile', user.id, user.name).byID();
-
-// Add an UPDATE action
-// Update a row
-// Action name is 'UpdateProfile'
-userTA
-  .updateOne('UserProfile')
-  .setInputs(user.name, user.sig)
-  .byID();
-
-// Add a DELETE action
-// Delete a row by ID
-// Action name is 'DeleteByID'
-userTA.deleteOne('ByID').byID();
-
-// Export the actions
-export default userTA;
+// --- userTA.ts ---
+export class UserTA extends dd.TA {
+  // selects all users
+  selectAllUsers = dd.selectAll(user.id, user.name);
+  // selects a single user by ID
+  selectUser = dd.select(user.id, user.name).byID();
+  // updates an user by ID
+  updateUser = dd.updateOne()
+    .setInputs(user.name, user.sig)
+    .byID();
+  // delete an user by ID
+  deleteUser = dd.delete().byID();
+}
+// Export a table actions object
+export default dd.ta(user, UserTA);
 ```
-
-Note that action name will have action type included and you don't need to re-type it in the `name` argument, like the example above, a `select` action with a name of `Profile` would have a action name as `SelectProfile`, similarly, a `delete` action with a name of `ByID` would set the action name to `DeleteByID` automatically.
 
 ### `SELECT` Actions Basics
 
 dd-models supports the following kinds of `SELECT` actions:
 
 ```ts
-class TableActionCollection {
-  // Selects a row
-  select(name: string, ...columns: ColumnBase[]): SelectAction;
+// Selects a row
+function select(...columns: ColumnBase[]): SelectAction;
 
-  // Selects all rows
-  selectAll(name: string, ...columns: ColumnBase[]): SelectAction;
+// Selects all rows
+function selectAll(...columns: ColumnBase[]): SelectAction;
 
-  // Selects a single field of a specific row
-  selectField(name: string, column: ColumnBase): SelectAction;
-}
+// Selects a single field of a specific row
+function selectField(column: ColumnBase): SelectAction;
 ```
 
-The differences are implementation dependent, normally, they differ from return values:
+They differ from return values:
 
 * `select` returns an row object containing all selected columns
 * `selectAll` returns an array of row objects each containing all selected columns
@@ -256,26 +266,29 @@ class User extends dd.Table {
 export default dd.table(User);
 
 // ----------- user table actions (userTA.ts) -----------
-const userTA = dd.actions(user);
-// Select a user profile by ID
-userTA.select('UserProfile', user.id, user.name, user.sig).byID();
-// Select all user profiles
-userTA.selectAll('AllUserProfiles', user.id, user.name, user.sig);
-// Select the sig field by ID
-userTA.selectField('Sig', user.sig).byID();
+import user from './user';
 
-export default userTA;
+export class UserTA extends dd.TA {
+  // Select a user profile by ID
+  selectUserProfile = dd.select(user.id, user.name, user.sig).byID();
+  // Select all user profiles
+  selectAllUserProfiles = dd.selectAll(user.id, user.name, user.sig);
+  // Select the sig field by ID
+  selectSig = dd.selectField(user.sig).byID();
+}
+
+export default dd.ta(user, UserTA);
 ```
 
 It would generate the following Go code (only function headers shown for simplicity):
 
 ```go
 // SelectUserProfile ...
-func (da *TableTypeUser) SelectUserProfile(queryable sqlx.Queryable, userID uint64) (*SelectUserProfileResult, error)
+func (da *TableTypeUser) SelectUserProfile(queryable dbx.Queryable, userID uint64) (*SelectUserProfileResult, error)
 // SelectAllUserProfiles ...
-func (da *TableTypeUser) SelectAllUserProfiles(queryable sqlx.Queryable) ([]*SelectAllUserProfilesResult, error)
+func (da *TableTypeUser) SelectAllUserProfiles(queryable dbx.Queryable) ([]*SelectAllUserProfilesResult, error)
 // SelectSig ...
-func (da *TableTypeUser) SelectSig(queryable sqlx.Queryable, userID uint64) (*string, error)
+func (da *TableTypeUser) SelectSig(queryable dbx.Queryable, userID uint64) (*string, error)
 ```
 
 ### `WHERE` and Raw SQL Expressions
@@ -285,7 +298,7 @@ We haven't used any `WHERE` clause in the `SELECT` actions above, to add a `WHER
 You can pass a column object to template string, it will be converted to a column name in SQL, for example:
 
 ```ts
-userTA.select('UserProfile', user.id, user.name, user.sig)
+selectUserProfile = dd.select(user.id, user.name, user.sig)
   .where(dd.sql`${user.id} = 1`);
 ```
 
@@ -298,11 +311,11 @@ SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1
 More complex queries:
 
 ```ts
-userTA.select('UserProfile', user.id, user.name, user.sig)
+selectUserProfile = dd.select(user.id, user.name, user.sig)
   .where(dd.sql`${user.id} = 1 AND ${user.sig} <> 'haha'`);
 ```
 
-[mingru](https://github.com/mgenware/mingru) translates it to:
+[mingru](https://github.com/mgenware/mingru) translates this into:
 
 ```sql
 SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1 AND `sig` <> 'haha'
@@ -310,10 +323,10 @@ SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1 AND `sig` <> 'haha'
 
 #### Input Parameters
 
-Your actions often require user input parameters, e.g. to select a single profile from user table, we need a `userID` which can uniquely identify an user record. Use `dd.input`:
+Your actions often require user input parameters, e.g. to select a single profile from user table, we need a `userID` which can uniquely identify an user record. Use `dd.input` for this purpose:
 
 ```ts
-userTA.select('UserProfile', user.id, user.name, user.sig)
+selectUserProfile = dd.select(user.id, user.name, user.sig)
   .where(dd.sql`${user.id} = ${dd.input(user.id)}`);
 ```
 
@@ -321,7 +334,7 @@ userTA.select('UserProfile', user.id, user.name, user.sig)
 
 ```go
 // SelectUserProfile ...
-func (da *TableTypeUser) SelectUserProfile(queryable sqlx.Queryable, userID uint64) (*SelectUserProfileResult, error) {
+func (da *TableTypeUser) SelectUserProfile(queryable dbx.Queryable, userID uint64) (*SelectUserProfileResult, error) {
 	result := &SelectUserProfileResult{}
 	err := queryable.QueryRow("SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = ?", userID).Scan(&result.UserID, &result.UserName, &result.UserSig)
 	if err != nil {
@@ -331,53 +344,53 @@ func (da *TableTypeUser) SelectUserProfile(queryable sqlx.Queryable, userID uint
 }
 ```
 
-The `userID` is included in function arguments and passed to SQL query function. If you don't like to automatically inferred name, can use the second optional `name` parameter:
+The `userID` is included in function arguments and passed to SQL query function. If you don't like the auto inferred name, can use the second optional `name` parameter of `dd.input`:
 
 ```ts
-userTA.select('UserProfile', user.id, user.name, user.sig)
+selectUserProfile = dd.select(user.id, user.name, user.sig)
   .where(dd.sql`${user.id} = ${dd.input(user.id, 'uid')}`);
 ```
 
-This way `uid` instead of inferred `userID` would be used in generated code.
+This way `uid` instead of inferred `userID` will be used in generated code.
 
 #### SQL Expression Helpers
 
-Writing `dd.input`s in `dd.sql` can be tedious, dd-models comes with some handy helpers to quick construct some commonly used expressions.
+Writing `dd.input`s in `dd.sql` can be tedious, dd-models comes with a bunch of handy helpers to construct some commonly used expressions.
 
 ##### `Column.toInput(column, optionalName): SQLInput`
 
 Shortcut to `dd.input(column, optionalName)`:
 
 ```ts
-userTA.select('UserProfile', user.id, user.name, user.sig)
+selectUserProfile = dd.select(user.id, user.name, user.sig)
   .where(dd.sql`${user.id} = ${user.id.toInput()}`);
 ```
 
 ##### `Column.isEqualTo(sql): SQL`
 
 ```ts
-userTA.select('Admin', user.id, user.name, user.sig)
+selectUserProfile = dd.select(user.id, user.name, user.sig)
   .where(user.name.isEqualTo(dd.sql`"Admin"`));
 ```
 
 Is equivalent to:
 
 ```ts
-userTA.select('Admin', user.id, user.name, user.sig)
+selectUserProfile = dd.select(user.id, user.name, user.sig)
   .where(dd.sql`${user.name} = "Admin"`);
 ```
 
 ##### `Column.isEqualToInput(optionalName): SQL`
 
 ```ts
-userTA.select('Admin', user.id, user.name, user.sig)
+selectUserProfile = dd.select(user.id, user.name, user.sig)
   .where(user.name.isEqualToInput());
 ```
 
 Is equivalent to:
 
 ```ts
-userTA.select('Admin', user.id, user.name, user.sig)
+selectUserProfile = dd.select(user.id, user.name, user.sig)
   .where(dd.sql`${user.name} = ${dd.input(user.name)}`);
 ```
 
@@ -388,7 +401,7 @@ Similar to `isEqualTo` and `isEqualToInput`, uses `<>`(not equal to operator) in
 ##### `.ByID()`
 
 ```ts
-userTA.select('UserProfile', user.id, user.name, user.sig).byID();
+selectUserProfile = dd.select(user.id, user.name, user.sig).byID();
 ```
 
 Is equivalent to 2 expressions listed below:
@@ -409,11 +422,11 @@ userTA.select('UserProfile', user.id, user.name, user.sig)
 As raw SQL expressions enable you to write any SQL, you may do this for a `DATETIME` column to set it to current time when inserted:
 
 ```ts
-userTA.update('LastLogin')
+updateLastLogin = dd.update()
   .set(user.lastLogin, dd.sql`NOW()`)
 ```
 
-While these system calls are commonly used, dd-models supports them as predefined system calls listed below:
+As these system calls are commonly used, dd-models supports them as predefined system calls listed below:
 
 ```ts
 enum SQLCallType {
@@ -431,13 +444,13 @@ All predefined system calls are under the root `dd` namespace:
 
 ```ts
 // These three are equivalent
-userTA.update('LastLogin')
+updateLastLogin = dd.update()
   .set(user.lastLogin, dd.sql`NOW()`);
 
-userTA.update('LastLogin')
+updateLastLogin = dd.update()
   .set(user.lastLogin, dd.sql`${dd.datetimeNow()}`)
 
-userTA.update('LastLogin')
+updateLastLogin = dd.update()
   .set(user.lastLogin, dd.datetimeNow())
 ```
 
@@ -446,7 +459,7 @@ userTA.update('LastLogin')
 #### `orderBy` and `orderByDesc`
 
 ```ts
-userTA.select('t', user.name, user.age)
+selectUser = dd.select(user.name, user.age)
   .byID()
   .orderBy(user.name)
   .orderByDesc(user.age);
@@ -455,7 +468,7 @@ userTA.select('t', user.name, user.age)
 #### Alias via `as`
 Can use `Column.as` to add the SQL `AS` alias to a selected column:
 ```ts
-userTA.select('t', user.name, user.post_count.as('count'));
+selectUser = dd.select(user.name, user.post_count.as('count'));
 ```
 
 Generates the following SQL:
@@ -469,24 +482,22 @@ SELECT `name`, `post_count` AS `count` from user;
 dd-models supports the following kinds of `UPDATE` actions:
 
 ```ts
-class TableActionCollection {
-  // Updates a row and checks rows affected to make sure only one row is updated
-  // Implementations should throw an error if used without a WHERE clause
-  updateOne(name: string): UpdateAction;
+// Updates a row and checks rows affected to make sure only one row is updated
+// Implementations should throw an error if used without a WHERE clause
+function updateOne(name: string): UpdateAction;
 
-  // Updates rows
-  updateAll(name: string): UpdateAction;
+// Updates rows
+function updateAll(name: string): UpdateAction;
 
-  // (Not recommended, prefer `updateOne`) Updates rows
-  // Implementations should throw an error if used without a WHERE clause
-  update(name: string): UpdateAction;
-}
+// (Not recommended, prefer `updateOne`) Updates rows
+// Implementations should throw an error if used without a WHERE clause
+function update(name: string): UpdateAction;
 ```
 
 To set individual column values, use `UpdateAction.set(column, sql)`, e.g. set an `user.sig` to a random string:
 
 ```ts
-userTA.updateOne('UserSig')
+updateUserSig = dd.updateOne()
   .set(user.sig, dd.sql`'My signature'`)
   .byID();
 ```
@@ -494,7 +505,7 @@ userTA.updateOne('UserSig')
 Or, use user input as column value:
 
 ```ts
-userTA.updateOne('UserSig')
+updateUserSig = dd.updateOne()
   .set(user.sig, user.sig.toInput())
   .byID();
 ```
@@ -502,8 +513,7 @@ userTA.updateOne('UserSig')
 To set multiple columns, just call `set` one by one:
 
 ```ts
-userTA
-  .updateOne('UserSig')
+updateUserSig = dd.updateOne()
   .set(user.sig, user.sig.toInput())
   .set(user.name, dd.sql`'Random name'`)
   .byID();
@@ -514,8 +524,7 @@ userTA
 Most of the time, you will be using `UPDATE` action with user inputs, so you probably always end up with this:
 
 ```ts
-userTA
-  .updateOne('ManyColumns')
+updateManyColumns = dd.updateOne()
   .set(user.sig, user.sig.toInput())
   .set(user.name, user.name.toInput())
   .set(user.age, user.age.toInput())
@@ -526,8 +535,7 @@ userTA
 To simplify this, `UpdateAction` also has a method called `setInputs`, you can pass an array of columns, all them will be considered inputs. The above code could be rewritten as using `setInputs`:
 
 ```ts
-userTA
-  .updateOne('ManyColumns')
+updateManyColumns = dd.updateOne()
   .setInputs(user.sig, user.name, user.age, user.gender)
   .byID();
 ```
@@ -535,8 +543,7 @@ userTA
 You can also mix this with the `set` method mentioned above:
 
 ```ts
-userTA
-  .updateOne('ManyColumns')
+updateManyColumns = dd.updateOne()
   .set(user.type, dd.sql`1`)
   .set(user.age, dd.sql`1`)
   .setInputs(user.sig, user.name, user.age, user.gender)
@@ -549,16 +556,15 @@ Notice `user.age` has been set for three times in the code above, the latter alw
 ### `INSERT` actions
 
 ```ts
-class TableActionCollection {
-  // Inserts a new row, and returns inserted ID
-  insertOne(name: string): InsertAction;
-  // Inserts a new row
-  insert(name: string): InsertAction;
+// Inserts a new row, and returns inserted ID
+function insertOne(name: string): InsertAction;
+// Inserts a new row
+function insert(name: string): InsertAction;
 
-  // Inserts a new row, and returns inserted ID. Use column default value for unset columns
-  insertOneWithDefaults(name: string): InsertAction;
-  // Inserts a new row. Use column default value for unset columns
-  insertWithDefaults(name: string): InsertAction;
+// Inserts a new row, and returns inserted ID. Use column default value for unset columns
+function insertOneWithDefaults(name: string): InsertAction;
+// Inserts a new row. Use column default value for unset columns
+function insertWithDefaults(name: string): InsertAction;
 }
 ```
 
@@ -566,8 +572,7 @@ Example:
 
 ```ts
 // Insert a new user
-userTA
-  .insertOne('User')
+insertUser = dd.insertOne()
   .set(user.sig, dd.sql`''`)
   .set(user.name, user.name.toInput())
   .set(user.age, user.age.toInput());
@@ -577,8 +582,7 @@ userTA
 
 ```ts
 // Insert a new user
-userTA
-  .insertOne('User')
+insertUser = dd.insertOne()
   .set(user.sig, dd.sql`''`)
   .setInputs(user.name, user.age);
 ```
@@ -589,8 +593,7 @@ userTA
 
 ```ts
 // Insert a new user
-userTA
-  .insertOneWithDefaults('User')
+insertUser = dd.insertOneWithDefaults()
   .set(user.sig, dd.sql`''`)
   .setInputs(user.name);
 
@@ -601,33 +604,29 @@ userTA
 
 ### `DELETE` actions
 ```ts
-class TableActionCollection {
-  // Deletes a row and checks rows affected to make sure only one row is updated
-  // Implementations should throw an error if used without a WHERE clause
-  deleteOne(name: string): DeleteAction;
+// Deletes a row and checks rows affected to make sure only one row is updated
+// Implementations should throw an error if used without a WHERE clause
+function deleteOne(name: string): DeleteAction;
 
-  // Deletes rows
-  deleteAll(name: string): DeleteAction;
+// Deletes rows
+function deleteAll(name: string): DeleteAction;
 
-  // (Not recommended, prefer `deleteOne`) Delete rows
-  // Implementations should throw an error if used without a WHERE clause
-  delete(name: string): DeleteAction {
-    return this.addAction(new DeleteAction(name, this.table, false, false));
-  }
-}
+// (Not recommended, prefer `deleteOne`) Delete rows
+// Implementations should throw an error if used without a WHERE clause
+function delete(name: string): DeleteAction;
 ```
 
 Like `SELECT` and `UPDATE` actions, `DELETE` action should have a `WHERE` clause unless you need to delete all rows using `deleteAll`.
 
 ```ts
 // Delete an user by ID
-userTA.deleteOne('ByID').byID();
+deleteByID = dd.deleteOne().byID();
 
 // Delete all users by a specified name
-userTA.delete('ByName').where(user.name.isEqualToInput());
+deleteByName = dd.delete().where(user.name.isEqualToInput());
 
 // Delete all users
-userTA.deleteAll('All');
+deleteAll = dd.deleteAll();
 ```
 
 ## Advanced Topics
@@ -704,33 +703,6 @@ const cols = [
   joinedUser.name,
   joinedUser.url,
 ];
-```
-
-## Troubleshooting
-### Error when defining table actions
-Error: Exported variable 'ta' has or is using name 'User' from external module "./user" but cannot be named.ts:
-```ts
-import * as dd from 'dd-models';
-import user from './user';
-
-const ta = dd.actions(user);
-// This line emits the following error:
-// Exported variable 'ta' has or is using name 'User' from external module "./user" but cannot be named.ts(4023)
-
-ta.select('SigSrc', user.sig_src.as('src')).byID();
-
-export default ta;
-```
-
-This is usually because you didn't export the `User` type in `user.ts`:
-```diff
-import * as dd from 'dd-models';
-
--class User extends dd.Table {
-+export class User extends dd.Table {
-}
-
-export default dd.table(User);
 ```
 
 -----------
