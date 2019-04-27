@@ -12,6 +12,7 @@ export enum ActionType {
   insert,
   update,
   delete,
+  transact,
 }
 
 export class Action extends CoreProperty {

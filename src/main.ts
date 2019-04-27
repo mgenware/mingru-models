@@ -18,3 +18,4 @@ export { default as DeleteAction } from './actions/deleteAction';
 export { default as utils } from './lib/utils';
 export * from './sqlHelper';
 export * from './core/sqlCall';
+export * from './actions/transact';
