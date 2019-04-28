@@ -70,29 +70,57 @@ export class SQLElement {
   }
 }
 
+export class SQLInputList {
+  list: SQLInput[] = [];
+  map: { [name: string]: SQLInput } = {};
+
+  get length(): number {
+    return this.list.length;
+  }
+
+  getByIndex(index: number): SQLInput | null {
+    return this.list[index];
+  }
+
+  getByName(name: string): SQLInput | null {
+    return this.map[name];
+  }
+
+  add(val: SQLInput) {
+    throwIfFalsy(val, 'val');
+    if (this.getByName(val.name)) {
+      throw new Error(`The input name "${val.name}" already exists`);
+    }
+    this.list.push(val);
+    this.map[val.name] = val;
+  }
+}
+
 export class SQL {
-  elements: SQLElement[];
+  elements: SQLElement[] = [];
+  inputs = new SQLInputList();
 
   constructor(literals: TemplateStringsArray, params: SQLConvertible[]) {
-    const elements: SQLElement[] = [];
     for (let i = 0; i < params.length; i++) {
       // Skip empty strings
       if (literals[i]) {
-        elements.push(new SQLElement(SQLElementType.rawString, literals[i]));
+        this.pushElement(new SQLElement(SQLElementType.rawString, literals[i]));
       }
       const param = params[i];
       if (typeof param === 'string') {
-        elements.push(
+        this.pushElement(
           new SQLElement(SQLElementType.rawString, param as string),
         );
       } else if (param instanceof Column) {
-        elements.push(new SQLElement(SQLElementType.column, param));
+        this.pushElement(new SQLElement(SQLElementType.column, param));
       } else if (param instanceof SQLInput) {
-        elements.push(new SQLElement(SQLElementType.input, param));
+        this.pushElement(new SQLElement(SQLElementType.input, param));
       } else if (param instanceof SQL) {
-        elements.push(...(param as SQL).elements);
+        for (const element of (param as SQL).elements) {
+          this.pushElement(element);
+        }
       } else if (param instanceof SQLCall) {
-        elements.push(new SQLElement(SQLElementType.call, param));
+        this.pushElement(new SQLElement(SQLElementType.call, param));
       } else {
         throw new Error(
           `Unsupported SQL parameter type "${toTypeString(param)}"`,
@@ -103,10 +131,8 @@ export class SQL {
     // push the last literal
     const lastLiteral = literals[literals.length - 1];
     if (lastLiteral) {
-      elements.push(new SQLElement(SQLElementType.rawString, lastLiteral));
+      this.pushElement(new SQLElement(SQLElementType.rawString, lastLiteral));
     }
-
-    this.elements = elements;
   }
 
   toString(): string {
@@ -129,6 +155,14 @@ export class SQL {
       }
     }
     return null;
+  }
+
+  private pushElement(element: SQLElement) {
+    if (element.type === SQLElementType.input) {
+      const input = element.value as SQLInput;
+      this.inputs.add(input);
+    }
+    this.elements.push(element);
   }
 
   private formatElement(element: SQLElement): string {

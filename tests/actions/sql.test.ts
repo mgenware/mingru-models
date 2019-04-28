@@ -133,3 +133,25 @@ test('findColumn', () => {
   s = dd.sql`${dd.coalesce('haha', user.name)}`;
   expect(s.findColumn()).toBe(user.name);
 });
+
+test('InputList', () => {
+  const i1 = dd.input(user.id);
+  const i2 = user.name.toInput();
+  const sql1 = dd.sql`${user.name} = ${i2}`;
+  const i3 = dd.input(user.snake_case_name);
+  const sql2 = dd.sql`_${user.id} = ${i1} AND ${sql1}`;
+  const sql = dd.sql`START${sql2} OR ${user.snake_case_name} = ${i3}`;
+  expect(sql.inputs.list).toEqual([i1, i2, i3]);
+});
+
+test('InputList (duplicate names)', () => {
+  expect(() => {
+    const i1 = dd.input(user.id);
+    const i2 = user.name.toInput();
+    const sql1 = dd.sql`${user.name} = ${i2}`;
+    const i3 = dd.input(user.snake_case_name, 'id');
+    const sql2 = dd.sql`_${user.id} = ${i1} AND ${sql1}`;
+    // tslint:disable-next-line no-unused-expression
+    dd.sql`START${sql2} OR ${user.snake_case_name} = ${i3}`;
+  }).toThrow('id');
+});
