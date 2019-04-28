@@ -37,6 +37,7 @@ export class CoreProperty {
 
   __handlers: CorePropertyHandler[] = [];
   __name!: string;
+  __payload!: unknown;
 }
 
 export class Column extends CoreProperty {
