@@ -635,7 +635,7 @@ deleteAll = dd.unsafeDeleteAll();
 
 ## Advanced Topics
 
-### JoinedColumn
+### `JoinedTable`
 
 Imagine the following join:
 
@@ -643,50 +643,52 @@ Imagine the following join:
 post.user_id.join(user).name;
 ```
 
-It returns a `JoinedColumn`, which contains:
+It returns an object of `JoinedColumn`:
 
 ```ts
-class JoinedColumn extends ColumnBase {
-    joinPath: string;
-    localColumn: ColumnBase;
-    remoteColumn: ColumnBase;
-    selectedColumn: ColumnBase;
+export declare class JoinedTable {
+    srcColumn: Column;
+    destTable: Table;
+    destColumn: Column;
+    keyPath: string;
+
+    tableInputName(): string;
 }
 ```
 
-An anatomy of a `JoinedColumn`:
+An anatomy of a `JoinedTable`:
 
 ```
 post.user_id.join(user).name;
------------------------------ JoinedColumn
-        |
-        -- Local column
-                          |
-                          -- Target column
-
-Remote column: auto detected if local column is a foreign column.
+----------------------------- 
+     |        |     |      |
+    srcColumn |  destTable |
+     |        |     |      |
+     |--- JoinedTable      |
+              |            |
+              -------- destColumn
 ```
 
 Multiple joins are also allowed:
 
 ```
 cmt.post_id.join(post).user_id.join(user).name
-|                          |
-----------------------------
-                          JC
-                           | Local column        |
-                           -----------------------
-                                                JC
+|                  |
+--------------------
+               JoinedTable
+                   |                  |
+                   --------------------
+                                  JoinedTable
 ```
 
-* First joined column:
-  * Local column: `cmt.post_id`
-  * Remote column: `post.id`
-  * Selected column: `post.user_id`
-* Second joined column:
-  * Local column: first joined column
-  * Remote column: `user.id`
-  * Selected column: `user.name`
+* For first joined table:
+  * `srcColumn`: `cmt.post_id`
+  * `destTable`: `post`
+  * `destColumn`: `post.user_id`
+* For second joined column:
+  * `srcColumn`: `<first joined table>.user_id`
+  * `destTable`: `user`
+  * `destColumn`: `user.name`
 
 ### Reuse a Joined Table
 
@@ -699,7 +701,7 @@ const cols = [
 ];
 ```
 
-This contains too much duplicate code, we can reuse the joined intermediate table like this:
+The code above can be simplified as below:
 
 ```ts
 const joinedUser = comment.post_id.join(post).user_id.join(user);
