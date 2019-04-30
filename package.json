@@ -38,19 +38,19 @@
     "testRegex": "/dist_tests/.*(\\.|/)(test|spec)\\.jsx?$"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.0",
-    "@types/lodash.camelcase": "^4.3.4",
-    "@types/lodash.snakecase": "^4.1.4",
-    "@types/node": "^10.12.21",
-    "jest": "^24.1.0",
+    "@types/jest": "^24.0.12",
+    "@types/lodash.camelcase": "^4.3.6",
+    "@types/lodash.snakecase": "^4.1.6",
+    "@types/node": "^11.13.8",
+    "jest": "^24.7.1",
     "rimraf": "^2.6.3",
-    "tslint": "^5.12.1",
-    "typescript": "^3.3.1"
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
   },
   "dependencies": {
     "lodash.camelcase": "^4.3.0",
     "lodash.snakecase": "^4.1.1",
-    "throw-if-arg-empty": "^1.0.1",
+    "throw-if-arg-empty": "^2.0.1",
     "to-type-string": "^1.0.0"
   }
 }
