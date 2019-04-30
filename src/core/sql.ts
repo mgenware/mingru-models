@@ -19,6 +19,22 @@ export class SQLInput {
     }
     return `${this.name}: ${type}`;
   }
+
+  isEqualTo(oth: SQLInput): boolean {
+    if (!oth) {
+      return false;
+    }
+    if (this.name !== oth.name) {
+      return false;
+    }
+    if (typeof this.typeObject !== typeof oth.typeObject) {
+      return false;
+    }
+    if (typeof this.typeObject === 'string') {
+      return (this.typeObject as string) === (oth.typeObject as string);
+    }
+    return (this.typeObject as Column) === (oth.typeObject as Column);
+  }
 }
 
 export function input(type: string | Column, name?: string): SQLInput {
@@ -88,11 +104,17 @@ export class SQLInputList {
 
   add(val: SQLInput) {
     throwIfFalsy(val, 'val');
-    if (this.getByName(val.name)) {
-      throw new Error(`The input name "${val.name}" already exists`);
+    const prev = this.getByName(val.name);
+    if (prev) {
+      if (!prev.isEqualTo(val)) {
+        throw new Error(
+          `Two inputs with same name "${val.name}" but different types`,
+        );
+      }
+    } else {
+      this.list.push(val);
+      this.map[val.name] = val;
     }
-    this.list.push(val);
-    this.map[val.name] = val;
   }
 }
 

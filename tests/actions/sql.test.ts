@@ -134,24 +134,45 @@ test('findColumn', () => {
   expect(s.findColumn()).toBe(user.name);
 });
 
+test('Input.isEqualTo', () => {
+  const a = user.id.toInput();
+  const b = user.id.toInput();
+  const c = dd.input('a', 'id');
+  const d = dd.input('a', 'id');
+  const e = dd.input('b', 'id');
+  expect(a.name).toBe(c.name);
+  expect(a.isEqualTo(b)).toBe(true);
+  expect(a.isEqualTo(c)).toBe(false);
+  expect(c.isEqualTo(d)).toBe(true);
+  expect(c.isEqualTo(e)).toBe(false);
+});
+
 test('InputList', () => {
   const i1 = dd.input(user.id);
   const i2 = user.name.toInput();
-  const sql1 = dd.sql`${user.name} = ${i2}`;
+  const sql1 = dd.sql`${user.name} = ${i2} ${dd.input('a', 'b')}`;
   const i3 = dd.input(user.snake_case_name);
   const sql2 = dd.sql`_${user.id} = ${i1} AND ${sql1}`;
-  const sql = dd.sql`START${sql2} OR ${user.snake_case_name} = ${i3}`;
-  expect(sql.inputs.list).toEqual([i1, i2, i3]);
+  const i4 = dd.input('a', 'b');
+  const sql = dd.sql`START${sql2} OR ${
+    user.snake_case_name
+  } = ${i3} = ${dd.input(user.snake_case_name)} ${i4}`;
+  expect(sql.inputs.list).toEqual([i1, i2, i4, i3]);
 });
 
-test('InputList (duplicate names)', () => {
+test('InputList (conflicting names)', () => {
   expect(() => {
-    const i1 = dd.input(user.id);
-    const i2 = user.name.toInput();
-    const sql1 = dd.sql`${user.name} = ${i2}`;
-    const i3 = dd.input(user.snake_case_name, 'id');
-    const sql2 = dd.sql`_${user.id} = ${i1} AND ${sql1}`;
     // tslint:disable-next-line no-unused-expression
-    dd.sql`START${sql2} OR ${user.snake_case_name} = ${i3}`;
+    dd.sql`START${dd.sql`${user.id.toInput()}`} OR ${
+      user.snake_case_name
+    } = ${dd.sql`${post.id.toInput()}`}`;
   }).toThrow('id');
+  expect(() => {
+    // tslint:disable-next-line no-unused-expression
+    dd.sql`${user.id.toInput()}${dd.input('b', 'id')}`;
+  }).toThrow('id');
+  expect(() => {
+    // tslint:disable-next-line no-unused-expression
+    dd.sql`${dd.input('a', 'v1')}${dd.input('b', 'v1')}`;
+  }).toThrow('v1');
 });
