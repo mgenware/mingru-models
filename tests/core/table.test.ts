@@ -15,3 +15,14 @@ test('enumerateColumns', () => {
     user.follower_count,
   ]);
 });
+
+test('enumerateColumns (sorted)', () => {
+  const cols: dd.Column[] = [];
+  dd.enumerateColumns(user, col => cols.push(col), { sorted: true });
+  expect(cols).toEqual([
+    user.follower_count,
+    user.id,
+    user.name,
+    user.snake_case_name,
+  ]);
+});

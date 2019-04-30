@@ -2,6 +2,7 @@ import { Table, CoreProperty } from '../core/core';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import * as defs from '../core/defs';
 import toTypeString from 'to-type-string';
+import Utils from '../lib/utils';
 
 export class TA {
   __table!: Table;
@@ -30,16 +31,27 @@ export class Action extends CoreProperty {
   }
 }
 
+export interface EnumerateActionsOptions {
+  sorted?: boolean;
+}
+
 export function enumerateActions<T extends TA>(
   tableActions: T,
   cb: (action: Action, prop: string) => void,
+  opts?: EnumerateActionsOptions,
 ) {
   throwIfFalsy(tableActions, 'tableActions');
+
+  opts = opts || {};
   if (!cb) {
     return;
   }
 
-  for (const pair of Object.entries(tableActions)) {
+  const entries = Object.entries(tableActions);
+  if (opts.sorted) {
+    entries.sort((a, b) => Utils.compareStrings(a[0], b[0]));
+  }
+  for (const pair of entries) {
     const name = pair[0] as string;
     const value = pair[1];
     // Ignore internal props and functions

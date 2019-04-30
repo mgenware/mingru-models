@@ -45,4 +45,14 @@ export default class Utils {
   static toPascalCase(s: string): string {
     return Utils.capitalizeFirstLetter(Utils.toCamelCase(s));
   }
+
+  static compareStrings(a: string, b: string) {
+    if (a < b) {
+      return -1;
+    }
+    if (a > b) {
+      return 1;
+    }
+    return 0;
+  }
 }

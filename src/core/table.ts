@@ -3,17 +3,29 @@ import { Table, Column, CoreProperty } from './core';
 import { utils } from '../main';
 import toTypeString from 'to-type-string';
 import * as defs from './defs';
+import Utils from '../lib/utils';
+
+export interface EnumerateColumnsOptions {
+  sorted?: boolean;
+}
 
 export function enumerateColumns(
   tableObject: Table,
   cb: (column: Column, prop: string) => void,
+  opts?: EnumerateColumnsOptions,
 ) {
   throwIfFalsy(tableObject, 'tableObject');
+
+  opts = opts || {};
   if (!cb) {
     return;
   }
 
-  for (const pair of Object.entries(tableObject)) {
+  const entries = Object.entries(tableObject);
+  if (opts.sorted) {
+    entries.sort((a, b) => Utils.compareStrings(a[0], b[0]));
+  }
+  for (const pair of entries) {
     const name = pair[0] as string;
     const value = pair[1];
     // Ignore internal props and functions
