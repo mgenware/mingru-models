@@ -181,8 +181,7 @@ export class SQL {
 
   private pushElement(element: SQLElement) {
     if (element.type === SQLElementType.input) {
-      const input = element.value as SQLInput;
-      this.inputs.add(input);
+      this.inputs.add(element.value as SQLInput);
     }
     this.elements.push(element);
   }
