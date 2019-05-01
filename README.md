@@ -323,35 +323,42 @@ SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1 AND `sig` <> 'haha'
 
 #### Input Parameters
 
-Your actions often require user input parameters, e.g. to select a single profile from user table, we need a `userID` which can uniquely identify an user record. Use `dd.input` for this purpose:
+Your actions often require user input parameters, e.g. to select a single profile from user table, we need a `id` parameter which can uniquely identify an user record. Use `dd.input` for this purpose:
 
 ```ts
 selectUserProfile = dd.select(user.id, user.name, user.sig)
   .where(dd.sql`${user.id} = ${dd.input(user.id)}`);
 ```
 
-[mingru](https://github.com/mgenware/mingru) translates to the following Go code:
+[mingru](https://github.com/mgenware/mingru) translates this to the following Go code:
 
 ```go
-// SelectUserProfile ...
-func (da *TableTypeUser) SelectUserProfile(queryable dbx.Queryable, userID uint64) (*SelectUserProfileResult, error) {
-	result := &SelectUserProfileResult{}
-	err := queryable.QueryRow("SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = ?", userID).Scan(&result.UserID, &result.UserName, &result.UserSig)
+func (da *TableTypeUser) SelectUserProfile(queryable dbx.Queryable, id uint64) (*UserTableSelectUserProfileResult, error) {
+	result := &UserTableSelectUserProfileResult{}
+	err := queryable.QueryRow("SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = ?", id).Scan(&result.ID, &result.Name, &result.Sig)
 	if err != nil {
 		return nil, err
-
+	}
 	return result, nil
 }
 ```
 
-The `userID` is included in function arguments and passed to SQL query function. If you don't like the auto inferred name, can use the second optional `name` parameter of `dd.input`:
+The `dd.input(user.id)` instructs builder to include a parameter named `id` and pass it to SQL query function. If you don't like the auto inferred name, can use the second optional `name` argument of `dd.input`:
 
 ```ts
 selectUserProfile = dd.select(user.id, user.name, user.sig)
   .where(dd.sql`${user.id} = ${dd.input(user.id, 'uid')}`);
+// Now `uid` instead of `name` will be used
 ```
 
-This way `uid` instead of inferred `userID` will be used in generated code.
+The auto inferred name also differs on foreign column, it uses full column name on foreign column:
+
+```ts
+dd.input(post.id); // Name is id
+dd.input(post.title); // Name is title
+// post.user_id is a foreign key to user table
+dd.input(post.user_id); // Name is userID (instead of )
+```
 
 #### SQL Expression Helpers
 
