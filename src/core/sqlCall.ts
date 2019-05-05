@@ -10,7 +10,9 @@ export enum SQLCallType {
   count, // COUNT()
   avg, // AVG()
   sum, // SUM()
-  coalesce, // COALESE()
+  coalesce, // COALESCE()
+  min, // MIN()
+  max, // MAX()
 }
 
 export class SQLCall {

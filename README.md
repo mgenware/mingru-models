@@ -444,7 +444,9 @@ enum SQLCallType {
   count, // COUNT()
   avg, // AVG()
   sum, // SUM()
-  coalese, // COALESE()
+  coalesce, // COALESCE()
+  min, // MIN()
+  max, // MAX()
 }
 ```
 
