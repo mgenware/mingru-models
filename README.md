@@ -564,7 +564,7 @@ updateManyColumns = dd.updateOne()
   .byID();
 ```
 
-Notice `user.age` has been set for three times in the code above, the latter always takes precedence, so `user.age` would be set a `18`.
+Notice `user.age` has been set for three times in the code above, the latter always takes precedence, so `user.age` will be set to `18`.
 
 ### `INSERT` actions
 
