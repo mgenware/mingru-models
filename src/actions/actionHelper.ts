@@ -2,6 +2,8 @@ import UpdateAction from './updateAction';
 import InsertAction from './insertAction';
 import DeleteAction from './deleteAction';
 import { SelectAction, SelectActionColumns } from './selectAction';
+import { Action } from './ta';
+import TransactAction from './transactAction';
 
 function selectCore(all: boolean, cols: SelectActionColumns[]): SelectAction {
   const action = new SelectAction(cols, all);
@@ -60,4 +62,8 @@ export function deleteOne(): DeleteAction {
 
 export function unsafeDeleteAll(): DeleteAction {
   return new DeleteAction(true, false);
+}
+
+export function transact(...actions: Action[]): TransactAction {
+  return new TransactAction(actions);
 }

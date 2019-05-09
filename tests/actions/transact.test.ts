@@ -14,8 +14,8 @@ test('Transact', () => {
       .updateOne()
       .setInputs(post.e_user_id_n)
       .byID();
-    batch = dd.transact([this.insert, userTA.insert, this.update]);
-    batch2 = dd.transact([this.insert, userTA.insert, this.batch]);
+    batch = dd.transact(this.insert, userTA.insert, this.update);
+    batch2 = dd.transact(this.insert, userTA.insert, this.batch);
   }
   const postTA = dd.ta(post, PostTA);
   expect(postTA.batch2.actions).toEqual([
