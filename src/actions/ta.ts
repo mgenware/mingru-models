@@ -3,6 +3,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import * as defs from '../core/defs';
 import toTypeString from 'to-type-string';
 import Utils from '../lib/utils';
+import { SQLInputList } from '../core/sql';
 
 export class TA {
   __table!: Table;
@@ -28,6 +29,10 @@ export class Action extends CoreProperty {
   // After action is fully initialized, `dd.ta` will call `Action.validate`
   validate() {
     // Implemented by sub-classes
+  }
+
+  getInputs(): SQLInputList {
+    throw new Error('Not implemented yet');
   }
 }
 

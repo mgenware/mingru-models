@@ -116,6 +116,13 @@ export class SQLInputList {
       this.map[val.name] = val;
     }
   }
+
+  merge(other: SQLInputList) {
+    throwIfFalsy(other, 'other');
+    for (const ipt of other.list) {
+      this.add(ipt);
+    }
+  }
 }
 
 export class SQL {

@@ -24,7 +24,6 @@ test('Order of setInputs and set', () => {
   class UserTA extends dd.TA {
     t = dd
       .insert()
-      .set(user.name, user.name.toInput('a'))
       .setInputs(user.snake_case_name, user.name)
       .set(user.name, user.name.toInput('b'));
   }
@@ -37,6 +36,17 @@ test('Order of setInputs and set', () => {
 
   expect(vName.toString()).toBe('<b: [name]>');
   expect(vSnakeName.toString()).toBe('<snakeCaseName: [snake_case_name]>');
+});
+
+test('Set same column twice', () => {
+  class UserTA extends dd.TA {
+    t = dd
+      .insert()
+      .set(user.name, user.name.toInput('a'))
+      .setInputs(user.snake_case_name, user.name)
+      .set(user.name, user.name.toInput('b'));
+  }
+  expect(() => dd.ta(user, UserTA)).toThrow('twice');
 });
 
 test('Insert one', () => {

@@ -1,10 +1,18 @@
 import { Action } from './ta';
 import { Column } from '../core/core';
-import { SQL, SQLConvertible, convertToSQL, sql } from '../core/sql';
+import {
+  SQL,
+  SQLConvertible,
+  convertToSQL,
+  sql,
+  SQLInputList,
+} from '../core/sql';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export default class CoreUpdateAction extends Action {
   setters = new Map<Column, SQL>();
+  // Accumulated SQL inputs, will be set after validate()
+  inputs!: SQLInputList;
 
   set(column: Column, value: SQLConvertible): this {
     throwIfFalsy(column, 'column');
@@ -15,7 +23,13 @@ export default class CoreUpdateAction extends Action {
 
   setInputs(...columns: Column[]): this {
     throwIfFalsy(columns, 'columns');
+    const { setters } = this;
     for (const col of columns) {
+      if (setters.get(col)) {
+        throw new Error(
+          `Column value cannot be set twice, column: "${col.__name}"`,
+        );
+      }
       this.setters.set(col, sql`${col.toInput()}`);
     }
     return this;
@@ -26,5 +40,13 @@ export default class CoreUpdateAction extends Action {
     if (!this.setters.size) {
       throw new Error(`No setters in action "${this.__name}"`);
     }
+    // set inputs
+    const inputs = new SQLInputList();
+    for (const [, setter] of this.setters) {
+      if (setter.inputs.length) {
+        inputs.merge(setter.inputs);
+      }
+    }
+    this.inputs = inputs;
   }
 }
