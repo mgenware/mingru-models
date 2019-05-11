@@ -11,8 +11,8 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export default class CoreUpdateAction extends Action {
   setters = new Map<Column, SQL>();
-  // Accumulated SQL inputs (based on all setters + where), will be set after validate()
-  inputs!: SQLInputList;
+  // Inputs for all setters, will be set after validate()
+  setterInputs!: SQLInputList;
 
   set(column: Column, value: SQLConvertible): this {
     throwIfFalsy(column, 'column');
@@ -56,10 +56,6 @@ export default class CoreUpdateAction extends Action {
       }
     }
     inputs.seal();
-    this.inputs = inputs;
-  }
-
-  getInputs(): SQLInputList {
-    return this.inputs;
+    this.setterInputs = inputs;
   }
 }
