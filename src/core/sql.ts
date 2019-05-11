@@ -89,6 +89,7 @@ export class SQLElement {
 export class SQLInputList {
   list: SQLInput[] = [];
   map: { [name: string]: SQLInput } = {};
+  sealed = false;
 
   get length(): number {
     return this.list.length;
@@ -102,7 +103,14 @@ export class SQLInputList {
     return this.map[name];
   }
 
+  seal() {
+    this.sealed = true;
+  }
+
   add(val: SQLInput) {
+    if (this.sealed) {
+      throw new Error('InputList is sealed');
+    }
     throwIfFalsy(val, 'val');
     const prev = this.getByName(val.name);
     if (prev) {
@@ -162,6 +170,8 @@ export class SQL {
     if (lastLiteral) {
       this.pushElement(new SQLElement(SQLElementType.rawString, lastLiteral));
     }
+
+    this.inputs.seal();
   }
 
   toString(): string {
@@ -233,3 +243,7 @@ export function convertToSQL(element: SQLConvertible): SQL {
   }
   return sql`${element}`;
 }
+
+// Empty sealed SLQInputList
+export const emptySQLInputList = new SQLInputList();
+emptySQLInputList.seal();

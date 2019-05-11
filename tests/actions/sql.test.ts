@@ -158,6 +158,7 @@ test('InputList', () => {
     user.snake_case_name
   } = ${i3} = ${dd.input(user.snake_case_name)} ${i4}`;
   expect(sql.inputs.list).toEqual([i1, i2, i4, i3]);
+  expect(sql.inputs.sealed).toBe(true);
 });
 
 test('InputList (conflicting names)', () => {
