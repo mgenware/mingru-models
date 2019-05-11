@@ -1,5 +1,5 @@
 import { Action } from './ta';
-import { SQL, SQLInputList } from '../core/sql';
+import { SQL, SQLInputList, emptySQLInputList } from '../core/sql';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { where, byIDUnsafe } from './common';
 import { CoreProperty } from '../core/core';
@@ -23,7 +23,7 @@ export default class CoreSelectAction extends Action {
 
   getInputs(): SQLInputList {
     if (!this.whereSQL) {
-      return new SQLInputList();
+      return emptySQLInputList;
     }
     return this.whereSQL.inputs;
   }

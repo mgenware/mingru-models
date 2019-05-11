@@ -126,4 +126,5 @@ test('getInputs', () => {
     user.id.toInput(),
     user.name.toInput('b'),
   ]);
+  expect(v.getInputs().sealed).toBe(true);
 });

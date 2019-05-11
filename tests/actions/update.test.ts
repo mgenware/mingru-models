@@ -162,4 +162,5 @@ test('getInputs', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
   expect(v.getInputs().list).toEqual([user.name.toInput(), user.id.toInput()]);
+  expect(v.getInputs().sealed).toBe(true);
 });

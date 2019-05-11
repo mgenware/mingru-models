@@ -37,7 +37,10 @@ export default class UpdateAction extends CoreUpdateAction {
 
     // super.inputs is set after super.validate(), now we need to merge WHERE inputs into it
     if (this.whereSQL) {
-      this.inputs.merge(this.whereSQL.inputs);
+      const inputs = this.inputs.copy();
+      inputs.merge(this.whereSQL.inputs);
+      inputs.seal();
+      this.inputs = inputs;
     }
   }
 }

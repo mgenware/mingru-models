@@ -55,6 +55,7 @@ export default class CoreUpdateAction extends Action {
         inputs.merge(setter.inputs);
       }
     }
+    inputs.seal();
     this.inputs = inputs;
   }
 

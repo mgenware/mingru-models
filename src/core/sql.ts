@@ -131,6 +131,13 @@ export class SQLInputList {
       this.add(ipt);
     }
   }
+
+  copy(): SQLInputList {
+    const res = new SQLInputList();
+    res.map = { ...this.map };
+    res.list = [...this.list];
+    return res;
+  }
 }
 
 export class SQL {
