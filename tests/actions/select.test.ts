@@ -199,3 +199,12 @@ test('getInputs', () => {
   const v = ta.t;
   expect(v.getInputs().list).toEqual([user.id.toInput(), user.name.toInput()]);
 });
+
+test('getInputs (no WHERE)', () => {
+  class UserTA extends dd.TA {
+    t = dd.select(user.id, user.name);
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+  expect(v.getInputs().list.length).toBe(0);
+});
