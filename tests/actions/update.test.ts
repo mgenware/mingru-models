@@ -150,3 +150,16 @@ test('No setters', () => {
     dd.ta(user, UserTA);
   }).toThrow('setter');
 });
+
+test('getInputs', () => {
+  class UserTA extends dd.TA {
+    t = dd
+      .updateSome()
+      .set(user.name, dd.sql`${dd.input(user.name)}`)
+      .set(user.follower_count, dd.sql`${user.follower_count} + 1`)
+      .where(dd.sql`${user.id.toInput()} ${user.name.toInput()}`);
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+  expect(v.getInputs().list).toEqual([user.name.toInput(), user.id.toInput()]);
+});

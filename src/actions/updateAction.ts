@@ -28,10 +28,16 @@ export default class UpdateAction extends CoreUpdateAction {
 
   validate() {
     super.validate();
+
     if (!this.allowNoWhere && !this.whereSQL) {
       throw new Error(
         `'allowNoWhere' is set to false, you must define an WHERE clause. Otherwise, use 'unsafeUpdateAll'`,
       );
+    }
+
+    // super.inputs is set after super.validate(), now we need to merge WHERE inputs into it
+    if (this.whereSQL) {
+      this.inputs.merge(this.whereSQL.inputs);
     }
   }
 }
