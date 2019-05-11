@@ -1,5 +1,5 @@
 import { ActionType } from './ta';
-import { SQL } from '../core/sql';
+import { SQL, SQLInputList } from '../core/sql';
 import CoreSelectAction from './coreSelectAction';
 
 export default class DeleteAction extends CoreSelectAction {
@@ -16,5 +16,12 @@ export default class DeleteAction extends CoreSelectAction {
         `'allowNoWhere' is set to false, you must define an WHERE clause. Otherwise, use 'unsafeDeleteAll'`,
       );
     }
+  }
+
+  getInputs(): SQLInputList {
+    if (this.whereSQL) {
+      return this.whereSQL.inputs;
+    }
+    return new SQLInputList();
   }
 }
