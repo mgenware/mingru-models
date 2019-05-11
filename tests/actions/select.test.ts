@@ -186,3 +186,16 @@ test('having', () => {
   expect(v.groupByColumns[0].column).toBe(user.name);
   expect(v.havingSQL!.toString()).toBe('CALL(3, `name`) > 2');
 });
+
+test('getInputs', () => {
+  class UserTA extends dd.TA {
+    t = dd
+      .select(user.id, user.name)
+      .where(
+        dd.sql`${user.id.toInput()} ${user.name.toInput()} ${user.id.toInput()}`,
+      );
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+  expect(v.getInputs().list).toEqual([user.id.toInput(), user.name.toInput()]);
+});
