@@ -24,7 +24,7 @@ test('Order of setInputs and set', () => {
   class UserTA extends dd.TA {
     t = dd
       .insert()
-      .setInputs(user.snake_case_name, user.name)
+      .setInputs(user.snake_case_name)
       .set(user.name, user.name.toInput('b'));
   }
   const ta = dd.ta(user, UserTA);
@@ -38,13 +38,23 @@ test('Order of setInputs and set', () => {
   expect(vSnakeName.toString()).toBe('<snakeCaseName: [snake_case_name]>');
 });
 
-test('Set same column twice', () => {
+test('Set same column twice (two set())', () => {
   class UserTA extends dd.TA {
     t = dd
       .insert()
       .set(user.name, user.name.toInput('a'))
       .setInputs(user.snake_case_name, user.name)
       .set(user.name, user.name.toInput('b'));
+  }
+  expect(() => dd.ta(user, UserTA)).toThrow('twice');
+});
+
+test('Set same column twice (set() and setInputs())', () => {
+  class UserTA extends dd.TA {
+    t = dd
+      .insert()
+      .setInputs(user.snake_case_name, user.name)
+      .set(user.name, user.name.toInput('a'));
   }
   expect(() => dd.ta(user, UserTA)).toThrow('twice');
 });
@@ -100,4 +110,20 @@ test('No setters', () => {
     }
     dd.ta(post, PostTA);
   }).toThrow('setter');
+});
+
+test('getInputs', () => {
+  class UserTA extends dd.TA {
+    t = dd
+      .insert()
+      .setInputs(user.snake_case_name, user.id)
+      .set(user.name, user.name.toInput('b'));
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+  expect(v.getInputs().list).toEqual([
+    user.snake_case_name.toInput(),
+    user.id.toInput(),
+    user.name.toInput('b'),
+  ]);
 });

@@ -32,7 +32,7 @@ test('Order of setInputs and set', () => {
   class UserTA extends dd.TA {
     t = dd
       .unsafeUpdateAll()
-      .setInputs(user.snake_case_name, user.name)
+      .setInputs(user.snake_case_name)
       .set(user.name, user.name.toInput('b'));
   }
   const ta = dd.ta(user, UserTA);

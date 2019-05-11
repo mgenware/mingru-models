@@ -17,7 +17,14 @@ export default class CoreUpdateAction extends Action {
   set(column: Column, value: SQLConvertible): this {
     throwIfFalsy(column, 'column');
     throwIfFalsy(value, 'value');
-    this.setters.set(column, convertToSQL(value));
+
+    const { setters } = this;
+    if (setters.get(column)) {
+      throw new Error(
+        `Column value cannot be set twice, column: "${column.__name}"`,
+      );
+    }
+    setters.set(column, convertToSQL(value));
     return this;
   }
 
