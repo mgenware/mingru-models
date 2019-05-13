@@ -23,19 +23,26 @@ export class CoreProperty {
   static registerHandler(property: CoreProperty, handler: CorePropertyHandler) {
     throwIfFalsy(property, 'property');
     throwIfFalsy(handler, 'handler');
-    property.__handlers.push(handler);
+    if (property.__handlers) {
+      property.__handlers.push(handler);
+    } else {
+      // Call handler immediately if property is already initialized
+      handler();
+    }
   }
 
   static runHandlers(property: CoreProperty) {
     throwIfFalsy(property, 'property');
-    for (const handler of property.__handlers) {
-      handler();
+    if (property.__handlers) {
+      for (const handler of property.__handlers) {
+        handler();
+      }
+      // Set handlers to null cuz handlers are meant to be run only once
+      property.__handlers = null;
     }
-    // Remove all handlers cuz handlers are meant to be run only once
-    property.__handlers = [];
   }
 
-  __handlers: CorePropertyHandler[] = [];
+  __handlers: CorePropertyHandler[] | null = [];
   __name!: string;
   __payload!: unknown;
 }

@@ -184,9 +184,17 @@ test('Register property callback', () => {
     t = col;
   }
 
-  expect(col.__handlers.length).toBe(2);
+  expect(col.__handlers!.length).toBe(2);
   expect(counter).toBe(0);
   dd.table(User);
-  expect(col.__handlers.length).toBe(0);
+  expect(col.__handlers).toBe(null);
   expect(counter).toBe(2);
+});
+
+test('Register property callback on a initialized property', () => {
+  let counter = 0;
+  const cb = () => counter++;
+  dd.CoreProperty.registerHandler(user.name, cb);
+  expect(user.name.__handlers).toBe(null);
+  expect(counter).toBe(1);
 });

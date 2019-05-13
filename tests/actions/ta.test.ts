@@ -36,10 +36,10 @@ test('Register property callback', () => {
     t = action;
   }
 
-  expect(action.__handlers.length).toBe(2);
+  expect(action.__handlers!.length).toBe(2);
   expect(counter).toBe(0);
   dd.ta(user, UserTA);
-  expect(action.__handlers.length).toBe(0);
+  expect(action.__handlers).toBe(null);
   expect(counter).toBe(2);
 });
 
