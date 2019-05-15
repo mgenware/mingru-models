@@ -31,6 +31,12 @@ export class CoreProperty {
     }
   }
 
+  static wait(property: CoreProperty): Promise<void> {
+    return new Promise(resolve => {
+      CoreProperty.registerHandler(property, () => resolve());
+    });
+  }
+
   static runHandlers(property: CoreProperty) {
     throwIfFalsy(property, 'property');
     if (property.__handlers) {
