@@ -11,7 +11,7 @@ Redefining database models using TypeScript.
 
 **Note that dd-models only helps you define database models in a strong-typed way, it has nothing to do with how these models are going to be used, usually, you use other libraries to consume your models**, examples:
 
-* [mingru](https://github.com/mgenware/mingru) converts dd-models to Go code
+- [mingru](https://github.com/mgenware/mingru) converts dd-models to Go code
 
 ## Installation
 
@@ -46,8 +46,8 @@ export default dd.table(User);
 
 You may wonder why a two-step process, why not export the table type directly? well, there are several reasons:
 
-* Exporting the class would require user to define columns as `static` properties.
-* When calling `dd.table`, dd-models will look through all columns and do some validation as well as preprocessing work like setting up foreign keys, which is definitely suited for an object.
+- Exporting the class would require user to define columns as `static` properties.
+- When calling `dd.table`, dd-models will look through all columns and do some validation as well as preprocessing work like setting up foreign keys, which is definitely suited for an object.
 
 ### Columns
 
@@ -82,7 +82,7 @@ Sometimes, we need to fully customize a default value, e.g. an SQL expression, t
 
 ```ts
 // Set it to an custom SQL expression once inserted
-age = dd.int(18).setDefault(dd.sql`FLOOR(RAND() * 401) + 100`)
+age = dd.int(18).setDefault(dd.sql`FLOOR(RAND() * 401) + 100`);
 
 // These two lines are equivalent
 datetime_updated = dd.datetime(true);
@@ -137,11 +137,12 @@ function time(defaultsToNow?: boolean): Column;
 NOTE: columns created by column helper methods are **`NOT NULL`** by default, to create nullable (`NULL`) column, use the extra `nullable` property:
 
 ```ts
-name = dd.varChar(100);     // `name` is NOT NULL
-sig = dd.text().nullable;   // `sig` is NULL
+name = dd.varChar(100); // `name` is NOT NULL
+sig = dd.text().nullable; // `sig` is NULL
 ```
 
 #### Column Name
+
 By default, property name reflects the column name, if you need a different name from property name, use `Column.setDBName` method:
 
 ```ts
@@ -158,17 +159,17 @@ You can create column objects manually if column helper methods don't fit your n
 
 ```ts
 class ColumnType {
-    types: string[];
-    pk: boolean;
-    nullable: boolean;
-    unsigned: boolean;
-    unique: boolean;
-    length: number;
-    constructor(types: string | string[]);
+  types: string[];
+  pk: boolean;
+  nullable: boolean;
+  unsigned: boolean;
+  unique: boolean;
+  length: number;
+  constructor(types: string | string[]);
 }
 
 class Column extends ColumnBase {
-    type: ColumnType;
+  type: ColumnType;
 }
 ```
 
@@ -220,7 +221,8 @@ export class UserTA extends dd.TA {
   // selects a single user by ID
   selectUser = dd.select(user.id, user.name).byID();
   // updates an user by ID
-  updateUser = dd.updateOne()
+  updateUser = dd
+    .updateOne()
     .setInputs(user.name, user.sig)
     .byID();
   // delete an user by ID
@@ -247,9 +249,9 @@ function selectField(column: ColumnBase): SelectAction;
 
 They differ from return values:
 
-* `select` returns an row object containing all selected columns
-* `selectAll` returns an array of row objects each containing all selected columns
-* `selectField` returns the single selected field
+- `select` returns an row object containing all selected columns
+- `selectAll` returns an array of row objects each containing all selected columns
+- `selectField` returns the single selected field
 
 For example, in [mingru](https://github.com/mgenware/mingru), consider the following models and actions:
 
@@ -298,7 +300,8 @@ We haven't used any `WHERE` clause in the `SELECT` actions above, to add a `WHER
 You can pass a column object to template string, it will be converted to a column name in SQL, for example:
 
 ```ts
-selectUserProfile = dd.select(user.id, user.name, user.sig)
+selectUserProfile = dd
+  .select(user.id, user.name, user.sig)
   .where(dd.sql`${user.id} = 1`);
 ```
 
@@ -311,7 +314,8 @@ SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1
 More complex queries:
 
 ```ts
-selectUserProfile = dd.select(user.id, user.name, user.sig)
+selectUserProfile = dd
+  .select(user.id, user.name, user.sig)
   .where(dd.sql`${user.id} = 1 AND ${user.sig} <> 'haha'`);
 ```
 
@@ -326,7 +330,8 @@ SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1 AND `sig` <> 'haha'
 Your actions often require user input parameters, e.g. to select a single profile from user table, we need a `id` parameter which can uniquely identify an user record. Use `dd.input` for this purpose:
 
 ```ts
-selectUserProfile = dd.select(user.id, user.name, user.sig)
+selectUserProfile = dd
+  .select(user.id, user.name, user.sig)
   .where(dd.sql`${user.id} = ${dd.input(user.id)}`);
 ```
 
@@ -346,7 +351,8 @@ func (da *TableTypeUser) SelectUserProfile(queryable dbx.Queryable, id uint64) (
 The `dd.input(user.id)` instructs builder to include a parameter named `id` and pass it to SQL query function. If you don't like the auto inferred name, can use the second optional `name` argument of `dd.input`:
 
 ```ts
-selectUserProfile = dd.select(user.id, user.name, user.sig)
+selectUserProfile = dd
+  .select(user.id, user.name, user.sig)
   .where(dd.sql`${user.id} = ${dd.input(user.id, 'uid')}`);
 // Now `uid` instead of `name` will be used
 ```
@@ -369,35 +375,40 @@ Writing `dd.input`s in `dd.sql` can be tedious, dd-models comes with a bunch of 
 Shortcut to `dd.input(column, optionalName)`:
 
 ```ts
-selectUserProfile = dd.select(user.id, user.name, user.sig)
+selectUserProfile = dd
+  .select(user.id, user.name, user.sig)
   .where(dd.sql`${user.id} = ${user.id.toInput()}`);
 ```
 
 ##### `Column.isEqualTo(sql): SQL`
 
 ```ts
-selectUserProfile = dd.select(user.id, user.name, user.sig)
+selectUserProfile = dd
+  .select(user.id, user.name, user.sig)
   .where(user.name.isEqualTo(dd.sql`"Admin"`));
 ```
 
 Is equivalent to:
 
 ```ts
-selectUserProfile = dd.select(user.id, user.name, user.sig)
+selectUserProfile = dd
+  .select(user.id, user.name, user.sig)
   .where(dd.sql`${user.name} = "Admin"`);
 ```
 
 ##### `Column.isEqualToInput(optionalName): SQL`
 
 ```ts
-selectUserProfile = dd.select(user.id, user.name, user.sig)
+selectUserProfile = dd
+  .select(user.id, user.name, user.sig)
   .where(user.name.isEqualToInput());
 ```
 
 Is equivalent to:
 
 ```ts
-selectUserProfile = dd.select(user.id, user.name, user.sig)
+selectUserProfile = dd
+  .select(user.id, user.name, user.sig)
   .where(dd.sql`${user.name} = ${dd.input(user.name)}`);
 ```
 
@@ -415,21 +426,26 @@ Is equivalent to 2 expressions listed below:
 
 ```ts
 // 1
-userTA.select('UserProfile', user.id, user.name, user.sig)
+userTA
+  .select('UserProfile', user.id, user.name, user.sig)
   .where(`${user.id} = ${user.id.toInput()}`);
 // 2
-userTA.select('UserProfile', user.id, user.name, user.sig)
+userTA
+  .select('UserProfile', user.id, user.name, user.sig)
   .where(user.id.isEqualTo(user.id.toInput()));
 // 3
-userTA.select('UserProfile', user.id, user.name, user.sig)
+userTA
+  .select('UserProfile', user.id, user.name, user.sig)
   .where(user.id.isEqualToInput());
 ```
 
 #### Predefined System Calls
+
 As raw SQL expressions enable you to write any SQL, you may do this for a `DATETIME` column to set it to current time when inserted:
 
 ```ts
-updateLastLogin = dd.updateOne()
+updateLastLogin = dd
+  .updateOne()
   .set(user.lastLogin, dd.sql`NOW()`)
   .byID();
 ```
@@ -454,15 +470,18 @@ All predefined system calls are under the root `dd` namespace:
 
 ```ts
 // These three are equivalent
-updateLastLogin = dd.updateOne()
+updateLastLogin = dd
+  .updateOne()
   .set(user.lastLogin, dd.sql`NOW()`)
   .byID();
 
-updateLastLogin = dd.updateOne()
+updateLastLogin = dd
+  .updateOne()
   .set(user.lastLogin, dd.sql`${dd.datetimeNow()}`)
   .byID();
 
-updateLastLogin = dd.updateOne()
+updateLastLogin = dd
+  .updateOne()
   .set(user.lastLogin, dd.datetimeNow())
   .byID();
 ```
@@ -472,14 +491,17 @@ updateLastLogin = dd.updateOne()
 #### `orderBy` and `orderByDesc`
 
 ```ts
-selectUser = dd.select(user.name, user.age)
+selectUser = dd
+  .select(user.name, user.age)
   .byID()
   .orderBy(user.name)
   .orderByDesc(user.age);
 ```
 
 #### Alias via `as`
+
 Can use `Column.as` to add the SQL `AS` alias to a selected column:
+
 ```ts
 selectUser = dd.select(user.name, user.post_count.as('count'));
 ```
@@ -510,7 +532,8 @@ function unsafeUpdateAll(): UpdateAction;
 To set individual column values, use `UpdateAction.set(column, sql)`, e.g. set an `user.sig` to a random string:
 
 ```ts
-updateUserSig = dd.updateOne()
+updateUserSig = dd
+  .updateOne()
   .set(user.sig, dd.sql`'My signature'`)
   .byID();
 ```
@@ -518,7 +541,8 @@ updateUserSig = dd.updateOne()
 Or, use user input as column value:
 
 ```ts
-updateUserSig = dd.updateOne()
+updateUserSig = dd
+  .updateOne()
   .set(user.sig, user.sig.toInput())
   .byID();
 ```
@@ -526,7 +550,8 @@ updateUserSig = dd.updateOne()
 To set multiple columns, just call `set` one by one:
 
 ```ts
-updateUserSig = dd.updateOne()
+updateUserSig = dd
+  .updateOne()
   .set(user.sig, user.sig.toInput())
   .set(user.name, dd.sql`'Random name'`)
   .byID();
@@ -537,7 +562,8 @@ updateUserSig = dd.updateOne()
 Most of the time, you will be using `UPDATE` action with user inputs, so you probably always end up with this:
 
 ```ts
-updateManyColumns = dd.updateOne()
+updateManyColumns = dd
+  .updateOne()
   .set(user.sig, user.sig.toInput())
   .set(user.name, user.name.toInput())
   .set(user.age, user.age.toInput())
@@ -548,7 +574,8 @@ updateManyColumns = dd.updateOne()
 To simplify this, `UpdateAction` also has a method called `setInputs`, you can pass an array of columns, all them will be considered inputs. The above code could be rewritten as using `setInputs`:
 
 ```ts
-updateManyColumns = dd.updateOne()
+updateManyColumns = dd
+  .updateOne()
   .setInputs(user.sig, user.name, user.age, user.gender)
   .byID();
 ```
@@ -556,15 +583,13 @@ updateManyColumns = dd.updateOne()
 You can also mix this with the `set` method mentioned above:
 
 ```ts
-updateManyColumns = dd.updateOne()
+updateManyColumns = dd
+  .updateOne()
   .set(user.type, dd.sql`1`)
-  .set(user.age, dd.sql`1`)
-  .setInputs(user.sig, user.name, user.age, user.gender)
+  .setInputs(user.sig, user.name, user.gender)
   .set(user.age, dd.sql`18`)
   .byID();
 ```
-
-Notice `user.age` has been set for three times in the code above, the latter always takes precedence, so `user.age` will be set to `18`.
 
 ### `INSERT` actions
 
@@ -585,7 +610,8 @@ Example:
 
 ```ts
 // Insert a new user
-insertUser = dd.insertOne()
+insertUser = dd
+  .insertOne()
   .set(user.sig, dd.sql`''`)
   .set(user.name, user.name.toInput())
   .set(user.age, user.age.toInput());
@@ -595,7 +621,8 @@ insertUser = dd.insertOne()
 
 ```ts
 // Insert a new user
-insertUser = dd.insertOne()
+insertUser = dd
+  .insertOne()
   .set(user.sig, dd.sql`''`)
   .setInputs(user.name, user.age);
 ```
@@ -606,7 +633,8 @@ insertUser = dd.insertOne()
 
 ```ts
 // Insert a new user
-insertUser = dd.insertOneWithDefaults()
+insertUser = dd
+  .insertOneWithDefaults()
   .set(user.sig, dd.sql`''`)
   .setInputs(user.name);
 
@@ -616,6 +644,7 @@ insertUser = dd.insertOneWithDefaults()
 ```
 
 ### `DELETE` actions
+
 ```ts
 // Deletes a row and checks rows affected to make sure only one row is updated
 // Implementations should throw an error if used without a WHERE clause
@@ -656,12 +685,12 @@ It returns an object of `JoinedColumn`:
 
 ```ts
 export declare class JoinedTable {
-    srcColumn: Column;
-    destTable: Table;
-    destColumn: Column;
-    keyPath: string;
+  srcColumn: Column;
+  destTable: Table;
+  destColumn: Column;
+  keyPath: string;
 
-    tableInputName(): string;
+  tableInputName(): string;
 }
 ```
 
@@ -669,7 +698,7 @@ An anatomy of a `JoinedTable`:
 
 ```
 post.user_id.join(user).name;
------------------------------ 
+-----------------------------
      |        |     |      |
     srcColumn |  destTable |
      |        |     |      |
@@ -690,14 +719,14 @@ cmt.post_id.join(post).user_id.join(user).name
                                   JoinedTable
 ```
 
-* For first joined table:
-  * `srcColumn`: `cmt.post_id`
-  * `destTable`: `post`
-  * `destColumn`: `post.user_id`
-* For second joined column:
-  * `srcColumn`: `<first joined table>.user_id`
-  * `destTable`: `user`
-  * `destColumn`: `user.name`
+- For first joined table:
+  - `srcColumn`: `cmt.post_id`
+  - `destTable`: `post`
+  - `destColumn`: `post.user_id`
+- For second joined column:
+  - `srcColumn`: `<first joined table>.user_id`
+  - `destTable`: `user`
+  - `destColumn`: `user.name`
 
 ### Reuse a Joined Table
 
@@ -714,11 +743,9 @@ The code above can be simplified as below:
 
 ```ts
 const joinedUser = comment.post_id.join(post).user_id.join(user);
-const cols = [
-  joinedUser.name,
-  joinedUser.url,
-];
+const cols = [joinedUser.name, joinedUser.url];
 ```
 
------------
+---
+
 **Work in progress**
