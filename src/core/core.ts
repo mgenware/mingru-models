@@ -213,10 +213,11 @@ export class Column extends CoreProperty {
     return curName;
   }
 
-  tableName(): string {
+  tableName(dbName = false): string {
     const { __table: table } = this;
     if (table instanceof Table) {
-      return this.castToTable().__name;
+      const t = this.castToTable();
+      return dbName ? t.getDBName() : t.__name;
     }
     // JoinedTable
     return this.castToJoinedTable().tableInputName();

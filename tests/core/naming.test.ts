@@ -10,12 +10,14 @@ class ABCTable extends dd.Table {
   uid3 = dd.fk(user.id).setDBName('UID3');
 }
 
-class DEFTable extends dd.Table {}
+class DEFTable extends dd.Table {
+  id = dd.pk();
+}
 
 const abcTable = dd.table(ABCTable);
 const defTable = dd.table(DEFTable, 't');
 
-test('Capitalized to snake_case', () => {
+test('Table name and getDBName', () => {
   expect(abcTable.__name).toBe('abc_table');
   expect(abcTable.getDBName()).toBe('abc_table');
   expect(defTable.__name).toBe('def_table');
@@ -25,6 +27,11 @@ test('Capitalized to snake_case', () => {
   expect(abcTable.statusType.__name).toBe('status_type');
   expect(abcTable.statusID.__name).toBe('status_id');
   expect(abcTable.statusID.__dbName).toBe('customName');
+});
+
+test('col.TableName(dbName)', () => {
+  expect(defTable.id.tableName()).toBe('def_table');
+  expect(defTable.id.tableName(true)).toBe('t');
 });
 
 test('Rename a FK', () => {
