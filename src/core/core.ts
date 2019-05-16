@@ -111,6 +111,7 @@ export class Column extends CoreProperty {
   __dbName: string | null = null;
   __table!: Table | JoinedTable;
 
+  // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any table, the foreignColumn property only indicates a column property is declared as FK and doesn't have any effect on join(), the real dest table and column are determined by join().
   foreignColumn: Column | null = null;
 
   // See `Column.join` for details
@@ -166,20 +167,23 @@ export class Column extends CoreProperty {
     return this.__dbName || this.__name;
   }
 
-  join<T extends Table>(destTable: T): T {
+  join<T extends Table>(destTable: T, destCol?: Column): T {
+    throwIfFalsy(destTable, 'destTable');
     // source column + dest table + dest column = joined table
     // Simple case: post.user_id.join(user): since post.user_id is a FK to user.id, so dest column here is implicitly user.id
 
     // Complex case: cmt.post_id.join(post).user_id.join(user): the current object(`this`) is a joined column(`cmt.post_id.join(post).user_id`), and also a FK.
-    if (!this.foreignColumn) {
-      throw new Error(
-        `You cannot call "join" on this column of type "${toTypeString(
-          this,
-        )}", because it's not a foreign column`,
-      );
+
+    let destColumn: Column;
+    if (destCol) {
+      destColumn = destCol;
+    } else {
+      // No explicit column set, use the PK from destTable
+      if (!destTable.__pks.length) {
+        throw new Error(`No primary key found on table "${destTable.__name}"`);
+      }
+      destColumn = destTable.__pks[0];
     }
-    // `this` is FK here
-    const destColumn = this.foreignColumn;
 
     // Join returns a proxy, each property access first retrieves the original column from original joined table, then it constructs a new copied column with `props.table` set to a newly created JoinedTable
     const joinedTable = new JoinedTable(this, destTable, destColumn);

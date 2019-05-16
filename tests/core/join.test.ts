@@ -82,3 +82,29 @@ test('Nested JoinedColumn', () => {
     '[[[[post_cmt.post_id].[post.id]].user_id].[user.id]]',
   );
 });
+
+test('Join arbitrary table and column', () => {
+  // Join pk of postCmt
+  let jc = post.user_id.join(postCmt).post_id;
+  testJCCols(
+    jc,
+    'user',
+    postCmt,
+    postCmt.id,
+    postCmt.post_id,
+    post.user_id,
+    '[[post.user_id].[post_cmt.id]]',
+  );
+
+  // Join explicit column of postCmt
+  jc = post.user_id.join(postCmt, postCmt.post_id).snake_case_post_id;
+  testJCCols(
+    jc,
+    'user',
+    postCmt,
+    postCmt.post_id,
+    postCmt.snake_case_post_id,
+    post.user_id,
+    '[[post.user_id].[post_cmt.post_id]]',
+  );
+});
