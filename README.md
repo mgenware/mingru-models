@@ -49,6 +49,17 @@ You may wonder why a two-step process, why not export the table type directly? w
 - Exporting the class would require user to define columns as `static` properties.
 - When calling `dd.table`, dd-models will look through all columns and do some validation as well as preprocessing work like setting up foreign keys, which is definitely suited for an object.
 
+#### Table Name
+
+By default, class name is used as table name, and dd-models automatially converts it to snake_case in SQL, for example, `class MyTable` would be `my_table`. Use the second parameter of `dd.table` to customize the name used in SQL.
+
+```ts
+class User extends dd.MyTable {}
+
+export default dd.table(MyTable); // Table name is "my_table" in SQL
+export default dd.table(MyTable, 'haha'); // Table name is "haha" in SQL
+```
+
 ### Columns
 
 #### Column Helper Methods
@@ -66,6 +77,9 @@ age = dd.int();
 
 // `name` is `VARCHAR(100)`
 name = dd.varChar(100);
+
+// Set primary key underlying data type to `INT`
+id = dd.pk(dd.int());
 ```
 
 In the code above, `dd.pk`, `dd.int` and `dd.varChar` are all column helper methods. You can also set a default value in most of the column helper methods:
