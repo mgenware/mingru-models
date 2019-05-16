@@ -58,12 +58,17 @@ Columns are nothing but `dd.Column` objects, but we actually seldom need to manu
 For example:
 
 ```ts
-id = dd.pk(); // `id` is a primary key, data type defaults to unsigned `BIGINT`
-age = dd.int(); // `age` is `INT`
-name = dd.varChar(100); // `name` is `VARCHAR(100)`
+// `id` is a primary key, data type defaults to unsigned `BIGINT`
+id = dd.pk();
+
+// `age` is `INT`
+age = dd.int();
+
+// `name` is `VARCHAR(100)`
+name = dd.varChar(100);
 ```
 
-In the code above, `dd.pk`, `dd.int` and `dd.varChar` are all column helper methods. You can also set a default value in most of the column helper methods, e.g.:
+In the code above, `dd.pk`, `dd.int` and `dd.varChar` are all column helper methods. You can also set a default value in most of the column helper methods:
 
 ```ts
 // `dd.int` accepts an optional number as default value

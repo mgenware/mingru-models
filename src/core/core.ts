@@ -246,15 +246,13 @@ export class Column extends CoreProperty {
 }
 
 export class Table {
-  __columns: Column[];
+  __columns: Column[] = [];
   __name!: string;
+  __dbName!: string;
   __pks: Column[] = [];
 
-  constructor(name?: string) {
-    this.__columns = [];
-    if (name) {
-      this.__name = name;
-    }
+  getDBName(): string {
+    return this.__dbName || this.__name;
   }
 }
 

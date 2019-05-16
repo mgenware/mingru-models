@@ -49,15 +49,13 @@ export function enumerateColumns(
 
 export function table<T extends Table>(
   cls: new (name?: string) => T,
-  name?: string,
+  dbName?: string,
 ): T {
   throwIfFalsy(cls, 'cls');
-  const tableObj = new cls(name);
+  const tableObj = new cls();
   const className = tableObj.constructor.name;
-  // table.__name can be in ctor
-  if (!tableObj.__name) {
-    tableObj.__name = utils.toSnakeCase(className);
-  }
+  tableObj.__name = utils.toSnakeCase(className);
+  tableObj.__dbName = dbName || tableObj.__name;
   const cols = tableObj.__columns;
   enumerateColumns(tableObj, (col, propName) => {
     if (!col) {

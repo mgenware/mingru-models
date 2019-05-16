@@ -17,7 +17,10 @@ const defTable = dd.table(DEFTable, 't');
 
 test('Capitalized to snake_case', () => {
   expect(abcTable.__name).toBe('abc_table');
-  expect(defTable.__name).toBe('t');
+  expect(abcTable.getDBName()).toBe('abc_table');
+  expect(defTable.__name).toBe('def_table');
+  expect(defTable.__dbName).toBe('t');
+  expect(defTable.getDBName()).toBe('t');
   expect(abcTable.StatusString.__name).toBe('status_string');
   expect(abcTable.statusType.__name).toBe('status_type');
   expect(abcTable.statusID.__name).toBe('status_id');
