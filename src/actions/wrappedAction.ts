@@ -7,12 +7,12 @@ export const InsertedKey = '_inserted';
 export const RowsAffectedKey = '_rows_affected';
 
 export class WrappedActionReturnValue {
-  constructor(public index: number, public key: string) {}
+  constructor(public index: number, public name: string) {}
 }
 
 export type WrappedActionValue = string | WrappedActionReturnValue;
 
-export default class WrappedAction extends Action {
+export class WrappedAction extends Action {
   inputs!: SQLInputList;
 
   constructor(

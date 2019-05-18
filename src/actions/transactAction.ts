@@ -3,12 +3,16 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { SQLInputList } from '../core/sql';
 import { CoreProperty } from '../core/core';
 
-export default class TrransactAction extends Action {
+export default class TransactAction extends Action {
   inputs!: SQLInputList;
 
-  constructor(public actions: Action[]) {
+  constructor(public actions: Action[], public resultIndex?: number) {
     super(ActionType.transact);
     throwIfFalsy(actions, 'actions');
+
+    if (resultIndex && (resultIndex < 0 || resultIndex >= actions.length)) {
+      throw new Error(`resultIndex(${resultIndex}) is out of bounds`);
+    }
 
     CoreProperty.registerHandler(this, () => {
       const len = actions.length;

@@ -11,7 +11,7 @@ export * from './actions/selectAction';
 export { default as UpdateAction } from './actions/updateAction';
 export { default as InsertAction } from './actions/insertAction';
 export { default as DeleteAction } from './actions/deleteAction';
-export { default as WrappedAction } from './actions/wrappedAction';
+export * from './actions/wrappedAction';
 export { default as TransactAction } from './actions/transactAction';
 export { default as utils } from './lib/utils';
 export * from './sqlHelper';

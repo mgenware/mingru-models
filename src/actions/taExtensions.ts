@@ -1,5 +1,5 @@
 import { Action } from './ta';
-import WrappedAction from './wrappedAction';
+import { WrappedAction } from './wrappedAction';
 
 declare module './ta' {
   interface Action {
