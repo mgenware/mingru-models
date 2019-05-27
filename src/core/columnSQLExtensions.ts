@@ -1,9 +1,9 @@
 import { Column } from './core';
-import { SQL, SQLInput, input, sql } from './sql';
+import { SQL, SQLVariable, input, sql } from './sql';
 
 declare module './core' {
   interface Column {
-    toInput(name?: string): SQLInput;
+    toInput(name?: string): SQLVariable;
     isEqualTo(valueSQL: SQL): SQL;
     isEqualToInput(name?: string): SQL;
     isNotEqualTo(valueSQL: SQL): SQL;

@@ -389,7 +389,7 @@ dd.input(post.user_id); // Name is userID (instead of )
 
 Writing `dd.input`s in `dd.sql` can be tedious, dd-models comes with a bunch of handy helpers to construct some commonly used expressions.
 
-##### `Column.toInput(column, optionalName): SQLInput`
+##### `Column.toInput(column, optionalName): SQLVariable`
 
 Shortcut to `dd.input(column, optionalName)`:
 

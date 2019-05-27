@@ -1,10 +1,10 @@
 import { Action, ActionType } from './ta';
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { SQLInputList } from '../core/sql';
+import { SQLVariableList } from '../core/sql';
 import { CoreProperty } from '../core/core';
 
 export default class TransactAction extends Action {
-  inputs!: SQLInputList;
+  inputs!: SQLVariableList;
 
   constructor(public actions: Action[], public resultIndex?: number) {
     super(ActionType.transact);
@@ -22,7 +22,7 @@ export default class TransactAction extends Action {
         CoreProperty.registerHandler(action, () => {
           counter++;
           if (counter === len) {
-            const inputs = new SQLInputList();
+            const inputs = new SQLVariableList();
             for (const a of actions) {
               const actionInputs = a.getInputs();
               if (!actionInputs) {
@@ -40,7 +40,7 @@ export default class TransactAction extends Action {
     });
   }
 
-  getInputs(): SQLInputList {
+  getInputs(): SQLVariableList {
     return this.inputs;
   }
 }

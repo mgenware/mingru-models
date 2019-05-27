@@ -3,7 +3,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { SQLCall } from './sqlCall';
 import toTypeString from 'to-type-string';
 
-export class SQLInput {
+export class SQLVariable {
   constructor(public typeObject: string | Column, public name: string) {
     throwIfFalsy(typeObject, 'typeObject');
     throwIfFalsy(name, 'name');
@@ -20,7 +20,7 @@ export class SQLInput {
     return `${this.name}: ${type}`;
   }
 
-  isEqualTo(oth: SQLInput): boolean {
+  isEqualTo(oth: SQLVariable): boolean {
     if (!oth) {
       return false;
     }
@@ -37,7 +37,7 @@ export class SQLInput {
   }
 }
 
-export function input(type: string | Column, name?: string): SQLInput {
+export function input(type: string | Column, name?: string): SQLVariable {
   if (type instanceof Column) {
     const col = type as Column;
     if (!name) {
@@ -48,16 +48,16 @@ export function input(type: string | Column, name?: string): SQLInput {
         );
       }
     }
-    return new SQLInput(col, name);
+    return new SQLVariable(col, name);
   }
   if (!name) {
     throw new Error(`Unexpected empty input name for type "${type}"`);
   }
-  return new SQLInput(type as string, name as string);
+  return new SQLVariable(type as string, name as string);
 }
 
 // Allowed types in dd.sql template strings
-export type SQLConvertible = string | Column | SQLInput | SQL | SQLCall;
+export type SQLConvertible = string | Column | SQLVariable | SQL | SQLCall;
 
 export enum SQLElementType {
   rawString,
@@ -77,8 +77,8 @@ export class SQLElement {
     return this.value as Column;
   }
 
-  toInput(): SQLInput {
-    return this.value as SQLInput;
+  toInput(): SQLVariable {
+    return this.value as SQLVariable;
   }
 
   toCall(): SQLCall {
@@ -86,20 +86,20 @@ export class SQLElement {
   }
 }
 
-export class SQLInputList {
-  list: SQLInput[] = [];
-  map: { [name: string]: SQLInput } = {};
+export class SQLVariableList {
+  list: SQLVariable[] = [];
+  map: { [name: string]: SQLVariable } = {};
   sealed = false;
 
   get length(): number {
     return this.list.length;
   }
 
-  getByIndex(index: number): SQLInput | null {
+  getByIndex(index: number): SQLVariable | null {
     return this.list[index];
   }
 
-  getByName(name: string): SQLInput | null {
+  getByName(name: string): SQLVariable | null {
     return this.map[name];
   }
 
@@ -107,7 +107,7 @@ export class SQLInputList {
     this.sealed = true;
   }
 
-  add(val: SQLInput) {
+  add(val: SQLVariable) {
     if (this.sealed) {
       throw new Error('InputList is sealed');
     }
@@ -125,15 +125,15 @@ export class SQLInputList {
     }
   }
 
-  merge(other: SQLInputList) {
+  merge(other: SQLVariableList) {
     throwIfFalsy(other, 'other');
     for (const ipt of other.list) {
       this.add(ipt);
     }
   }
 
-  copy(): SQLInputList {
-    const res = new SQLInputList();
+  copy(): SQLVariableList {
+    const res = new SQLVariableList();
     res.map = { ...this.map };
     res.list = [...this.list];
     return res;
@@ -142,7 +142,7 @@ export class SQLInputList {
 
 export class SQL {
   elements: SQLElement[] = [];
-  inputs = new SQLInputList();
+  inputs = new SQLVariableList();
 
   constructor(literals: TemplateStringsArray, params: SQLConvertible[]) {
     for (let i = 0; i < params.length; i++) {
@@ -157,7 +157,7 @@ export class SQL {
         );
       } else if (param instanceof Column) {
         this.pushElement(new SQLElement(SQLElementType.column, param));
-      } else if (param instanceof SQLInput) {
+      } else if (param instanceof SQLVariable) {
         this.pushElement(new SQLElement(SQLElementType.input, param));
       } else if (param instanceof SQL) {
         for (const element of (param as SQL).elements) {
@@ -205,7 +205,7 @@ export class SQL {
 
   private pushElement(element: SQLElement) {
     if (element.type === SQLElementType.input) {
-      this.inputs.add(element.value as SQLInput);
+      this.inputs.add(element.value as SQLVariable);
     }
     this.elements.push(element);
   }
@@ -252,5 +252,5 @@ export function convertToSQL(element: SQLConvertible): SQL {
 }
 
 // Empty sealed SLQInputList
-export const emptySQLInputList = new SQLInputList();
-emptySQLInputList.seal();
+export const emptySQLVariableList = new SQLVariableList();
+emptySQLVariableList.seal();

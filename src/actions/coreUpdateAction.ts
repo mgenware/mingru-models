@@ -5,14 +5,14 @@ import {
   SQLConvertible,
   convertToSQL,
   sql,
-  SQLInputList,
+  SQLVariableList,
 } from '../core/sql';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export default class CoreUpdateAction extends Action {
   setters = new Map<Column, SQL>();
   // Inputs for all setters, will be set after validate()
-  setterInputs!: SQLInputList;
+  setterInputs!: SQLVariableList;
 
   set(column: Column, value: SQLConvertible): this {
     throwIfFalsy(column, 'column');
@@ -48,7 +48,7 @@ export default class CoreUpdateAction extends Action {
       throw new Error(`No setters in action "${this.__name}"`);
     }
     // Set inputs
-    const inputs = new SQLInputList();
+    const inputs = new SQLVariableList();
     // Merge setter inputs
     for (const [, setter] of this.setters) {
       if (setter.inputs.length) {

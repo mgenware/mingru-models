@@ -1,5 +1,5 @@
 import { ActionType } from './ta';
-import { SQL, SQLInputList, emptySQLInputList } from '../core/sql';
+import { SQL, SQLVariableList, emptySQLVariableList } from '../core/sql';
 import CoreSelectAction from './coreSelectAction';
 
 export default class DeleteAction extends CoreSelectAction {
@@ -18,10 +18,10 @@ export default class DeleteAction extends CoreSelectAction {
     }
   }
 
-  getInputs(): SQLInputList {
+  getInputs(): SQLVariableList {
     if (this.whereSQL) {
       return this.whereSQL.inputs;
     }
-    return emptySQLInputList;
+    return emptySQLVariableList;
   }
 }

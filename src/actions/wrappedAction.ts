@@ -1,19 +1,15 @@
 import { Action, ActionType } from './ta';
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { SQLInputList } from '../core/sql';
+import { SQLVariableList } from '../core/sql';
 import { CoreProperty } from '../core/core';
 
 export const InsertedKey = '_inserted';
 export const RowsAffectedKey = '_rows_affected';
 
-export class WrappedActionReturnValue {
-  constructor(public index: number, public name: string) {}
-}
-
-export type WrappedActionValue = string | WrappedActionReturnValue;
+export type WrappedActionValue = string | number;
 
 export class WrappedAction extends Action {
-  inputs!: SQLInputList;
+  inputs!: SQLVariableList;
 
   constructor(
     public action: Action,
@@ -38,7 +34,7 @@ export class WrappedAction extends Action {
         }
       }
       // Populate new inputs
-      const newInputs = new SQLInputList();
+      const newInputs = new SQLVariableList();
       for (const input of inputs.list) {
         if (!args[input.name]) {
           newInputs.add(input);
@@ -48,7 +44,7 @@ export class WrappedAction extends Action {
     });
   }
 
-  getInputs(): SQLInputList {
+  getInputs(): SQLVariableList {
     return this.inputs;
   }
 }

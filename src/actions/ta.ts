@@ -3,7 +3,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import * as defs from '../core/defs';
 import toTypeString from 'to-type-string';
 import Utils from '../lib/utils';
-import { SQLInputList } from '../core/sql';
+import { SQLVariableList } from '../core/sql';
 
 export class TA {
   __table!: Table;
@@ -31,7 +31,7 @@ export class Action extends CoreProperty {
     // Implemented by sub-classes
   }
 
-  getInputs(): SQLInputList {
+  getInputs(): SQLVariableList {
     throw new Error('Not implemented yet');
   }
 }

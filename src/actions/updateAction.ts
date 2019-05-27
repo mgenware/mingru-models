@@ -1,5 +1,5 @@
 import { ActionType } from './ta';
-import { SQL, SQLInputList } from '../core/sql';
+import { SQL, SQLVariableList } from '../core/sql';
 import CoreUpdateAction from './coreUpdateAction';
 import { where, byIDUnsafe } from './common';
 import { throwIfFalsy } from 'throw-if-arg-empty';
@@ -9,7 +9,7 @@ export default class UpdateAction extends CoreUpdateAction {
   whereSQL: SQL | null = null;
   whereValidator: ((value: SQL) => void) | null = null;
   // Accumulated inputs (whereInputs + setterInputs), will be set after validate()
-  inputs!: SQLInputList;
+  inputs!: SQLVariableList;
 
   constructor(public allowNoWhere: boolean, public checkAffectedRows: boolean) {
     super(ActionType.update);
@@ -46,7 +46,7 @@ export default class UpdateAction extends CoreUpdateAction {
     }
   }
 
-  getInputs(): SQLInputList {
+  getInputs(): SQLVariableList {
     return this.inputs;
   }
 }
