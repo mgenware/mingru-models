@@ -111,20 +111,3 @@ test('No setters', () => {
     dd.ta(post, PostTA);
   }).toThrow('setter');
 });
-
-test('getInputs', () => {
-  class UserTA extends dd.TA {
-    t = dd
-      .insert()
-      .setInputs(user.snake_case_name, user.id)
-      .set(user.name, user.name.toInput('b'));
-  }
-  const ta = dd.ta(user, UserTA);
-  const v = ta.t;
-  expect(v.getInputs().list).toEqual([
-    user.snake_case_name.toInput(),
-    user.id.toInput(),
-    user.name.toInput('b'),
-  ]);
-  expect(v.getInputs().sealed).toBe(true);
-});

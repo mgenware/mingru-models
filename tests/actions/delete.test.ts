@@ -64,24 +64,3 @@ test('unsafeDeleteAll', () => {
   expect(v.checkAffectedRows).toBe(false);
   expect(v.allowNoWhere).toBe(true);
 });
-
-test('getInputs', () => {
-  class UserTA extends dd.TA {
-    t = dd
-      .deleteOne()
-      .where(dd.sql`${user.id.toInput()} ${user.name.toInput()}`);
-  }
-  const ta = dd.ta(user, UserTA);
-  const v = ta.t;
-  expect(v.getInputs().list).toEqual([user.id.toInput(), user.name.toInput()]);
-  expect(v.getInputs().sealed).toBe(true);
-});
-
-test('getInputs (no WHERE)', () => {
-  class UserTA extends dd.TA {
-    t = dd.unsafeDeleteAll();
-  }
-  const ta = dd.ta(user, UserTA);
-  const v = ta.t;
-  expect(v.getInputs().list.length).toBe(0);
-});
