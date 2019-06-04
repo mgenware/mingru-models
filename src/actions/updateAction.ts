@@ -1,5 +1,5 @@
 import { ActionType } from './ta';
-import { SQL, SQLVariableList } from '../core/sql';
+import { SQL } from '../core/sql';
 import CoreUpdateAction from './coreUpdateAction';
 import { where, byIDUnsafe } from './common';
 import { throwIfFalsy } from 'throw-if-arg-empty';
@@ -8,8 +8,6 @@ import { CoreProperty } from '../core/core';
 export default class UpdateAction extends CoreUpdateAction {
   whereSQL: SQL | null = null;
   whereValidator: ((value: SQL) => void) | null = null;
-  // Accumulated inputs (whereInputs + setterInputs), will be set after validate()
-  inputs!: SQLVariableList;
 
   constructor(public allowNoWhere: boolean, public checkAffectedRows: boolean) {
     super(ActionType.update);
@@ -36,17 +34,5 @@ export default class UpdateAction extends CoreUpdateAction {
         `'allowNoWhere' is set to false, you must define an WHERE clause. Otherwise, use 'unsafeUpdateAll'`,
       );
     }
-
-    // super.inputs is set after super.validate(), now we need to merge WHERE inputs into it
-    if (this.whereSQL) {
-      const inputs = this.whereSQL.inputs.copy();
-      inputs.merge(this.setterInputs);
-      inputs.seal();
-      this.inputs = inputs;
-    }
-  }
-
-  getInputs(): SQLVariableList {
-    return this.inputs;
   }
 }
