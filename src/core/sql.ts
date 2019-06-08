@@ -4,6 +4,7 @@ import { SQLCall } from './sqlCall';
 import toTypeString from 'to-type-string';
 
 export class SQLVariable {
+  // typeInfo: <Type name>[:<Import>]
   constructor(public typeInfo: string | Column, public name: string) {
     throwIfFalsy(typeInfo, 'typeInfo');
     throwIfFalsy(name, 'name');
