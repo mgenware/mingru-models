@@ -4,18 +4,18 @@ import { SQLCall } from './sqlCall';
 import toTypeString from 'to-type-string';
 
 export class SQLVariable {
-  constructor(public typeObject: string | Column, public name: string) {
-    throwIfFalsy(typeObject, 'typeObject');
+  constructor(public typeInfo: string | Column, public name: string) {
+    throwIfFalsy(typeInfo, 'typeInfo');
     throwIfFalsy(name, 'name');
   }
 
   toString(): string {
-    const { typeObject } = this;
+    const { typeInfo } = this;
     let type = '';
-    if (typeof typeObject === 'string') {
-      type = typeObject as string;
+    if (typeof typeInfo === 'string') {
+      type = typeInfo as string;
     } else {
-      type = `[${(typeObject as Column).__name}]`;
+      type = `[${(typeInfo as Column).__name}]`;
     }
     return `${this.name}: ${type}`;
   }
@@ -27,13 +27,13 @@ export class SQLVariable {
     if (this.name !== oth.name) {
       return false;
     }
-    if (typeof this.typeObject !== typeof oth.typeObject) {
+    if (typeof this.typeInfo !== typeof oth.typeInfo) {
       return false;
     }
-    if (typeof this.typeObject === 'string') {
-      return (this.typeObject as string) === (oth.typeObject as string);
+    if (typeof this.typeInfo === 'string') {
+      return (this.typeInfo as string) === (oth.typeInfo as string);
     }
-    return (this.typeObject as Column) === (oth.typeObject as Column);
+    return (this.typeInfo as Column) === (oth.typeInfo as Column);
   }
 }
 
