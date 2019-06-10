@@ -18,31 +18,31 @@ test('SQL with input', () => {
 
 test('Input', () => {
   const input = dd.input(user.name);
-  expect(input.typeInfo).toBe(user.name);
+  expect(input.type).toBe(user.name);
   expect(input.name).toBe('name');
 });
 
 test('Named input', () => {
   const input = dd.input(user.name, 'haha');
-  expect(input.typeInfo).toBe(user.name);
+  expect(input.type).toBe(user.name);
   expect(input.name).toBe('haha');
 });
 
 test('Input (foreign key)', () => {
   const input = dd.input(post.user_id);
-  expect((input.typeInfo as Column).foreignColumn).toBe(user.id);
+  expect((input.type as Column).foreignColumn).toBe(user.id);
   expect(input.name).toBe('userID');
 });
 
 test('Input (joined key)', () => {
   const input = dd.input(post.user_id.join(user).name);
-  expect((input.typeInfo as dd.Column).mirroredColumn).toBe(user.name);
+  expect((input.type as dd.Column).mirroredColumn).toBe(user.name);
   expect(input.name).toBe('userName');
 });
 
 test('Raw type input', () => {
   const input = dd.input('uint32', 'uid');
-  expect(input.typeInfo).toBe('uint32');
+  expect(input.type).toBe('uint32');
   expect(input.name).toBe('uid');
 });
 
@@ -65,13 +65,13 @@ test('Embed string', () => {
 
 test('toInput', () => {
   const input = user.name.toInput();
-  expect(input.typeInfo).toBe(user.name);
+  expect(input.type).toBe(user.name);
   expect(input.name).toBe('name');
 });
 
 test('toInput(string)', () => {
   const input = user.name.toInput('haha');
-  expect(input.typeInfo).toBe(user.name);
+  expect(input.type).toBe(user.name);
   expect(input.name).toBe('haha');
 });
 

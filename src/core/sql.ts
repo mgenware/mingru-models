@@ -4,21 +4,23 @@ import { SQLCall } from './sqlCall';
 import toTypeString from 'to-type-string';
 
 export class SQLVariable {
-  // typeInfo: <Type name>[:<Import>]
-  constructor(public typeInfo: string | Column, public name: string) {
-    throwIfFalsy(typeInfo, 'typeInfo');
+  constructor(
+    public type: string | Column, // type string can also contains an import path: <Type name>[|<Import>]
+    public name: string,
+  ) {
+    throwIfFalsy(type, 'type');
     throwIfFalsy(name, 'name');
   }
 
   toString(): string {
-    const { typeInfo } = this;
-    let type = '';
-    if (typeof typeInfo === 'string') {
-      type = typeInfo as string;
+    const { type } = this;
+    let desc = '';
+    if (typeof type === 'string') {
+      desc = type as string;
     } else {
-      type = `[${(typeInfo as Column).__name}]`;
+      desc = `[${(type as Column).__name}]`;
     }
-    return `${this.name}: ${type}`;
+    return `${this.name}: ${desc}`;
   }
 
   isEqualTo(oth: SQLVariable): boolean {
@@ -28,13 +30,13 @@ export class SQLVariable {
     if (this.name !== oth.name) {
       return false;
     }
-    if (typeof this.typeInfo !== typeof oth.typeInfo) {
+    if (typeof this.type !== typeof oth.type) {
       return false;
     }
-    if (typeof this.typeInfo === 'string') {
-      return (this.typeInfo as string) === (oth.typeInfo as string);
+    if (typeof this.type === 'string') {
+      return (this.type as string) === (oth.type as string);
     }
-    return (this.typeInfo as Column) === (oth.typeInfo as Column);
+    return (this.type as Column) === (oth.type as Column);
   }
 }
 
