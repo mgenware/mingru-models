@@ -5,7 +5,10 @@ import CoreSelectAction from './coreSelectAction';
 export default class DeleteAction extends CoreSelectAction {
   whereSQL: SQL | null = null;
 
-  constructor(public allowNoWhere: boolean, public checkAffectedRows: boolean) {
+  constructor(
+    public allowNoWhere: boolean,
+    public checkOnlyOneAffected: boolean, // Make sure only one row is affected, used by `updateOne`
+  ) {
     super(ActionType.delete);
   }
 

@@ -9,7 +9,10 @@ export default class UpdateAction extends CoreUpdateAction {
   whereSQL: SQL | null = null;
   whereValidator: ((value: SQL) => void) | null = null;
 
-  constructor(public allowNoWhere: boolean, public checkAffectedRows: boolean) {
+  constructor(
+    public allowNoWhere: boolean,
+    public checkOnlyOneAffected: boolean,
+  ) {
     super(ActionType.update);
   }
 

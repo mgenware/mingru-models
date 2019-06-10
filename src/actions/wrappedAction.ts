@@ -18,25 +18,5 @@ export class WrappedAction extends Action {
     if (Object.entries(args).length === 0) {
       throw new Error('"args" cannot be empty');
     }
-
-    // CoreProperty.registerHandler(action, () => {
-    //   // Throw on non-existing argument names
-    //   const inputs = action.getInputs();
-    //   for (const key of Object.keys(args)) {
-    //     if (!inputs.getByName(key)) {
-    //       throw new Error(
-    //         `The argument "${key}" doesn't exist in action "${action.__name}"`,
-    //       );
-    //     }
-    //   }
-    //   // Populate new inputs
-    //   const newInputs = new SQLVariableList();
-    //   for (const input of inputs.list) {
-    //     if (!args[input.name]) {
-    //       newInputs.add(input);
-    //     }
-    //   }
-    //   this.inputs = newInputs;
-    // });
   }
 }

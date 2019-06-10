@@ -21,7 +21,7 @@ test('deleteOne', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.checkAffectedRows).toBe(true);
+  expect(v.checkOnlyOneAffected).toBe(true);
   expect(v.allowNoWhere).toBe(false);
 
   // Throw error when WHERE is empty
@@ -41,7 +41,7 @@ test('deleteSome', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.checkAffectedRows).toBe(false);
+  expect(v.checkOnlyOneAffected).toBe(false);
   expect(v.allowNoWhere).toBe(false);
 
   // Throw error when WHERE is empty
@@ -61,6 +61,6 @@ test('unsafeDeleteAll', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.checkAffectedRows).toBe(false);
+  expect(v.checkOnlyOneAffected).toBe(false);
   expect(v.allowNoWhere).toBe(true);
 });
