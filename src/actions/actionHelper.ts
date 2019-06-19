@@ -2,8 +2,12 @@ import UpdateAction from './updateAction';
 import InsertAction from './insertAction';
 import DeleteAction from './deleteAction';
 import { SelectAction, SelectActionColumns } from './selectAction';
-import { Action } from './ta';
-import TransactAction from './transactAction';
+import {
+  TransactAction,
+  TransactionMemberHelper,
+  TransactionMember,
+} from './transactAction';
+import { throwIfFalsy } from 'throw-if-arg-empty';
 
 function selectCore(all: boolean, cols: SelectActionColumns[]): SelectAction {
   const action = new SelectAction(cols, all);
@@ -64,6 +68,12 @@ export function unsafeDeleteAll(): DeleteAction {
   return new DeleteAction(true, false);
 }
 
-export function transact(...actions: Action[]): TransactAction {
-  return new TransactAction(actions);
+export function transact(
+  ...actions: TransactionMemberHelper[]
+): TransactAction {
+  throwIfFalsy(actions, 'actions');
+  const converted = actions.map(a =>
+    a instanceof TransactionMember ? a : new TransactionMember(a),
+  );
+  return new TransactAction(converted);
 }

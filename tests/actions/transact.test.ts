@@ -18,7 +18,7 @@ test('Transact', () => {
     batch2 = dd.transact(this.insert, userTA.insert, this.batch);
   }
   const postTA = dd.ta(post, PostTA);
-  expect(postTA.batch2.actions).toEqual([
+  expect(postTA.batch2.members).toEqual([
     postTA.insert,
     userTA.insert,
     postTA.batch,
