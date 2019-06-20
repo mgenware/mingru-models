@@ -12,9 +12,7 @@ export default class CoreUpdateAction extends Action {
 
     const { setters } = this;
     if (setters.get(column)) {
-      throw new Error(
-        `Column value cannot be set twice, column: "${column.__name}"`,
-      );
+      this.throwDuplicateSetter(column.__name);
     }
     setters.set(column, convertToSQL(value));
     return this;
@@ -25,9 +23,7 @@ export default class CoreUpdateAction extends Action {
     const { setters } = this;
     for (const col of columns) {
       if (setters.get(col)) {
-        throw new Error(
-          `Column value cannot be set twice, column: "${col.__name}"`,
-        );
+        this.throwDuplicateSetter(col.__name);
       }
       this.setters.set(col, sql`${col.toInput()}`);
     }
@@ -39,5 +35,9 @@ export default class CoreUpdateAction extends Action {
     if (!this.setters.size) {
       throw new Error(`No setters in action "${this.__name}"`);
     }
+  }
+
+  private throwDuplicateSetter(name: string) {
+    throw new Error(`Column "${name}" is already set`);
   }
 }
