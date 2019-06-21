@@ -41,19 +41,11 @@ export function updateSome(): UpdateAction {
 }
 
 export function insert(): InsertAction {
-  return new InsertAction(false, false);
+  return new InsertAction(false);
 }
 
 export function insertOne(): InsertAction {
-  return new InsertAction(true, false);
-}
-
-export function insertWithDefaults(): InsertAction {
-  return new InsertAction(false, true);
-}
-
-export function insertOneWithDefaults(): InsertAction {
-  return new InsertAction(true, true);
+  return new InsertAction(true);
 }
 
 export function deleteSome(): DeleteAction {

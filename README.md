@@ -590,7 +590,7 @@ updateManyColumns = dd
   .byID();
 ```
 
-To simplify this, `UpdateAction` also has a method called `setInputs`, you can pass an array of columns, all them will be considered inputs. The above code could be rewritten as using `setInputs`:
+To simplify this, `UpdateAction` also has a method called `setInputs`, you can pass an array of columns, all of them will be considered inputs. The above code could be rewritten as using `setInputs`:
 
 ```ts
 updateManyColumns = dd
@@ -610,6 +610,15 @@ updateManyColumns = dd
   .byID();
 ```
 
+`setInputs` can also be called with no arguments, in this case, all remaining columns (haven't been set yet) will be automatically set as inputs:
+
+```ts
+updateManyColumns = dd
+  .updateOne()
+  .setInputs(user.sig)
+  .setInputs(); // All columns other than `user.sig` will be set as inputs
+```
+
 ### `INSERT` actions
 
 ```ts
@@ -617,12 +626,6 @@ updateManyColumns = dd
 function insertOne(): InsertAction;
 // Inserts a new row
 function insert(): InsertAction;
-
-// Inserts a new row, and returns inserted ID. Use column default value for unset columns
-function insertOneWithDefaults(): InsertAction;
-// Inserts a new row. Use column default value for unset columns
-function insertWithDefaults(): InsertAction;
-}
 ```
 
 Example:
@@ -636,30 +639,29 @@ insertUser = dd
   .set(user.age, user.age.toInput());
 ```
 
+#### `setInputs` and `setDefaults`
+
 `INSERT` action can also use `setInputs` like in `UPDATE` action:
 
 ```ts
-// Insert a new user
 insertUser = dd
   .insertOne()
-  .set(user.sig, dd.sql`''`)
-  .setInputs(user.name, user.age);
+  .set(user.sig, dd.sql`''`) // Set sig column to an empty string
+  .setInputs(user.name, user.age); // Set user.name and user.age as inputs
+
+insertUser = dd
+  .insertOne()
+  .set(user.sig, dd.sql`''`) // Set sig column to an empty string
+  .setInputs(); // Calling setInput with no args simply sets all other columns of this table as inputs
 ```
 
-#### `insertOneWithDefaults` and `insertWithDefaults`
-
-`insertOneWithDefaults` and `insertWithDefaults` suffix will auto use column's default value it has been set, example:
+`setDefaults` is like `setInputs` except it set the target column to its default value instead of an input:
 
 ```ts
-// Insert a new user
 insertUser = dd
-  .insertOneWithDefaults()
-  .set(user.sig, dd.sql`''`)
-  .setInputs(user.name);
-
-// user.sig = ''
-// user.name = <input>
-// the remaining columns of user will have be set as their defaults
+  .insertOne()
+  .setInputs(user.name, user.age) // Set user.name and user.age as inputs
+  .setDefaults(); // Set other columns to their default values
 ```
 
 ### `DELETE` actions
