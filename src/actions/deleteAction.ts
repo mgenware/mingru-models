@@ -1,6 +1,6 @@
 import { ActionType } from './ta';
 import { SQL } from '../core/sql';
-import CoreSelectAction from './coreSelectAction';
+import { CoreSelectAction } from './coreSelectAction';
 
 export class DeleteAction extends CoreSelectAction {
   whereSQL: SQL | null = null;

@@ -2,7 +2,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { ActionType } from './ta';
 import { Column, ColumnType } from '../core/core';
 import { SQL, SQLConvertible, convertToSQL } from '../core/sql';
-import CoreSelectAction from './coreSelectAction';
+import { CoreSelectAction } from './coreSelectAction';
 import toTypeString from 'to-type-string';
 
 export type SelectActionColumns = Column | RawColumn;

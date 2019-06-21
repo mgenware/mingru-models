@@ -14,6 +14,7 @@ test('Update', () => {
 
   expect(v.actionType).toBe(dd.ActionType.update);
   expect(v).toBeInstanceOf(dd.UpdateAction);
+  expect(v).toBeInstanceOf(dd.CoreUpdateAction);
   expect(v).toBeInstanceOf(dd.Action);
   expect(v.whereSQL!.toString()).toBe('`id` = 1');
   expect(v.setters.size).toBe(2);

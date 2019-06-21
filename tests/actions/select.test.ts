@@ -11,6 +11,7 @@ test('Select and from', () => {
   const v = ta.t;
 
   expect(v).toBeInstanceOf(dd.SelectAction);
+  expect(v).toBeInstanceOf(dd.CoreSelectAction);
   expect(v).toBeInstanceOf(dd.Action);
   expect(v.columns.length).toBe(2);
   expect(v.columns[0]).toBe(user.id);

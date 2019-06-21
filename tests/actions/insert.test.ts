@@ -15,6 +15,7 @@ test('Insert', () => {
   expect(v.actionType).toBe(dd.ActionType.insert);
   expect(v.fetchInsertedID).toBeFalsy();
   expect(v).toBeInstanceOf(dd.InsertAction);
+  expect(v).toBeInstanceOf(dd.CoreUpdateAction);
   expect(v.settersToString()).toBe(
     'title: <title: [title]>, snake_case_user_id: <snakeCaseUserID: [snake_case_user_id]>',
   );

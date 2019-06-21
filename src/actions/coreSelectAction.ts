@@ -4,7 +4,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { where, byIDUnsafe } from './common';
 import { CoreProperty } from '../core/core';
 
-export default class CoreSelectAction extends Action {
+export class CoreSelectAction extends Action {
   whereSQL: SQL | null = null;
   whereValidator: ((value: SQL) => void) | null = null;
 

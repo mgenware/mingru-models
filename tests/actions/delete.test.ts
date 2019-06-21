@@ -8,6 +8,7 @@ test('DeleteAction', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
   expect(v).toBeInstanceOf(dd.DeleteAction);
+  expect(v).toBeInstanceOf(dd.CoreSelectAction);
   expect(v).toBeInstanceOf(dd.Action);
   expect(v.whereSQL!.toString()).toBe('`id` = 1');
   expect(v.actionType).toBe(dd.ActionType.delete);
