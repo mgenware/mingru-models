@@ -18,9 +18,16 @@ test('Transact', () => {
     batch2 = dd.transact(this.insert, userTA.insert, this.batch);
   }
   const postTA = dd.ta(post, PostTA);
-  expect(postTA.batch2.members).toEqual([
-    postTA.insert,
-    userTA.insert,
-    postTA.batch,
-  ]);
+
+  let v = postTA.batch;
+  expect(v.actionType).toBe(dd.ActionType.transact);
+  expect(v).toBeInstanceOf(dd.TransactAction);
+  expect(v).toBeInstanceOf(dd.Action);
+
+  v = postTA.batch2;
+  expect(v.members).toEqual(
+    [postTA.insert, userTA.insert, postTA.batch].map(
+      m => new dd.TransactionMember(m),
+    ),
+  );
 });

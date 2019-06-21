@@ -52,7 +52,7 @@ test('setInputs and setDefaults', () => {
   const v = ta.t;
 
   expect(v.settersToString()).toBe(
-    'snake_case_name: <snakeCaseName: [snake_case_name]>, name: <b: [name]>',
+    'def_value: abc, snake_case_name: <snakeCaseName: [snake_case_name]>',
   );
 });
 
