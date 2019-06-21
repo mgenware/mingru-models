@@ -70,7 +70,7 @@ test('setInputs with no args', () => {
   expect(v.settersToString()).toBe(
     'def_value: abc, snake_case_name: <snakeCaseName: [snake_case_name]>',
   );
-  expect(v.allSet).toBe('inputs');
+  expect(v.autoSetter).toBe('input');
 });
 
 test('setDefaults with no args', () => {
@@ -87,7 +87,7 @@ test('setDefaults with no args', () => {
   expect(v.settersToString()).toBe(
     'def_value: abc, snake_case_name: <snakeCaseName: [snake_case_name]>',
   );
-  expect(v.allSet).toBe('defaults');
+  expect(v.autoSetter).toBe('default');
 });
 
 test('setInputs and setDefaults twice', () => {

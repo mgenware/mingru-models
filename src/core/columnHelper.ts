@@ -85,7 +85,14 @@ export function unique(col: Column): Column {
 }
 
 export function pk(column?: Column): Column {
-  const col = column ? column : uBigInt();
+  let col: Column;
+  if (column) {
+    col = column;
+  } else {
+    col = uBigInt();
+    // Auto set AUTO_INCREMENT if column is not present
+    col.type.autoIncrement = true;
+  }
   col.type.pk = true;
   return col;
 }

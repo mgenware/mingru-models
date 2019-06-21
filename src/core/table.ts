@@ -57,6 +57,7 @@ export function table<T extends Table>(
   tableObj.__name = utils.toSnakeCase(className);
   tableObj.__dbName = dbName || tableObj.__name;
   const cols = tableObj.__columns;
+
   enumerateColumns(tableObj, (col, propName) => {
     if (!col) {
       throw new Error(`Expected empty column object at property "${propName}"`);
@@ -84,9 +85,11 @@ export function table<T extends Table>(
       columnToAdd.__name = utils.toSnakeCase(propName);
     }
     columnToAdd.__table = tableObj;
-    // Check if it's a pk
     if (columnToAdd.type.pk) {
       tableObj.__pks.push(col);
+      if (columnToAdd.type.autoIncrement) {
+        tableObj.__pkAIs.push(col);
+      }
     }
 
     cols.push(columnToAdd);
@@ -97,5 +100,6 @@ export function table<T extends Table>(
 
     columnToAdd.freeze();
   });
+  tableObj.__columns;
   return (tableObj as unknown) as T;
 }

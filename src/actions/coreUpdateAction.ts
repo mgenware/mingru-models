@@ -3,9 +3,11 @@ import { Column } from '../core/core';
 import { SQL, SQLConvertible, convertToSQL, sql } from '../core/sql';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
-export default class CoreUpdateAction extends Action {
+export type AutoSetterType = '' | 'default' | 'input';
+
+export class CoreUpdateAction extends Action {
   setters = new Map<Column, SQL>();
-  allSet: '' | 'defaults' | 'inputs' = '';
+  autoSetter: AutoSetterType = '';
 
   set(column: Column, value: SQLConvertible): this {
     throwIfFalsy(column, 'column');
@@ -21,7 +23,7 @@ export default class CoreUpdateAction extends Action {
   setInputs(...columns: Column[]): this {
     this.checkNotAllSet();
     if (!columns.length) {
-      this.allSet = 'inputs';
+      this.autoSetter = 'input';
       return this;
     }
     for (const col of columns) {
@@ -34,7 +36,7 @@ export default class CoreUpdateAction extends Action {
   setDefaults(...columns: Column[]): this {
     this.checkNotAllSet();
     if (!columns.length) {
-      this.allSet = 'defaults';
+      this.autoSetter = 'default';
       // We can't check whether all remaining columns have a default value cuz this.__table is null here
       // We check it in validate()
       return this;
@@ -50,7 +52,7 @@ export default class CoreUpdateAction extends Action {
 
   validate() {
     super.validate();
-    if (!this.setters.size && !this.allSet) {
+    if (!this.setters.size && !this.autoSetter) {
       throw new Error(`No setters in action "${this.__name}"`);
     }
   }
@@ -63,8 +65,8 @@ export default class CoreUpdateAction extends Action {
   }
 
   private checkNotAllSet() {
-    if (this.allSet) {
-      throw new Error(`All columns are already set to ${this.allSet}`);
+    if (this.autoSetter) {
+      throw new Error(`All columns are already set to ${this.autoSetter}`);
     }
   }
 

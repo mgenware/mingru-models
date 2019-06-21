@@ -76,6 +76,7 @@ test('pk', () => {
   expect(c.type.unique).toBe(false);
   expect(c.type.nullable).toBe(false);
   expect(c.type.unsigned).toBe(true);
+  expect(c.type.autoIncrement).toBe(true);
 });
 
 test('pk(column)', () => {
@@ -84,6 +85,7 @@ test('pk(column)', () => {
   expect(c).toBe(charCol);
   expect(c.type.unique).toBe(false);
   expect(c.type.nullable).toBe(false);
+  expect(c.type.autoIncrement).toBe(false);
 });
 
 test('text', () => {

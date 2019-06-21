@@ -1,6 +1,6 @@
-import UpdateAction from './updateAction';
-import InsertAction from './insertAction';
-import DeleteAction from './deleteAction';
+import { UpdateAction } from './updateAction';
+import { InsertAction } from './insertAction';
+import { DeleteAction } from './deleteAction';
 import { SelectAction, SelectActionColumns } from './selectAction';
 import {
   TransactAction,

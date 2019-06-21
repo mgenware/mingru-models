@@ -9,6 +9,7 @@ export class ColumnType {
   unsigned = false;
   unique = false;
   length = 0;
+  autoIncrement = false;
 
   constructor(types: string | string[]) {
     throwIfFalsy(types, 'types');
@@ -254,7 +255,10 @@ export class Table {
   __columns: Column[] = [];
   __name!: string;
   __dbName!: string;
+  // Primary key columns
   __pks: Column[] = [];
+  // Primary key with auto_increment columns
+  __pkAIs: Column[] = [];
 
   getDBName(): string {
     return this.__dbName || this.__name;

@@ -1,11 +1,11 @@
 import { ActionType } from './ta';
 import { SQL } from '../core/sql';
-import CoreUpdateAction from './coreUpdateAction';
+import { CoreUpdateAction } from './coreUpdateAction';
 import { where, byIDUnsafe } from './common';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { CoreProperty } from '../core/core';
 
-export default class UpdateAction extends CoreUpdateAction {
+export class UpdateAction extends CoreUpdateAction {
   whereSQL: SQL | null = null;
   whereValidator: ((value: SQL) => void) | null = null;
 
