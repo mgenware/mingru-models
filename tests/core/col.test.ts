@@ -64,7 +64,7 @@ test('Column.newForeignColumn', () => {
   expect(b.type.types).not.toBe(a.type.types);
 
   // Check equality
-  expect(a.default).toBe(b.default);
+  expect(a.defaultValue).toBe(b.defaultValue);
   expect(a.type.types).toEqual(b.type.types);
   expect(a.type.nullable).toBe(b.type.nullable);
   expect(a.type.unique).toBe(b.type.unique);
@@ -86,7 +86,7 @@ test('Column.newJoinedColumn', () => {
   expect(b.type.types).not.toBe(a.type.types);
 
   // Check equality
-  expect(a.default).toBe(b.default);
+  expect(a.defaultValue).toBe(b.defaultValue);
   expect(a.type.types).toEqual(b.type.types);
   expect(a.type.nullable).toBe(b.type.nullable);
   expect(a.type.unique).toBe(b.type.unique);
@@ -120,10 +120,10 @@ test('unique (default)', () => {
 
 test('setDefault', () => {
   let c = dd.int(123).setDefault('omg');
-  expect(c.default).toBe('omg');
+  expect(c.defaultValue).toBe('omg');
 
   c = dd.int(123).setDefault(null);
-  expect(c.default).toBe(null);
+  expect(c.defaultValue).toBe(null);
 });
 
 test('Column.inputName', () => {

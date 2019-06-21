@@ -20,21 +20,21 @@ export function fk(column: Column): Column {
 export function varChar(length: number, defaultValue?: string): Column {
   const col = Column.fromTypes(dt.varChar);
   col.type.length = length;
-  col.default = defaultValue;
+  col.defaultValue = defaultValue;
   return col;
 }
 
 export function char(length: number, defaultValue?: string): Column {
   const col = Column.fromTypes(dt.char);
   col.type.length = length;
-  col.default = defaultValue;
+  col.defaultValue = defaultValue;
   return col;
 }
 
 function _int(type: string, unsigned: boolean, def?: number): Column {
   const col = Column.fromTypes(type);
   col.type.unsigned = unsigned;
-  col.default = def;
+  col.defaultValue = def;
   return col;
 }
 
@@ -92,20 +92,20 @@ export function pk(column?: Column): Column {
 
 export function text(defaultValue?: string): Column {
   const col = Column.fromTypes(dt.text);
-  col.default = defaultValue;
+  col.defaultValue = defaultValue;
   return col;
 }
 
 export function bool(defaultValue?: boolean): Column {
   const col = Column.fromTypes(dt.bool);
-  col.default = defaultValue;
+  col.defaultValue = defaultValue;
   return col;
 }
 
 export function datetime(defaultsToNow = false): Column {
   const col = Column.fromTypes(dt.datetime);
   if (defaultsToNow) {
-    col.default = sql`${call.datetimeNow()}`;
+    col.defaultValue = sql`${call.datetimeNow()}`;
   }
   return col;
 }
@@ -113,7 +113,7 @@ export function datetime(defaultsToNow = false): Column {
 export function date(defaultsToNow = false): Column {
   const col = Column.fromTypes(dt.date);
   if (defaultsToNow) {
-    col.default = sql`${call.dateNow()}`;
+    col.defaultValue = sql`${call.dateNow()}`;
   }
   return col;
 }
@@ -121,7 +121,7 @@ export function date(defaultsToNow = false): Column {
 export function time(defaultsToNow = false): Column {
   const col = Column.fromTypes(dt.time);
   if (defaultsToNow) {
-    col.default = sql`${call.timeNow()}`;
+    col.defaultValue = sql`${call.timeNow()}`;
   }
   return col;
 }

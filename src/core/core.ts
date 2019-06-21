@@ -90,7 +90,7 @@ export class Column extends CoreProperty {
   ): Column {
     const res = new Column(column.type);
     // Copy values
-    res.default = column.default;
+    res.defaultValue = column.defaultValue;
     if (newTable) {
       res.__table = newTable;
     }
@@ -105,7 +105,7 @@ export class Column extends CoreProperty {
   }
 
   type: ColumnType;
-  default: unknown = undefined;
+  defaultValue: unknown = undefined;
 
   // __ properties will be set after dd.table()
   __dbName: string | null = null;
@@ -152,7 +152,7 @@ export class Column extends CoreProperty {
 
   setDefault(value: unknown): this {
     this.checkMutability();
-    this.default = value;
+    this.defaultValue = value;
     return this;
   }
 

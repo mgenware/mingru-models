@@ -41,6 +41,21 @@ test('Order of setInputs and set', () => {
   );
 });
 
+test('setInputs and setDefaults', () => {
+  class UserTA extends dd.TA {
+    t = dd
+      .unsafeUpdateAll()
+      .setDefaults(user.def_value)
+      .setInputs(user.snake_case_name);
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+
+  expect(v.settersToString()).toBe(
+    'snake_case_name: <snakeCaseName: [snake_case_name]>, name: <b: [name]>',
+  );
+});
+
 test('Set same column twice', () => {
   class UserTA extends dd.TA {
     t = dd

@@ -42,7 +42,8 @@ export default class CoreUpdateAction extends Action {
     for (const col of columns) {
       this.checkColumnFree(col);
       this.checkHasDefault(col);
-      this.setters.set(col, sql`${col.toInput()}`);
+      const defaultValueStr = `${col.defaultValue}`;
+      this.setters.set(col, sql`${defaultValueStr}`);
     }
     return this;
   }
@@ -74,7 +75,7 @@ export default class CoreUpdateAction extends Action {
   }
 
   private checkHasDefault(col: Column) {
-    const def = col.default;
+    const def = col.defaultValue;
     if (def === undefined || def === null) {
       throw new Error(
         `The column "${col.__name}" does not have a default value`,
