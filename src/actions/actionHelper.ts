@@ -48,6 +48,14 @@ export function insertOne(): InsertAction {
   return new InsertAction(true);
 }
 
+export function unsafeInsert(): InsertAction {
+  return new InsertAction(false, true);
+}
+
+export function unsafeInsertOne(): InsertAction {
+  return new InsertAction(true, true);
+}
+
 export function deleteSome(): DeleteAction {
   return new DeleteAction(false, false);
 }

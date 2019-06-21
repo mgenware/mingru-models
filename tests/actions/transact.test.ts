@@ -4,12 +4,18 @@ import post from '../models/post';
 
 test('Transact', () => {
   class UserTA extends dd.TA {
-    insert = dd.insert().setInputs(user.follower_count);
+    insert = dd
+      .insert()
+      .setInputs(user.follower_count)
+      .setInputs();
   }
   const userTA = dd.ta(user, UserTA);
 
   class PostTA extends dd.TA {
-    insert = dd.insert().setInputs(post.title, post.snake_case_user_id);
+    insert = dd
+      .insert()
+      .setInputs(post.title, post.snake_case_user_id)
+      .setInputs();
     update = dd
       .updateOne()
       .setInputs(post.e_user_id_n)

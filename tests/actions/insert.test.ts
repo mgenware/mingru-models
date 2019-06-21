@@ -4,7 +4,10 @@ import post from '../models/post';
 
 test('Insert', () => {
   class UserTA extends dd.TA {
-    t = dd.insert().setInputs(post.title, post.snake_case_user_id);
+    t = dd
+      .insert()
+      .setInputs(post.title, post.snake_case_user_id)
+      .setInputs();
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
@@ -19,7 +22,10 @@ test('Insert', () => {
 
 test('Insert one', () => {
   class UserTA extends dd.TA {
-    t = dd.insertOne().setInputs(post.title, post.snake_case_user_id);
+    t = dd
+      .insertOne()
+      .setInputs(post.title, post.snake_case_user_id)
+      .setInputs();
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
@@ -27,10 +33,29 @@ test('Insert one', () => {
   expect(v.fetchInsertedID).toBeTruthy();
 });
 
+test('unsafeInsert', () => {
+  class UserTA extends dd.TA {
+    t = dd.unsafeInsert().setInputs(post.title, post.snake_case_user_id);
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+  expect(v.noColumnNumberCheck).toBeTruthy();
+});
+
+test('unsafeInsertOne', () => {
+  class UserTA extends dd.TA {
+    t = dd.unsafeInsertOne().setInputs(post.title, post.snake_case_user_id);
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+  expect(v.fetchInsertedID).toBeTruthy();
+  expect(v.noColumnNumberCheck).toBeTruthy();
+});
+
 test('SQLConvertible value', () => {
   class UserTA extends dd.TA {
     t = dd
-      .insertOne()
+      .unsafeInsert()
       .set(post.title, dd.dateNow())
       .setDefaults();
   }
@@ -46,4 +71,25 @@ test('No setters', () => {
     }
     dd.ta(post, PostTA);
   }).toThrow('setter');
+});
+
+test('Column number check', () => {
+  expect(() => {
+    class PostTA extends dd.TA {
+      t = dd.insert().setInputs(post.e_user_id);
+    }
+    dd.ta(post, PostTA);
+  }).toThrow('all columns');
+  expect(() => {
+    class PostTA extends dd.TA {
+      t = dd.insert().setInputs();
+    }
+    dd.ta(post, PostTA);
+  }).not.toThrow();
+  expect(() => {
+    class PostTA extends dd.TA {
+      t = dd.unsafeInsert().setInputs(post.e_user_id);
+    }
+    dd.ta(post, PostTA);
+  }).not.toThrow();
 });
