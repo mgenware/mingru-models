@@ -100,6 +100,5 @@ export function table<T extends Table>(
 
     columnToAdd.freeze();
   });
-  tableObj.__columns;
   return (tableObj as unknown) as T;
 }
