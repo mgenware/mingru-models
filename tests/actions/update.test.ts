@@ -56,6 +56,61 @@ test('setInputs and setDefaults', () => {
   );
 });
 
+test('setInputs with no args', () => {
+  class UserTA extends dd.TA {
+    t = dd
+      .unsafeUpdateAll()
+      .setDefaults(user.def_value)
+      .setInputs(user.snake_case_name)
+      .setInputs();
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+
+  expect(v.settersToString()).toBe(
+    'def_value: abc, snake_case_name: <snakeCaseName: [snake_case_name]>',
+  );
+  expect(v.allSet).toBe('inputs');
+});
+
+test('setDefaults with no args', () => {
+  class UserTA extends dd.TA {
+    t = dd
+      .unsafeUpdateAll()
+      .setDefaults(user.def_value)
+      .setInputs(user.snake_case_name)
+      .setDefaults();
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+
+  expect(v.settersToString()).toBe(
+    'def_value: abc, snake_case_name: <snakeCaseName: [snake_case_name]>',
+  );
+  expect(v.allSet).toBe('defaults');
+});
+
+test('setInputs and setDefaults twice', () => {
+  expect(() => {
+    class UserTA extends dd.TA {
+      t = dd
+        .unsafeUpdateAll()
+        .setInputs()
+        .setDefaults();
+    }
+    dd.ta(user, UserTA);
+  }).toThrow('already set');
+  expect(() => {
+    class UserTA extends dd.TA {
+      t = dd
+        .unsafeUpdateAll()
+        .setDefaults()
+        .setInputs();
+    }
+    dd.ta(user, UserTA);
+  }).toThrow('already set');
+});
+
 test('Set same column twice', () => {
   class UserTA extends dd.TA {
     t = dd
@@ -158,4 +213,16 @@ test('No setters', () => {
     }
     dd.ta(user, UserTA);
   }).toThrow('setter');
+  expect(() => {
+    class UserTA extends dd.TA {
+      t = dd.unsafeUpdateAll().setInputs();
+    }
+    dd.ta(user, UserTA);
+  }).not.toThrow();
+  expect(() => {
+    class UserTA extends dd.TA {
+      t = dd.unsafeUpdateAll().setDefaults();
+    }
+    dd.ta(user, UserTA);
+  }).not.toThrow();
 });
