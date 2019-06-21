@@ -21,11 +21,9 @@ test('Update', () => {
   // extra props
   expect(v.checkOnlyOneAffected).toBe(false);
   expect(v.allowNoWhere).toBe(false);
-
-  const vName = v.setters.get(user.name) as dd.SQL;
-  const vSnakeName = v.setters.get(user.snake_case_name) as dd.SQL;
-  expect(vName).not.toBeNull();
-  expect(vSnakeName).not.toBeNull();
+  expect(v.settersToString()).toBe(
+    'name: <name: [name]>, follower_count: `follower_count` + 1',
+  );
 });
 
 test('Order of setInputs and set', () => {
@@ -38,13 +36,9 @@ test('Order of setInputs and set', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.setters.size).toBe(2);
-
-  const vName = v.setters.get(user.name) as dd.SQL;
-  const vSnakeName = v.setters.get(user.snake_case_name) as dd.SQL;
-
-  expect(vName.toString()).toBe('<b: [name]>');
-  expect(vSnakeName.toString()).toBe('<snakeCaseName: [snake_case_name]>');
+  expect(v.settersToString()).toBe(
+    'snake_case_name: <snakeCaseName: [snake_case_name]>, name: <b: [name]>',
+  );
 });
 
 test('Set same column twice', () => {
@@ -55,7 +49,7 @@ test('Set same column twice', () => {
       .setInputs(user.snake_case_name, user.name)
       .set(user.name, user.name.toInput('b'));
   }
-  expect(() => dd.ta(user, UserTA)).toThrow('twice');
+  expect(() => dd.ta(user, UserTA)).toThrow('already set');
 });
 
 test('updateOne', () => {

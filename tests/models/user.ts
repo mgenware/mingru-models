@@ -5,6 +5,7 @@ class User extends dd.Table {
   name = dd.varChar(100);
   snake_case_name = dd.varChar(100);
   follower_count = dd.int(0);
+  def_value = dd.varChar(20, 'abc');
 }
 
 export default dd.table(User);
