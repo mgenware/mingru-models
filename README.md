@@ -256,13 +256,13 @@ export default dd.ta(user, UserTA);
 dd-models supports the following kinds of `SELECT` actions:
 
 ```ts
-// Selects a row
+// Selects a row.
 function select(...columns: ColumnBase[]): SelectAction;
 
-// Selects all rows
+// Selects all rows.
 function selectAll(...columns: ColumnBase[]): SelectAction;
 
-// Selects a single field of a specific row
+// Selects a single field of a specific row.
 function selectField(column: ColumnBase): SelectAction;
 ```
 
@@ -290,11 +290,11 @@ export default dd.table(User);
 import user from './user';
 
 export class UserTA extends dd.TA {
-  // Select a user profile by ID
+  // Select a user profile by ID.
   selectUserProfile = dd.select(user.id, user.name, user.sig).byID();
-  // Select all user profiles
+  // Select all user profiles.
   selectAllUserProfiles = dd.selectAll(user.id, user.name, user.sig);
-  // Select the sig field by ID
+  // Select the sig field by ID.
   selectSig = dd.selectField(user.sig).byID();
 }
 
@@ -373,16 +373,17 @@ The `dd.input(user.id)` instructs builder to include a parameter named `id` and 
 selectUserProfile = dd
   .select(user.id, user.name, user.sig)
   .where(dd.sql`${user.id} = ${dd.input(user.id, 'uid')}`);
-// Now `uid` instead of `name` will be used
+// Now input name is `uid` instead of `name`
 ```
 
 The auto inferred name also differs on foreign column, it uses full column name on foreign column:
 
 ```ts
-dd.input(post.id); // Name is id
-dd.input(post.title); // Name is title
-// post.user_id is a foreign key to user table
-dd.input(post.user_id); // Name is userID (instead of )
+dd.input(post.id);
+// Input name is id
+
+dd.input(comment.post_id.join(post).title);
+// Input name is postTitle instead of title because title comes from a joined table
 ```
 
 #### SQL Expression Helpers
@@ -441,7 +442,7 @@ Similar to `isEqualTo` and `isEqualToInput`, uses `<>`(not equal to operator) in
 selectUserProfile = dd.select(user.id, user.name, user.sig).byID();
 ```
 
-Is equivalent to 2 expressions listed below:
+Is equivalent to 3 expressions listed below:
 
 ```ts
 // 1
@@ -536,15 +537,15 @@ SELECT `name`, `post_count` AS `count` from user;
 dd-models supports the following kinds of `UPDATE` actions:
 
 ```ts
-// Updates a row and checks rows affected to make sure only one row is updated
-// Implementations should throw an error if used without a WHERE clause
+// Updates a row and checks rows affected to make sure only one row is updated.
+// Implementations should throw an error if used without a WHERE clause.
 function updateOne(): UpdateAction;
 
 // Updates rows base on some conditions
-// Implementations should throw an error if used without a WHERE clause
+// Implementations should throw an error if used without a WHERE clause.
 function updateSome(): UpdateAction;
 
-// Updates all rows
+// Updates all rows.
 function unsafeUpdateAll(): UpdateAction;
 ```
 
@@ -622,10 +623,15 @@ updateManyColumns = dd
 ### `INSERT` actions
 
 ```ts
-// Inserts a new row, and returns inserted ID
+// Inserts a new row, and returns inserted ID.
 function insertOne(): InsertAction;
-// Inserts a new row
+// Inserts a new row.
 function insert(): InsertAction;
+
+// The unsafe version of `insertOne` and `insert` does not check if all columns are set.
+// See the "Unsafe Insert` section below for details.
+function unsafeInsertOne(): InsertAction;
+function unsafeInsert(): InsertAction;
 ```
 
 Example:
@@ -664,31 +670,45 @@ insertUser = dd
   .setDefaults(); // Set other columns to their default values
 ```
 
+#### Unsafe Insert
+
+By default, insert action throws an error when not all columns are set (not including `AUTO_INCREMENT` columns), even if columns have default values, you should always explicitly set them via `setDefaults`:
+
+```ts
+// Set all columns to their default values.
+insertUser = dd.insertOne().setDefaults();
+
+// Set all columns as inputs.
+insertUser = dd.insertOne().setInputs();
+```
+
+To bypass this check, use the unsafe version instead, i.e. `unsafeInsertOne` and `unsafeInsert`.
+
 ### `DELETE` actions
 
 ```ts
-// Deletes a row and checks rows affected to make sure only one row is updated
-// Implementations should throw an error if used without a WHERE clause
+// Deletes a row and checks rows affected to make sure only one row is updated.
+// Implementations should throw an error if used without a WHERE clause.
 function deleteOne(): DeleteAction;
 
 // Deletes rows based on some conditions
-// Implementations should throw an error if used without a WHERE clause
+// Implementations should throw an error if used without a WHERE clause.
 function deleteSome(): DeleteAction;
 
-// Delete all rows
+// Delete all rows.
 function unsafeDeleteAll(): DeleteAction;
 ```
 
 Example:
 
 ```ts
-// Delete an user by ID
+// Delete an user by ID.
 deleteByID = dd.deleteOne().byID();
 
-// Delete all users by a specified name
+// Delete all users by a specified name.
 deleteByName = dd.deleteSome().where(user.name.isEqualToInput());
 
-// Delete all users
+// Delete all users.
 deleteAll = dd.unsafeDeleteAll();
 ```
 
