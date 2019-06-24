@@ -135,3 +135,14 @@ test('time', () => {
   c = dd.time(true);
   expect((c.defaultValue as object).toString()).toBe('CALL(2)');
 });
+
+test('dt.isInteger', () => {
+  const { dt } = dd;
+  expect(dt.isInteger(dt.bigInt)).toBe(true);
+  expect(dt.isInteger(dt.int)).toBe(true);
+  expect(dt.isInteger(dt.smallInt)).toBe(true);
+  expect(dt.isInteger(dt.tinyInt)).toBe(true);
+  expect(dt.isInteger(dt.bool)).toBe(true);
+  expect(dt.isInteger(dt.varChar)).toBe(true);
+  expect(dt.isInteger(dt.char)).toBe(true);
+});

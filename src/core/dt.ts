@@ -17,6 +17,17 @@ export class DataTypes {
   datetime = Prefix + 'DATETIME';
   date = Prefix + 'DATE';
   time = Prefix + 'TIME';
+
+  private integerSet = new Set<string>([
+    this.int,
+    this.bigInt,
+    this.smallInt,
+    this.tinyInt,
+  ]);
+
+  isInteger(s: string) {
+    return this.integerSet.has(s);
+  }
 }
 
 export default new DataTypes();
