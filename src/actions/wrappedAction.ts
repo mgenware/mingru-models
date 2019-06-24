@@ -1,9 +1,6 @@
 import { Action, ActionType } from './ta';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
-export const InsertedKey = '_inserted';
-export const RowsAffectedKey = '_rows_affected';
-
 export type WrappedActionValue = string | number;
 
 export class WrappedAction extends Action {
