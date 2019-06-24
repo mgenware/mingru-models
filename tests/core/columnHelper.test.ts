@@ -85,7 +85,17 @@ test('pk(column)', () => {
   expect(c).toBe(charCol);
   expect(c.type.unique).toBe(false);
   expect(c.type.nullable).toBe(false);
-  expect(c.type.autoIncrement).toBe(false);
+});
+
+test('autoIncrement', () => {
+  // Calling pk with an integer type sets AUTO_INCREMENT to true
+  expect(dd.pk(dd.int()).type.autoIncrement).toBe(true);
+  expect(dd.pk(dd.tinyInt()).type.autoIncrement).toBe(true);
+  expect(dd.pk(dd.bool()).type.autoIncrement).toBe(false);
+  expect(dd.pk(dd.varChar(3)).type.autoIncrement).toBe(false);
+  // Set the AUTO_INCREMENT explicitly
+  expect(dd.pk(dd.int()).noAutoIncrement.type.autoIncrement).toBe(false);
+  expect(dd.pk(dd.varChar(3)).autoIncrement.type.autoIncrement).toBe(true);
 });
 
 test('text', () => {
@@ -142,7 +152,7 @@ test('dt.isInteger', () => {
   expect(dt.isInteger(dt.int)).toBe(true);
   expect(dt.isInteger(dt.smallInt)).toBe(true);
   expect(dt.isInteger(dt.tinyInt)).toBe(true);
-  expect(dt.isInteger(dt.bool)).toBe(true);
-  expect(dt.isInteger(dt.varChar)).toBe(true);
-  expect(dt.isInteger(dt.char)).toBe(true);
+  expect(dt.isInteger(dt.bool)).toBe(false);
+  expect(dt.isInteger(dt.varChar)).toBe(false);
+  expect(dt.isInteger(dt.char)).toBe(false);
 });

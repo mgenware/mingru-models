@@ -146,6 +146,18 @@ export class Column extends CoreProperty {
     return this;
   }
 
+  get autoIncrement(): Column {
+    this.checkMutability();
+    this.type.autoIncrement = true;
+    return this;
+  }
+
+  get noAutoIncrement(): Column {
+    this.checkMutability();
+    this.type.autoIncrement = false;
+    return this;
+  }
+
   freeze() {
     Object.freeze(this.type);
     Object.freeze(this);

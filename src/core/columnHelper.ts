@@ -90,10 +90,16 @@ export function pk(column?: Column): Column {
     col = column;
   } else {
     col = uBigInt();
-    // Auto set AUTO_INCREMENT if column is not present
-    col.type.autoIncrement = true;
   }
-  col.type.pk = true;
+  const colType = col.type;
+  colType.pk = true;
+  // Auto set AUTO_INCREMENT if column is an integer
+  for (const t of colType.types) {
+    if (dt.isInteger(t)) {
+      colType.autoIncrement = true;
+      break;
+    }
+  }
   return col;
 }
 
