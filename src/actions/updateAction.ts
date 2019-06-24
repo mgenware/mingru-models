@@ -11,7 +11,7 @@ export class UpdateAction extends CoreUpdateAction {
 
   constructor(
     public allowNoWhere: boolean,
-    public checkOnlyOneAffected: boolean,
+    public ensureOneRowAffected: boolean,
   ) {
     super(ActionType.update);
   }

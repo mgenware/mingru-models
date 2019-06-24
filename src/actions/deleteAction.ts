@@ -7,7 +7,7 @@ export class DeleteAction extends CoreSelectAction {
 
   constructor(
     public allowNoWhere: boolean,
-    public checkOnlyOneAffected: boolean, // Make sure only one row is affected, used by `updateOne`
+    public ensureOneRowAffected: boolean, // Make sure only one row is affected, used by `updateOne`
   ) {
     super(ActionType.delete);
   }

@@ -3,7 +3,7 @@ import { CoreUpdateAction } from './coreUpdateAction';
 
 export class InsertAction extends CoreUpdateAction {
   constructor(
-    public checkOnlyOneAffected: boolean,
+    public ensureOneRowAffected: boolean,
     public noColumnNumberCheck = false,
   ) {
     super(ActionType.insert);

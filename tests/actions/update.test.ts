@@ -20,7 +20,7 @@ test('Update', () => {
   expect(v.setters.size).toBe(2);
 
   // extra props
-  expect(v.checkOnlyOneAffected).toBe(false);
+  expect(v.ensureOneRowAffected).toBe(false);
   expect(v.allowNoWhere).toBe(false);
   expect(v.settersToString()).toBe(
     'name: <name: [name]>, follower_count: `follower_count` + 1',
@@ -134,7 +134,7 @@ test('updateOne', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.checkOnlyOneAffected).toBe(true);
+  expect(v.ensureOneRowAffected).toBe(true);
   expect(v.allowNoWhere).toBe(false);
 
   // Throw error when WHERE is empty
@@ -157,7 +157,7 @@ test('updateSome', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.checkOnlyOneAffected).toBe(false);
+  expect(v.ensureOneRowAffected).toBe(false);
   expect(v.allowNoWhere).toBe(false);
 
   // Throw error when WHERE is empty
@@ -177,7 +177,7 @@ test('unsafeUpdateAll', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.checkOnlyOneAffected).toBe(false);
+  expect(v.ensureOneRowAffected).toBe(false);
   expect(v.allowNoWhere).toBe(true);
 });
 

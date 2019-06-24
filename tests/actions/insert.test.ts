@@ -13,7 +13,7 @@ test('Insert', () => {
   const v = ta.t;
 
   expect(v.actionType).toBe(dd.ActionType.insert);
-  expect(v.checkOnlyOneAffected).toBeFalsy();
+  expect(v.ensureOneRowAffected).toBeFalsy();
   expect(v).toBeInstanceOf(dd.InsertAction);
   expect(v).toBeInstanceOf(dd.CoreUpdateAction);
   expect(v.settersToString()).toBe(
@@ -31,7 +31,7 @@ test('Insert one', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.checkOnlyOneAffected).toBeTruthy();
+  expect(v.ensureOneRowAffected).toBeTruthy();
 });
 
 test('unsafeInsert', () => {
@@ -49,7 +49,7 @@ test('unsafeInsertOne', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  expect(v.checkOnlyOneAffected).toBeTruthy();
+  expect(v.ensureOneRowAffected).toBeTruthy();
   expect(v.noColumnNumberCheck).toBeTruthy();
 });
 
