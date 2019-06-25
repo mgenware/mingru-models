@@ -3,7 +3,7 @@ import user from '../models/user';
 import post from '../models/post';
 import { RawColumn } from '../../dist/main';
 
-test('Select and from', () => {
+test('select', () => {
   class UserTA extends dd.TA {
     t = dd.select(user.id, user.name).where(dd.sql`${user.id} = 1`);
   }
@@ -17,17 +17,24 @@ test('Select and from', () => {
   expect(v.columns[0]).toBe(user.id);
   expect(v.columns[1]).toBe(user.name);
   expect(v.whereSQL!.toString()).toBe('`id` = 1');
-  expect(v.isSelectAll).toBe(false);
+  expect(v.selectRows).toBe(false);
   expect(v.actionType).toBe(dd.ActionType.select);
 });
 
-test('SelectAll', () => {
+test('Select all columns', () => {
   class UserTA extends dd.TA {
-    t = dd.selectAll(user.id, user.name).where(dd.sql`${user.id} = 1`);
+    t = dd.select();
+  }
+  expect(() => dd.ta(user, UserTA)).not.toThrow();
+});
+
+test('selectRows', () => {
+  class UserTA extends dd.TA {
+    t = dd.selectRows(user.id, user.name).where(dd.sql`${user.id} = 1`);
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  expect(v.isSelectAll).toBe(true);
+  expect(v.selectRows).toBe(true);
 });
 
 test('as', () => {
@@ -125,7 +132,7 @@ test('SelectField', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.isSelectAll).toBe(false);
+  expect(v.selectRows).toBe(false);
   expect(v.isSelectField).toBe(true);
   expect(v.columns[0]).toBe(user.name);
 
@@ -159,7 +166,7 @@ test('Validate columns', () => {
   const t = user;
   expect(() => {
     class UserTA extends dd.TA {
-      t = dd.selectAll(
+      t = dd.selectRows(
         t.name,
         (null as unknown) as dd.Column,
         t.follower_count,
@@ -169,7 +176,7 @@ test('Validate columns', () => {
   }).toThrow('null');
   expect(() => {
     class UserTA extends dd.TA {
-      t = dd.selectAll(t.name, (32 as unknown) as dd.Column, t.follower_count);
+      t = dd.selectRows(t.name, (32 as unknown) as dd.Column, t.follower_count);
     }
     dd.ta(user, UserTA);
   }).toThrow('not a valid');
@@ -178,7 +185,7 @@ test('Validate columns', () => {
 test('having', () => {
   class UserTA extends dd.TA {
     t = dd
-      .selectAll(user.id, user.name)
+      .selectRows(user.id, user.name)
       .groupBy(user.name)
       .having(dd.sql`${dd.count(user.name)} > 2`);
   }

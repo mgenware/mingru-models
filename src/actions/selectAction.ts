@@ -67,7 +67,7 @@ export class SelectAction extends CoreSelectAction {
 
   constructor(
     public columns: SelectActionColumns[],
-    public isSelectAll: boolean,
+    public selectRows: boolean,
   ) {
     super(ActionType.select);
     throwIfFalsy(columns, 'columns');

@@ -18,7 +18,7 @@ export function select(...columns: SelectActionColumns[]): SelectAction {
   return selectCore(false, columns);
 }
 
-export function selectAll(...columns: SelectActionColumns[]): SelectAction {
+export function selectRows(...columns: SelectActionColumns[]): SelectAction {
   return selectCore(true, columns);
 }
 

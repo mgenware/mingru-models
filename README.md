@@ -236,7 +236,7 @@ import user from './user';
 // --- userTA.ts ---
 export class UserTA extends dd.TA {
   // selects all users
-  selectAllUsers = dd.selectAll(user.id, user.name);
+  selectAllUsers = dd.selectRows(user.id, user.name);
   // selects a single user by ID
   selectUser = dd.select(user.id, user.name).byID();
   // updates an user by ID
@@ -259,8 +259,8 @@ dd-models supports the following kinds of `SELECT` actions:
 // Selects a row.
 function select(...columns: ColumnBase[]): SelectAction;
 
-// Selects all rows.
-function selectAll(...columns: ColumnBase[]): SelectAction;
+// Selects rows.
+function selectRows(...columns: ColumnBase[]): SelectAction;
 
 // Selects a single field of a specific row.
 function selectField(column: ColumnBase): SelectAction;
@@ -269,7 +269,7 @@ function selectField(column: ColumnBase): SelectAction;
 They differ from return values:
 
 - `select` returns an row object containing all selected columns
-- `selectAll` returns an array of row objects each containing all selected columns
+- `selectRows` returns an array of row objects each containing all selected columns
 - `selectField` returns the single selected field
 
 For example, in [mingru](https://github.com/mgenware/mingru), consider the following models and actions:
@@ -293,7 +293,7 @@ export class UserTA extends dd.TA {
   // Select a user profile by ID.
   selectUserProfile = dd.select(user.id, user.name, user.sig).byID();
   // Select all user profiles.
-  selectAllUserProfiles = dd.selectAll(user.id, user.name, user.sig);
+  selectAllUserProfiles = dd.selectRows(user.id, user.name, user.sig);
   // Select the sig field by ID.
   selectSig = dd.selectField(user.sig).byID();
 }
