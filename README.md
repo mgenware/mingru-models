@@ -312,6 +312,10 @@ func (da *TableTypeUser) SelectAllUserProfiles(queryable dbx.Queryable) ([]*Sele
 func (da *TableTypeUser) SelectSig(queryable dbx.Queryable, userID uint64) (*string, error)
 ```
 
+#### `SELECT *`
+
+To select all columns of a table, simply call `select` or `selectRows` with no arguments.
+
 ### `WHERE` and Raw SQL Expressions
 
 We haven't used any `WHERE` clause in the `SELECT` actions above, to add a `WHERE` clause, we have to construct a raw SQL expression using `dd.sql`, which uses TypeScript/JavaScript template string and enables us to write arbitrary SQL expressions.

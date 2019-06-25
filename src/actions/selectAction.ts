@@ -70,7 +70,6 @@ export class SelectAction extends CoreSelectAction {
     public selectRows: boolean,
   ) {
     super(ActionType.select);
-    throwIfFalsy(columns, 'columns');
     // Validate individual column
     columns.forEach((col, idx) => {
       if (!col) {
