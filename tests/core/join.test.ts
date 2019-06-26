@@ -4,16 +4,6 @@ import post from '../models/post';
 import postCmt from '../models/postCmt';
 import { Column } from '../../dist/main';
 
-function testType(col: dd.Column, name: string) {
-  expect(col.isJoinedColumn()).toBe(true);
-  expect(col.__name).toBe(name);
-}
-
-test('Instance type', () => {
-  testType(post.user_id.join(user).name, 'name');
-  testType(postCmt.post_id.join(post).user_id.join(user).name, 'name');
-});
-
 function testJCCols(
   jc: dd.Column,
   tableInputName: string,
@@ -23,6 +13,7 @@ function testJCCols(
   srcColumn: Column,
   path: string,
 ) {
+  expect(jc.isJoinedColumn()).toBe(true);
   expect(jc.mirroredColumn).toBe(selectedColumn);
   const jt = jc.__table as dd.JoinedTable;
   expect(jt.tableInputName()).toBe(tableInputName);
