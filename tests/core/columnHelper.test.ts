@@ -1,4 +1,5 @@
 import * as dd from '../../';
+import post from '../models/post';
 
 test('bigInt', () => {
   const c = dd.bigInt(123);
@@ -96,6 +97,8 @@ test('autoIncrement', () => {
   // Set the AUTO_INCREMENT explicitly
   expect(dd.pk(dd.int()).noAutoIncrement.type.autoIncrement).toBe(false);
   expect(dd.pk(dd.varChar(3)).autoIncrement.type.autoIncrement).toBe(true);
+  // FK
+  expect(post.user_id.type.autoIncrement).toBe(false);
 });
 
 test('text', () => {

@@ -102,6 +102,7 @@ export class Column extends CoreProperty {
     res.mirroredColumn = column.mirroredColumn;
     // Reset value
     res.type.pk = false;
+    res.type.autoIncrement = false;
     return res;
   }
 

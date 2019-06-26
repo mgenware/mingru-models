@@ -57,6 +57,7 @@ test('Column.newForeignColumn', () => {
   expect(b.__name).toBeNull();
   // Value being reset
   expect(b.type.pk).toBe(false);
+  expect(b.type.autoIncrement).toBe(false);
   expect(b.__table).toBe(post);
   // props is copied
   expect(b.type).not.toBe(a.type);
@@ -78,6 +79,7 @@ test('Column.newJoinedColumn', () => {
   expect(b.mirroredColumn).toBe(a);
   // Value being reset
   expect(b.type.pk).toBe(false);
+  expect(b.type.autoIncrement).toBe(false);
   expect(b.__name).toBe(a.__name);
   expect(b.__table).toBe(t);
   // props is copied
