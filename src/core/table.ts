@@ -4,6 +4,7 @@ import { utils } from '../main';
 import toTypeString from 'to-type-string';
 import * as defs from './defs';
 import Utils from '../lib/utils';
+import { SQL } from './sql';
 
 export interface EnumerateColumnsOptions {
   sorted?: boolean;
@@ -60,13 +61,13 @@ export function table<T extends Table>(
 
   enumerateColumns(tableObj, (col, propName) => {
     if (!col) {
-      throw new Error(`Expected empty column object at property "${propName}"`);
+      throw new Error(`Expected empty column object at column "${propName}"`);
     }
     if (col.isJoinedColumn()) {
       throw new Error(
         `Unexpected ${toTypeString(
           col,
-        )} at property "${propName}", you should not use JoinedColumn in a table definition, JoinedColumn should be used in SELECT actions`,
+        )} at column "${propName}", you should not use JoinedColumn in a table definition, JoinedColumn should be used in SELECT actions`,
       );
     }
 
@@ -90,6 +91,17 @@ export function table<T extends Table>(
       if (columnToAdd.type.autoIncrement) {
         tableObj.__pkAIs.push(col);
       }
+    }
+
+    // Column default value cannot be a complex SQL
+    if (
+      columnToAdd.defaultValue &&
+      columnToAdd.defaultValue instanceof SQL &&
+      (columnToAdd.defaultValue as SQL).isComplex
+    ) {
+      throw new Error(
+        `Column "${propName}"'s default value cannot be a complex SQL expression`,
+      );
     }
 
     cols.push(columnToAdd);

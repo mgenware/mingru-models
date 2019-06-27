@@ -146,3 +146,14 @@ test('Input.isEqualTo', () => {
   expect(c.isEqualTo(d)).toBe(true);
   expect(c.isEqualTo(e)).toBe(false);
 });
+
+test('isComplex', () => {
+  const a = dd.sql`sdf sd ${dd.datetimeNow()}`;
+  const b = dd.sql`sisjsdf`;
+  const c = dd.sql`jis df${user.id}`;
+  const d = dd.sql`isjdf${user.name.toInput()}`;
+  expect(a.isComplex).toBe(false);
+  expect(b.isComplex).toBe(false);
+  expect(c.isComplex).toBe(true);
+  expect(d.isComplex).toBe(true);
+});

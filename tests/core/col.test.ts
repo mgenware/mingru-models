@@ -200,3 +200,18 @@ test('Register property callback on a initialized property', () => {
   expect(user.name.__handlers).toBe(null);
   expect(counter).toBe(1);
 });
+
+test('Throw on default value of complex SQL', () => {
+  expect(() => {
+    class T extends dd.Table {
+      t = dd.varChar(23).setDefault(dd.datetimeNow());
+    }
+    dd.table(T);
+  }).not.toThrow();
+  expect(() => {
+    class T extends dd.Table {
+      t = dd.varChar(23).setDefault(dd.sql`${user.name}`);
+    }
+    dd.table(T);
+  }).toThrow('complex SQL');
+});

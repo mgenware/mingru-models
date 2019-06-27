@@ -91,6 +91,8 @@ export class SQLElement {
 
 export class SQL {
   elements: SQLElement[] = [];
+  // True if this expression contains columns or inputs
+  isComplex = false;
 
   constructor(literals: TemplateStringsArray, params: SQLConvertible[]) {
     for (let i = 0; i < params.length; i++) {
@@ -150,6 +152,12 @@ export class SQL {
   }
 
   private pushElement(element: SQLElement) {
+    if (
+      element.type === SQLElementType.column ||
+      element.type === SQLElementType.input
+    ) {
+      this.isComplex = true;
+    }
     this.elements.push(element);
   }
 
