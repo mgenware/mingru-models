@@ -92,7 +92,9 @@ export class SQLElement {
 export class SQL {
   elements: SQLElement[] = [];
   // True if this expression contains columns or inputs
-  isComplex = false;
+  hasColumns = false;
+  // True if this expression contains SQLCalls
+  hasCalls = false;
 
   constructor(literals: TemplateStringsArray, params: SQLConvertible[]) {
     for (let i = 0; i < params.length; i++) {
@@ -156,7 +158,9 @@ export class SQL {
       element.type === SQLElementType.column ||
       element.type === SQLElementType.input
     ) {
-      this.isComplex = true;
+      this.hasColumns = true;
+    } else if (element.type === SQLElementType.call) {
+      this.hasCalls = true;
     }
     this.elements.push(element);
   }

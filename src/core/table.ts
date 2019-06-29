@@ -97,7 +97,7 @@ export function table<T extends Table>(
     if (
       columnToAdd.defaultValue &&
       columnToAdd.defaultValue instanceof SQL &&
-      (columnToAdd.defaultValue as SQL).isComplex
+      (columnToAdd.defaultValue as SQL).hasColumns
     ) {
       throw new Error(
         `Column "${propName}"'s default value cannot be a complex SQL expression`,

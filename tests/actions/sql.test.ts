@@ -147,13 +147,24 @@ test('Input.isEqualTo', () => {
   expect(c.isEqualTo(e)).toBe(false);
 });
 
-test('isComplex', () => {
+test('hasColumns', () => {
   const a = dd.sql`sdf sd ${dd.datetimeNow()}`;
   const b = dd.sql`sisjsdf`;
   const c = dd.sql`jis df${user.id}`;
   const d = dd.sql`isjdf${user.name.toInput()}`;
-  expect(a.isComplex).toBe(false);
-  expect(b.isComplex).toBe(false);
-  expect(c.isComplex).toBe(true);
-  expect(d.isComplex).toBe(true);
+  expect(a.hasColumns).toBe(false);
+  expect(b.hasColumns).toBe(false);
+  expect(c.hasColumns).toBe(true);
+  expect(d.hasColumns).toBe(true);
+});
+
+test('hasCalls', () => {
+  const a = dd.sql`sdf sd ${dd.datetimeNow()}`;
+  const b = dd.sql`sisjsdf`;
+  const c = dd.sql`jis df${user.id}`;
+  const d = dd.sql`isjdf${user.name.toInput()}`;
+  expect(a.hasCalls).toBe(true);
+  expect(b.hasCalls).toBe(false);
+  expect(c.hasCalls).toBe(false);
+  expect(d.hasCalls).toBe(false);
 });
