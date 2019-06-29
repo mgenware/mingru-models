@@ -107,7 +107,8 @@ export class Column extends CoreProperty {
   }
 
   type: ColumnType;
-  defaultValue: unknown = undefined;
+  defaultValue: unknown;
+  isNoDefaultOnCSQL = false;
 
   // __ properties will be set after dd.table()
   __dbName: string | null = null;
@@ -156,6 +157,12 @@ export class Column extends CoreProperty {
   get noAutoIncrement(): Column {
     this.checkMutability();
     this.type.autoIncrement = false;
+    return this;
+  }
+
+  get noDefaultOnCSQL(): Column {
+    this.checkMutability();
+    this.isNoDefaultOnCSQL = true;
     return this;
   }
 

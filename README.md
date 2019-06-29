@@ -718,6 +718,34 @@ deleteAll = dd.unsafeDeleteAll();
 
 ## Advanced Topics
 
+### Default Values
+
+When set a default value to a column, two things happen:
+
+- Default values are included in `CREATE TABLE` SQL.
+- Default values are also explicitly set in `INSERT` and `UPDATE` actions.
+
+Setting default values in `CREATE TABLE` also makes it hard to attach a dynamic value to a column, e.g. setting `NOW()` in a `DATETIME` column, in this case, you can use the `noDefaultOnCSQL` property to disable setting default value on generated `CREATE TABLE` SQL:
+
+```ts
+a = dd.int(1);
+b = dd.int(1).noDefaultOnCSQL;
+```
+
+The generated `CREATE TABLE` SQL:
+
+```sql
+CREATE TABLE `user` (
+	`a` INT NOT NULL DEFAULT 1,
+	`b` INT NOT NULL
+)
+CHARACTER SET=utf8mb4
+COLLATE=utf8mb4_unicode_ci
+;
+```
+
+Note that the columns above have same generated `INSERT` and `UPDATE` code since default values are also explicitly set in `INSERT` and `UPDATE` actions.
+
 ### `JoinedTable`
 
 Imagine the following join:

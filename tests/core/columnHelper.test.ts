@@ -101,6 +101,11 @@ test('autoIncrement', () => {
   expect(post.user_id.type.autoIncrement).toBe(false);
 });
 
+test('isNoDefaultOnCSQL', () => {
+  expect(dd.pk(dd.int(20)).isNoDefaultOnCSQL).toBe(false);
+  expect(dd.pk(dd.int(20)).noDefaultOnCSQL.isNoDefaultOnCSQL).toBe(true);
+});
+
 test('text', () => {
   const c = dd.text('ha');
   expect(c.type.types).toContain(dd.dt.text);
