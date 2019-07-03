@@ -112,10 +112,10 @@ export class SelectAction extends CoreSelectAction {
     return this;
   }
 
-  paginate(): this {
+  limit(): this {
     if (this.mode !== SelectActionMode.list) {
       throw new Error(
-        `paginate can only be used when mode = 'SelectActionMode.list', current mode is ${
+        `limit can only be used when mode = 'SelectActionMode.list', current mode is ${
           this.mode
         }`,
       );

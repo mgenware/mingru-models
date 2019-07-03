@@ -194,11 +194,11 @@ test('having', () => {
   expect(v.havingSQL!.toString()).toBe('CALL(3, `name`) > 2');
 });
 
-test('Throw when paginate is called on non-list mode', () => {
+test('Throw when limit is called on non-list mode', () => {
   const t = user;
   expect(() => {
     class UserTA extends dd.TA {
-      t = dd.selectField(t.name).paginate();
+      t = dd.selectField(t.name).limit();
     }
     dd.ta(user, UserTA);
   }).toThrow('list');
