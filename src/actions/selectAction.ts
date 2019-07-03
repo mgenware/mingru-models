@@ -113,6 +113,13 @@ export class SelectAction extends CoreSelectAction {
   }
 
   paginate(): this {
+    if (this.mode !== SelectActionMode.list) {
+      throw new Error(
+        `paginate can only be used when mode = 'SelectActionMode.list', current mode is ${
+          this.mode
+        }`,
+      );
+    }
     this.pagination = true;
     return this;
   }

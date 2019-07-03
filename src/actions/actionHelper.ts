@@ -25,6 +25,10 @@ export function selectField(column: SelectActionColumns): SelectAction {
   return new SelectAction([column], SelectActionMode.field);
 }
 
+export function selectPage(...columns: SelectActionColumns[]): SelectAction {
+  return new SelectAction(columns, SelectActionMode.page);
+}
+
 export function unsafeUpdateAll(): UpdateAction {
   return new UpdateAction(true, false);
 }
