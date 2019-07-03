@@ -17,11 +17,11 @@ test('select', () => {
   expect(v.columns[0]).toBe(user.id);
   expect(v.columns[1]).toBe(user.name);
   expect(v.whereSQL!.toString()).toBe('`id` = 1');
-  expect(v.selectRows).toBe(false);
+  expect(v.mode).toBe(dd.SelectActionMode.row);
   expect(v.actionType).toBe(dd.ActionType.select);
 });
 
-test('Select all columns', () => {
+test('Select *', () => {
   class UserTA extends dd.TA {
     t = dd.select();
   }
@@ -34,7 +34,7 @@ test('selectRows', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  expect(v.selectRows).toBe(true);
+  expect(v.mode).toBe(dd.SelectActionMode.list);
 });
 
 test('as', () => {
@@ -123,7 +123,7 @@ test('ByID', () => {
   expect(v.whereSQL!.toString()).toBe('`id` = <id: [id]>');
 });
 
-test('SelectField', () => {
+test('selectField', () => {
   const sc = dd.sel(dd.count('*'), 'c');
   class UserTA extends dd.TA {
     t = dd.selectField(user.name).byID();
@@ -132,8 +132,7 @@ test('SelectField', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.selectRows).toBe(false);
-  expect(v.isSelectField).toBe(true);
+  expect(v.mode).toBe(dd.SelectActionMode.field);
   expect(v.columns[0]).toBe(user.name);
 
   const v2 = ta.t2;

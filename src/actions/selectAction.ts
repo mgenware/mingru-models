@@ -57,17 +57,23 @@ export function sel(
   return new RawColumn(convertToSQL(sql), selectedName, type);
 }
 
+export enum SelectActionMode {
+  row,
+  field,
+  list,
+  page,
+}
+
 export class SelectAction extends CoreSelectAction {
   havingSQL: SQL | null = null;
   havingValidator: ((value: SQL) => void) | null = null;
-  isSelectField = false;
   pagination = false;
   orderByColumns: ColumnName[] = [];
   groupByColumns: ColumnName[] = [];
 
   constructor(
     public columns: SelectActionColumns[],
-    public selectRows: boolean,
+    public mode: SelectActionMode,
   ) {
     super(ActionType.select);
     // Validate individual column

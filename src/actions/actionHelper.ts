@@ -1,7 +1,11 @@
 import { UpdateAction } from './updateAction';
 import { InsertAction } from './insertAction';
 import { DeleteAction } from './deleteAction';
-import { SelectAction, SelectActionColumns } from './selectAction';
+import {
+  SelectAction,
+  SelectActionColumns,
+  SelectActionMode,
+} from './selectAction';
 import {
   TransactAction,
   TransactionMemberHelper,
@@ -9,23 +13,16 @@ import {
 } from './transactAction';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
-function selectCore(all: boolean, cols: SelectActionColumns[]): SelectAction {
-  const action = new SelectAction(cols, all);
-  return action;
-}
-
 export function select(...columns: SelectActionColumns[]): SelectAction {
-  return selectCore(false, columns);
+  return new SelectAction(columns, SelectActionMode.row);
 }
 
 export function selectRows(...columns: SelectActionColumns[]): SelectAction {
-  return selectCore(true, columns);
+  return new SelectAction(columns, SelectActionMode.list);
 }
 
 export function selectField(column: SelectActionColumns): SelectAction {
-  const action = select(column);
-  action.isSelectField = true;
-  return action;
+  return new SelectAction([column], SelectActionMode.field);
 }
 
 export function unsafeUpdateAll(): UpdateAction {
