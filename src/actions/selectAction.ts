@@ -67,7 +67,8 @@ export enum SelectActionMode {
 export class SelectAction extends CoreSelectAction {
   havingSQL: SQL | null = null;
   havingValidator: ((value: SQL) => void) | null = null;
-  pagination = false;
+  // Only used in rows mode.
+  hasLimit = false;
   orderByColumns: ColumnName[] = [];
   groupByColumns: ColumnName[] = [];
 
@@ -120,7 +121,7 @@ export class SelectAction extends CoreSelectAction {
         }`,
       );
     }
-    this.pagination = true;
+    this.hasLimit = true;
     return this;
   }
 
