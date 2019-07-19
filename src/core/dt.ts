@@ -25,8 +25,27 @@ export class DataTypes {
     this.tinyInt,
   ]);
 
+  private numberSet = new Set<string>([
+    ...this.integerSet,
+    ...[this.double, this.float],
+  ]);
+
+  private timeRelatedSet = new Set<string>([
+    this.date,
+    this.datetime,
+    this.time,
+  ]);
+
   isInteger(s: string) {
     return this.integerSet.has(s);
+  }
+
+  isNumber(s: string) {
+    return this.numberSet.has(s);
+  }
+
+  isTimeRelated(s: string) {
+    return this.timeRelatedSet.has(s);
   }
 }
 

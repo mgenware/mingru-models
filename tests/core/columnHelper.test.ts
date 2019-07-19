@@ -160,7 +160,28 @@ test('dt.isInteger', () => {
   expect(dt.isInteger(dt.int)).toBe(true);
   expect(dt.isInteger(dt.smallInt)).toBe(true);
   expect(dt.isInteger(dt.tinyInt)).toBe(true);
+  expect(dt.isInteger(dt.float)).toBe(false);
+  expect(dt.isInteger(dt.double)).toBe(false);
   expect(dt.isInteger(dt.bool)).toBe(false);
   expect(dt.isInteger(dt.varChar)).toBe(false);
   expect(dt.isInteger(dt.char)).toBe(false);
+});
+
+test('dt.isNumber', () => {
+  const { dt } = dd;
+  expect(dt.isNumber(dt.bigInt)).toBe(true);
+  expect(dt.isNumber(dt.int)).toBe(true);
+  expect(dt.isNumber(dt.smallInt)).toBe(true);
+  expect(dt.isNumber(dt.tinyInt)).toBe(true);
+  expect(dt.isNumber(dt.float)).toBe(true);
+  expect(dt.isNumber(dt.double)).toBe(true);
+  expect(dt.isNumber(dt.bool)).toBe(false);
+});
+
+test('dt.isTimeRelated', () => {
+  const { dt } = dd;
+  expect(dt.isTimeRelated(dt.datetime)).toBe(true);
+  expect(dt.isTimeRelated(dt.date)).toBe(true);
+  expect(dt.isTimeRelated(dt.time)).toBe(true);
+  expect(dt.isTimeRelated(dt.int)).toBe(false);
 });
