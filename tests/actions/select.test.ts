@@ -114,13 +114,22 @@ test('dd.select (types)', () => {
   expect(a.type).toEqual(new dd.ColumnType(['t1', 't2']));
 });
 
-test('ByID', () => {
+test('byID', () => {
   class UserTA extends dd.TA {
     t = dd.select(user.name).byID();
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
   expect(v.whereSQL!.toString()).toBe('`id` = <id: [id]>');
+});
+
+test('by', () => {
+  class UserTA extends dd.TA {
+    t = dd.select(user.name).by(user.snake_case_name);
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+  expect(v.whereSQL!.toString()).toBe('<snakeCaseName: [snake_case_name]>');
 });
 
 test('selectField', () => {

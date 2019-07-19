@@ -291,9 +291,9 @@ import user from './user';
 
 export class UserTA extends dd.TA {
   // Select a user profile by ID.
-  selectUserProfile = dd.select(user.id, user.name, user.sig).byID();
+  selectProfile = dd.select(user.id, user.name, user.sig).byID();
   // Select all user profiles.
-  selectAllUserProfiles = dd.selectRows(user.id, user.name, user.sig);
+  selectAllProfiles = dd.selectRows(user.id, user.name, user.sig);
   // Select the sig field by ID.
   selectSig = dd.selectField(user.sig).byID();
 }
@@ -305,9 +305,9 @@ It would generate the following Go code (only function headers shown for simplic
 
 ```go
 // SelectUserProfile ...
-func (da *TableTypeUser) SelectUserProfile(queryable dbx.Queryable, userID uint64) (*SelectUserProfileResult, error)
+func (da *TableTypeUser) SelectProfile(queryable dbx.Queryable, userID uint64) (*SelectUserProfileResult, error)
 // SelectAllUserProfiles ...
-func (da *TableTypeUser) SelectAllUserProfiles(queryable dbx.Queryable) ([]*SelectAllUserProfilesResult, error)
+func (da *TableTypeUser) SelectAllProfiles(queryable dbx.Queryable) ([]*SelectAllUserProfilesResult, error)
 // SelectSig ...
 func (da *TableTypeUser) SelectSig(queryable dbx.Queryable, userID uint64) (*string, error)
 ```
@@ -415,7 +415,7 @@ selectUserProfile = dd
 Is equivalent to:
 
 ```ts
-selectUserProfile = dd
+selectProfile = dd
   .select(user.id, user.name, user.sig)
   .where(dd.sql`${user.name} = "Admin"`);
 ```
@@ -423,7 +423,7 @@ selectUserProfile = dd
 ##### `Column.isEqualToInput(optionalName): SQL`
 
 ```ts
-selectUserProfile = dd
+selectProfile = dd
   .select(user.id, user.name, user.sig)
   .where(user.name.isEqualToInput());
 ```
@@ -431,7 +431,7 @@ selectUserProfile = dd
 Is equivalent to:
 
 ```ts
-selectUserProfile = dd
+selectProfile = dd
   .select(user.id, user.name, user.sig)
   .where(dd.sql`${user.name} = ${dd.input(user.name)}`);
 ```
@@ -440,27 +440,31 @@ selectUserProfile = dd
 
 Similar to `isEqualTo` and `isEqualToInput`, uses `<>`(not equal to operator) instead.
 
-##### `.ByID()`
+##### `.byID()` and `by()`
 
 ```ts
-selectUserProfile = dd.select(user.id, user.name, user.sig).byID();
+selectByID = dd.select(user.id, user.name, user.sig).byID();
 ```
 
 Is equivalent to 3 expressions listed below:
 
 ```ts
 // 1
-userTA
-  .select('UserProfile', user.id, user.name, user.sig)
-  .where(`${user.id} = ${user.id.toInput()}`);
+dd.select(user.id, user.name, user.sig).where(
+  `${user.id} = ${user.id.toInput()}`,
+);
 // 2
-userTA
-  .select('UserProfile', user.id, user.name, user.sig)
-  .where(user.id.isEqualTo(user.id.toInput()));
+dd.select(user.id, user.name, user.sig).where(
+  user.id.isEqualTo(user.id.toInput()),
+);
 // 3
-userTA
-  .select('UserProfile', user.id, user.name, user.sig)
-  .where(user.id.isEqualToInput());
+dd.select(user.id, user.name, user.sig).where(user.id.isEqualToInput());
+```
+
+`byID` automatically sets table's primary key as input as `WHERE`, to specify another column, use `by` instead:
+
+```ts
+selectByName = dd.select(user.id, user.name, user.sig).by(user.name);
 ```
 
 #### Predefined System Calls

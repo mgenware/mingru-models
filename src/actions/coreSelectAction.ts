@@ -1,8 +1,8 @@
 import { Action } from './ta';
-import { SQL } from '../core/sql';
+import { SQL, sql } from '../core/sql';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { where, byIDUnsafe } from './common';
-import { CoreProperty } from '../core/core';
+import { CoreProperty, Column } from '../core/core';
 
 export class CoreSelectAction extends Action {
   whereSQL: SQL | null = null;
@@ -18,6 +18,12 @@ export class CoreSelectAction extends Action {
     CoreProperty.registerHandler(this, () => {
       byIDUnsafe(this);
     });
+    return this;
+  }
+
+  by(column: Column): this {
+    throwIfFalsy(column, 'column');
+    this.where(sql`${column.toInput()}`);
     return this;
   }
 }
