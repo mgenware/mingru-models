@@ -1,10 +1,8 @@
 import { Action, ActionType } from './ta';
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Table } from '../core/core';
 
 export class WrappedAction extends Action {
   constructor(
-    srcTable: Table,
     public action: Action,
     // tslint:disable-next-line no-any
     public args: { [name: string]: any },
@@ -17,6 +15,7 @@ export class WrappedAction extends Action {
       throw new Error('"args" cannot be empty');
     }
 
-    this.__table = srcTable;
+    this.__table = action.__table;
+    this.__name = action.__name;
   }
 }
