@@ -40,3 +40,12 @@ test('Chaining', () => {
     follower_count: 123,
   });
 });
+
+test('Set __table', () => {
+  class UserTA extends dd.TA {
+    t = dd.insert().setInputs();
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t.wrap({ name: 'abc' });
+  expect(v.__table).toBe(user);
+});
