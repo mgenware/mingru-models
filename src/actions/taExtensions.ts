@@ -8,7 +8,8 @@ declare module './ta' {
 }
 
 Action.prototype.wrap = function(args: {
-  [name: string]: string;
+  // tslint:disable-next-line no-any
+  [name: string]: any;
 }): WrappedAction {
   return new WrappedAction(this, args);
 };

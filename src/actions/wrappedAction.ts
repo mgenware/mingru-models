@@ -1,12 +1,11 @@
 import { Action, ActionType } from './ta';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
-export type WrappedActionValue = string | number;
-
 export class WrappedAction extends Action {
   constructor(
     public action: Action,
-    public args: { [name: string]: WrappedActionValue },
+    // tslint:disable-next-line no-any
+    public args: { [name: string]: any },
   ) {
     super(ActionType.wrap);
     throwIfFalsy(action, 'action');
