@@ -110,9 +110,8 @@ export class Column extends CoreProperty {
   defaultValue: unknown;
   isNoDefaultOnCSQL = false;
 
-  // __ properties will be set after dd.table()
   __dbName: string | null = null;
-  __table!: Table | JoinedTable;
+  __table: Table | JoinedTable | null = null;
 
   // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any table, the foreignColumn property only indicates a column property is declared as FK and doesn't have any effect on join(), the real dest table and column are determined by join().
   foreignColumn: Column | null = null;

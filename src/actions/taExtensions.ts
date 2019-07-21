@@ -3,6 +3,7 @@ import { WrappedAction } from './wrappedAction';
 
 declare module './ta' {
   interface Action {
+    // tslint:disable-next-line no-any
     wrap(args: { [name: string]: any }): WrappedAction;
   }
 }

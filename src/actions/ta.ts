@@ -18,15 +18,15 @@ export enum ActionType {
 }
 
 export class Action extends CoreProperty {
-  // Will be set in dd.ta
-  __table!: Table;
+  // Will be set after calling dd.ta
+  __table: Table | null = null;
 
   constructor(public actionType: ActionType) {
     super();
   }
 
   // After action is fully initialized, `dd.ta` will call `Action.validate`
-  validate() {
+  validate(_: Table, __: string) {
     // Implemented by sub-classes
   }
 }
@@ -86,7 +86,7 @@ export function ta<T extends Table, A extends TA>(
     // After all properties are set, run property handlers
     CoreProperty.runHandlers(action);
     // Validate this action
-    action.validate();
+    action.validate(table, prop);
   });
   return group;
 }

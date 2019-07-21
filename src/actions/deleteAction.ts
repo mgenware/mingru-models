@@ -1,6 +1,7 @@
 import { ActionType } from './ta';
 import { SQL } from '../core/sql';
 import { CoreSelectAction } from './coreSelectAction';
+import { Table } from '../core/core';
 
 export class DeleteAction extends CoreSelectAction {
   whereSQL: SQL | null = null;
@@ -12,8 +13,8 @@ export class DeleteAction extends CoreSelectAction {
     super(ActionType.delete);
   }
 
-  validate() {
-    super.validate();
+  validate(table: Table, name: string) {
+    super.validate(table, name);
     if (!this.allowNoWhere && !this.whereSQL) {
       throw new Error(
         `'allowNoWhere' is set to false, you must define an WHERE clause. Otherwise, use 'unsafeDeleteAll'`,

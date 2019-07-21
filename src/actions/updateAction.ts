@@ -3,7 +3,7 @@ import { SQL } from '../core/sql';
 import { CoreUpdateAction } from './coreUpdateAction';
 import { where, byIDUnsafe } from './common';
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { CoreProperty } from '../core/core';
+import { CoreProperty, Table } from '../core/core';
 
 export class UpdateAction extends CoreUpdateAction {
   whereSQL: SQL | null = null;
@@ -29,8 +29,8 @@ export class UpdateAction extends CoreUpdateAction {
     return this;
   }
 
-  validate() {
-    super.validate();
+  validate(table: Table, name: string) {
+    super.validate(table, name);
 
     if (!this.allowNoWhere && !this.whereSQL) {
       throw new Error(

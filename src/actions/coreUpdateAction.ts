@@ -1,5 +1,5 @@
 import { Action } from './ta';
-import { Column } from '../core/core';
+import { Column, Table } from '../core/core';
 import { SQL, SQLConvertible, convertToSQL, sql } from '../core/sql';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
@@ -50,8 +50,8 @@ export class CoreUpdateAction extends Action {
     return this;
   }
 
-  validate() {
-    super.validate();
+  validate(table: Table, name: string) {
+    super.validate(table, name);
     if (!this.setters.size && !this.autoSetter) {
       throw new Error(`No setters in action "${this.__name}"`);
     }

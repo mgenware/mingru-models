@@ -2,7 +2,7 @@ import { SQL } from '../core/sql';
 import { Table } from '../core/core';
 
 export interface IActionWithWhere {
-  __table: Table;
+  __table: Table | null;
   whereSQL: SQL | null;
   whereValidator: ((value: SQL) => void) | null;
 }
@@ -21,6 +21,9 @@ export function where(action: IActionWithWhere, value: SQL) {
 // Unsafe means it accesses `__table` which is not available during property initialization, and should be wrapped inside `CoreProperty.registerHandler`.
 export function byIDUnsafe(action: IActionWithWhere) {
   const { __table: table } = action;
+  if (!table) {
+    throw new Error(`Action is not initialized by dd.ta`);
+  }
   if (table.__pks.length > 1) {
     throw new Error(
       `byID cannot handle tables with more than 1 PKs, table name: "${
