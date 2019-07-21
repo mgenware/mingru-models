@@ -22,9 +22,9 @@ export class UpdateAction extends CoreUpdateAction {
     return this;
   }
 
-  byID(): this {
+  byID(inputName?: string): this {
     CoreProperty.registerHandler(this, () => {
-      byIDUnsafe(this);
+      byIDUnsafe(this, inputName);
     });
     return this;
   }

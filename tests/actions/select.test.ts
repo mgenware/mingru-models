@@ -123,6 +123,15 @@ test('byID', () => {
   expect(v.whereSQL!.toString()).toBe('`id` = <id: [id]>');
 });
 
+test('byID with inputName', () => {
+  class UserTA extends dd.TA {
+    t = dd.select(user.name).byID('haha');
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+  expect(v.whereSQL!.toString()).toBe('`id` = <haha: [id]>');
+});
+
 test('by', () => {
   class UserTA extends dd.TA {
     t = dd.select(user.name).by(user.snake_case_name);

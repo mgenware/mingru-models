@@ -19,7 +19,10 @@ export function where(action: IActionWithWhere, value: SQL) {
 }
 
 // Unsafe means it accesses `__table` which is not available during property initialization, and should be wrapped inside `CoreProperty.registerHandler`.
-export function byIDUnsafe(action: IActionWithWhere) {
+export function byIDUnsafe(
+  action: IActionWithWhere,
+  inputName: string | undefined,
+) {
   const { __table: table } = action;
   if (!table) {
     throw new Error(`Action is not initialized by dd.ta`);
@@ -37,5 +40,5 @@ export function byIDUnsafe(action: IActionWithWhere) {
     );
   }
   const pk = table.__pks[0];
-  where(action, pk.isEqualToInput());
+  where(action, pk.isEqualToInput(inputName));
 }
