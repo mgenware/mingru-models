@@ -58,8 +58,6 @@ test('Temp member actions (wrap self)', async () => {
   const user2TA = dd.ta(user2, User2TA);
   const v = user2TA.t;
   const wrapped = v.members[0].action as WrappedAction;
-  expect(wrapped.__table).toBe(user2);
-  expect(wrapped.__name).toBe('updatePostCount');
   expect(wrapped.action).toBe(user2TA.updatePostCount);
   expect(wrapped.args).toEqual({ offset: 1 });
 });
@@ -92,8 +90,6 @@ test('Temp member actions (wrap other)', async () => {
   const postTA = dd.ta(post2, Post2TA);
   const v = postTA.insert;
   const wrapped = v.members[0].action as WrappedAction;
-  expect(wrapped.__table).toBe(user2);
-  expect(wrapped.__name).toBe('updatePostCount');
   expect(wrapped.action).toBe(user2TA.updatePostCount);
   expect(wrapped.args).toEqual({ offset: 1 });
 });
