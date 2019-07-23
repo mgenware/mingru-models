@@ -5,7 +5,7 @@ import toTypeString from 'to-type-string';
 import Utils from '../lib/utils';
 
 export class TA {
-  __table!: Table;
+  __table: Table | null = null;
 }
 
 export enum ActionType {
