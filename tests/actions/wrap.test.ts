@@ -40,3 +40,13 @@ test('Chaining', () => {
     follower_count: 123,
   });
 });
+
+test('Uninitialized wrapped action __table n __name', () => {
+  class UserTA extends dd.TA {
+    t = dd.deleteOne().byID();
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t.wrap({ id: 23 });
+  expect(v.__table).toBe(user);
+  expect(v.__name).toBe(null);
+});

@@ -28,7 +28,9 @@ export class RawColumn {
     if (core instanceof Column) {
       const col = core as Column;
       if (!col.__name) {
-        throw new Error('core is not initialized');
+        throw new Error(
+          'The "core" argument is not initialized (did you accidentally put a RawColumn in a SELECT action?)',
+        );
       }
       this.core = col;
       this.selectedName = selectedName || col.__name;

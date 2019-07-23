@@ -14,5 +14,6 @@ export class WrappedAction extends Action {
     if (Object.entries(args).length === 0) {
       throw new Error('"args" cannot be empty');
     }
+    this.__table = action.__table;
   }
 }
