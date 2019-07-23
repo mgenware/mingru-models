@@ -27,6 +27,9 @@ export class RawColumn {
     throwIfFalsy(core, 'core');
     if (core instanceof Column) {
       const col = core as Column;
+      if (!col.__name) {
+        throw new Error('core is not initialized');
+      }
       this.core = col;
       this.selectedName = selectedName || col.__name;
     } else {
@@ -38,6 +41,9 @@ export class RawColumn {
         // Try to extract a column name from SQL expression
         const col = expr.findColumn();
         if (col) {
+          if (!col.__name) {
+            throw new Error('core is not initialized');
+          }
           this.selectedName = col.__name;
         } else {
           throw new Error(

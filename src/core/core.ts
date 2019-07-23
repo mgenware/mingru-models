@@ -50,7 +50,9 @@ export class CoreProperty {
   }
 
   __handlers: CorePropertyHandler[] | null = [];
-  __name!: string;
+
+  // If null, this property is not initialized.
+  __name: string | null = null;
   __payload!: unknown;
 }
 
@@ -184,7 +186,7 @@ export class Column extends CoreProperty {
   }
 
   getDBName(): string {
-    return this.__dbName || this.__name;
+    return this.__dbName || this.__name || '';
   }
 
   join<T extends Table>(destTable: T, destCol?: Column): T {
@@ -227,6 +229,9 @@ export class Column extends CoreProperty {
   }
 
   inputName(): string {
+    if (!this.__name) {
+      throw new Error('Property not initialized');
+    }
     const curName = utils.toCamelCase(this.__name);
     if (this.isJoinedColumn()) {
       return (
@@ -315,6 +320,9 @@ export class JoinedTable {
 
   tableInputName(): string {
     const { srcColumn } = this;
+    if (!srcColumn.__name) {
+      throw new Error('Source column is not initialized');
+    }
     const curName = makeMiddleName(srcColumn.__name);
     if (srcColumn.isJoinedColumn()) {
       // If srcColumn is a joined column, e.g. cmt.post_id.join(post).user_id.join(user), returns 'postUser' in this case
