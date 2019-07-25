@@ -93,3 +93,32 @@ test('Temp member actions (wrap other)', async () => {
   expect(wrapped.action).toBe(user2TA.updatePostCount);
   expect(wrapped.args).toEqual({ offset: 1 });
 });
+
+test('Setting __table or temp members', () => {
+  class UserTA extends dd.TA {
+    insert = dd
+      .insert()
+      .setInputs(user.follower_count)
+      .setInputs();
+  }
+  const userTA = dd.ta(user, UserTA);
+
+  class PostTA extends dd.TA {
+    insert = dd
+      .insert()
+      .setInputs(post.title, post.snake_case_user_id)
+      .setInputs();
+    t = dd.transact(
+      this.insert,
+      userTA.insert,
+      this.insert.wrap({ title: 'title' }),
+      dd.insert().setDefaults(),
+    );
+  }
+  const postTA = dd.ta(post, PostTA);
+  const members = postTA.t.members;
+  expect(members[0].action.__table).toBe(post);
+  expect(members[1].action.__table).toBe(user);
+  expect(members[2].action.__table).toBe(post);
+  expect(members[3].action.__table).toBe(post);
+});
