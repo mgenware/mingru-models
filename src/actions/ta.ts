@@ -73,6 +73,16 @@ export function enumerateActions<T extends TA>(
   }
 }
 
+export function initializeAction(action: Action, table: Table, name: string) {
+  throwIfFalsy(action, 'action');
+  action.__name = name;
+  action.__table = table;
+  // After all properties are set, run property handlers
+  CoreProperty.runHandlers(action);
+  // Run validate callback
+  action.validate(table, name);
+}
+
 export function ta<T extends Table, A extends TA>(
   table: T,
   taCls: new () => A,
@@ -80,13 +90,8 @@ export function ta<T extends Table, A extends TA>(
   throwIfFalsy(table, 'table');
   const group = new taCls();
   group.__table = table;
-  enumerateActions(group, (action, prop) => {
-    action.__name = prop;
-    action.__table = table;
-    // After all properties are set, run property handlers
-    CoreProperty.runHandlers(action);
-    // Validate this action
-    action.validate(table, prop);
+  enumerateActions(group, (action, name) => {
+    initializeAction(action, table, name);
   });
   return group;
 }
