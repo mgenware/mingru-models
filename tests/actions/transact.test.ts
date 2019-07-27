@@ -118,7 +118,11 @@ test('Setting __table or temp members', () => {
   const postTA = dd.ta(post, PostTA);
   const members = postTA.t.members;
   expect(members[0].action.__table).toBe(post);
+  expect(members[0].action.__name).toBe('insert');
   expect(members[1].action.__table).toBe(user);
+  expect(members[1].action.__name).toBe('insert');
   expect(members[2].action.__table).toBe(post);
+  expect(members[2].action.__name).toBe('tChild2');
   expect(members[3].action.__table).toBe(post);
+  expect(members[3].action.__name).toBe('tChild3');
 });
