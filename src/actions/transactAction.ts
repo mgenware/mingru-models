@@ -5,6 +5,8 @@ import { Table } from '../core/core';
 export type TransactionMemberHelper = TransactionMember | Action;
 
 export class TransactionMember {
+  // True if this member is created inside transaction function block.
+  isTemp = false;
   constructor(public action: Action, public name?: string) {
     throwIfFalsy(action, 'action');
   }
@@ -23,6 +25,7 @@ export class TransactAction extends Action {
       const mAction = mem.action;
       if (!mAction.__name) {
         initializeAction(mAction, table, mem.name || `${name}Child${idx}`);
+        mem.isTemp = true;
       }
       idx++;
     }
