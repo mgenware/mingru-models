@@ -287,6 +287,10 @@ export class Table {
   getDBName(): string {
     return this.__dbName || this.__name;
   }
+
+  toString(): string {
+    return `Table (${this.getDBName()})`;
+  }
 }
 
 /*

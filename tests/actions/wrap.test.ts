@@ -43,10 +43,13 @@ test('Chaining', () => {
 
 test('Uninitialized wrapped action __table n __name', () => {
   class UserTA extends dd.TA {
-    t = dd.deleteOne().byID();
+    t = dd
+      .deleteOne()
+      .byID()
+      .wrap({ id: 23 });
   }
   const ta = dd.ta(user, UserTA);
-  const v = ta.t.wrap({ id: 23 });
+  const v = ta.t;
   expect(v.__table).toBe(user);
-  expect(v.__name).toBe(null);
+  expect(v.__name).toBe('t');
 });

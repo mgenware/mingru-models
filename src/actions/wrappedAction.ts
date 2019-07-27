@@ -1,5 +1,6 @@
-import { Action, ActionType } from './ta';
+import { Action, ActionType, initializeAction } from './ta';
 import { throwIfFalsy } from 'throw-if-arg-empty';
+import { Table } from '../core/core';
 
 export class WrappedAction extends Action {
   constructor(
@@ -14,6 +15,14 @@ export class WrappedAction extends Action {
     if (Object.entries(args).length === 0) {
       throw new Error('"args" cannot be empty');
     }
-    this.__table = action.__table;
+  }
+
+  validate(table: Table, name: string) {
+    // Initialize wrapped action if it hasn't done it yet
+    if (!this.action.__name) {
+      // For an uninitialized wrapped action, table and name default to parent's equivalent,
+      // e.g. dd.wrap(dd.insert(...))
+      initializeAction(this.action, table, name);
+    }
   }
 }
