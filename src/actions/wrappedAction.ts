@@ -3,6 +3,8 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table } from '../core/core';
 
 export class WrappedAction extends Action {
+  isTemp = false;
+
   constructor(
     public action: Action,
     // tslint:disable-next-line no-any
@@ -22,7 +24,9 @@ export class WrappedAction extends Action {
     if (!this.action.__name) {
       // For an uninitialized wrapped action, table and name default to parent's equivalent,
       // e.g. dd.wrap(dd.insert(...))
+      // NOTE: action must be initialized to function properly
       initializeAction(this.action, table, name);
+      this.isTemp = true;
     }
   }
 }

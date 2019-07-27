@@ -39,6 +39,7 @@ test('Chaining', () => {
     def_value: 'c',
     follower_count: 123,
   });
+  expect(v.isTemp).toBe(false);
 });
 
 test('Uninitialized wrapped action __table n __name', () => {
@@ -52,4 +53,5 @@ test('Uninitialized wrapped action __table n __name', () => {
   const v = ta.t;
   expect(v.__table).toBe(user);
   expect(v.__name).toBe('t');
+  expect(v.isTemp).toBe(true);
 });
