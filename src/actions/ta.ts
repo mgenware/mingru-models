@@ -3,6 +3,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import * as defs from '../core/defs';
 import toTypeString from 'to-type-string';
 import Utils from '../lib/utils';
+import { SQLVariable } from '../core/sql';
 
 export class TA {
   __table: Table | null = null;
@@ -21,6 +22,8 @@ export class Action extends CoreProperty {
   // Will be set after calling dd.ta
   __table: Table | null = null;
 
+  __argStubs: SQLVariable[] = [];
+
   constructor(public actionType: ActionType) {
     super();
   }
@@ -28,6 +31,11 @@ export class Action extends CoreProperty {
   // After action is fully initialized, `dd.ta` will call `Action.validate`
   validate(_: Table, __: string) {
     // Implemented by sub-classes
+  }
+
+  argStubs(...args: SQLVariable[]): this {
+    this.__argStubs = args;
+    return this;
   }
 }
 

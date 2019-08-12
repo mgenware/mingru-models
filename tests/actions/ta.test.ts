@@ -72,3 +72,17 @@ test('enumerateActions (sorted)', () => {
   dd.enumerateActions(ta, a => actions.push(a), { sorted: true });
   expect(actions).toEqual([ta.sel, ta.upd]);
 });
+
+test('Argument stubs', () => {
+  const stubs = [
+    new dd.SQLVariable('int', 'id'),
+    new dd.SQLVariable('int', 'id2'),
+  ];
+  class UserTA extends dd.TA {
+    t = dd.select(user.id).argStubs(...stubs);
+  }
+  const ta = dd.ta(user, UserTA);
+
+  const v = ta.t;
+  expect(v.__argStubs).toEqual(stubs);
+});
