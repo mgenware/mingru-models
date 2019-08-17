@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { ActionType } from './ta';
-import { Column, ColumnType } from '../core/core';
+import { Column, ColumnType, Table } from '../core/core';
 import { SQL, SQLConvertible, convertToSQL } from '../core/sql';
 import { CoreSelectAction } from './coreSelectAction';
 import toTypeString from 'to-type-string';
@@ -147,6 +147,21 @@ export class SelectAction extends CoreSelectAction {
     }
     this.havingSQL = value;
     return this;
+  }
+
+  validate(table: Table, name: string) {
+    super.validate(table, name);
+
+    const { mode } = this;
+    const selectCollection =
+      mode === SelectActionMode.list || mode === SelectActionMode.page;
+    if (selectCollection && !this.orderByColumns.length) {
+      throw new Error(
+        `An ORDER BY clause is required when select multiple rows, action name "${
+          this.__name
+        }"`,
+      );
+    }
   }
 
   private orderByCore(column: SelectActionColumnNames, desc: boolean): this {

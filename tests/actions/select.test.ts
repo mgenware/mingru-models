@@ -30,7 +30,10 @@ test('Select *', () => {
 
 test('selectRows', () => {
   class UserTA extends dd.TA {
-    t = dd.selectRows(user.id, user.name).where(dd.sql`${user.id} = 1`);
+    t = dd
+      .selectRows(user.id, user.name)
+      .where(dd.sql`${user.id} = 1`)
+      .orderBy(user.id);
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
@@ -204,7 +207,8 @@ test('having', () => {
     t = dd
       .selectRows(user.id, user.name)
       .groupBy(user.name)
-      .having(dd.sql`${dd.count(user.name)} > 2`);
+      .having(dd.sql`${dd.count(user.name)} > 2`)
+      .orderBy(user.id);
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
@@ -220,4 +224,44 @@ test('Throw when limit is called on non-list mode', () => {
     }
     dd.ta(user, UserTA);
   }).toThrow('list');
+});
+
+test('Throw on selecting collection without ORDER BY', () => {
+  const t = user;
+  expect(() => {
+    class UserTA extends dd.TA {
+      t = dd.selectField(t.name);
+    }
+    dd.ta(user, UserTA);
+  }).not.toThrow();
+  expect(() => {
+    class UserTA extends dd.TA {
+      t = dd.select(t.name);
+    }
+    dd.ta(user, UserTA);
+  }).not.toThrow();
+  expect(() => {
+    class UserTA extends dd.TA {
+      t = dd.selectRows(t.name).orderBy(t.name);
+    }
+    dd.ta(user, UserTA);
+  }).not.toThrow();
+  expect(() => {
+    class UserTA extends dd.TA {
+      t = dd.selectPage(t.name).orderBy(t.name);
+    }
+    dd.ta(user, UserTA);
+  }).not.toThrow();
+  expect(() => {
+    class UserTA extends dd.TA {
+      t = dd.selectRows(t.name);
+    }
+    dd.ta(user, UserTA);
+  }).toThrow('ORDER BY');
+  expect(() => {
+    class UserTA extends dd.TA {
+      t = dd.selectPage(t.name);
+    }
+    dd.ta(user, UserTA);
+  }).toThrow('ORDER BY');
 });
