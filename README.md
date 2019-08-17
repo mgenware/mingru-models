@@ -516,13 +516,13 @@ updateLastLogin = dd
 
 ### More on `SELECT` Actions
 
-#### `orderBy` and `orderByDesc`
+#### `orderByAsc` and `orderByDesc`
 
 ```ts
 selectUser = dd
   .select(user.name, user.age)
   .byID()
-  .orderBy(user.name)
+  .orderByAsc(user.name)
   .orderByDesc(user.age);
 ```
 

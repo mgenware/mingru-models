@@ -105,7 +105,7 @@ export class SelectAction extends CoreSelectAction {
     });
   }
 
-  orderBy(column: SelectActionColumnNames): this {
+  orderByAsc(column: SelectActionColumnNames): this {
     throwIfFalsy(column, 'column');
     return this.orderByCore(column, false);
   }

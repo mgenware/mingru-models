@@ -33,7 +33,7 @@ test('selectRows', () => {
     t = dd
       .selectRows(user.id, user.name)
       .where(dd.sql`${user.id} = 1`)
-      .orderBy(user.id);
+      .orderByAsc(user.id);
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
@@ -166,8 +166,8 @@ test('Order by', () => {
     t = dd
       .select(user.name, user.follower_count, cc)
       .byID()
-      .orderBy(user.name)
-      .orderBy(cc)
+      .orderByAsc(user.name)
+      .orderByAsc(cc)
       .orderByDesc(user.follower_count);
   }
   const ta = dd.ta(user, UserTA);
@@ -208,7 +208,7 @@ test('having', () => {
       .selectRows(user.id, user.name)
       .groupBy(user.name)
       .having(dd.sql`${dd.count(user.name)} > 2`)
-      .orderBy(user.id);
+      .orderByAsc(user.id);
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
@@ -242,13 +242,13 @@ test('Throw on selecting collection without ORDER BY', () => {
   }).not.toThrow();
   expect(() => {
     class UserTA extends dd.TA {
-      t = dd.selectRows(t.name).orderBy(t.name);
+      t = dd.selectRows(t.name).orderByAsc(t.name);
     }
     dd.ta(user, UserTA);
   }).not.toThrow();
   expect(() => {
     class UserTA extends dd.TA {
-      t = dd.selectPage(t.name).orderBy(t.name);
+      t = dd.selectPage(t.name).orderByAsc(t.name);
     }
     dd.ta(user, UserTA);
   }).not.toThrow();
