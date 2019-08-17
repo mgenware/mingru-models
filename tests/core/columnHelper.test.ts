@@ -88,6 +88,14 @@ test('pk(column)', () => {
   expect(c.type.nullable).toBe(false);
 });
 
+test('pk(FK)', () => {
+  const c = dd.pk(post.id);
+  expect(c.type.pk).toBe(true);
+  expect(c.type.unique).toBe(false);
+  expect(c.type.nullable).toBe(false);
+  expect(c.foreignColumn).toBe(post.id);
+});
+
 test('autoIncrement', () => {
   // Calling pk with an integer type sets AUTO_INCREMENT to true
   expect(dd.pk(dd.int()).type.autoIncrement).toBe(true);

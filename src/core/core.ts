@@ -64,7 +64,7 @@ export class Column extends CoreProperty {
 
   static newForeignColumn(
     srcColumn: Column,
-    table: Table | null, // can be nullable, used by dd.fk which doesn't have a table param
+    table: Table | null, // can be null, used by dd.fk which doesn't have a table param
   ): Column {
     throwIfFalsy(srcColumn, 'srcColumn');
 

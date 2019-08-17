@@ -91,6 +91,12 @@ export function pk(column?: Column): Column {
   } else {
     col = uBigInt();
   }
+  if (Object.isFrozen(col)) {
+    // col is from another table, therefore an implicit FK
+    const fkCol = Column.newForeignColumn(col, null);
+    fkCol.type.pk = true;
+    col = fkCol;
+  }
   const colType = col.type;
   colType.pk = true;
   // Auto set AUTO_INCREMENT if column is an integer
