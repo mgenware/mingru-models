@@ -1,6 +1,10 @@
 import * as dd from '../../';
 import user from '../models/user';
 import post from '../models/post';
+import * as assert from 'assert';
+
+const expect = assert.equal;
+const ok = assert.ok;
 
 it('Insert', () => {
   class UserTA extends dd.TA {
@@ -12,11 +16,12 @@ it('Insert', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.actionType).toBe(dd.ActionType.insert);
-  expect(v.ensureOneRowAffected).toBeFalsy();
-  expect(v).toBeInstanceOf(dd.InsertAction);
-  expect(v).toBeInstanceOf(dd.CoreUpdateAction);
-  expect(v.settersToString()).toBe(
+  expect(v.actionType, dd.ActionType.insert);
+  expect(v.ensureOneRowAffected, false);
+  ok(v instanceof dd.InsertAction);
+  ok(v instanceof dd.CoreUpdateAction);
+  expect(
+    v.settersToString(),
     'title: <title: [title]>, snake_case_user_id: <snakeCaseUserID: [snake_case_user_id]>',
   );
 });
@@ -31,7 +36,7 @@ it('Insert one', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.ensureOneRowAffected).toBeTruthy();
+  expect(v.ensureOneRowAffected, true);
 });
 
 it('unsafeInsert', () => {
@@ -40,7 +45,7 @@ it('unsafeInsert', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  expect(v.noColumnNumberCheck).toBeTruthy();
+  expect(v.noColumnNumberCheck, true);
 });
 
 it('unsafeInsertOne', () => {
@@ -49,8 +54,8 @@ it('unsafeInsertOne', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  expect(v.ensureOneRowAffected).toBeTruthy();
-  expect(v.noColumnNumberCheck).toBeTruthy();
+  expect(v.ensureOneRowAffected, true);
+  expect(v.noColumnNumberCheck, true);
 });
 
 it('SQLConvertible value', () => {
@@ -62,35 +67,35 @@ it('SQLConvertible value', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  expect(v.setters.get(post.title)!.toString()).toBe('CALL(1)');
+  expect(v.setters.get(post.title)!.toString(), 'CALL(1)');
 });
 
 it('No setters', () => {
-  expect(() => {
+  assert.throws(() => {
     class PostTA extends dd.TA {
       t = dd.insert();
     }
     dd.ta(post, PostTA);
-  }).toThrow('setter');
+  }, 'setter');
 });
 
 it('Column number check', () => {
-  expect(() => {
+  assert.throws(() => {
     class PostTA extends dd.TA {
       t = dd.insert().setInputs(post.e_user_id);
     }
     dd.ta(post, PostTA);
-  }).toThrow('all columns');
-  expect(() => {
+  }, 'all columns');
+  assert.doesNotThrow(() => {
     class PostTA extends dd.TA {
       t = dd.insert().setInputs();
     }
     dd.ta(post, PostTA);
-  }).not.toThrow();
-  expect(() => {
+  });
+  assert.doesNotThrow(() => {
     class PostTA extends dd.TA {
       t = dd.unsafeInsert().setInputs(post.e_user_id);
     }
     dd.ta(post, PostTA);
-  }).not.toThrow();
+  });
 });
