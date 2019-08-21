@@ -4,18 +4,18 @@ import post from '../models/post';
 import { Column } from '../../';
 import cmt from '../models/postCmt';
 
-test('Frozen after dd.table', () => {
+it('Frozen after dd.table', () => {
   expect(Object.isFrozen(post.id)).toBe(true);
   expect(Object.isFrozen(post.user_id)).toBe(true);
   expect(Object.isFrozen(post.title)).toBe(true);
 });
 
-test('Normal col', () => {
+it('Normal col', () => {
   expect(post.id.__name).toBe('id');
   expect(post.id.__table).toBe(post);
 });
 
-test('Implicit FK', () => {
+it('Implicit FK', () => {
   const col = post.user_id;
   expect(col.__table).toBe(post);
   expect(col.__name).toBe('user_id');
@@ -23,7 +23,7 @@ test('Implicit FK', () => {
   expect(col.type).not.toBe(user.id.type);
 });
 
-test('Explicit FK', () => {
+it('Explicit FK', () => {
   const col = post.e_user_id_n;
   expect(col.__table).toBe(post);
   expect(col.__name).toBe('e_user_id_n');
@@ -32,7 +32,7 @@ test('Explicit FK', () => {
   expect(col.type.nullable).toBe(true);
 });
 
-test('Explicit FK (untouched)', () => {
+it('Explicit FK (untouched)', () => {
   const col = post.e_user_id;
   expect(col.__table).toBe(post);
   expect(col.__name).toBe('e_user_id');
@@ -41,14 +41,14 @@ test('Explicit FK (untouched)', () => {
   expect(col.type.nullable).toBe(false);
 });
 
-test('freeze', () => {
+it('freeze', () => {
   const col = dd.int(234);
   col.freeze();
   expect(Object.isFrozen(col)).toBe(true);
   expect(Object.isFrozen(col.type)).toBe(true);
 });
 
-test('Column.newForeignColumn', () => {
+it('Column.newForeignColumn', () => {
   const a = user.id;
   const b = Column.newForeignColumn(a, post);
   // FK
@@ -71,7 +71,7 @@ test('Column.newForeignColumn', () => {
   expect(a.type.unique).toBe(b.type.unique);
 });
 
-test('Column.newJoinedColumn', () => {
+it('Column.newJoinedColumn', () => {
   const t = (post.user_id.join(user) as unknown) as dd.JoinedTable;
   const a = user.name;
   const b = Column.newJoinedColumn(a, t);
@@ -94,33 +94,33 @@ test('Column.newJoinedColumn', () => {
   expect(a.type.unique).toBe(b.type.unique);
 });
 
-test('Mutate a frozen column', () => {
+it('Mutate a frozen column', () => {
   const a = dd.int(234);
   a.freeze();
   expect(() => a.nullable).toThrow();
 });
 
-test('notNull (default)', () => {
+it('notNull (default)', () => {
   const c = dd.int(123);
   expect(c.type.nullable).toBe(false);
 });
 
-test('nullable', () => {
+it('nullable', () => {
   const c = dd.int(123).nullable;
   expect(c.type.nullable).toBe(true);
 });
 
-test('unique', () => {
+it('unique', () => {
   const c = dd.int(123).unique;
   expect(c.type.unique).toBe(true);
 });
 
-test('unique (default)', () => {
+it('unique (default)', () => {
   const c = dd.int(123);
   expect(c.type.unique).toBe(false);
 });
 
-test('setDefault', () => {
+it('setDefault', () => {
   let c = dd.int(123).setDefault('omg');
   expect(c.defaultValue).toBe('omg');
 
@@ -128,17 +128,17 @@ test('setDefault', () => {
   expect(c.defaultValue).toBe(null);
 });
 
-test('Column.inputName', () => {
+it('Column.inputName', () => {
   expect(user.id.inputName()).toBe('id');
   expect(user.snake_case_name.inputName()).toBe('snakeCaseName');
   expect(cmt.snake_case_post_id.inputName()).toBe('snakeCasePostID');
 });
 
-test('ForeignColumn.inputName', () => {
+it('ForeignColumn.inputName', () => {
   expect(post.snake_case_user_id.inputName()).toBe('snakeCaseUserID');
 });
 
-test('JoinedColumn.inputName', () => {
+it('JoinedColumn.inputName', () => {
   expect(post.snake_case_user_id.join(user).id.inputName()).toBe(
     'snakeCaseUserID',
   );
@@ -163,7 +163,7 @@ class JCTable extends dd.Table {
   jc = post.user_id.join(user).name;
 }
 
-test('JoinedColumn in table def', () => {
+it('JoinedColumn in table def', () => {
   expect(() => dd.table(JCTable)).toThrow('JoinedColumn');
 });
 
@@ -171,11 +171,11 @@ class SCTable extends dd.Table {
   sc = dd.int().as('haha');
 }
 
-test('RawColumn in table def', () => {
+it('RawColumn in table def', () => {
   expect(() => dd.table(SCTable)).toThrow('RawColumn');
 });
 
-test('Register property callback', () => {
+it('Register property callback', () => {
   let counter = 0;
   const cb = () => counter++;
   const col = new dd.Column(new dd.ColumnType('abc'));
@@ -193,7 +193,7 @@ test('Register property callback', () => {
   expect(counter).toBe(2);
 });
 
-test('Register property callback on a initialized property', () => {
+it('Register property callback on a initialized property', () => {
   let counter = 0;
   const cb = () => counter++;
   dd.CoreProperty.registerHandler(user.name, cb);
@@ -201,7 +201,7 @@ test('Register property callback on a initialized property', () => {
   expect(counter).toBe(1);
 });
 
-test('Throw on default value of complex SQL', () => {
+it('Throw on default value of complex SQL', () => {
   expect(() => {
     class T extends dd.Table {
       t = dd.varChar(23).setDefault(dd.datetimeNow());

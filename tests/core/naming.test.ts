@@ -17,7 +17,7 @@ class DEFTable extends dd.Table {
 const abcTable = dd.table(ABCTable);
 const defTable = dd.table(DEFTable, 't');
 
-test('Table name and getDBName', () => {
+it('Table name and getDBName', () => {
   expect(abcTable.__name).toBe('abc_table');
   expect(abcTable.getDBName()).toBe('abc_table');
   expect(defTable.__name).toBe('def_table');
@@ -29,12 +29,12 @@ test('Table name and getDBName', () => {
   expect(abcTable.statusID.__dbName).toBe('customName');
 });
 
-test('col.TableName(dbName)', () => {
+it('col.TableName(dbName)', () => {
   expect(defTable.id.tableName()).toBe('def_table');
   expect(defTable.id.tableName(true)).toBe('t');
 });
 
-test('Rename a FK', () => {
+it('Rename a FK', () => {
   expect(abcTable.uid1.__name).toBe('uid_1');
   expect(abcTable.uid1.__dbName).toBe(null);
   expect(abcTable.uid1.getDBName()).toBe('uid_1');

@@ -2,11 +2,11 @@ import * as dd from '../../';
 import user from '../models/user';
 import employee from '../models/employee';
 
-test('Table name', () => {
+it('Table name', () => {
   expect(user.__name).toBe('user');
 });
 
-test('enumerateColumns', () => {
+it('enumerateColumns', () => {
   const cols: dd.Column[] = [];
   dd.enumerateColumns(user, col => cols.push(col));
   expect(cols).toEqual([
@@ -18,7 +18,7 @@ test('enumerateColumns', () => {
   ]);
 });
 
-test('enumerateColumns (sorted)', () => {
+it('enumerateColumns (sorted)', () => {
   const cols: dd.Column[] = [];
   dd.enumerateColumns(user, col => cols.push(col), { sorted: true });
   expect(cols).toEqual([
@@ -30,7 +30,7 @@ test('enumerateColumns (sorted)', () => {
   ]);
 });
 
-test('__pks', () => {
+it('__pks', () => {
   expect(user.__pks).toEqual([user.id]);
   expect(user.__pkAIs).toEqual([user.id]);
   expect(employee.__pks).toEqual([employee.id]);

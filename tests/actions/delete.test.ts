@@ -1,20 +1,24 @@
 import * as dd from '../../';
 import user from '../models/user';
+import * as assert from 'assert';
 
-test('DeleteAction', () => {
+const expect = assert.equal;
+const ok = assert.ok;
+
+it('DeleteAction', () => {
   class UserTA extends dd.TA {
     t = dd.deleteOne().where(dd.sql`${user.id} = 1`);
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  expect(v).toBeInstanceOf(dd.DeleteAction);
-  expect(v).toBeInstanceOf(dd.CoreSelectAction);
-  expect(v).toBeInstanceOf(dd.Action);
-  expect(v.whereSQL!.toString()).toBe('`id` = 1');
-  expect(v.actionType).toBe(dd.ActionType.delete);
+  ok(v instanceof dd.DeleteAction);
+  ok(v instanceof dd.CoreSelectAction);
+  ok(v instanceof dd.Action);
+  expect(v.whereSQL!.toString(), '`id` = 1');
+  expect(v.actionType, dd.ActionType.delete);
 });
 
-test('deleteOne', () => {
+it('deleteOne', () => {
   class UserTA extends dd.TA {
     t = dd.deleteOne().where(dd.sql`${user.id} = 1`);
   }
@@ -22,19 +26,19 @@ test('deleteOne', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.ensureOneRowAffected).toBe(true);
-  expect(v.allowNoWhere).toBe(false);
+  expect(v.ensureOneRowAffected, true);
+  expect(v.allowNoWhere, false);
 
   // Throw error when WHERE is empty
-  expect(() => {
+  assert.throws(() => {
     class TA extends dd.TA {
       t = dd.deleteOne();
     }
     dd.ta(user, TA);
-  }).toThrow('unsafeDeleteAll');
+  }, 'unsafeDeleteAll');
 });
 
-test('deleteSome', () => {
+it('deleteSome', () => {
   class UserTA extends dd.TA {
     t = dd.deleteSome().where(dd.sql`${user.id} = 1`);
   }
@@ -42,19 +46,19 @@ test('deleteSome', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.ensureOneRowAffected).toBe(false);
-  expect(v.allowNoWhere).toBe(false);
+  expect(v.ensureOneRowAffected, false);
+  expect(v.allowNoWhere, false);
 
   // Throw error when WHERE is empty
-  expect(() => {
+  assert.throws(() => {
     class TA extends dd.TA {
       t = dd.deleteSome();
     }
     dd.ta(user, TA);
-  }).toThrow('unsafeDeleteAll');
+  }, 'unsafeDeleteAll');
 });
 
-test('unsafeDeleteAll', () => {
+it('unsafeDeleteAll', () => {
   class UserTA extends dd.TA {
     t = dd.unsafeDeleteAll();
   }
@@ -62,6 +66,6 @@ test('unsafeDeleteAll', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.ensureOneRowAffected).toBe(false);
-  expect(v.allowNoWhere).toBe(true);
+  expect(v.ensureOneRowAffected, false);
+  expect(v.allowNoWhere, true);
 });

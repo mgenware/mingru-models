@@ -23,7 +23,7 @@ function testJCCols(
   expect(jt.keyPath).toBe(path);
 }
 
-test('JoinedColumn', () => {
+it('JoinedColumn', () => {
   const jc = post.user_id.join(user).name;
   testJCCols(
     jc,
@@ -36,7 +36,7 @@ test('JoinedColumn', () => {
   );
 });
 
-test('Nested JoinedColumn', () => {
+it('Nested JoinedColumn', () => {
   const jc1 = postCmt.post_id.join(post).user_id;
   const jc2 = jc1.join(user).name;
 
@@ -74,7 +74,7 @@ test('Nested JoinedColumn', () => {
   );
 });
 
-test('Join arbitrary table and column', () => {
+it('Join arbitrary table and column', () => {
   // Join pk of postCmt
   let jc = post.user_id.join(postCmt).post_id;
   testJCCols(

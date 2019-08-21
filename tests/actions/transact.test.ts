@@ -3,7 +3,7 @@ import user from '../models/user';
 import post from '../models/post';
 import { WrappedAction } from '../../';
 
-test('Transact', () => {
+it('Transact', () => {
   class UserTA extends dd.TA {
     insert = dd
       .insert()
@@ -39,7 +39,7 @@ test('Transact', () => {
   );
 });
 
-test('Temp member actions (wrap self)', async () => {
+it('Temp member actions (wrap self)', async () => {
   class User2 extends dd.Table {
     id = dd.pk();
     postCount = dd.int();
@@ -62,7 +62,7 @@ test('Temp member actions (wrap self)', async () => {
   expect(wrapped.args).toEqual({ offset: 1 });
 });
 
-test('Temp member actions (wrap other)', async () => {
+it('Temp member actions (wrap other)', async () => {
   class User2 extends dd.Table {
     id = dd.pk();
     postCount = dd.int();
@@ -94,7 +94,7 @@ test('Temp member actions (wrap other)', async () => {
   expect(wrapped.args).toEqual({ offset: 1 });
 });
 
-test('Setting __table or temp members', () => {
+it('Setting __table or temp members', () => {
   class UserTA extends dd.TA {
     insert = dd
       .insert()

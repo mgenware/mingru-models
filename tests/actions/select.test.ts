@@ -3,7 +3,7 @@ import user from '../models/user';
 import post from '../models/post';
 import { RawColumn } from '../../dist/main';
 
-test('select', () => {
+it('select', () => {
   class UserTA extends dd.TA {
     t = dd.select(user.id, user.name).where(dd.sql`${user.id} = 1`);
   }
@@ -21,14 +21,14 @@ test('select', () => {
   expect(v.actionType).toBe(dd.ActionType.select);
 });
 
-test('Select *', () => {
+it('Select *', () => {
   class UserTA extends dd.TA {
     t = dd.select();
   }
   expect(() => dd.ta(user, UserTA)).not.toThrow();
 });
 
-test('selectRows', () => {
+it('selectRows', () => {
   class UserTA extends dd.TA {
     t = dd
       .selectRows(user.id, user.name)
@@ -40,7 +40,7 @@ test('selectRows', () => {
   expect(v.mode).toBe(dd.SelectActionMode.list);
 });
 
-test('as', () => {
+it('as', () => {
   const a = user.id.as('a');
   const b = user.name.as('b');
   const c = user.id.as('c');
@@ -51,7 +51,7 @@ test('as', () => {
   expect(c.selectedName).toBe('c');
 });
 
-test('RawColumn', () => {
+it('RawColumn', () => {
   const a = user.id.as('x');
   const b = new dd.RawColumn(user.id, 'y');
   expect(a.selectedName).toBe('x');
@@ -60,7 +60,7 @@ test('RawColumn', () => {
   expect(b.core).toBe(user.id);
 });
 
-test('RawColumn (raw SQL)', () => {
+it('RawColumn (raw SQL)', () => {
   const a = new dd.RawColumn(dd.sql`123`, 'x');
   const b = new dd.RawColumn(dd.sql`COUNT(${user.name})`, 'y');
   expect(a.selectedName).toBe('x');
@@ -69,14 +69,14 @@ test('RawColumn (raw SQL)', () => {
   expect(b.core.toString()).toBe('COUNT(`name`)');
 });
 
-test('RawColumn (types)', () => {
+it('RawColumn (types)', () => {
   const a = new dd.RawColumn(dd.sql`123`, 'x', new dd.ColumnType(['t1', 't2']));
   expect(a.selectedName).toBe('x');
   expect(a.core.toString()).toBe('123');
   expect(a.type).toEqual(new dd.ColumnType(['t1', 't2']));
 });
 
-test('RawColumn (count)', () => {
+it('RawColumn (count)', () => {
   class UserTA extends dd.TA {
     t = dd.select(
       dd.sel(
@@ -93,7 +93,7 @@ test('RawColumn (count)', () => {
   expect(cc.core.toString()).toBe('CALL(3, `name`)');
 });
 
-test('RawColumn (SQLConvertible)', () => {
+it('RawColumn (SQLConvertible)', () => {
   let cc = new RawColumn(post.user_id, 't');
   // Column should not be wrapped in SQL
   expect(cc.core).toBe(post.user_id);
@@ -103,21 +103,21 @@ test('RawColumn (SQLConvertible)', () => {
   expect(cc.core.toString()).toBe('CALL(3, `id`)');
 });
 
-test('RawColumn (infer name from columns)', () => {
+it('RawColumn (infer name from columns)', () => {
   let cc = dd.sel(user.name);
   expect(cc.selectedName).toBe('name');
   cc = new RawColumn(dd.coalesce('a', user.name, user.snake_case_name));
   expect(cc.selectedName).toBe('name');
 });
 
-test('dd.select (types)', () => {
+it('dd.select (types)', () => {
   const a = dd.sel(dd.sql`123`, 'x', new dd.ColumnType(['t1', 't2']));
   expect(a.selectedName).toBe('x');
   expect(a.core.toString()).toBe('123');
   expect(a.type).toEqual(new dd.ColumnType(['t1', 't2']));
 });
 
-test('byID', () => {
+it('byID', () => {
   class UserTA extends dd.TA {
     t = dd.select(user.name).byID();
   }
@@ -126,7 +126,7 @@ test('byID', () => {
   expect(v.whereSQL!.toString()).toBe('`id` = <id: [id]>');
 });
 
-test('byID with inputName', () => {
+it('byID with inputName', () => {
   class UserTA extends dd.TA {
     t = dd.select(user.name).byID('haha');
   }
@@ -135,7 +135,7 @@ test('byID with inputName', () => {
   expect(v.whereSQL!.toString()).toBe('`id` = <haha: [id]>');
 });
 
-test('by', () => {
+it('by', () => {
   class UserTA extends dd.TA {
     t = dd.select(user.name).by(user.snake_case_name);
   }
@@ -144,7 +144,7 @@ test('by', () => {
   expect(v.whereSQL!.toString()).toBe('<snakeCaseName: [snake_case_name]>');
 });
 
-test('selectField', () => {
+it('selectField', () => {
   const sc = dd.sel(dd.count('*'), 'c');
   class UserTA extends dd.TA {
     t = dd.selectField(user.name).byID();
@@ -160,7 +160,7 @@ test('selectField', () => {
   expect(v2.columns[0]).toEqual(sc);
 });
 
-test('Order by', () => {
+it('Order by', () => {
   const cc = dd.sel('haha', 'name', new dd.ColumnType('int'));
   class UserTA extends dd.TA {
     t = dd
@@ -182,7 +182,7 @@ test('Order by', () => {
   expect(v.orderByColumns[2].desc).toBe(true);
 });
 
-test('Validate columns', () => {
+it('Validate columns', () => {
   const t = user;
   expect(() => {
     class UserTA extends dd.TA {
@@ -202,7 +202,7 @@ test('Validate columns', () => {
   }).toThrow('not a valid');
 });
 
-test('having', () => {
+it('having', () => {
   class UserTA extends dd.TA {
     t = dd
       .selectRows(user.id, user.name)
@@ -216,7 +216,7 @@ test('having', () => {
   expect(v.havingSQL!.toString()).toBe('CALL(3, `name`) > 2');
 });
 
-test('Throw when limit is called on non-list mode', () => {
+it('Throw when limit is called on non-list mode', () => {
   const t = user;
   expect(() => {
     class UserTA extends dd.TA {
@@ -226,7 +226,7 @@ test('Throw when limit is called on non-list mode', () => {
   }).toThrow('list');
 });
 
-test('Throw on selecting collection without ORDER BY', () => {
+it('Throw on selecting collection without ORDER BY', () => {
   const t = user;
   expect(() => {
     class UserTA extends dd.TA {

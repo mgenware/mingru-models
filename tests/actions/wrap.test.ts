@@ -1,7 +1,7 @@
 import * as dd from '../../';
 import user from '../models/user';
 
-test('WrappedAction', () => {
+it('WrappedAction', () => {
   class UserTA extends dd.TA {
     t = dd.deleteOne().byID();
     t2 = this.t.wrap({
@@ -19,7 +19,7 @@ test('WrappedAction', () => {
   });
 });
 
-test('Chaining', () => {
+it('Chaining', () => {
   class UserTA extends dd.TA {
     t = dd.insert().setInputs();
     t2 = this.t
@@ -42,7 +42,7 @@ test('Chaining', () => {
   expect(v.isTemp).toBe(false);
 });
 
-test('Uninitialized wrapped action __table n __name', () => {
+it('Uninitialized wrapped action __table n __name', () => {
   class UserTA extends dd.TA {
     t = dd
       .deleteOne()

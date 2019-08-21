@@ -6,7 +6,7 @@ function dtc(dtString: string): dd.ColumnType {
   return new dd.ColumnType(dtString);
 }
 
-test('SQL calls', () => {
+it('SQL calls', () => {
   let t: dd.SQLCall;
   t = dd.datetimeNow();
   expect(t.type).toBe(dd.SQLCallType.datetimeNow);
@@ -31,13 +31,13 @@ test('SQL calls', () => {
   expect(dd.countAll()).toEqual(dd.count('*'));
 });
 
-test('Embed', () => {
+it('Embed', () => {
   expect(dd.sql`haha ${dd.datetimeNow()} ${dd.dateNow()}`.toString()).toBe(
     `haha CALL(${dd.SQLCallType.datetimeNow}) CALL(${dd.SQLCallType.dateNow})`,
   );
 });
 
-test('Embed (raw)', () => {
+it('Embed (raw)', () => {
   expect(
     dd.sql`haha ${new dd.SQLCall(
       dd.SQLCallType.datetimeNow,

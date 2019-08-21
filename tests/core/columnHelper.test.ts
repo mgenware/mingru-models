@@ -1,77 +1,77 @@
 import * as dd from '../../';
 import post from '../models/post';
 
-test('bigInt', () => {
+it('bigInt', () => {
   const c = dd.bigInt(123);
   expect(c.type.types).toContain(dd.dt.bigInt);
   expect(c.defaultValue).toBe(123);
   expect(c.type.unsigned).toBe(false);
 });
 
-test('unsignedBigInt', () => {
+it('unsignedBigInt', () => {
   const c = dd.uBigInt(123);
   expect(c.type.types).toContain(dd.dt.bigInt);
   expect(c.defaultValue).toBe(123);
   expect(c.type.unsigned).toBe(true);
 });
 
-test('int', () => {
+it('int', () => {
   const c = dd.int(123);
   expect(c.type.types).toContain(dd.dt.int);
   expect(c.defaultValue).toBe(123);
   expect(c.type.unsigned).toBe(false);
 });
 
-test('unsignedInt', () => {
+it('unsignedInt', () => {
   const c = dd.uInt(123);
   expect(c.type.types).toContain(dd.dt.int);
   expect(c.defaultValue).toBe(123);
   expect(c.type.unsigned).toBe(true);
 });
 
-test('smallInt', () => {
+it('smallInt', () => {
   const c = dd.smallInt(123);
   expect(c.type.types).toContain(dd.dt.smallInt);
   expect(c.defaultValue).toBe(123);
   expect(c.type.unsigned).toBe(false);
 });
 
-test('unsignedSmallInt', () => {
+it('unsignedSmallInt', () => {
   const c = dd.uSmallInt(123);
   expect(c.type.types).toContain(dd.dt.smallInt);
   expect(c.defaultValue).toBe(123);
   expect(c.type.unsigned).toBe(true);
 });
 
-test('tinyInt', () => {
+it('tinyInt', () => {
   const c = dd.tinyInt(123);
   expect(c.type.types).toContain(dd.dt.tinyInt);
   expect(c.defaultValue).toBe(123);
   expect(c.type.unsigned).toBe(false);
 });
 
-test('unsignedTinyInt', () => {
+it('unsignedTinyInt', () => {
   const c = dd.uTinyInt(123);
   expect(c.type.types).toContain(dd.dt.tinyInt);
   expect(c.defaultValue).toBe(123);
   expect(c.type.unsigned).toBe(true);
 });
 
-test('char', () => {
+it('char', () => {
   const c = dd.char(20, 'ha');
   expect(c.type.types).toContain(dd.dt.char);
   expect(c.defaultValue).toBe('ha');
   expect(c.type.length).toBe(20);
 });
 
-test('varChar', () => {
+it('varChar', () => {
   const c = dd.varChar(20, 'ha');
   expect(c.type.types).toContain(dd.dt.varChar);
   expect(c.defaultValue).toBe('ha');
   expect(c.type.length).toBe(20);
 });
 
-test('pk', () => {
+it('pk', () => {
   const c = dd.pk();
   expect(c.type.types).toContain(dd.dt.bigInt);
   expect(c.type.unique).toBe(false);
@@ -80,7 +80,7 @@ test('pk', () => {
   expect(c.type.autoIncrement).toBe(true);
 });
 
-test('pk(column)', () => {
+it('pk(column)', () => {
   const charCol = dd.char(3);
   const c = dd.pk(charCol);
   expect(c).toBe(charCol);
@@ -88,7 +88,7 @@ test('pk(column)', () => {
   expect(c.type.nullable).toBe(false);
 });
 
-test('pk(FK)', () => {
+it('pk(FK)', () => {
   const c = dd.pk(post.id);
   expect(c.type.pk).toBe(true);
   expect(c.type.unique).toBe(false);
@@ -96,7 +96,7 @@ test('pk(FK)', () => {
   expect(c.foreignColumn).toBe(post.id);
 });
 
-test('autoIncrement', () => {
+it('autoIncrement', () => {
   // Calling pk with an integer type sets AUTO_INCREMENT to true
   expect(dd.pk(dd.int()).type.autoIncrement).toBe(true);
   expect(dd.pk(dd.tinyInt()).type.autoIncrement).toBe(true);
@@ -109,36 +109,36 @@ test('autoIncrement', () => {
   expect(post.user_id.type.autoIncrement).toBe(false);
 });
 
-test('isNoDefaultOnCSQL', () => {
+it('isNoDefaultOnCSQL', () => {
   expect(dd.pk(dd.int(20)).isNoDefaultOnCSQL).toBe(false);
   expect(dd.pk(dd.int(20)).noDefaultOnCSQL.isNoDefaultOnCSQL).toBe(true);
 });
 
-test('text', () => {
+it('text', () => {
   const c = dd.text('ha');
   expect(c.type.types).toContain(dd.dt.text);
   expect(c.defaultValue).toBe('ha');
 });
 
-test('double', () => {
+it('double', () => {
   const c = dd.double(20);
   expect(c.type.types).toContain(dd.dt.double);
   expect(c.defaultValue).toBe(20);
 });
 
-test('float', () => {
+it('float', () => {
   const c = dd.float(20);
   expect(c.type.types).toContain(dd.dt.float);
   expect(c.defaultValue).toBe(20);
 });
 
-test('bool', () => {
+it('bool', () => {
   const c = dd.bool(true);
   expect(c.type.types).toContain(dd.dt.bool);
   expect(c.defaultValue).toBe(true);
 });
 
-test('datetime', () => {
+it('datetime', () => {
   let c = dd.datetime();
   expect(c.type.types).toContain(dd.dt.datetime);
 
@@ -146,7 +146,7 @@ test('datetime', () => {
   expect((c.defaultValue as object).toString()).toBe('CALL(0)');
 });
 
-test('date', () => {
+it('date', () => {
   let c = dd.date();
   expect(c.type.types).toContain(dd.dt.date);
 
@@ -154,7 +154,7 @@ test('date', () => {
   expect((c.defaultValue as object).toString()).toBe('CALL(1)');
 });
 
-test('time', () => {
+it('time', () => {
   let c = dd.time();
   expect(c.type.types).toContain(dd.dt.time);
 
@@ -162,7 +162,7 @@ test('time', () => {
   expect((c.defaultValue as object).toString()).toBe('CALL(2)');
 });
 
-test('dt.isInteger', () => {
+it('dt.isInteger', () => {
   const { dt } = dd;
   expect(dt.isInteger(dt.bigInt)).toBe(true);
   expect(dt.isInteger(dt.int)).toBe(true);
@@ -175,7 +175,7 @@ test('dt.isInteger', () => {
   expect(dt.isInteger(dt.char)).toBe(false);
 });
 
-test('dt.isNumber', () => {
+it('dt.isNumber', () => {
   const { dt } = dd;
   expect(dt.isNumber(dt.bigInt)).toBe(true);
   expect(dt.isNumber(dt.int)).toBe(true);
@@ -186,7 +186,7 @@ test('dt.isNumber', () => {
   expect(dt.isNumber(dt.bool)).toBe(false);
 });
 
-test('dt.isTimeRelated', () => {
+it('dt.isTimeRelated', () => {
   const { dt } = dd;
   expect(dt.isTimeRelated(dt.datetime)).toBe(true);
   expect(dt.isTimeRelated(dt.date)).toBe(true);

@@ -1,7 +1,7 @@
 import * as dd from '../../';
 import user from '../models/user';
 
-test('ta', () => {
+it('ta', () => {
   class UserTA extends dd.TA {
     upd = dd
       .unsafeUpdateAll()
@@ -25,7 +25,7 @@ test('ta', () => {
   expect(v2).toBeInstanceOf(dd.SelectAction);
 });
 
-test('Register property callback', () => {
+it('Register property callback', () => {
   let counter = 0;
   const cb = () => counter++;
   const action = new dd.Action(dd.ActionType.select);
@@ -43,7 +43,7 @@ test('Register property callback', () => {
   expect(counter).toBe(2);
 });
 
-test('enumerateActions', () => {
+it('enumerateActions', () => {
   class UserTA extends dd.TA {
     upd = dd
       .unsafeUpdateAll()
@@ -58,7 +58,7 @@ test('enumerateActions', () => {
   expect(actions).toEqual([ta.upd, ta.sel]);
 });
 
-test('enumerateActions (sorted)', () => {
+it('enumerateActions (sorted)', () => {
   class UserTA extends dd.TA {
     upd = dd
       .unsafeUpdateAll()
@@ -73,7 +73,7 @@ test('enumerateActions (sorted)', () => {
   expect(actions).toEqual([ta.sel, ta.upd]);
 });
 
-test('Argument stubs', () => {
+it('Argument stubs', () => {
   const stubs = [
     new dd.SQLVariable('int', 'id'),
     new dd.SQLVariable('int', 'id2'),

@@ -1,7 +1,7 @@
 import * as dd from '../../';
 import user from '../models/user';
 
-test('Update', () => {
+it('Update', () => {
   class UserTA extends dd.TA {
     t = dd
       .updateSome()
@@ -27,7 +27,7 @@ test('Update', () => {
   );
 });
 
-test('Order of setInputs and set', () => {
+it('Order of setInputs and set', () => {
   class UserTA extends dd.TA {
     t = dd
       .unsafeUpdateAll()
@@ -42,7 +42,7 @@ test('Order of setInputs and set', () => {
   );
 });
 
-test('setInputs and setDefaults', () => {
+it('setInputs and setDefaults', () => {
   class UserTA extends dd.TA {
     t = dd
       .unsafeUpdateAll()
@@ -57,7 +57,7 @@ test('setInputs and setDefaults', () => {
   );
 });
 
-test('setInputs with no args', () => {
+it('setInputs with no args', () => {
   class UserTA extends dd.TA {
     t = dd
       .unsafeUpdateAll()
@@ -74,7 +74,7 @@ test('setInputs with no args', () => {
   expect(v.autoSetter).toBe('input');
 });
 
-test('setDefaults with no args', () => {
+it('setDefaults with no args', () => {
   class UserTA extends dd.TA {
     t = dd
       .unsafeUpdateAll()
@@ -91,7 +91,7 @@ test('setDefaults with no args', () => {
   expect(v.autoSetter).toBe('default');
 });
 
-test('setInputs and setDefaults twice', () => {
+it('setInputs and setDefaults twice', () => {
   expect(() => {
     class UserTA extends dd.TA {
       t = dd
@@ -112,7 +112,7 @@ test('setInputs and setDefaults twice', () => {
   }).toThrow('already set');
 });
 
-test('Set same column twice', () => {
+it('Set same column twice', () => {
   class UserTA extends dd.TA {
     t = dd
       .unsafeUpdateAll()
@@ -123,7 +123,7 @@ test('Set same column twice', () => {
   expect(() => dd.ta(user, UserTA)).toThrow('already set');
 });
 
-test('updateOne', () => {
+it('updateOne', () => {
   class UserTA extends dd.TA {
     t = dd
       .updateOne()
@@ -146,7 +146,7 @@ test('updateOne', () => {
   }).toThrow('unsafeUpdateAll');
 });
 
-test('updateSome', () => {
+it('updateSome', () => {
   class UserTA extends dd.TA {
     t = dd
       .updateSome()
@@ -169,7 +169,7 @@ test('updateSome', () => {
   }).toThrow('unsafeUpdateAll');
 });
 
-test('unsafeUpdateAll', () => {
+it('unsafeUpdateAll', () => {
   class UserTA extends dd.TA {
     t = dd.unsafeUpdateAll().setInputs(user.snake_case_name);
   }
@@ -181,7 +181,7 @@ test('unsafeUpdateAll', () => {
   expect(v.allowNoWhere).toBe(true);
 });
 
-test('ByID', () => {
+it('ByID', () => {
   class UserTA extends dd.TA {
     t = dd
       .updateOne()
@@ -194,7 +194,7 @@ test('ByID', () => {
   expect(v.whereSQL!.toString()).toBe('`id` = <id: [id]>');
 });
 
-test('SQLConvertible value', () => {
+it('SQLConvertible value', () => {
   class UserTA extends dd.TA {
     t = dd
       .updateOne()
@@ -207,7 +207,7 @@ test('SQLConvertible value', () => {
   expect(v.setters.get(user.name)!.toString()).toBe('CALL(1)');
 });
 
-test('No setters', () => {
+it('No setters', () => {
   expect(() => {
     class UserTA extends dd.TA {
       t = dd.unsafeUpdateAll();

@@ -2,7 +2,7 @@ import * as dd from '../../';
 import user from '../models/user';
 import post from '../models/post';
 
-test('Insert', () => {
+it('Insert', () => {
   class UserTA extends dd.TA {
     t = dd
       .insert()
@@ -21,7 +21,7 @@ test('Insert', () => {
   );
 });
 
-test('Insert one', () => {
+it('Insert one', () => {
   class UserTA extends dd.TA {
     t = dd
       .insertOne()
@@ -34,7 +34,7 @@ test('Insert one', () => {
   expect(v.ensureOneRowAffected).toBeTruthy();
 });
 
-test('unsafeInsert', () => {
+it('unsafeInsert', () => {
   class UserTA extends dd.TA {
     t = dd.unsafeInsert().setInputs(post.title, post.snake_case_user_id);
   }
@@ -43,7 +43,7 @@ test('unsafeInsert', () => {
   expect(v.noColumnNumberCheck).toBeTruthy();
 });
 
-test('unsafeInsertOne', () => {
+it('unsafeInsertOne', () => {
   class UserTA extends dd.TA {
     t = dd.unsafeInsertOne().setInputs(post.title, post.snake_case_user_id);
   }
@@ -53,7 +53,7 @@ test('unsafeInsertOne', () => {
   expect(v.noColumnNumberCheck).toBeTruthy();
 });
 
-test('SQLConvertible value', () => {
+it('SQLConvertible value', () => {
   class UserTA extends dd.TA {
     t = dd
       .unsafeInsert()
@@ -65,7 +65,7 @@ test('SQLConvertible value', () => {
   expect(v.setters.get(post.title)!.toString()).toBe('CALL(1)');
 });
 
-test('No setters', () => {
+it('No setters', () => {
   expect(() => {
     class PostTA extends dd.TA {
       t = dd.insert();
@@ -74,7 +74,7 @@ test('No setters', () => {
   }).toThrow('setter');
 });
 
-test('Column number check', () => {
+it('Column number check', () => {
   expect(() => {
     class PostTA extends dd.TA {
       t = dd.insert().setInputs(post.e_user_id);

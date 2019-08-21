@@ -3,54 +3,54 @@ import user from '../models/user';
 import post from '../models/post';
 import { Column } from '../../';
 
-test('SQL', () => {
+it('SQL', () => {
   const sql = dd.sql`${user.id} = 1 OR ${user.name} = ${dd.input(user.name)}`;
   expect(sql.toString()).toBe('`id` = 1 OR `name` = <name: [name]>');
   expect(sql).toBeInstanceOf(dd.SQL);
 });
 
-test('SQL with input', () => {
+it('SQL with input', () => {
   const sql = dd.sql`START${user.id} = 1 OR ${user.name} = ${dd.input(
     user.name,
   )}END`;
   expect(sql.toString()).toBe('START`id` = 1 OR `name` = <name: [name]>END');
 });
 
-test('Input', () => {
+it('Input', () => {
   const input = dd.input(user.name);
   expect(input.type).toBe(user.name);
   expect(input.name).toBe('name');
 });
 
-test('Named input', () => {
+it('Named input', () => {
   const input = dd.input(user.name, 'haha');
   expect(input.type).toBe(user.name);
   expect(input.name).toBe('haha');
 });
 
-test('Input (foreign key)', () => {
+it('Input (foreign key)', () => {
   const input = dd.input(post.user_id);
   expect((input.type as Column).foreignColumn).toBe(user.id);
   expect(input.name).toBe('userID');
 });
 
-test('Input (joined key)', () => {
+it('Input (joined key)', () => {
   const input = dd.input(post.user_id.join(user).name);
   expect((input.type as dd.Column).mirroredColumn).toBe(user.name);
   expect(input.name).toBe('userName');
 });
 
-test('Raw type input', () => {
+it('Raw type input', () => {
   const input = dd.input('uint32', 'uid');
   expect(input.type).toBe('uint32');
   expect(input.name).toBe('uid');
 });
 
-test('Empty name for raw type input', () => {
+it('Empty name for raw type input', () => {
   expect(() => dd.input('uint32')).toThrow('empty input name');
 });
 
-test('Embed another sql', () => {
+it('Embed another sql', () => {
   const embedded = dd.sql`_${user.id} = ${dd.input(user.id)}`;
   const sql = dd.sql`START${embedded} OR ${user.name} = ${dd.input(user.name)}`;
   expect(sql.toString()).toBe(
@@ -58,64 +58,64 @@ test('Embed another sql', () => {
   );
 });
 
-test('Embed string', () => {
+it('Embed string', () => {
   const sql = dd.sql`${user.id} = ${'123'}`;
   expect(sql.toString()).toBe('`id` = 123');
 });
 
-test('toInput', () => {
+it('toInput', () => {
   const input = user.name.toInput();
   expect(input.type).toBe(user.name);
   expect(input.name).toBe('name');
 });
 
-test('toInput(string)', () => {
+it('toInput(string)', () => {
   const input = user.name.toInput('haha');
   expect(input.type).toBe(user.name);
   expect(input.name).toBe('haha');
 });
 
-test('isEqualTo', () => {
+it('isEqualTo', () => {
   const sql = user.name.isEqualTo(dd.sql`"haha"`);
   expect(sql.toString()).toBe('`name` = "haha"');
 });
 
-test('isEqualToInput', () => {
+it('isEqualToInput', () => {
   const sql = user.name.isEqualToInput();
   expect(sql.toString()).toBe('`name` = <name: [name]>');
 });
 
-test('isEqualToInput(string)', () => {
+it('isEqualToInput(string)', () => {
   const sql = user.name.isEqualToInput('haha');
   expect(sql.toString()).toBe('`name` = <haha: [name]>');
 });
 
-test('isNotEqualTo', () => {
+it('isNotEqualTo', () => {
   const sql = user.name.isNotEqualTo(dd.sql`"haha"`);
   expect(sql.toString()).toBe('`name` <> "haha"');
 });
 
-test('isNotEqualToInput', () => {
+it('isNotEqualToInput', () => {
   const sql = user.name.isNotEqualToInput();
   expect(sql.toString()).toBe('`name` <> <name: [name]>');
 });
 
-test('isNotEqualToInput(string)', () => {
+it('isNotEqualToInput(string)', () => {
   const sql = user.name.isNotEqualToInput('haha');
   expect(sql.toString()).toBe('`name` <> <haha: [name]>');
 });
 
-test('isNull', () => {
+it('isNull', () => {
   const sql = user.name.isNull();
   expect(sql.toString()).toBe('`name` IS NULL');
 });
 
-test('isNotNull', () => {
+it('isNotNull', () => {
   const sql = user.name.isNotNull();
   expect(sql.toString()).toBe('`name` IS NOT NULL');
 });
 
-test('makeSQL', () => {
+it('makeSQL', () => {
   const s = dd.sql`haha`;
   expect(dd.convertToSQL(s)).toBe(s);
   expect(dd.convertToSQL('haha').toString()).toBe('haha');
@@ -125,7 +125,7 @@ test('makeSQL', () => {
   );
 });
 
-test('findColumn', () => {
+it('findColumn', () => {
   let s = dd.sql`haha`;
   expect(s.findColumn()).toBeNull();
   s = dd.sql`kaokdjdf ${user.name}`;
@@ -134,7 +134,7 @@ test('findColumn', () => {
   expect(s.findColumn()).toBe(user.name);
 });
 
-test('Input.isEqualTo', () => {
+it('Input.isEqualTo', () => {
   const a = user.id.toInput();
   const b = user.id.toInput();
   const c = dd.input('a', 'id');
@@ -147,7 +147,7 @@ test('Input.isEqualTo', () => {
   expect(c.isEqualTo(e)).toBe(false);
 });
 
-test('hasColumns', () => {
+it('hasColumns', () => {
   const a = dd.sql`sdf sd ${dd.datetimeNow()}`;
   const b = dd.sql`sisjsdf`;
   const c = dd.sql`jis df${user.id}`;
@@ -158,7 +158,7 @@ test('hasColumns', () => {
   expect(d.hasColumns).toBe(true);
 });
 
-test('hasCalls', () => {
+it('hasCalls', () => {
   const a = dd.sql`sdf sd ${dd.datetimeNow()}`;
   const b = dd.sql`sisjsdf`;
   const c = dd.sql`jis df${user.id}`;
