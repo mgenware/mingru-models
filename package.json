@@ -19,7 +19,7 @@
   "license": "MIT",
   "scripts": {
     "test": "yarn run clean && yarn run compile && yarn run lint && yarn run t",
-    "t": "mocha dist_tests/*.js",
+    "t": "mocha dist_tests/**/*.test.js",
     "build": "yarn test",
     "compile": "tsc -b tests",
     "dev": "yarn run clean && tsc -b tests -w",
@@ -33,12 +33,12 @@
   "devDependencies": {
     "@types/lodash.camelcase": "^4.3.6",
     "@types/lodash.snakecase": "^4.1.6",
+    "@types/mocha": "^5.2.7",
     "@types/node": "^12.0.8",
+    "mocha": "^6.2.0",
     "rimraf": "^2.6.3",
     "tslint": "^5.17.0",
-    "typescript": "^3.5.2",
-    "@types/mocha": "^5.2.7",
-    "mocha": "^6.2.0"
+    "typescript": "^3.5.2"
   },
   "dependencies": {
     "lodash.camelcase": "^4.3.0",

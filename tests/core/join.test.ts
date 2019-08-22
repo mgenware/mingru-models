@@ -2,7 +2,9 @@ import * as dd from '../../';
 import user from '../models/user';
 import post from '../models/post';
 import postCmt from '../models/postCmt';
-import { Column } from '../../dist/main';
+import * as assert from 'assert';
+
+const expect = assert.equal;
 
 function testJCCols(
   jc: dd.Column,
@@ -10,17 +12,17 @@ function testJCCols(
   destTable: dd.Table,
   destColumn: dd.Column,
   selectedColumn: dd.Column,
-  srcColumn: Column,
+  srcColumn: dd.Column,
   path: string,
 ) {
-  expect(jc.isJoinedColumn()).toBe(true);
-  expect(jc.mirroredColumn).toBe(selectedColumn);
+  expect(jc.isJoinedColumn(), true);
+  expect(jc.mirroredColumn, selectedColumn);
   const jt = jc.__table as dd.JoinedTable;
-  expect(jt.tableInputName()).toBe(tableInputName);
-  expect(jt.destTable).toBe(destTable);
-  expect(jt.destColumn).toBe(destColumn);
-  expect(jt.srcColumn).toBe(srcColumn);
-  expect(jt.keyPath).toBe(path);
+  expect(jt.tableInputName(), tableInputName);
+  expect(jt.destTable, destTable);
+  expect(jt.destColumn, destColumn);
+  expect(jt.srcColumn, srcColumn);
+  expect(jt.keyPath, path);
 }
 
 it('JoinedColumn', () => {

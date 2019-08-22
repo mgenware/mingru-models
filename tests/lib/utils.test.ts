@@ -1,20 +1,23 @@
 import { utils } from '../../';
+import * as assert from 'assert';
+
+const expect = assert.equal;
 
 it('toSnakeCase', () => {
-  expect(utils.toSnakeCase('TableABC')).toBe('table_abc');
+  expect(utils.toSnakeCase('TableABC'), 'table_abc');
 });
 
 it('toCamelCase', () => {
-  expect(utils.toCamelCase('id')).toBe('id');
-  expect(utils.toCamelCase('user_max_id')).toBe('userMaxID');
+  expect(utils.toCamelCase('id'), 'id');
+  expect(utils.toCamelCase('user_max_id'), 'userMaxID');
 });
 
 it('stripEndingSnakeID', () => {
-  expect(utils.stripTrailingSnakeID('user_max_id')).toBe('user_max');
+  expect(utils.stripTrailingSnakeID('user_max_id'), 'user_max');
 });
 
 it('capitalizeColumnName', () => {
-  expect(utils.capitalizeColumnName('userId')).toBe('UserID');
-  expect(utils.capitalizeColumnName('Id')).toBe('ID');
-  expect(utils.capitalizeColumnName('id')).toBe('ID');
+  expect(utils.capitalizeColumnName('userId'), 'UserID');
+  expect(utils.capitalizeColumnName('Id'), 'ID');
+  expect(utils.capitalizeColumnName('id'), 'ID');
 });

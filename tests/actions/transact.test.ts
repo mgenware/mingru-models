@@ -2,6 +2,10 @@ import * as dd from '../../';
 import user from '../models/user';
 import post from '../models/post';
 import { WrappedAction } from '../../';
+import * as assert from 'assert';
+
+const expect = assert.equal;
+const ok = assert.ok;
 
 it('Transact', () => {
   class UserTA extends dd.TA {
@@ -27,12 +31,13 @@ it('Transact', () => {
   const postTA = dd.ta(post, PostTA);
 
   let v = postTA.batch;
-  expect(v.actionType).toBe(dd.ActionType.transact);
-  expect(v).toBeInstanceOf(dd.TransactAction);
-  expect(v).toBeInstanceOf(dd.Action);
+  expect(v.actionType, dd.ActionType.transact);
+  ok(v instanceof dd.TransactAction);
+  ok(v instanceof dd.Action);
 
   v = postTA.batch2;
-  expect(v.members).toEqual(
+  assert.deepEqual(
+    v.members,
     [postTA.insert, userTA.insert, postTA.batch].map(
       m => new dd.TransactionMember(m),
     ),
@@ -58,8 +63,8 @@ it('Temp member actions (wrap self)', async () => {
   const user2TA = dd.ta(user2, User2TA);
   const v = user2TA.t;
   const wrapped = v.members[0].action as WrappedAction;
-  expect(wrapped.action).toBe(user2TA.updatePostCount);
-  expect(wrapped.args).toEqual({ offset: 1 });
+  expect(wrapped.action, user2TA.updatePostCount);
+  assert.deepEqual(wrapped.args, { offset: 1 });
 });
 
 it('Temp member actions (wrap other)', async () => {
@@ -90,8 +95,8 @@ it('Temp member actions (wrap other)', async () => {
   const postTA = dd.ta(post2, Post2TA);
   const v = postTA.insert;
   const wrapped = v.members[0].action as WrappedAction;
-  expect(wrapped.action).toBe(user2TA.updatePostCount);
-  expect(wrapped.args).toEqual({ offset: 1 });
+  expect(wrapped.action, user2TA.updatePostCount);
+  assert.deepEqual(wrapped.args, { offset: 1 });
 });
 
 it('Setting __table or temp members', () => {
@@ -117,16 +122,16 @@ it('Setting __table or temp members', () => {
   }
   const postTA = dd.ta(post, PostTA);
   const members = postTA.t.members;
-  expect(members[0].action.__table).toBe(post);
-  expect(members[0].action.__name).toBe('insert');
-  expect(members[0].isTemp).toBe(false);
-  expect(members[1].action.__table).toBe(user);
-  expect(members[1].action.__name).toBe('insert');
-  expect(members[1].isTemp).toBe(false);
-  expect(members[2].action.__table).toBe(post);
-  expect(members[2].action.__name).toBe('tChild2');
-  expect(members[2].isTemp).toBe(true);
-  expect(members[3].action.__table).toBe(post);
-  expect(members[3].action.__name).toBe('tChild3');
-  expect(members[3].isTemp).toBe(true);
+  expect(members[0].action.__table, post);
+  expect(members[0].action.__name, 'insert');
+  expect(members[0].isTemp, false);
+  expect(members[1].action.__table, user);
+  expect(members[1].action.__name, 'insert');
+  expect(members[1].isTemp, false);
+  expect(members[2].action.__table, post);
+  expect(members[2].action.__name, 'tChild2');
+  expect(members[2].isTemp, true);
+  expect(members[3].action.__table, post);
+  expect(members[3].action.__name, 'tChild3');
+  expect(members[3].isTemp, true);
 });

@@ -1,5 +1,8 @@
 import * as dd from '../../';
 import post from '../models/post';
+import * as assert from 'assert';
+
+const expect = assert.equal;
 
 const { dt } = dd;
 function dtc(dtString: string): dd.ColumnType {
@@ -9,30 +12,30 @@ function dtc(dtString: string): dd.ColumnType {
 it('SQL calls', () => {
   let t: dd.SQLCall;
   t = dd.datetimeNow();
-  expect(t.type).toBe(dd.SQLCallType.datetimeNow);
-  expect(t.returnType).toEqual(dtc(dt.datetime));
+  expect(t.type, dd.SQLCallType.datetimeNow);
+  assert.deepEqual(t.returnType, dtc(dt.datetime));
 
   t = dd.dateNow();
-  expect(t.type).toBe(dd.SQLCallType.dateNow);
-  expect(t.returnType).toEqual(dtc(dt.date));
+  expect(t.type, dd.SQLCallType.dateNow);
+  assert.deepEqual(t.returnType, dtc(dt.date));
 
   t = dd.timeNow();
-  expect(t.type).toBe(dd.SQLCallType.timeNow);
-  expect(t.returnType).toEqual(dtc(dt.time));
+  expect(t.type, dd.SQLCallType.timeNow);
+  assert.deepEqual(t.returnType, dtc(dt.time));
 
   t = dd.count(post.id);
-  expect(t.type).toBe(dd.SQLCallType.count);
-  expect(t.returnType).toEqual(dtc(dt.int));
+  expect(t.type, dd.SQLCallType.count);
+  assert.deepEqual(t.returnType, dtc(dt.int));
 
   t = dd.coalesce(dd.sql`haha`, post.title, post.user_id);
-  expect(t.type).toBe(dd.SQLCallType.coalesce);
-  expect(t.returnType).toEqual(dd.varChar(100).type);
-
-  expect(dd.countAll()).toEqual(dd.count('*'));
+  expect(t.type, dd.SQLCallType.coalesce);
+  assert.deepEqual(t.returnType, dd.varChar(100).type);
+  assert.deepEqual(dd.countAll(), dd.count('*'));
 });
 
 it('Embed', () => {
-  expect(dd.sql`haha ${dd.datetimeNow()} ${dd.dateNow()}`.toString()).toBe(
+  expect(
+    dd.sql`haha ${dd.datetimeNow()} ${dd.dateNow()}`.toString(),
     `haha CALL(${dd.SQLCallType.datetimeNow}) CALL(${dd.SQLCallType.dateNow})`,
   );
 });
@@ -46,7 +49,6 @@ it('Embed (raw)', () => {
       dd.SQLCallType.dateNow,
       new dd.ColumnType('c2'),
     )}`.toString(),
-  ).toBe(
     `haha CALL(${dd.SQLCallType.datetimeNow}) CALL(${dd.SQLCallType.dateNow})`,
   );
 });

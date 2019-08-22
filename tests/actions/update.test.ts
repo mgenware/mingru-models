@@ -1,5 +1,9 @@
 import * as dd from '../../';
 import user from '../models/user';
+import * as assert from 'assert';
+
+const expect = assert.equal;
+const ok = assert.ok;
 
 it('Update', () => {
   class UserTA extends dd.TA {
@@ -12,17 +16,18 @@ it('Update', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.actionType).toBe(dd.ActionType.update);
-  expect(v).toBeInstanceOf(dd.UpdateAction);
-  expect(v).toBeInstanceOf(dd.CoreUpdateAction);
-  expect(v).toBeInstanceOf(dd.Action);
-  expect(v.whereSQL!.toString()).toBe('`id` = 1');
-  expect(v.setters.size).toBe(2);
+  expect(v.actionType, dd.ActionType.update);
+  ok(v instanceof dd.UpdateAction);
+  ok(v instanceof dd.CoreUpdateAction);
+  ok(v instanceof dd.Action);
+  expect(v.whereSQL!.toString(), '`id` = 1');
+  expect(v.setters.size, 2);
 
   // extra props
-  expect(v.ensureOneRowAffected).toBe(false);
-  expect(v.allowNoWhere).toBe(false);
-  expect(v.settersToString()).toBe(
+  expect(v.ensureOneRowAffected, false);
+  expect(v.allowNoWhere, false);
+  expect(
+    v.settersToString(),
     'name: <name: [name]>, follower_count: `follower_count` + 1',
   );
 });
@@ -37,7 +42,8 @@ it('Order of setInputs and set', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.settersToString()).toBe(
+  expect(
+    v.settersToString(),
     'snake_case_name: <snakeCaseName: [snake_case_name]>, name: <b: [name]>',
   );
 });
@@ -52,7 +58,8 @@ it('setInputs and setDefaults', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.settersToString()).toBe(
+  expect(
+    v.settersToString(),
     'def_value: abc, snake_case_name: <snakeCaseName: [snake_case_name]>',
   );
 });
@@ -68,10 +75,11 @@ it('setInputs with no args', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.settersToString()).toBe(
+  expect(
+    v.settersToString(),
     'def_value: abc, snake_case_name: <snakeCaseName: [snake_case_name]>',
   );
-  expect(v.autoSetter).toBe('input');
+  expect(v.autoSetter, 'input');
 });
 
 it('setDefaults with no args', () => {
@@ -85,14 +93,15 @@ it('setDefaults with no args', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.settersToString()).toBe(
+  expect(
+    v.settersToString(),
     'def_value: abc, snake_case_name: <snakeCaseName: [snake_case_name]>',
   );
-  expect(v.autoSetter).toBe('default');
+  expect(v.autoSetter, 'default');
 });
 
 it('setInputs and setDefaults twice', () => {
-  expect(() => {
+  assert.throws(() => {
     class UserTA extends dd.TA {
       t = dd
         .unsafeUpdateAll()
@@ -100,8 +109,8 @@ it('setInputs and setDefaults twice', () => {
         .setDefaults();
     }
     dd.ta(user, UserTA);
-  }).toThrow('already set');
-  expect(() => {
+  }, 'already set');
+  assert.throws(() => {
     class UserTA extends dd.TA {
       t = dd
         .unsafeUpdateAll()
@@ -109,7 +118,7 @@ it('setInputs and setDefaults twice', () => {
         .setInputs();
     }
     dd.ta(user, UserTA);
-  }).toThrow('already set');
+  }, 'already set');
 });
 
 it('Set same column twice', () => {
@@ -120,7 +129,7 @@ it('Set same column twice', () => {
       .setInputs(user.snake_case_name, user.name)
       .set(user.name, user.name.toInput('b'));
   }
-  expect(() => dd.ta(user, UserTA)).toThrow('already set');
+  assert.throws(() => dd.ta(user, UserTA), 'already set');
 });
 
 it('updateOne', () => {
@@ -134,16 +143,16 @@ it('updateOne', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.ensureOneRowAffected).toBe(true);
-  expect(v.allowNoWhere).toBe(false);
+  expect(v.ensureOneRowAffected, true);
+  expect(v.allowNoWhere, false);
 
   // Throw error when WHERE is empty
-  expect(() => {
+  assert.throws(() => {
     class TA extends dd.TA {
       t = dd.updateOne().setInputs(user.snake_case_name);
     }
     dd.ta(user, TA);
-  }).toThrow('unsafeUpdateAll');
+  }, 'unsafeUpdateAll');
 });
 
 it('updateSome', () => {
@@ -157,16 +166,16 @@ it('updateSome', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.ensureOneRowAffected).toBe(false);
-  expect(v.allowNoWhere).toBe(false);
+  expect(v.ensureOneRowAffected, false);
+  expect(v.allowNoWhere, false);
 
   // Throw error when WHERE is empty
-  expect(() => {
+  assert.throws(() => {
     class TA extends dd.TA {
       t = dd.updateSome().setInputs(user.snake_case_name);
     }
     dd.ta(user, TA);
-  }).toThrow('unsafeUpdateAll');
+  }, 'unsafeUpdateAll');
 });
 
 it('unsafeUpdateAll', () => {
@@ -177,8 +186,8 @@ it('unsafeUpdateAll', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.ensureOneRowAffected).toBe(false);
-  expect(v.allowNoWhere).toBe(true);
+  expect(v.ensureOneRowAffected, false);
+  expect(v.allowNoWhere, true);
 });
 
 it('ByID', () => {
@@ -191,7 +200,7 @@ it('ByID', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.whereSQL!.toString()).toBe('`id` = <id: [id]>');
+  expect(v.whereSQL!.toString(), '`id` = <id: [id]>');
 });
 
 it('SQLConvertible value', () => {
@@ -204,26 +213,26 @@ it('SQLConvertible value', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.setters.get(user.name)!.toString()).toBe('CALL(1)');
+  expect(v.setters.get(user.name)!.toString(), 'CALL(1)');
 });
 
 it('No setters', () => {
-  expect(() => {
+  assert.throws(() => {
     class UserTA extends dd.TA {
       t = dd.unsafeUpdateAll();
     }
     dd.ta(user, UserTA);
-  }).toThrow('setter');
-  expect(() => {
+  }, 'setter');
+  assert.doesNotThrow(() => {
     class UserTA extends dd.TA {
       t = dd.unsafeUpdateAll().setInputs();
     }
     dd.ta(user, UserTA);
-  }).not.toThrow();
-  expect(() => {
+  });
+  assert.doesNotThrow(() => {
     class UserTA extends dd.TA {
       t = dd.unsafeUpdateAll().setDefaults();
     }
     dd.ta(user, UserTA);
-  }).not.toThrow();
+  });
 });

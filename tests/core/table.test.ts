@@ -1,15 +1,18 @@
 import * as dd from '../../';
 import user from '../models/user';
 import employee from '../models/employee';
+import * as assert from 'assert';
+
+const expect = assert.equal;
 
 it('Table name', () => {
-  expect(user.__name).toBe('user');
+  expect(user.__name, 'user');
 });
 
 it('enumerateColumns', () => {
   const cols: dd.Column[] = [];
   dd.enumerateColumns(user, col => cols.push(col));
-  expect(cols).toEqual([
+  assert.deepEqual(cols, [
     user.id,
     user.name,
     user.snake_case_name,
@@ -21,7 +24,7 @@ it('enumerateColumns', () => {
 it('enumerateColumns (sorted)', () => {
   const cols: dd.Column[] = [];
   dd.enumerateColumns(user, col => cols.push(col), { sorted: true });
-  expect(cols).toEqual([
+  assert.deepEqual(cols, [
     user.def_value,
     user.follower_count,
     user.id,
@@ -31,8 +34,8 @@ it('enumerateColumns (sorted)', () => {
 });
 
 it('__pks', () => {
-  expect(user.__pks).toEqual([user.id]);
-  expect(user.__pkAIs).toEqual([user.id]);
-  expect(employee.__pks).toEqual([employee.id]);
-  expect(employee.__pkAIs).toEqual([]);
+  assert.deepEqual(user.__pks, [user.id]);
+  assert.deepEqual(user.__pkAIs, [user.id]);
+  assert.deepEqual(employee.__pks, [employee.id]);
+  assert.deepEqual(employee.__pkAIs, []);
 });

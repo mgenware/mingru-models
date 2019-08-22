@@ -1,5 +1,9 @@
 import * as dd from '../../';
 import user from '../models/user';
+import * as assert from 'assert';
+
+const expect = assert.equal;
+const ok = assert.ok;
 
 it('ta', () => {
   class UserTA extends dd.TA {
@@ -11,18 +15,18 @@ it('ta', () => {
   }
   const ta = dd.ta(user, UserTA);
 
-  expect(ta).toBeInstanceOf(dd.TA);
-  expect(ta.__table).toBe(user);
+  ok(ta instanceof dd.TA);
+  expect(ta.__table, user);
 
   const v1 = ta.upd;
-  expect(v1.__name).toBe('upd');
-  expect(v1.__table).toBe(user);
-  expect(v1).toBeInstanceOf(dd.UpdateAction);
+  expect(v1.__name, 'upd');
+  expect(v1.__table, user);
+  ok(v1 instanceof dd.UpdateAction);
 
   const v2 = ta.sel;
-  expect(v2.__name).toBe('sel');
-  expect(v2.__table).toBe(user);
-  expect(v2).toBeInstanceOf(dd.SelectAction);
+  expect(v2.__name, 'sel');
+  expect(v2.__table, user);
+  ok(v2 instanceof dd.SelectAction);
 });
 
 it('Register property callback', () => {
@@ -36,11 +40,11 @@ it('Register property callback', () => {
     t = action;
   }
 
-  expect(action.__handlers!.length).toBe(2);
-  expect(counter).toBe(0);
+  expect(action.__handlers!.length, 2);
+  expect(counter, 0);
   dd.ta(user, UserTA);
-  expect(action.__handlers).toBe(null);
-  expect(counter).toBe(2);
+  expect(action.__handlers, null);
+  expect(counter, 2);
 });
 
 it('enumerateActions', () => {
@@ -55,7 +59,7 @@ it('enumerateActions', () => {
 
   const actions: dd.Action[] = [];
   dd.enumerateActions(ta, a => actions.push(a));
-  expect(actions).toEqual([ta.upd, ta.sel]);
+  assert.deepEqual(actions, [ta.upd, ta.sel]);
 });
 
 it('enumerateActions (sorted)', () => {
@@ -70,7 +74,7 @@ it('enumerateActions (sorted)', () => {
 
   const actions: dd.Action[] = [];
   dd.enumerateActions(ta, a => actions.push(a), { sorted: true });
-  expect(actions).toEqual([ta.sel, ta.upd]);
+  assert.deepEqual(actions, [ta.sel, ta.upd]);
 });
 
 it('Argument stubs', () => {
@@ -84,5 +88,5 @@ it('Argument stubs', () => {
   const ta = dd.ta(user, UserTA);
 
   const v = ta.t;
-  expect(v.__argStubs).toEqual(stubs);
+  assert.deepEqual(v.__argStubs, stubs);
 });

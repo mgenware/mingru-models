@@ -1,148 +1,149 @@
 import * as dd from '../../';
 import user from '../models/user';
 import post from '../models/post';
-import { Column } from '../../';
 import cmt from '../models/postCmt';
+import * as assert from 'assert';
+
+const expect = assert.equal;
 
 it('Frozen after dd.table', () => {
-  expect(Object.isFrozen(post.id)).toBe(true);
-  expect(Object.isFrozen(post.user_id)).toBe(true);
-  expect(Object.isFrozen(post.title)).toBe(true);
+  expect(Object.isFrozen(post.id), true);
+  expect(Object.isFrozen(post.user_id), true);
+  expect(Object.isFrozen(post.title), true);
 });
 
 it('Normal col', () => {
-  expect(post.id.__name).toBe('id');
-  expect(post.id.__table).toBe(post);
+  expect(post.id.__name, 'id');
+  expect(post.id.__table, post);
 });
 
 it('Implicit FK', () => {
   const col = post.user_id;
-  expect(col.__table).toBe(post);
-  expect(col.__name).toBe('user_id');
-  expect(col.foreignColumn).toBe(user.id);
-  expect(col.type).not.toBe(user.id.type);
+  expect(col.__table, post);
+  expect(col.__name, 'user_id');
+  expect(col.foreignColumn, user.id);
+  assert.notEqual(col.type, user.id.type);
 });
 
 it('Explicit FK', () => {
   const col = post.e_user_id_n;
-  expect(col.__table).toBe(post);
-  expect(col.__name).toBe('e_user_id_n');
-  expect(col.foreignColumn).toBe(user.id);
-  expect(col).not.toBe(user.id.type);
-  expect(col.type.nullable).toBe(true);
+  expect(col.__table, post);
+  expect(col.__name, 'e_user_id_n');
+  expect(col.foreignColumn, user.id);
+  assert.notEqual(col, user.id.type);
+  expect(col.type.nullable, true);
 });
 
 it('Explicit FK (untouched)', () => {
   const col = post.e_user_id;
-  expect(col.__table).toBe(post);
-  expect(col.__name).toBe('e_user_id');
-  expect(col.foreignColumn).toBe(user.id);
-  expect(col.type).not.toBe(user.id.type);
-  expect(col.type.nullable).toBe(false);
+  expect(col.__table, post);
+  expect(col.__name, 'e_user_id');
+  expect(col.foreignColumn, user.id);
+  assert.notEqual(col.type, user.id.type);
+  expect(col.type.nullable, false);
 });
 
 it('freeze', () => {
   const col = dd.int(234);
   col.freeze();
-  expect(Object.isFrozen(col)).toBe(true);
-  expect(Object.isFrozen(col.type)).toBe(true);
+  expect(Object.isFrozen(col), true);
+  expect(Object.isFrozen(col.type), true);
 });
 
 it('Column.newForeignColumn', () => {
   const a = user.id;
-  const b = Column.newForeignColumn(a, post);
+  const b = dd.Column.newForeignColumn(a, post);
   // FK
-  expect(b.foreignColumn).toBe(a);
+  expect(b.foreignColumn, a);
   // name is cleared
-  expect(b.__name).toBeNull();
+  expect(b.__name, null);
   // Value being reset
-  expect(b.type.pk).toBe(false);
-  expect(b.type.autoIncrement).toBe(false);
-  expect(b.__table).toBe(post);
+  expect(b.type.pk, false);
+  expect(b.type.autoIncrement, false);
+  expect(b.__table, post);
   // props is copied
-  expect(b.type).not.toBe(a.type);
+  assert.notEqual(b.type, a.type);
   // props.types is copied
-  expect(b.type.types).not.toBe(a.type.types);
+  assert.notEqual(b.type.types, a.type.types);
 
   // Check equality
-  expect(a.defaultValue).toBe(b.defaultValue);
-  expect(a.type.types).toEqual(b.type.types);
-  expect(a.type.nullable).toBe(b.type.nullable);
-  expect(a.type.unique).toBe(b.type.unique);
+  expect(a.defaultValue, b.defaultValue);
+  assert.deepEqual(a.type.types, b.type.types);
+  expect(a.type.nullable, b.type.nullable);
+  expect(a.type.unique, b.type.unique);
 });
 
 it('Column.newJoinedColumn', () => {
   const t = (post.user_id.join(user) as unknown) as dd.JoinedTable;
   const a = user.name;
-  const b = Column.newJoinedColumn(a, t);
+  const b = dd.Column.newJoinedColumn(a, t);
   // mirroredColumn
-  expect(b.mirroredColumn).toBe(a);
+  expect(b.mirroredColumn, a);
   // Value being reset
-  expect(b.type.pk).toBe(false);
-  expect(b.type.autoIncrement).toBe(false);
-  expect(b.__name).toBe(a.__name);
-  expect(b.__table).toBe(t);
+  expect(b.type.pk, false);
+  expect(b.type.autoIncrement, false);
+  expect(b.__name, a.__name);
+  expect(b.__table, t);
   // props is copied
-  expect(b.type).not.toBe(a.type);
+  assert.notEqual(b.type, a.type);
   // props.types is copied
-  expect(b.type.types).not.toBe(a.type.types);
+  assert.notEqual(b.type.types, a.type.types);
 
   // Check equality
-  expect(a.defaultValue).toBe(b.defaultValue);
-  expect(a.type.types).toEqual(b.type.types);
-  expect(a.type.nullable).toBe(b.type.nullable);
-  expect(a.type.unique).toBe(b.type.unique);
+  expect(a.defaultValue, b.defaultValue);
+  assert.deepEqual(a.type.types, b.type.types);
+  expect(a.type.nullable, b.type.nullable);
+  expect(a.type.unique, b.type.unique);
 });
 
 it('Mutate a frozen column', () => {
   const a = dd.int(234);
   a.freeze();
-  expect(() => a.nullable).toThrow();
+  assert.throws(() => a.nullable);
 });
 
 it('notNull (default)', () => {
   const c = dd.int(123);
-  expect(c.type.nullable).toBe(false);
+  expect(c.type.nullable, false);
 });
 
 it('nullable', () => {
   const c = dd.int(123).nullable;
-  expect(c.type.nullable).toBe(true);
+  expect(c.type.nullable, true);
 });
 
 it('unique', () => {
   const c = dd.int(123).unique;
-  expect(c.type.unique).toBe(true);
+  expect(c.type.unique, true);
 });
 
 it('unique (default)', () => {
   const c = dd.int(123);
-  expect(c.type.unique).toBe(false);
+  expect(c.type.unique, false);
 });
 
 it('setDefault', () => {
   let c = dd.int(123).setDefault('omg');
-  expect(c.defaultValue).toBe('omg');
+  expect(c.defaultValue, 'omg');
 
   c = dd.int(123).setDefault(null);
-  expect(c.defaultValue).toBe(null);
+  expect(c.defaultValue, null);
 });
 
 it('Column.inputName', () => {
-  expect(user.id.inputName()).toBe('id');
-  expect(user.snake_case_name.inputName()).toBe('snakeCaseName');
-  expect(cmt.snake_case_post_id.inputName()).toBe('snakeCasePostID');
+  expect(user.id.inputName(), 'id');
+  expect(user.snake_case_name.inputName(), 'snakeCaseName');
+  expect(cmt.snake_case_post_id.inputName(), 'snakeCasePostID');
 });
 
 it('ForeignColumn.inputName', () => {
-  expect(post.snake_case_user_id.inputName()).toBe('snakeCaseUserID');
+  expect(post.snake_case_user_id.inputName(), 'snakeCaseUserID');
 });
 
 it('JoinedColumn.inputName', () => {
-  expect(post.snake_case_user_id.join(user).id.inputName()).toBe(
-    'snakeCaseUserID',
-  );
-  expect(post.snake_case_user_id.join(user).name.inputName()).toBe(
+  expect(post.snake_case_user_id.join(user).id.inputName(), 'snakeCaseUserID');
+  expect(
+    post.snake_case_user_id.join(user).name.inputName(),
     'snakeCaseUserName',
   );
   expect(
@@ -150,13 +151,15 @@ it('JoinedColumn.inputName', () => {
       .join(post)
       .user_id.join(user)
       .id.inputName(),
-  ).toBe('postUserID');
+    'postUserID',
+  );
   expect(
     cmt.post_id
       .join(post)
       .snake_case_user_id.join(user)
       .name.inputName(),
-  ).toBe('postSnakeCaseUserName');
+    'postSnakeCaseUserName',
+  );
 });
 
 class JCTable extends dd.Table {
@@ -164,7 +167,7 @@ class JCTable extends dd.Table {
 }
 
 it('JoinedColumn in table def', () => {
-  expect(() => dd.table(JCTable)).toThrow('JoinedColumn');
+  assert.throws(() => dd.table(JCTable), 'JoinedColumn');
 });
 
 class SCTable extends dd.Table {
@@ -172,7 +175,7 @@ class SCTable extends dd.Table {
 }
 
 it('RawColumn in table def', () => {
-  expect(() => dd.table(SCTable)).toThrow('RawColumn');
+  assert.throws(() => dd.table(SCTable), 'RawColumn');
 });
 
 it('Register property callback', () => {
@@ -186,32 +189,32 @@ it('Register property callback', () => {
     t = col;
   }
 
-  expect(col.__handlers!.length).toBe(2);
-  expect(counter).toBe(0);
+  expect(col.__handlers!.length, 2);
+  expect(counter, 0);
   dd.table(User);
-  expect(col.__handlers).toBe(null);
-  expect(counter).toBe(2);
+  expect(col.__handlers, null);
+  expect(counter, 2);
 });
 
 it('Register property callback on a initialized property', () => {
   let counter = 0;
   const cb = () => counter++;
   dd.CoreProperty.registerHandler(user.name, cb);
-  expect(user.name.__handlers).toBe(null);
-  expect(counter).toBe(1);
+  expect(user.name.__handlers, null);
+  expect(counter, 1);
 });
 
 it('Throw on default value of complex SQL', () => {
-  expect(() => {
+  assert.doesNotThrow(() => {
     class T extends dd.Table {
       t = dd.varChar(23).setDefault(dd.datetimeNow());
     }
     dd.table(T);
-  }).not.toThrow();
-  expect(() => {
+  });
+  assert.throws(() => {
     class T extends dd.Table {
       t = dd.varChar(23).setDefault(dd.sql`${user.name}`);
     }
     dd.table(T);
-  }).toThrow('complex SQL');
+  }, 'complex SQL');
 });

@@ -1,5 +1,9 @@
 import * as dd from '../../';
 import user from '../models/user';
+import * as assert from 'assert';
+
+const expect = assert.equal;
+const ok = assert.ok;
 
 it('WrappedAction', () => {
   class UserTA extends dd.TA {
@@ -10,11 +14,11 @@ it('WrappedAction', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t2;
-  expect(v).toBeInstanceOf(dd.WrappedAction);
-  expect(v).toBeInstanceOf(dd.Action);
-  expect(v.actionType).toBe(dd.ActionType.wrap);
-  expect(v.action).toBe(ta.t);
-  expect(v.args).toEqual({
+  ok(v instanceof dd.WrappedAction);
+  ok(v instanceof dd.Action);
+  expect(v.actionType, dd.ActionType.wrap);
+  expect(v.action, ta.t);
+  assert.deepEqual(v.args, {
     id: '1',
   });
 });
@@ -34,12 +38,12 @@ it('Chaining', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t2;
-  expect(v.args).toEqual({
+  assert.deepEqual(v.args, {
     name: 'a',
     def_value: 'c',
     follower_count: 123,
   });
-  expect(v.isTemp).toBe(false);
+  expect(v.isTemp, false);
 });
 
 it('Uninitialized wrapped action __table n __name', () => {
@@ -51,7 +55,7 @@ it('Uninitialized wrapped action __table n __name', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  expect(v.__table).toBe(user);
-  expect(v.__name).toBe('t');
-  expect(v.isTemp).toBe(true);
+  expect(v.__table, user);
+  expect(v.__name, 't');
+  expect(v.isTemp, true);
 });
