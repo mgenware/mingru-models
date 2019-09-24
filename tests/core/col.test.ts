@@ -218,3 +218,7 @@ it('Throw on default value of complex SQL', () => {
     dd.table(T);
   }, 'complex SQL');
 });
+
+it('getSourceTable', () => {
+  expect(post.title.getSourceTable(), post);
+});

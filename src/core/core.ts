@@ -264,6 +264,17 @@ export class Column extends CoreProperty {
     return this.__table as JoinedTable;
   }
 
+  getSourceTable(): Table | null {
+    const table = this.__table;
+    if (!table) {
+      return null;
+    }
+    if (table instanceof JoinedTable) {
+      return (table as JoinedTable).srcColumn.getSourceTable();
+    }
+    return table;
+  }
+
   private checkMutability() {
     if (Object.isFrozen(this)) {
       throw new Error(

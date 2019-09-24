@@ -14,6 +14,7 @@ function testJCCols(
   selectedColumn: dd.Column,
   srcColumn: dd.Column,
   path: string,
+  sourceTable: dd.Table,
 ) {
   expect(jc.isJoinedColumn(), true);
   expect(jc.mirroredColumn, selectedColumn);
@@ -23,6 +24,7 @@ function testJCCols(
   expect(jt.destColumn, destColumn);
   expect(jt.srcColumn, srcColumn);
   expect(jt.keyPath, path);
+  expect(jc.getSourceTable(), sourceTable);
 }
 
 it('JoinedColumn', () => {
@@ -35,6 +37,7 @@ it('JoinedColumn', () => {
     user.name,
     post.user_id,
     '[[post.user_id].[user.id]]',
+    post,
   );
 });
 
@@ -50,6 +53,7 @@ it('Nested JoinedColumn', () => {
     post.user_id,
     postCmt.post_id,
     '[[post_cmt.post_id].[post.id]]',
+    postCmt,
   );
 
   testJCCols(
@@ -60,6 +64,7 @@ it('Nested JoinedColumn', () => {
     user.name,
     jc1,
     '[[[[post_cmt.post_id].[post.id]].user_id].[user.id]]',
+    postCmt,
   );
 
   // like jc2, but select user.id instead of user.name
@@ -73,6 +78,7 @@ it('Nested JoinedColumn', () => {
     user.id,
     jc3,
     '[[[[post_cmt.post_id].[post.id]].user_id].[user.id]]',
+    postCmt,
   );
 });
 
@@ -87,6 +93,7 @@ it('Join arbitrary table and column', () => {
     postCmt.post_id,
     post.user_id,
     '[[post.user_id].[post_cmt.id]]',
+    post,
   );
 
   // Join explicit column of postCmt
@@ -99,5 +106,6 @@ it('Join arbitrary table and column', () => {
     postCmt.snake_case_post_id,
     post.user_id,
     '[[post.user_id].[post_cmt.post_id]]',
+    post,
   );
 });
