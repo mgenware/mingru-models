@@ -28,7 +28,7 @@
     "clean": "rimraf dist && rimraf dist_tests"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
   "devDependencies": {
     "@types/lodash.camelcase": "^4.3.6",
