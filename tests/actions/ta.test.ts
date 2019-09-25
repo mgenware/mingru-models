@@ -90,3 +90,16 @@ it('Argument stubs', () => {
   const v = ta.t;
   assert.deepEqual(v.__argStubs, stubs);
 });
+
+it('action.ensureInitialized', () => {
+  class UserTA extends dd.TA {
+    t = dd.select(user.id);
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+  assert.doesNotThrow(() => v.ensureInitialized());
+  assert.throws(
+    () => dd.select(user.id).ensureInitialized(),
+    'not initialized',
+  );
+});

@@ -37,6 +37,13 @@ export class Action extends CoreProperty {
     this.__argStubs = args;
     return this;
   }
+
+  ensureInitialized(): [string, Table] {
+    if (!this.__name || !this.__table) {
+      throw new Error(`Action "${toTypeString(this)}" is not initialized`);
+    }
+    return [this.__name, this.__table];
+  }
 }
 
 export interface EnumerateActionsOptions {
