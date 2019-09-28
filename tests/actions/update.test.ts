@@ -236,3 +236,15 @@ it('No setters', () => {
     dd.ta(user, UserTA);
   });
 });
+
+it('by', () => {
+  class UserTA extends dd.TA {
+    t = dd
+      .updateOne()
+      .setInputs(user.def_value)
+      .by(user.snake_case_name);
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+  expect(v.whereSQL!.toString(), '<snakeCaseName: [snake_case_name]>');
+});

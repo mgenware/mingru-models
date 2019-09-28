@@ -1,9 +1,9 @@
 import { ActionType } from './ta';
 import { SQL } from '../core/sql';
 import { CoreUpdateAction } from './coreUpdateAction';
-import { where, byIDUnsafe } from './common';
+import { where, byID, by } from './common';
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { CoreProperty, Table } from '../core/core';
+import { Table, Column } from '../core/core';
 
 export class UpdateAction extends CoreUpdateAction {
   whereSQL: SQL | null = null;
@@ -23,9 +23,12 @@ export class UpdateAction extends CoreUpdateAction {
   }
 
   byID(inputName?: string): this {
-    CoreProperty.registerHandler(this, () => {
-      byIDUnsafe(this, inputName);
-    });
+    byID(this, inputName);
+    return this;
+  }
+
+  by(column: Column): this {
+    by(this, column);
     return this;
   }
 
