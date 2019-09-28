@@ -147,6 +147,30 @@ it('by', () => {
   expect(v.whereSQL!.toString(), '<snakeCaseName: [snake_case_name]>');
 });
 
+it('andBy', () => {
+  class UserTA extends dd.TA {
+    t1 = dd
+      .select(user.name)
+      .by(user.snake_case_name)
+      .andBy(user.follower_count);
+    t2 = dd.select(user.name).andBy(user.follower_count);
+    t3 = dd
+      .select(user.name)
+      .byID()
+      .andBy(user.follower_count);
+  }
+  const ta = dd.ta(user, UserTA);
+  expect(
+    ta.t1.whereSQL!.toString(),
+    '<snakeCaseName: [snake_case_name]> AND <followerCount: [follower_count]>',
+  );
+  expect(ta.t2.whereSQL!.toString(), '<followerCount: [follower_count]>');
+  expect(
+    ta.t3.whereSQL!.toString(),
+    '`id` = <id: [id]> AND <followerCount: [follower_count]>',
+  );
+});
+
 it('selectField', () => {
   const sc = dd.sel(dd.count('*'), 'c');
   class UserTA extends dd.TA {

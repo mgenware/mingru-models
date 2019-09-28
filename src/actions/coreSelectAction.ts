@@ -1,6 +1,6 @@
 import { Action } from './ta';
 import { SQL } from '../core/sql';
-import { where, byID, by } from './common';
+import { where, byID, by, andBy } from './common';
 import { Column } from '../core/core';
 
 export class CoreSelectAction extends Action {
@@ -19,6 +19,11 @@ export class CoreSelectAction extends Action {
 
   by(column: Column): this {
     by(this, column);
+    return this;
+  }
+
+  andBy(column: Column): this {
+    andBy(this, column);
     return this;
   }
 }

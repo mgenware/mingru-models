@@ -1,7 +1,7 @@
 import { ActionType } from './ta';
 import { SQL } from '../core/sql';
 import { CoreUpdateAction } from './coreUpdateAction';
-import { where, byID, by } from './common';
+import { where, byID, by, andBy } from './common';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table, Column } from '../core/core';
 
@@ -29,6 +29,11 @@ export class UpdateAction extends CoreUpdateAction {
 
   by(column: Column): this {
     by(this, column);
+    return this;
+  }
+
+  andBy(column: Column): this {
+    andBy(this, column);
     return this;
   }
 

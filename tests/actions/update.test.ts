@@ -248,3 +248,32 @@ it('by', () => {
   const v = ta.t;
   expect(v.whereSQL!.toString(), '<snakeCaseName: [snake_case_name]>');
 });
+
+it('andBy', () => {
+  class UserTA extends dd.TA {
+    t1 = dd
+      .updateOne()
+      .setInputs(user.name)
+      .by(user.snake_case_name)
+      .andBy(user.follower_count);
+    t2 = dd
+      .updateOne()
+      .setInputs(user.name)
+      .andBy(user.follower_count);
+    t3 = dd
+      .updateOne()
+      .setInputs(user.name)
+      .byID()
+      .andBy(user.follower_count);
+  }
+  const ta = dd.ta(user, UserTA);
+  expect(
+    ta.t1.whereSQL!.toString(),
+    '<snakeCaseName: [snake_case_name]> AND <followerCount: [follower_count]>',
+  );
+  expect(ta.t2.whereSQL!.toString(), '<followerCount: [follower_count]>');
+  expect(
+    ta.t3.whereSQL!.toString(),
+    '`id` = <id: [id]> AND <followerCount: [follower_count]>',
+  );
+});

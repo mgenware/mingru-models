@@ -1,6 +1,7 @@
 import { SQL, sql } from '../core/sql';
 import { Table, CoreProperty, Column } from '../core/core';
 import { throwIfFalsy } from 'throw-if-arg-empty';
+import { and } from '../sqlHelper';
 
 export interface IActionWithWhere {
   __table: Table | null;
@@ -52,4 +53,20 @@ export function byID(
 export function by(action: IActionWithWhere, column: Column) {
   throwIfFalsy(column, 'column');
   where(action, sql`${column.toInput()}`);
+}
+
+export function andBy(action: CoreProperty & IActionWithWhere, column: Column) {
+  throwIfFalsy(column, 'column');
+  CoreProperty.registerHandler(action, () => {
+    // Combine existing WHERE
+    let s: SQL;
+    if (action.whereSQL) {
+      s = and(action.whereSQL, sql`${column.toInput()}`);
+      // Set whereSQL to null cuz `where` doesn't allow whereSQL to be set twice
+      action.whereSQL = null;
+    } else {
+      s = sql`${column.toInput()}`;
+    }
+    where(action, s);
+  });
 }
