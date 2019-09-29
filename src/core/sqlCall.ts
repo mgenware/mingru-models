@@ -97,3 +97,19 @@ export function minute(column: SQLConvertible): SQLCall {
 export function second(column: SQLConvertible): SQLCall {
   return new SQLCall(SQLCallType.second, new ColumnType(dt.int), [column]);
 }
+
+export function min(column: SQLConvertible): SQLCall {
+  return new SQLCall(SQLCallType.min, new ColumnType(dt.int), [column]);
+}
+
+export function max(column: SQLConvertible): SQLCall {
+  return new SQLCall(SQLCallType.max, new ColumnType(dt.int), [column]);
+}
+
+export function avg(column: SQLConvertible): SQLCall {
+  return new SQLCall(SQLCallType.avg, new ColumnType(dt.int), [column]);
+}
+
+export function sum(column: SQLConvertible): SQLCall {
+  return new SQLCall(SQLCallType.sum, new ColumnType(dt.int), [column]);
+}

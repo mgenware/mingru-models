@@ -60,6 +60,22 @@ it('SQL calls', () => {
   t = dd.second(post.id);
   expect(t.type, dd.SQLCallType.second);
   assert.deepEqual(t.returnType, dtc(dt.int));
+
+  t = dd.min(post.id);
+  expect(t.type, dd.SQLCallType.min);
+  assert.deepEqual(t.returnType, dtc(dt.int));
+
+  t = dd.max(post.id);
+  expect(t.type, dd.SQLCallType.max);
+  assert.deepEqual(t.returnType, dtc(dt.int));
+
+  t = dd.avg(post.id);
+  expect(t.type, dd.SQLCallType.avg);
+  assert.deepEqual(t.returnType, dtc(dt.int));
+
+  t = dd.sum(post.id);
+  expect(t.type, dd.SQLCallType.sum);
+  assert.deepEqual(t.returnType, dtc(dt.int));
 });
 
 it('Embed', () => {
