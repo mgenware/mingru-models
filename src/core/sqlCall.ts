@@ -13,6 +13,15 @@ export enum SQLCallType {
   coalesce, // COALESCE()
   min, // MIN()
   max, // MAX()
+
+  // Time related
+  year,
+  month,
+  week,
+  day,
+  hour,
+  minute,
+  second,
 }
 
 export class SQLCall {
@@ -59,4 +68,32 @@ export function coalesce(...columns: SQLConvertible[]): SQLCall {
     throw new Error(`Cannot infer a type from all columns provided`);
   }
   return new SQLCall(SQLCallType.coalesce, type, columns);
+}
+
+export function year(column: SQLConvertible): SQLCall {
+  return new SQLCall(SQLCallType.year, new ColumnType(dt.int), [column]);
+}
+
+export function month(column: SQLConvertible): SQLCall {
+  return new SQLCall(SQLCallType.month, new ColumnType(dt.int), [column]);
+}
+
+export function week(column: SQLConvertible): SQLCall {
+  return new SQLCall(SQLCallType.week, new ColumnType(dt.int), [column]);
+}
+
+export function day(column: SQLConvertible): SQLCall {
+  return new SQLCall(SQLCallType.day, new ColumnType(dt.int), [column]);
+}
+
+export function hour(column: SQLConvertible): SQLCall {
+  return new SQLCall(SQLCallType.hour, new ColumnType(dt.int), [column]);
+}
+
+export function minute(column: SQLConvertible): SQLCall {
+  return new SQLCall(SQLCallType.minute, new ColumnType(dt.int), [column]);
+}
+
+export function second(column: SQLConvertible): SQLCall {
+  return new SQLCall(SQLCallType.second, new ColumnType(dt.int), [column]);
 }

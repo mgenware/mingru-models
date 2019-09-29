@@ -30,7 +30,36 @@ it('SQL calls', () => {
   t = dd.coalesce(dd.sql`haha`, post.title, post.user_id);
   expect(t.type, dd.SQLCallType.coalesce);
   assert.deepEqual(t.returnType, dd.varChar(100).type);
+
   assert.deepEqual(dd.countAll(), dd.count('*'));
+
+  t = dd.year(post.id);
+  expect(t.type, dd.SQLCallType.year);
+  assert.deepEqual(t.returnType, dtc(dt.int));
+
+  t = dd.month(post.id);
+  expect(t.type, dd.SQLCallType.month);
+  assert.deepEqual(t.returnType, dtc(dt.int));
+
+  t = dd.day(post.id);
+  expect(t.type, dd.SQLCallType.day);
+  assert.deepEqual(t.returnType, dtc(dt.int));
+
+  t = dd.week(post.id);
+  expect(t.type, dd.SQLCallType.week);
+  assert.deepEqual(t.returnType, dtc(dt.int));
+
+  t = dd.hour(post.id);
+  expect(t.type, dd.SQLCallType.hour);
+  assert.deepEqual(t.returnType, dtc(dt.int));
+
+  t = dd.minute(post.id);
+  expect(t.type, dd.SQLCallType.minute);
+  assert.deepEqual(t.returnType, dtc(dt.int));
+
+  t = dd.second(post.id);
+  expect(t.type, dd.SQLCallType.second);
+  assert.deepEqual(t.returnType, dtc(dt.int));
 });
 
 it('Embed', () => {
