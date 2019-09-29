@@ -8,7 +8,7 @@ import toTypeString from 'to-type-string';
 export type SelectActionColumns = Column | RawColumn;
 export type SelectActionColumnNames = SelectActionColumns | string;
 
-export class ColumnName {
+export class OrderByColumn {
   constructor(public column: SelectActionColumnNames, public desc = false) {
     throwIfFalsy(column, 'column');
   }
@@ -77,8 +77,8 @@ export class SelectAction extends CoreSelectAction {
   havingValidator: ((value: SQL) => void) | null = null;
   // Only used in rows mode.
   hasLimit = false;
-  orderByColumns: ColumnName[] = [];
-  groupByColumns: ColumnName[] = [];
+  orderByColumns: OrderByColumn[] = [];
+  groupByColumns: string[] = [];
 
   constructor(
     public columns: SelectActionColumns[],
@@ -115,18 +115,26 @@ export class SelectAction extends CoreSelectAction {
     return this.orderByCore(column, true);
   }
 
-  groupBy(column: SelectActionColumnNames): this {
-    throwIfFalsy(column, 'column');
-    this.groupByColumns.push(new ColumnName(column));
+  groupBy(...columns: SelectActionColumnNames[]): this {
+    throwIfFalsy(columns, 'columns');
+    for (const column of columns) {
+      let name: string;
+      if (column instanceof Column) {
+        name = column.getDBName();
+      } else if (column instanceof RawColumn) {
+        name = column.selectedName;
+      } else {
+        name = column;
+      }
+      this.groupByColumns.push(name);
+    }
     return this;
   }
 
   limit(): this {
     if (this.mode !== SelectActionMode.list) {
       throw new Error(
-        `limit can only be used when mode = 'SelectActionMode.list', current mode is ${
-          this.mode
-        }`,
+        `limit can only be used when mode = 'SelectActionMode.list', current mode is ${this.mode}`,
       );
     }
     this.hasLimit = true;
@@ -157,15 +165,13 @@ export class SelectAction extends CoreSelectAction {
       mode === SelectActionMode.list || mode === SelectActionMode.page;
     if (selectCollection && !this.orderByColumns.length) {
       throw new Error(
-        `An ORDER BY clause is required when select multiple rows, action name "${
-          this.__name
-        }"`,
+        `An ORDER BY clause is required when select multiple rows, action name "${this.__name}"`,
       );
     }
   }
 
   private orderByCore(column: SelectActionColumnNames, desc: boolean): this {
-    this.orderByColumns.push(new ColumnName(column, desc));
+    this.orderByColumns.push(new OrderByColumn(column, desc));
     return this;
   }
 }

@@ -229,7 +229,22 @@ it('Validate columns', () => {
   }, 'not a valid');
 });
 
-it('having', () => {
+it('GROUP BY names', () => {
+  const col = dd.sel(user.id, 'raw');
+  class UserTA extends dd.TA {
+    t = dd
+      .selectRows(user.id, col)
+      .groupBy(user.name, col, 'haha')
+      .having(dd.sql`${dd.count(user.name)} > 2`)
+      .orderByAsc(user.id);
+  }
+  const ta = dd.ta(user, UserTA);
+  const v = ta.t;
+  expect(v.groupByColumns[0], user.name.getDBName());
+  expect(v.havingSQL!.toString(), 'CALL(3, `name`) > 2');
+});
+
+it('HAVING', () => {
   class UserTA extends dd.TA {
     t = dd
       .selectRows(user.id, user.name)
@@ -239,7 +254,7 @@ it('having', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  expect(v.groupByColumns[0].column, user.name);
+  expect(v.groupByColumns[0], user.name.getDBName());
   expect(v.havingSQL!.toString(), 'CALL(3, `name`) > 2');
 });
 
