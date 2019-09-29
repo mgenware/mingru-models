@@ -2,6 +2,7 @@ import { Column } from './core';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { SQLCall } from './sqlCall';
 import toTypeString from 'to-type-string';
+import { RawColumn } from '../actions/selectAction';
 
 export class SQLVariable {
   constructor(
@@ -60,13 +61,20 @@ export function input(type: string | Column, name?: string): SQLVariable {
 }
 
 // Allowed types in dd.sql template strings
-export type SQLConvertible = string | Column | SQLVariable | SQL | SQLCall;
+export type SQLConvertible =
+  | string
+  | Column
+  | SQLVariable
+  | SQL
+  | SQLCall
+  | RawColumn;
 
 export enum SQLElementType {
   rawString,
   column,
   input,
   call,
+  rawColumn,
 }
 
 export class SQLElement {
@@ -78,6 +86,10 @@ export class SQLElement {
 
   toColumn(): Column {
     return this.value as Column;
+  }
+
+  toRawColumn(): RawColumn {
+    return this.value as RawColumn;
   }
 
   toInput(): SQLVariable {
@@ -117,6 +129,8 @@ export class SQL {
         }
       } else if (param instanceof SQLCall) {
         this.pushElement(new SQLElement(SQLElementType.call, param));
+      } else if (param instanceof RawColumn) {
+        this.pushElement(new SQLElement(SQLElementType.rawColumn, param));
       } else {
         throw new Error(
           `Unsupported SQL parameter type "${toTypeString(param)}"`,
@@ -182,6 +196,9 @@ export class SQL {
           ? call.params.map(p => `, ${(p as object).toString()}`).join('')
           : '';
         return `CALL(${call.type}${pas})`;
+      }
+      case SQLElementType.rawColumn: {
+        return `RAW(${element.toRawColumn().toString()})`;
       }
       default: {
         throw new Error(

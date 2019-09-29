@@ -55,6 +55,11 @@ export class RawColumn {
       }
     }
   }
+
+  toString(): string {
+    const type = this.core instanceof Column ? 'COL' : 'SQL';
+    return `${type}(${this.core.toString()}) -> ${this.selectedName}`;
+  }
 }
 
 export function sel(
