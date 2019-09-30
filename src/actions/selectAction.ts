@@ -59,7 +59,7 @@ export class RawColumn {
   toInput(): SQLVariable {
     const { core } = this;
     if (core instanceof SQL) {
-      throw new Error('Cannot convert a RawColumn with SQL to an SQLVariable');
+      throw new Error('Cannot convert a RawColumn(SQL) to an SQLVariable');
     }
     return new SQLVariable(core, this.selectedName);
   }
