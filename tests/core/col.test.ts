@@ -15,7 +15,7 @@ it('Frozen after dd.table', () => {
 it('Normal col', () => {
   expect(post.id.__name, 'id');
   expect(post.id.__table, post);
-  expect(post.id.toString(), 'Column (id) <- Table (post)');
+  expect(post.id.toString(), 'Column(id, Table(post))');
 });
 
 it('Implicit FK', () => {

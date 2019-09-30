@@ -1,7 +1,7 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { ActionType } from './ta';
 import { Column, ColumnType, Table } from '../core/core';
-import { SQL, SQLConvertible, convertToSQL } from '../core/sql';
+import { SQL, SQLConvertible, convertToSQL, SQLVariable } from '../core/sql';
 import { CoreSelectAction } from './coreSelectAction';
 import toTypeString from 'to-type-string';
 
@@ -56,9 +56,16 @@ export class RawColumn {
     }
   }
 
+  toInput(): SQLVariable {
+    const { core } = this;
+    if (core instanceof SQL) {
+      throw new Error('Cannot convert a RawColumn with SQL to an SQLVariable');
+    }
+    return new SQLVariable(core, this.selectedName);
+  }
+
   toString(): string {
-    const type = this.core instanceof Column ? 'COL' : 'SQL';
-    return `${type}(${this.core.toString()}) -> ${this.selectedName}`;
+    return `RawColumn(${this.selectedName}, core = ${this.core.toString()})`;
   }
 }
 
@@ -67,7 +74,7 @@ export function sel(
   selectedName?: string,
   type?: ColumnType,
 ): RawColumn {
-  return new RawColumn(convertToSQL(sql), selectedName, type);
+  return new RawColumn(sql, selectedName, type);
 }
 
 export enum SelectActionMode {

@@ -20,7 +20,10 @@ it('Update', () => {
   ok(v instanceof dd.UpdateAction);
   ok(v instanceof dd.CoreUpdateAction);
   ok(v instanceof dd.Action);
-  expect(v.whereSQL!.toString(), '`id` = 1');
+  expect(
+    v.whereSQL!.toString(),
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
+  );
   expect(v.setters.size, 2);
 
   // extra props
@@ -28,7 +31,7 @@ it('Update', () => {
   expect(v.allowNoWhere, false);
   expect(
     v.settersToString(),
-    'name: <name: [name]>, follower_count: `follower_count` + 1',
+    'name: SQL(E(SQLVar(name, desc = Column(name, Table(user))), type = 2)), follower_count: SQL(E(Column(follower_count, Table(user)), type = 1), E( + 1, type = 0))',
   );
 });
 
@@ -44,7 +47,7 @@ it('Order of setInputs and set', () => {
 
   expect(
     v.settersToString(),
-    'snake_case_name: <snakeCaseName: [snake_case_name]>, name: <b: [name]>',
+    'snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2)), name: SQL(E(SQLVar(b, desc = Column(name, Table(user))), type = 2))',
   );
 });
 
@@ -60,7 +63,7 @@ it('setInputs and setDefaults', () => {
 
   expect(
     v.settersToString(),
-    'def_value: abc, snake_case_name: <snakeCaseName: [snake_case_name]>',
+    'def_value: SQL(E(abc, type = 0)), snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
 });
 
@@ -77,7 +80,7 @@ it('setInputs with no args', () => {
 
   expect(
     v.settersToString(),
-    'def_value: abc, snake_case_name: <snakeCaseName: [snake_case_name]>',
+    'def_value: SQL(E(abc, type = 0)), snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
   expect(v.autoSetter, 'input');
 });
@@ -95,7 +98,7 @@ it('setDefaults with no args', () => {
 
   expect(
     v.settersToString(),
-    'def_value: abc, snake_case_name: <snakeCaseName: [snake_case_name]>',
+    'def_value: SQL(E(abc, type = 0)), snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
   expect(v.autoSetter, 'default');
 });
@@ -200,7 +203,10 @@ it('ByID', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.whereSQL!.toString(), '`id` = <id: [id]>');
+  expect(
+    v.whereSQL!.toString(),
+    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2))',
+  );
 });
 
 it('SQLConvertible value', () => {
@@ -213,7 +219,10 @@ it('SQLConvertible value', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.setters.get(user.name)!.toString(), 'CALL(1)');
+  expect(
+    v.setters.get(user.name)!.toString(),
+    'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
+  );
 });
 
 it('No setters', () => {
@@ -246,7 +255,10 @@ it('by', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  expect(v.whereSQL!.toString(), '<snakeCaseName: [snake_case_name]>');
+  expect(
+    v.whereSQL!.toString(),
+    'SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
+  );
 });
 
 it('andBy', () => {
@@ -269,11 +281,14 @@ it('andBy', () => {
   const ta = dd.ta(user, UserTA);
   expect(
     ta.t1.whereSQL!.toString(),
-    '<snakeCaseName: [snake_case_name]> AND <followerCount: [follower_count]>',
+    'SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
-  expect(ta.t2.whereSQL!.toString(), '<followerCount: [follower_count]>');
+  expect(
+    ta.t2.whereSQL!.toString(),
+    'SQL(E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
+  );
   expect(
     ta.t3.whereSQL!.toString(),
-    '`id` = <id: [id]> AND <followerCount: [follower_count]>',
+    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
 });

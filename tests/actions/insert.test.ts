@@ -22,7 +22,7 @@ it('Insert', () => {
   ok(v instanceof dd.CoreUpdateAction);
   expect(
     v.settersToString(),
-    'title: <title: [title]>, snake_case_user_id: <snakeCaseUserID: [snake_case_user_id]>',
+    'title: SQL(E(SQLVar(title, desc = Column(title, Table(post))), type = 2)), snake_case_user_id: SQL(E(SQLVar(snakeCaseUserID, desc = Column(snake_case_user_id, Table(post))), type = 2))',
   );
 });
 
@@ -67,7 +67,10 @@ it('SQLConvertible value', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  expect(v.setters.get(post.title)!.toString(), 'CALL(1)');
+  expect(
+    v.setters.get(post.title)!.toString(),
+    'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
+  );
 });
 
 it('No setters', () => {

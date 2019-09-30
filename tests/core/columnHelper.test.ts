@@ -147,7 +147,10 @@ it('datetime', () => {
   ok(c.type.types.includes(dd.dt.datetime));
 
   c = dd.datetime(true);
-  expect((c.defaultValue as object).toString(), 'CALL(0)');
+  expect(
+    (c.defaultValue as object).toString(),
+    'SQL(E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3))',
+  );
 });
 
 it('date', () => {
@@ -155,7 +158,10 @@ it('date', () => {
   ok(c.type.types.includes(dd.dt.date));
 
   c = dd.date(true);
-  expect((c.defaultValue as object).toString(), 'CALL(1)');
+  expect(
+    (c.defaultValue as object).toString(),
+    'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
+  );
 });
 
 it('time', () => {
@@ -163,7 +169,10 @@ it('time', () => {
   ok(c.type.types.includes(dd.dt.time));
 
   c = dd.time(true);
-  expect((c.defaultValue as object).toString(), 'CALL(2)');
+  expect(
+    (c.defaultValue as object).toString(),
+    'SQL(E(SQLCall(2, return = ColType(SQL.TIME), type = 3))',
+  );
 });
 
 it('dt.isInteger', () => {

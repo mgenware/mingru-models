@@ -16,6 +16,10 @@ export class ColumnType {
     types = typeof types === 'string' ? [types] : types;
     this.types = types;
   }
+
+  toString(): string {
+    return `ColType(${this.types.join(', ')})`;
+  }
 }
 
 export type CorePropertyHandler = () => void;
@@ -281,7 +285,7 @@ export class Column extends CoreProperty {
       name += `|${this.getDBName()}`;
     }
     const tableStr = this.__table ? this.__table.toString() : '<null>';
-    return `Column (${name}) <- ${tableStr}`;
+    return `Column(${name}, ${tableStr})`;
   }
 
   private checkMutability() {
@@ -313,7 +317,7 @@ export class Table {
     if (name !== this.getDBName()) {
       name += `|${this.getDBName()}`;
     }
-    return `Table (${name})`;
+    return `Table(${name})`;
   }
 }
 

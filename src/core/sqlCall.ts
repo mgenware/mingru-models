@@ -33,6 +33,16 @@ export class SQLCall {
   ) {
     this.params = params ? params.map(p => convertToSQL(p)) : [];
   }
+
+  toString(): string {
+    let paramsDesc = '';
+    if (this.params.length) {
+      paramsDesc = `, params = ${this.params.join(', ')})`;
+    }
+    return `SQLCall(${
+      this.type
+    }, return = ${this.returnType.toString()}${paramsDesc}`;
+  }
 }
 
 export function datetimeNow(): SQLCall {

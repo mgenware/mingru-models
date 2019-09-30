@@ -7,7 +7,7 @@ const expect = assert.equal;
 
 it('Table name', () => {
   expect(user.__name, 'user');
-  expect(user.toString(), 'Table (user)');
+  expect(user.toString(), 'Table(user)');
 });
 
 it('enumerateColumns', () => {

@@ -78,14 +78,11 @@ it('SQL calls', () => {
   assert.deepEqual(t.returnType, dtc(dt.int));
 });
 
-it('Embed', () => {
+it('Embeded in SQL', () => {
   expect(
     dd.sql`haha ${dd.datetimeNow()} ${dd.dateNow()}`.toString(),
-    `haha CALL(${dd.SQLCallType.datetimeNow}) CALL(${dd.SQLCallType.dateNow})`,
+    `SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(SQL.DATE), type = 3))`,
   );
-});
-
-it('Embed (raw)', () => {
   expect(
     dd.sql`haha ${new dd.SQLCall(
       dd.SQLCallType.datetimeNow,
@@ -94,6 +91,6 @@ it('Embed (raw)', () => {
       dd.SQLCallType.dateNow,
       new dd.ColumnType('c2'),
     )}`.toString(),
-    `haha CALL(${dd.SQLCallType.datetimeNow}) CALL(${dd.SQLCallType.dateNow})`,
+    `SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(c1), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(c2), type = 3))`,
   );
 });

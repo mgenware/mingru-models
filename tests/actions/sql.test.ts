@@ -9,7 +9,10 @@ const ok = assert.ok;
 
 it('SQL', () => {
   const sql = dd.sql`${user.id} = 1 OR ${user.name} = ${dd.input(user.name)}`;
-  expect(sql.toString(), '`id` = 1 OR `name` = <name: [name]>');
+  expect(
+    sql.toString(),
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
+  );
   ok(sql instanceof dd.SQL);
 });
 
@@ -17,7 +20,10 @@ it('SQL with input', () => {
   const sql = dd.sql`START${user.id} = 1 OR ${user.name} = ${dd.input(
     user.name,
   )}END`;
-  expect(sql.toString(), 'START`id` = 1 OR `name` = <name: [name]>END');
+  expect(
+    sql.toString(),
+    'SQL(E(START, type = 0), E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2), E(END, type = 0))',
+  );
 });
 
 it('Input', () => {
@@ -57,12 +63,18 @@ it('Empty name for raw type input', () => {
 it('Embed another sql', () => {
   const embedded = dd.sql`_${user.id} = ${dd.input(user.id)}`;
   const sql = dd.sql`START${embedded} OR ${user.name} = ${dd.input(user.name)}`;
-  expect(sql.toString(), 'START_`id` = <id: [id]> OR `name` = <name: [name]>');
+  expect(
+    sql.toString(),
+    'SQL(E(START, type = 0), E(_, type = 0), E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2), E( OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
+  );
 });
 
 it('Embed string', () => {
   const sql = dd.sql`${user.id} = ${'123'}`;
-  expect(sql.toString(), '`id` = 123');
+  expect(
+    sql.toString(),
+    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(123, type = 0))',
+  );
 });
 
 it('toInput', () => {
@@ -79,52 +91,79 @@ it('toInput(string)', () => {
 
 it('isEqualTo', () => {
   const sql = user.name.isEqualTo(dd.sql`"haha"`);
-  expect(sql.toString(), '`name` = "haha"');
+  expect(
+    sql.toString(),
+    'SQL(E(Column(name, Table(user)), type = 1), E( = , type = 0), E("haha", type = 0))',
+  );
 });
 
 it('isEqualToInput', () => {
   const sql = user.name.isEqualToInput();
-  expect(sql.toString(), '`name` = <name: [name]>');
+  expect(
+    sql.toString(),
+    'SQL(E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
+  );
 });
 
 it('isEqualToInput(string)', () => {
   const sql = user.name.isEqualToInput('haha');
-  expect(sql.toString(), '`name` = <haha: [name]>');
+  expect(
+    sql.toString(),
+    'SQL(E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(haha, desc = Column(name, Table(user))), type = 2))',
+  );
 });
 
 it('isNotEqualTo', () => {
   const sql = user.name.isNotEqualTo(dd.sql`"haha"`);
-  expect(sql.toString(), '`name` <> "haha"');
+  expect(
+    sql.toString(),
+    'SQL(E(Column(name, Table(user)), type = 1), E( <> , type = 0), E("haha", type = 0))',
+  );
 });
 
 it('isNotEqualToInput', () => {
   const sql = user.name.isNotEqualToInput();
-  expect(sql.toString(), '`name` <> <name: [name]>');
+  expect(
+    sql.toString(),
+    'SQL(E(Column(name, Table(user)), type = 1), E( <> , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
+  );
 });
 
 it('isNotEqualToInput(string)', () => {
   const sql = user.name.isNotEqualToInput('haha');
-  expect(sql.toString(), '`name` <> <haha: [name]>');
+  expect(
+    sql.toString(),
+    'SQL(E(Column(name, Table(user)), type = 1), E( <> , type = 0), E(SQLVar(haha, desc = Column(name, Table(user))), type = 2))',
+  );
 });
 
 it('isNull', () => {
   const sql = user.name.isNull();
-  expect(sql.toString(), '`name` IS NULL');
+  expect(
+    sql.toString(),
+    'SQL(E(Column(name, Table(user)), type = 1), E( IS NULL, type = 0))',
+  );
 });
 
 it('isNotNull', () => {
   const sql = user.name.isNotNull();
-  expect(sql.toString(), '`name` IS NOT NULL');
+  expect(
+    sql.toString(),
+    'SQL(E(Column(name, Table(user)), type = 1), E( IS NOT NULL, type = 0))',
+  );
 });
 
 it('makeSQL', () => {
   const s = dd.sql`haha`;
   expect(dd.convertToSQL(s), s);
-  expect(dd.convertToSQL('haha').toString(), 'haha');
-  expect(dd.convertToSQL(post.user_id).toString(), '`user_id`');
+  expect(dd.convertToSQL('haha').toString(), 'SQL(E(haha, type = 0))');
+  expect(
+    dd.convertToSQL(post.user_id).toString(),
+    'SQL(E(Column(user_id, Table(post)), type = 1))',
+  );
   expect(
     dd.convertToSQL(dd.count(post.user_id)).toString(),
-    'CALL(3, `user_id`)',
+    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(user_id, Table(post)), type = 1))), type = 3))',
   );
 });
 
@@ -175,5 +214,8 @@ it('hasCalls', () => {
 it('RawColumn', () => {
   const rawCol = dd.sel(user.id, 'haha');
   const sql = dd.sql`${user.id} = ${rawCol}`;
-  expect(sql.toString(), '`id` = RAW(SQL(`id`) -> haha)');
+  expect(
+    sql.toString(),
+    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(RawColumn(haha, core = Column(id, Table(user))), type = 4))',
+  );
 });

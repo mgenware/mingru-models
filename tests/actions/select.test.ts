@@ -19,7 +19,10 @@ it('select', () => {
   expect(v.columns.length, 2);
   expect(v.columns[0], user.id);
   expect(v.columns[1], user.name);
-  expect(v.whereSQL!.toString(), '`id` = 1');
+  expect(
+    v.whereSQL!.toString(),
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
+  );
   expect(v.mode, dd.SelectActionMode.row);
   expect(v.actionType, dd.ActionType.select);
 });
@@ -55,27 +58,48 @@ it('as', () => {
 });
 
 it('RawColumn', () => {
-  const a = user.id.as('x');
-  const b = new dd.RawColumn(user.id, 'y');
-  expect(a.selectedName, 'x');
-  expect(a.core, user.id);
-  expect(b.selectedName, 'y');
-  expect(b.core, user.id);
+  // as
+  let c = user.id.as('x');
+  expect(c.selectedName, 'x');
+  expect(c.core, user.id);
+
+  // new RawColumn
+  c = new dd.RawColumn(user.id, 'y');
+  expect(c.selectedName, 'y');
+  expect(c.core, user.id);
+
+  // dd.sel
+  c = dd.sel(user.id, 'x');
+  expect(c.selectedName, 'x');
+  expect(c.core, user.id);
+
+  // new RawColumn
+  c = new dd.RawColumn(user.id);
+  expect(c.selectedName, 'id');
+  expect(c.core, user.id);
+
+  // dd.sel
+  c = dd.sel(user.id);
+  expect(c.selectedName, 'id');
+  expect(c.core, user.id);
 });
 
 it('RawColumn (raw SQL)', () => {
   const a = new dd.RawColumn(dd.sql`123`, 'x');
   const b = new dd.RawColumn(dd.sql`COUNT(${user.name})`, 'y');
   expect(a.selectedName, 'x');
-  expect(a.core.toString(), '123');
+  expect(a.core.toString(), 'SQL(E(123, type = 0))');
   expect(b.selectedName, 'y');
-  expect(b.core.toString(), 'COUNT(`name`)');
+  expect(
+    b.core.toString(),
+    'SQL(E(COUNT(, type = 0), E(Column(name, Table(user)), type = 1), E(), type = 0))',
+  );
 });
 
 it('RawColumn (types)', () => {
   const a = new dd.RawColumn(dd.sql`123`, 'x', new dd.ColumnType(['t1', 't2']));
   expect(a.selectedName, 'x');
-  expect(a.core.toString(), '123');
+  expect(a.core.toString(), 'SQL(E(123, type = 0))');
   assert.deepEqual(a.type, new dd.ColumnType(['t1', 't2']));
 });
 
@@ -93,7 +117,10 @@ it('RawColumn (count)', () => {
 
   const cc = v.columns[0] as dd.RawColumn;
   expect(cc.selectedName, 'count');
-  expect(cc.core.toString(), 'CALL(3, `name`)');
+  expect(
+    cc.core.toString(),
+    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, [object Object]), type = 1))), type = 3))',
+  );
 });
 
 it('RawColumn (SQLConvertible)', () => {
@@ -101,9 +128,12 @@ it('RawColumn (SQLConvertible)', () => {
   // Column should not be wrapped in SQL
   expect(cc.core, post.user_id);
   cc = new dd.RawColumn('str', 't');
-  expect(cc.core.toString(), 'str');
+  expect(cc.core.toString(), 'SQL(E(str, type = 0))');
   cc = new dd.RawColumn(dd.count(post.id), 't');
-  expect(cc.core.toString(), 'CALL(3, `id`)');
+  expect(
+    cc.core.toString(),
+    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(id, Table(post)), type = 1))), type = 3))',
+  );
 });
 
 it('RawColumn (infer name from columns)', () => {
@@ -116,7 +146,7 @@ it('RawColumn (infer name from columns)', () => {
 it('dd.select (types)', () => {
   const a = dd.sel(dd.sql`123`, 'x', new dd.ColumnType(['t1', 't2']));
   expect(a.selectedName, 'x');
-  expect(a.core.toString(), '123');
+  expect(a.core.toString(), 'SQL(E(123, type = 0))');
   assert.deepEqual(a.type, new dd.ColumnType(['t1', 't2']));
 });
 
@@ -126,7 +156,10 @@ it('byID', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  expect(v.whereSQL!.toString(), '`id` = <id: [id]>');
+  expect(
+    v.whereSQL!.toString(),
+    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2))',
+  );
 });
 
 it('byID with inputName', () => {
@@ -135,7 +168,10 @@ it('byID with inputName', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  expect(v.whereSQL!.toString(), '`id` = <haha: [id]>');
+  expect(
+    v.whereSQL!.toString(),
+    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(haha, desc = Column(id, Table(user))), type = 2))',
+  );
 });
 
 it('by', () => {
@@ -144,7 +180,10 @@ it('by', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  expect(v.whereSQL!.toString(), '<snakeCaseName: [snake_case_name]>');
+  expect(
+    v.whereSQL!.toString(),
+    'SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
+  );
 });
 
 it('andBy', () => {
@@ -162,12 +201,15 @@ it('andBy', () => {
   const ta = dd.ta(user, UserTA);
   expect(
     ta.t1.whereSQL!.toString(),
-    '<snakeCaseName: [snake_case_name]> AND <followerCount: [follower_count]>',
+    'SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
-  expect(ta.t2.whereSQL!.toString(), '<followerCount: [follower_count]>');
+  expect(
+    ta.t2.whereSQL!.toString(),
+    'SQL(E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
+  );
   expect(
     ta.t3.whereSQL!.toString(),
-    '`id` = <id: [id]> AND <followerCount: [follower_count]>',
+    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
 });
 
@@ -241,7 +283,10 @@ it('GROUP BY names', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
   expect(v.groupByColumns[0], user.name.getDBName());
-  expect(v.havingSQL!.toString(), 'CALL(3, `name`) > 2');
+  expect(
+    v.havingSQL!.toString(),
+    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
+  );
 });
 
 it('HAVING', () => {
@@ -255,7 +300,10 @@ it('HAVING', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
   expect(v.groupByColumns[0], user.name.getDBName());
-  expect(v.havingSQL!.toString(), 'CALL(3, `name`) > 2');
+  expect(
+    v.havingSQL!.toString(),
+    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
+  );
 });
 
 it('Throw when limit is called on non-list mode', () => {
@@ -306,4 +354,14 @@ it('Throw on selecting collection without ORDER BY', () => {
     }
     dd.ta(user, UserTA);
   }, 'ORDER BY');
+});
+
+it('RawColumn.toInput', () => {
+  let c = dd.sel(user.name);
+  let v = c.toInput();
+  expect(v.toString(), 'SQLVar(name, desc = Column(name, Table(user)))');
+
+  c = dd.sel(user.name, 'haha', dd.int().type);
+  v = c.toInput();
+  expect(v.toString(), 'SQLVar(haha, desc = Column(name, Table(user)))');
 });

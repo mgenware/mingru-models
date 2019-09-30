@@ -17,11 +17,12 @@ export class SQLVariable {
     const { type } = this;
     let desc = '';
     if (typeof type === 'string') {
-      desc = type as string;
+      desc = `String(${type})`;
     } else {
-      desc = `[${(type as Column).__name}]`;
+      // type is Column
+      desc = type.toString();
     }
-    return `${this.name}: ${desc}`;
+    return `SQLVar(${this.name}, desc = ${desc})`;
   }
 
   isEqualTo(oth: SQLVariable): boolean {
@@ -99,6 +100,10 @@ export class SQLElement {
   toCall(): SQLCall {
     return this.value as SQLCall;
   }
+
+  toString(): string {
+    return `E(${(this.value as object).toString()}, type = ${this.type})`;
+  }
 }
 
 export class SQL {
@@ -146,7 +151,7 @@ export class SQL {
   }
 
   toString(): string {
-    return this.elements.map(e => this.formatElement(e)).join('');
+    return `SQL(${this.elements.map(e => e.toString()).join(', ')})`;
   }
 
   findColumn(): Column | null {
@@ -177,35 +182,6 @@ export class SQL {
       this.hasCalls = true;
     }
     this.elements.push(element);
-  }
-
-  private formatElement(element: SQLElement): string {
-    switch (element.type) {
-      case SQLElementType.rawString: {
-        return element.toRawString();
-      }
-      case SQLElementType.column: {
-        return '`' + element.toColumn().__name + '`';
-      }
-      case SQLElementType.input: {
-        return `<${element.toInput().toString()}>`;
-      }
-      case SQLElementType.call: {
-        const call = element.toCall();
-        const pas = call.params.length
-          ? call.params.map(p => `, ${(p as object).toString()}`).join('')
-          : '';
-        return `CALL(${call.type}${pas})`;
-      }
-      case SQLElementType.rawColumn: {
-        return `RAW(${element.toRawColumn().toString()})`;
-      }
-      default: {
-        throw new Error(
-          `Unsupported SQL element type "${toTypeString(element)}"`,
-        );
-      }
-    }
   }
 }
 
