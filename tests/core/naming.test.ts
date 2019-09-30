@@ -26,6 +26,7 @@ it('Table name and getDBName', () => {
   expect(defTable.__name, 'def_table');
   expect(defTable.__dbName, 't');
   expect(defTable.getDBName(), 't');
+  expect(defTable.toString(), 'Table (def_table|t)');
   expect(abcTable.StatusString.__name, 'status_string');
   expect(abcTable.statusType.__name, 'status_type');
   expect(abcTable.statusID.__name, 'status_id');
@@ -47,4 +48,5 @@ it('Rename a FK', () => {
   expect(abcTable.uid3.__name, 'uid_3');
   expect(abcTable.uid3.__dbName, 'UID3');
   expect(abcTable.uid3.getDBName(), 'UID3');
+  expect(abcTable.uid3.toString(), 'Column (uid_3|UID3) <- Table (abc_table)');
 });

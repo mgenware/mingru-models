@@ -171,3 +171,9 @@ it('hasCalls', () => {
   expect(c.hasCalls, false);
   expect(d.hasCalls, false);
 });
+
+it('RawColumn', () => {
+  const rawCol = dd.sel(user.id, 'haha');
+  const sql = dd.sql`${user.id} = ${rawCol}`;
+  expect(sql.toString(), '`id` = RAW(SQL(`id`) -> haha)');
+});

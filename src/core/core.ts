@@ -275,6 +275,15 @@ export class Column extends CoreProperty {
     return table;
   }
 
+  toString(): string {
+    let name = this.__name;
+    if (this.getDBName() !== name) {
+      name += `|${this.getDBName()}`;
+    }
+    const tableStr = this.__table ? this.__table.toString() : '<null>';
+    return `Column (${name}) <- ${tableStr}`;
+  }
+
   private checkMutability() {
     if (Object.isFrozen(this)) {
       throw new Error(
@@ -300,7 +309,11 @@ export class Table {
   }
 
   toString(): string {
-    return `Table (${this.getDBName()})`;
+    let name = this.__name;
+    if (name !== this.getDBName()) {
+      name += `|${this.getDBName()}`;
+    }
+    return `Table (${name})`;
   }
 }
 
