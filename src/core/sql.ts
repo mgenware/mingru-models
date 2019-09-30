@@ -1,4 +1,4 @@
-import { Column } from './core';
+import { Column, ColumnType } from './core';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { SQLCall } from './sqlCall';
 import toTypeString from 'to-type-string';
@@ -166,6 +166,28 @@ export class SQL {
           if (col) {
             return col;
           }
+        }
+      }
+    }
+    return null;
+  }
+
+  sniffType(): ColumnType | string | null {
+    for (const element of this.elements) {
+      const { type } = element;
+      if (type === SQLElementType.column) {
+        return element.toColumn().type;
+      }
+      if (type === SQLElementType.call) {
+        return element.toCall().returnType;
+      }
+      if (type === SQLElementType.rawColumn) {
+        const raw = element.toRawColumn();
+        if (raw.type) {
+          return raw.type;
+        }
+        if (raw.core instanceof Column) {
+          return raw.core.type;
         }
       }
     }
