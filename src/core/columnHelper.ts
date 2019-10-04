@@ -91,19 +91,23 @@ export function pk(column?: Column): Column {
   } else {
     col = uBigInt();
   }
+  let isFK = false;
   if (Object.isFrozen(col)) {
     // col is from another table, therefore an implicit FK
+    isFK = true;
     const fkCol = Column.newForeignColumn(col, null);
     fkCol.type.pk = true;
     col = fkCol;
   }
   const colType = col.type;
   colType.pk = true;
-  // Auto set AUTO_INCREMENT if column is an integer
-  for (const t of colType.types) {
-    if (dt.isInteger(t)) {
-      colType.autoIncrement = true;
-      break;
+  if (!isFK) {
+    // Auto set AUTO_INCREMENT if column is an integer
+    for (const t of colType.types) {
+      if (dt.isInteger(t)) {
+        colType.autoIncrement = true;
+        break;
+      }
     }
   }
   return col;

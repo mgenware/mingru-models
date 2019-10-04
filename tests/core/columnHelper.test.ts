@@ -1,6 +1,8 @@
 import * as dd from '../../';
 import post from '../models/post';
+import like from '../models/like';
 import * as assert from 'assert';
+import user from '../models/user';
 
 const expect = assert.equal;
 const ok = assert.ok;
@@ -97,7 +99,13 @@ it('pk(FK)', () => {
   expect(c.type.pk, true);
   expect(c.type.unique, false);
   expect(c.type.nullable, false);
+  expect(c.type.autoIncrement, false);
   expect(c.foreignColumn, post.id);
+
+  const likeUserID = like.user_id;
+  expect(likeUserID.type.pk, true);
+  expect(likeUserID.foreignColumn, user.id);
+  expect(likeUserID.type.autoIncrement, false);
 });
 
 it('autoIncrement', () => {

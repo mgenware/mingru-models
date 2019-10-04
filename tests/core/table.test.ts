@@ -2,6 +2,7 @@ import * as dd from '../../';
 import user from '../models/user';
 import employee from '../models/employee';
 import * as assert from 'assert';
+import like from '../models/like';
 
 const expect = assert.equal;
 
@@ -39,4 +40,9 @@ it('__pks', () => {
   assert.deepEqual(user.__pkAIs, [user.id]);
   assert.deepEqual(employee.__pks, [employee.id]);
   assert.deepEqual(employee.__pkAIs, []);
+});
+
+it('Composite PKs', () => {
+  assert.deepEqual(like.__pks, [like.user_id, like.type]);
+  assert.deepEqual(like.__pkAIs, []);
 });
