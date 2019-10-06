@@ -40,7 +40,6 @@
     "eslint": "^6.5.1",
     "mocha": "^6.2.0",
     "rimraf": "^3.0.0",
-    "tslint": "^5.20.0",
     "typescript": "^3.6.3"
   },
   "dependencies": {
