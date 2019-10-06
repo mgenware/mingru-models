@@ -3,13 +3,13 @@ import { Table, CoreProperty, Column } from '../core/core';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { and } from '../sqlHelper';
 
-export interface IActionWithWhere {
+export interface ActionWithWhere {
   __table: Table | null;
   whereSQL: SQL | null;
   whereValidator: ((value: SQL) => void) | null;
 }
 
-export function where(action: IActionWithWhere, value: SQL) {
+export function where(action: ActionWithWhere, value: SQL) {
   throwIfFalsy(value, 'value');
   if (action.whereValidator) {
     action.whereValidator(value);
@@ -22,7 +22,7 @@ export function where(action: IActionWithWhere, value: SQL) {
 }
 
 // Unsafe means it accesses `__table` which is not available during property initialization, and should be wrapped inside `CoreProperty.registerHandler`.
-function byIDUnsafe(action: IActionWithWhere, inputName: string | undefined) {
+function byIDUnsafe(action: ActionWithWhere, inputName: string | undefined) {
   const { __table: table } = action;
   if (!table) {
     throw new Error(`Action is not initialized by dd.ta`);
@@ -42,7 +42,7 @@ function byIDUnsafe(action: IActionWithWhere, inputName: string | undefined) {
 }
 
 export function byID(
-  action: CoreProperty & IActionWithWhere,
+  action: CoreProperty & ActionWithWhere,
   inputName?: string,
 ) {
   CoreProperty.registerHandler(action, () => {
@@ -50,12 +50,12 @@ export function byID(
   });
 }
 
-export function by(action: IActionWithWhere, column: Column) {
+export function by(action: ActionWithWhere, column: Column) {
   throwIfFalsy(column, 'column');
   where(action, sql`${column.toInput()}`);
 }
 
-export function andBy(action: CoreProperty & IActionWithWhere, column: Column) {
+export function andBy(action: CoreProperty & ActionWithWhere, column: Column) {
   throwIfFalsy(column, 'column');
   CoreProperty.registerHandler(action, () => {
     // Combine existing WHERE
