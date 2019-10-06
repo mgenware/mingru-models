@@ -1,12 +1,12 @@
 {
-  "name": "dd-models",
-  "version": "0.23.1",
-  "description": "Redefining database models",
+  "name": "mingru-models",
+  "version": "0.24.0",
+  "description": "Strongly typed database models in TypeScript",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "author": "Mgen (https://www.mgenware.com)",
-  "homepage": "https://github.com/mgenware/dd-models",
-  "bugs": "https://github.com/mgenware/dd-models/issues",
+  "homepage": "https://github.com/mgenware/mingru-models",
+  "bugs": "https://github.com/mgenware/mingru-models/issues",
   "keywords": [
     "database",
     "orm",
@@ -14,7 +14,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/mgenware/dd-models.git"
+    "url": "https://github.com/mgenware/mingru-models.git"
   },
   "license": "MIT",
   "scripts": {

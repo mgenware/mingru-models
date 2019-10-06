@@ -1,22 +1,22 @@
-# dd-models (WIP)
+# mingru-models (WIP)
 
 [![MEAN Module](https://img.shields.io/badge/MEAN%20Module-TypeScript-blue.svg?style=flat-square)](https://github.com/mgenware/MEAN-Module)
-[![Build Status](https://img.shields.io/travis/mgenware/dd-models.svg?style=flat-square&label=Build+Status)](https://travis-ci.org/mgenware/dd-models)
-[![npm version](https://img.shields.io/npm/v/dd-models.svg?style=flat-square)](https://npmjs.com/package/dd-models)
-[![Node.js Version](http://img.shields.io/node/v/dd-models.svg?style=flat-square)](https://nodejs.org/en/)
+[![Build Status](https://img.shields.io/travis/mgenware/mingru-models.svg?style=flat-square&label=Build+Status)](https://travis-ci.org/mgenware/mingru-models)
+[![npm version](https://img.shields.io/npm/v/mingru-models.svg?style=flat-square)](https://npmjs.com/package/mingru-models)
+[![Node.js Version](http://img.shields.io/node/v/mingru-models.svg?style=flat-square)](https://nodejs.org/en/)
 
-Redefining database models using TypeScript.
+Strongly typed database models in TypeScript.
 
 **All APIs are subject to change before 1.0.0**
 
-**Note that dd-models only helps you define database models in a strong-typed way, it has nothing to do with how these models are going to be used, usually, you use other libraries to consume your models**, examples:
+**Note that mingru-models only helps you define database models in a strong-typed way, it has nothing to do with how these models are going to be used, usually, you use other libraries to consume your models**, examples:
 
-- [mingru](https://github.com/mgenware/mingru) converts dd-models to Go code
+- [mingru](https://github.com/mgenware/mingru) converts mingru-models to Go code
 
 ## Installation
 
 ```sh
-yarn install dd-models
+yarn install mingru-models
 ```
 
 # Quick Start
@@ -34,7 +34,7 @@ To create a table:
 For example, a table named `User` with 2 columns, `id` and `name`:
 
 ```ts
-import * as dd from 'dd-models';
+import * as dd from 'mingru-models';
 
 class User extends dd.Table {
   id = dd.pk();
@@ -47,11 +47,11 @@ export default dd.table(User);
 You may wonder why a two-step process, why not export the table type directly? well, there are several reasons:
 
 - Exporting the class would require user to define columns as `static` properties.
-- When calling `dd.table`, dd-models will look through all columns and do some validation as well as preprocessing work like setting up foreign keys, which is definitely suited for an object.
+- When calling `dd.table`, mingru-models will look through all columns and do some validation as well as preprocessing work like setting up foreign keys, which is definitely suited for an object.
 
 #### Table Name
 
-By default, class name is used as table name, and dd-models automatially converts it to snake_case in SQL, for example, `class MyTable` would be `my_table`. Use the second parameter of `dd.table` to customize the name used in SQL.
+By default, class name is used as table name, and mingru-models automatially converts it to snake_case in SQL, for example, `class MyTable` would be `my_table`. Use the second parameter of `dd.table` to customize the name used in SQL.
 
 ```ts
 class User extends dd.MyTable {}
@@ -199,7 +199,7 @@ class Column extends ColumnBase {
 Joins can be created by simply assigning a foreign column to the target column, for example, let's say `post` table has a foreign key to `user` table at `user_id` column, here is what `user` looks like (`user.ts`):
 
 ```ts
-import * as dd from 'dd-models';
+import * as dd from 'mingru-models';
 
 class User extends dd.Table {
   id = dd.pk();
@@ -212,7 +212,7 @@ export default dd.table(User);
 To create a join to `user` table, inside `post` table (`post.ts`), you need to import `user` table, and set `user.id` to the `user_id` column:
 
 ```ts
-import * as dd from 'dd-models';
+import * as dd from 'mingru-models';
 import user from './user';
 
 class Post extends dd.Table {
@@ -253,7 +253,7 @@ export default dd.ta(user, UserTA);
 
 ### `SELECT` Actions Basics
 
-dd-models supports the following kinds of `SELECT` actions:
+mingru-models supports the following kinds of `SELECT` actions:
 
 ```ts
 // Selects a row.
@@ -276,7 +276,7 @@ For example, in [mingru](https://github.com/mgenware/mingru), consider the follo
 
 ```ts
 // ----------- user table model (user.ts) -----------
-import * as dd from 'dd-models';
+import * as dd from 'mingru-models';
 
 class User extends dd.Table {
   id = dd.pk();
@@ -392,7 +392,7 @@ dd.input(comment.post_id.join(post).title);
 
 #### SQL Expression Helpers
 
-Writing `dd.input`s in `dd.sql` can be tedious, dd-models comes with a bunch of handy helpers to construct some commonly used expressions.
+Writing `dd.input`s in `dd.sql` can be tedious, mingru-models comes with a bunch of handy helpers to construct some commonly used expressions.
 
 ##### `Column.toInput(column, optionalName): SQLVariable`
 
@@ -478,7 +478,7 @@ updateLastLogin = dd
   .byID();
 ```
 
-As these system calls are commonly used, dd-models supports them as predefined system calls listed below:
+As these system calls are commonly used, mingru-models supports them as predefined system calls listed below:
 
 ```ts
 enum SQLCallType {
@@ -574,7 +574,7 @@ Notice the `limit` and `offset` arguments are gone, `page` and `pageSize` are ex
 
 ### `UPDATE` Actions
 
-dd-models supports the following kinds of `UPDATE` actions:
+mingru-models supports the following kinds of `UPDATE` actions:
 
 ```ts
 // Updates a row and checks rows affected to make sure only one row is updated.
