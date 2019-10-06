@@ -109,9 +109,8 @@ it('pk(FK)', () => {
 });
 
 it('autoIncrement', () => {
-  // Calling pk with an integer type sets AUTO_INCREMENT to true
-  expect(dd.pk(dd.int()).type.autoIncrement, true);
-  expect(dd.pk(dd.tinyInt()).type.autoIncrement, true);
+  expect(dd.pk(dd.int()).type.autoIncrement, false);
+  expect(dd.pk(dd.tinyInt()).type.autoIncrement, false);
   expect(dd.pk(dd.bool()).type.autoIncrement, false);
   expect(dd.pk(dd.varChar(3)).type.autoIncrement, false);
   // Set the AUTO_INCREMENT explicitly
