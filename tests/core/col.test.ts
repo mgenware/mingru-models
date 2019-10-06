@@ -190,7 +190,7 @@ it('Register property callback', () => {
     t = col;
   }
 
-  expect(col.__handlers!.length, 2);
+  assert.deepEqual(col.__handlers, [cb, cb]);
   expect(counter, 0);
   dd.table(User);
   expect(col.__handlers, null);

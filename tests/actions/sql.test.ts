@@ -222,21 +222,13 @@ it('RawColumn', () => {
 
 it('sniffType', () => {
   // Column
-  expect(dd.sql`haha${user.id}`.sniffType()!.toString(), 'ColType(SQL.BIGINT)');
+  expect(dd.sql`haha${user.id}`.sniffType(), 'ColType(SQL.BIGINT)');
   // Call
-  expect(
-    dd.sql`${dd.max(dd.sql``)}`.sniffType()!.toString(),
-    'ColType(SQL.INT)',
-  );
+  expect(dd.sql`${dd.max(dd.sql``)}`.sniffType(), 'ColType(SQL.INT)');
   // RawColumn
+  expect(dd.sql`haha${user.id.as('abc')}`.sniffType(), 'ColType(SQL.BIGINT)');
   expect(
-    dd.sql`haha${user.id.as('abc')}`.sniffType()!.toString(),
-    'ColType(SQL.BIGINT)',
-  );
-  expect(
-    dd.sql`haha${dd.sel(dd.sql`abc`, 'name', dd.int().type)}`
-      .sniffType()!
-      .toString(),
+    dd.sql`haha${dd.sel(dd.sql`abc`, 'name', dd.int().type)}`.sniffType(),
     'ColType(SQL.INT)',
   );
 });

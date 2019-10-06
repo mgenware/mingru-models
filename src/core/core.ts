@@ -75,8 +75,7 @@ export class Column extends CoreProperty {
     const copied = Column.copyFrom(srcColumn, table, null);
     copied.foreignColumn = srcColumn;
     // For foreign column, `__name` is reset to null
-    // tslint:disable-next-line no-any
-    (copied.__name as any) = null;
+    copied.__name = null;
     return copied;
   }
 
@@ -274,7 +273,7 @@ export class Column extends CoreProperty {
       return null;
     }
     if (table instanceof JoinedTable) {
-      return (table as JoinedTable).srcColumn.getSourceTable();
+      return table.srcColumn.getSourceTable();
     }
     return table;
   }

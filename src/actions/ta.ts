@@ -29,7 +29,7 @@ export class Action extends CoreProperty {
   }
 
   // After action is fully initialized, `dd.ta` will call `Action.validate`
-  validate(_: Table, __: string) {
+  validate(_table: Table, _name: string) {
     // Implemented by sub-classes
   }
 
@@ -83,8 +83,7 @@ export function enumerateActions<T extends TA>(
         )}"`,
       );
     }
-    const col = value as Action;
-    cb(col, name);
+    cb(value, name);
   }
 }
 

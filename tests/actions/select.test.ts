@@ -20,7 +20,7 @@ it('select', () => {
   expect(v.columns[0], user.id);
   expect(v.columns[1], user.name);
   expect(
-    v.whereSQL!.toString(),
+    v.whereSQL,
     'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
   );
   expect(v.mode, dd.SelectActionMode.row);
@@ -143,6 +143,21 @@ it('RawColumn (infer name from columns)', () => {
   expect(cc.selectedName, 'name');
 });
 
+it('RawColumn.toInput', () => {
+  // .core is column
+  let cc = dd.sel(user.name);
+  expect(
+    cc.toInput().toString(),
+    'SQLVar(name, desc = Column(name, Table(user)))',
+  );
+  // .core is SQL
+  cc = dd.sel(dd.sql`haha${user.id}`);
+  expect(cc.toInput().toString(), 'SQLVar(id, desc = ColType(SQL.BIGINT))');
+
+  cc = dd.sel(dd.sql`${dd.max(dd.sql``)}`, 'haha');
+  expect(cc.toInput().toString(), 'SQLVar(haha, desc = ColType(SQL.INT))');
+});
+
 it('dd.select (types)', () => {
   const a = dd.sel(dd.sql`123`, 'x', new dd.ColumnType(['t1', 't2']));
   expect(a.selectedName, 'x');
@@ -157,7 +172,7 @@ it('byID', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
   expect(
-    v.whereSQL!.toString(),
+    v.whereSQL,
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2))',
   );
 });
@@ -169,7 +184,7 @@ it('byID with inputName', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
   expect(
-    v.whereSQL!.toString(),
+    v.whereSQL,
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(haha, desc = Column(id, Table(user))), type = 2))',
   );
 });
@@ -181,7 +196,7 @@ it('by', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
   expect(
-    v.whereSQL!.toString(),
+    v.whereSQL,
     'SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
 });
@@ -200,15 +215,15 @@ it('andBy', () => {
   }
   const ta = dd.ta(user, UserTA);
   expect(
-    ta.t1.whereSQL!.toString(),
+    ta.t1.whereSQL,
     'SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
   expect(
-    ta.t2.whereSQL!.toString(),
+    ta.t2.whereSQL,
     'SQL(E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
   expect(
-    ta.t3.whereSQL!.toString(),
+    ta.t3.whereSQL,
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
 });
@@ -284,7 +299,7 @@ it('GROUP BY names', () => {
   const v = ta.t;
   expect(v.groupByColumns[0], user.name.getDBName());
   expect(
-    v.havingSQL!.toString(),
+    v.havingSQL,
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
   );
 });
@@ -301,7 +316,7 @@ it('HAVING', () => {
   const v = ta.t;
   expect(v.groupByColumns[0], user.name.getDBName());
   expect(
-    v.havingSQL!.toString(),
+    v.havingSQL,
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
   );
 });

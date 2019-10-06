@@ -43,8 +43,7 @@ export function enumerateColumns(
         )}"`,
       );
     }
-    const col = value as Column;
-    cb(col, name);
+    cb(value, name);
   }
 }
 
@@ -97,7 +96,7 @@ export function table<T extends Table>(
     if (
       columnToAdd.defaultValue &&
       columnToAdd.defaultValue instanceof SQL &&
-      (columnToAdd.defaultValue as SQL).hasColumns
+      columnToAdd.defaultValue.hasColumns
     ) {
       throw new Error(
         `Column "${propName}"'s default value cannot be a complex SQL expression`,
@@ -105,7 +104,7 @@ export function table<T extends Table>(
     }
 
     cols.push(columnToAdd);
-    // tslint:disable-next-line
+    // eslint-disable-next-line
     (tableObj as any)[propName] = columnToAdd;
     // After all properties are set, run property handlers
     CoreProperty.runHandlers(columnToAdd);

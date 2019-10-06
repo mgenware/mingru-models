@@ -21,7 +21,7 @@ it('Update', () => {
   ok(v instanceof dd.CoreUpdateAction);
   ok(v instanceof dd.Action);
   expect(
-    v.whereSQL!.toString(),
+    v.whereSQL,
     'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
   );
   expect(v.setters.size, 2);
@@ -204,7 +204,7 @@ it('ByID', () => {
   const v = ta.t;
 
   expect(
-    v.whereSQL!.toString(),
+    v.whereSQL,
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2))',
   );
 });
@@ -220,7 +220,7 @@ it('SQLConvertible value', () => {
   const v = ta.t;
 
   expect(
-    v.setters.get(user.name)!.toString(),
+    v.setters.get(user.name),
     'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
   );
 });
@@ -256,7 +256,7 @@ it('by', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
   expect(
-    v.whereSQL!.toString(),
+    v.whereSQL,
     'SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
 });
@@ -280,15 +280,15 @@ it('andBy', () => {
   }
   const ta = dd.ta(user, UserTA);
   expect(
-    ta.t1.whereSQL!.toString(),
+    ta.t1.whereSQL,
     'SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
   expect(
-    ta.t2.whereSQL!.toString(),
+    ta.t2.whereSQL,
     'SQL(E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
   expect(
-    ta.t3.whereSQL!.toString(),
+    ta.t3.whereSQL,
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
 });

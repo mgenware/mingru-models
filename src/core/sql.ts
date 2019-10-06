@@ -6,7 +6,7 @@ import { RawColumn } from '../actions/selectAction';
 
 export class SQLVariable {
   constructor(
-    public type: string | Column, // type string can also contains an import path: <Type name>[|<Import>]
+    public type: string | Column | ColumnType, // type string can also contains an import path: <Type name>[|<Import>]
     public name: string,
   ) {
     throwIfFalsy(type, 'type');
@@ -36,29 +36,31 @@ export class SQLVariable {
       return false;
     }
     if (typeof this.type === 'string') {
-      return (this.type as string) === (oth.type as string);
+      return this.type === (oth.type as string);
     }
-    return (this.type as Column) === (oth.type as Column);
+    return this.type === (oth.type as Column);
   }
 }
 
-export function input(type: string | Column, name?: string): SQLVariable {
+export function input(
+  type: string | Column | ColumnType,
+  name?: string,
+): SQLVariable {
   if (type instanceof Column) {
-    const col = type as Column;
     if (!name) {
-      name = col.inputName();
+      name = type.inputName();
       if (!name) {
         throw new Error(
           `Unexpected empty input name for column "${toTypeString(type)}"`,
         );
       }
     }
-    return new SQLVariable(col, name);
+    return new SQLVariable(type, name);
   }
   if (!name) {
     throw new Error(`Unexpected empty input name for type "${type}"`);
   }
-  return new SQLVariable(type as string, name as string);
+  return new SQLVariable(type, name);
 }
 
 // Allowed types in dd.sql template strings
@@ -121,15 +123,13 @@ export class SQL {
       }
       const param = params[i];
       if (typeof param === 'string') {
-        this.pushElement(
-          new SQLElement(SQLElementType.rawString, param as string),
-        );
+        this.pushElement(new SQLElement(SQLElementType.rawString, param));
       } else if (param instanceof Column) {
         this.pushElement(new SQLElement(SQLElementType.column, param));
       } else if (param instanceof SQLVariable) {
         this.pushElement(new SQLElement(SQLElementType.input, param));
       } else if (param instanceof SQL) {
-        for (const element of (param as SQL).elements) {
+        for (const element of param.elements) {
           this.pushElement(element);
         }
       } else if (param instanceof SQLCall) {
@@ -216,7 +216,7 @@ export function sql(
 
 export function convertToSQL(element: SQLConvertible): SQL {
   if (element instanceof SQL) {
-    return element as SQL;
+    return element;
   }
   return sql`${element}`;
 }

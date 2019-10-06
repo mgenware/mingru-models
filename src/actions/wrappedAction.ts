@@ -5,11 +5,7 @@ import { Table } from '../core/core';
 export class WrappedAction extends Action {
   isTemp = false;
 
-  constructor(
-    public action: Action,
-    // tslint:disable-next-line no-any
-    public args: { [name: string]: any },
-  ) {
+  constructor(public action: Action, public args: { [name: string]: unknown }) {
     super(ActionType.wrap);
     throwIfFalsy(action, 'action');
     throwIfFalsy(args, 'args');

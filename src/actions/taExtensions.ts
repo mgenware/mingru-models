@@ -3,14 +3,12 @@ import { WrappedAction } from './wrappedAction';
 
 declare module './ta' {
   interface Action {
-    // tslint:disable-next-line no-any
-    wrap(args: { [name: string]: any }): WrappedAction;
+    wrap(args: { [name: string]: unknown }): WrappedAction;
   }
 }
 
 Action.prototype.wrap = function(args: {
-  // tslint:disable-next-line no-any
-  [name: string]: any;
+  [name: string]: unknown;
 }): WrappedAction {
   if (this.__table || this instanceof WrappedAction === false) {
     return new WrappedAction(this, args);

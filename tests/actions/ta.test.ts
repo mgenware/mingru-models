@@ -40,7 +40,7 @@ it('Register property callback', () => {
     t = action;
   }
 
-  expect(action.__handlers!.length, 2);
+  assert.deepEqual(action.__handlers, [cb, cb]);
   expect(counter, 0);
   dd.ta(user, UserTA);
   expect(action.__handlers, null);

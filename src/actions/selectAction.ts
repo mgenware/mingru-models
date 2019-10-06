@@ -26,14 +26,13 @@ export class RawColumn {
   ) {
     throwIfFalsy(core, 'core');
     if (core instanceof Column) {
-      const col = core as Column;
-      if (!col.__name) {
+      if (!core.__name) {
         throw new Error(
           'The "core" argument is not initialized (did you accidentally put a RawColumn in a SELECT action?)',
         );
       }
-      this.core = col;
-      this.selectedName = selectedName || col.__name;
+      this.core = core;
+      this.selectedName = selectedName || core.__name;
     } else {
       const expr = convertToSQL(core);
       this.core = expr;
@@ -57,11 +56,15 @@ export class RawColumn {
   }
 
   toInput(): SQLVariable {
-    const { core } = this;
+    const { core, selectedName } = this;
     if (core instanceof SQL) {
-      throw new Error('Cannot convert a RawColumn(SQL) to an SQLVariable');
+      const inferred = core.sniffType();
+      if (!inferred) {
+        throw new Error('Cannot convert a RawColumn(SQL) to an SQLVariable');
+      }
+      return new SQLVariable(inferred, selectedName);
     }
-    return new SQLVariable(core, this.selectedName);
+    return new SQLVariable(core, selectedName);
   }
 
   toString(): string {

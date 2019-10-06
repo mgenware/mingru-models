@@ -24,7 +24,7 @@
     "compile": "tsc -b tests",
     "dev": "yarn run clean && tsc -b tests -w",
     "prepublishOnly": "yarn run test",
-    "lint": "eslint \"{src,tests}/**/*.ts\" --quiet",
+    "lint": "eslint --ext .ts src/ tests/",
     "clean": "rimraf dist && rimraf dist_tests"
   },
   "engines": {

@@ -15,7 +15,7 @@ it('DeleteAction', () => {
   ok(v instanceof dd.CoreSelectAction);
   ok(v instanceof dd.Action);
   expect(
-    v.whereSQL!.toString(),
+    v.whereSQL,
     'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
   );
   expect(v.actionType, dd.ActionType.delete);

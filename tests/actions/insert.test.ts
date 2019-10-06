@@ -68,7 +68,7 @@ it('SQLConvertible value', () => {
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
   expect(
-    v.setters.get(post.title)!.toString(),
+    v.setters.get(post.title),
     'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
   );
 });
