@@ -24,7 +24,7 @@
     "compile": "tsc -b tests",
     "dev": "yarn run clean && tsc -b tests -w",
     "prepublishOnly": "yarn run test",
-    "lint": "tslint --project tsconfig.json --config tslint.json",
+    "lint": "eslint \"{src,tests}/**/*.ts\" --quiet",
     "clean": "rimraf dist && rimraf dist_tests"
   },
   "engines": {
@@ -35,6 +35,9 @@
     "@types/lodash.snakecase": "^4.1.6",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.7.5",
+    "@typescript-eslint/eslint-plugin": "^2.3.2",
+    "@typescript-eslint/parser": "^2.3.2",
+    "eslint": "^6.5.1",
     "mocha": "^6.2.0",
     "rimraf": "^3.0.0",
     "tslint": "^5.20.0",
