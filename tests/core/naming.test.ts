@@ -34,7 +34,7 @@ it('Table name and getDBName', () => {
 });
 
 it('col.TableName(dbName)', () => {
-  expect(defTable.id.tableName(), 'def_table');
+  expect(defTable.id.tableName(false), 'def_table');
   expect(defTable.id.tableName(true), 't');
 });
 

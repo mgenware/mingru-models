@@ -97,7 +97,7 @@ it('action.ensureInitialized', () => {
   }
   const ta = dd.ta(user, UserTA);
   const v = ta.t;
-  assert.doesNotThrow(() => v.ensureInitialized());
+  assert.deepEqual(v.ensureInitialized(), [user, 't']);
   assert.throws(
     () => dd.select(user.id).ensureInitialized(),
     'not initialized',

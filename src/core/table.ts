@@ -1,5 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Table, Column, CoreProperty } from './core';
+import { Table, Column, CoreProperty, JoinedTable } from './core';
 import { utils } from '../main';
 import toTypeString from 'to-type-string';
 import * as defs from './defs';
@@ -62,7 +62,7 @@ export function table<T extends Table>(
     if (!col) {
       throw new Error(`Expected empty column object at column "${propName}"`);
     }
-    if (col.isJoinedColumn()) {
+    if (col.__table instanceof JoinedTable) {
       throw new Error(
         `Unexpected ${toTypeString(
           col,

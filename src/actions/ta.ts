@@ -38,11 +38,11 @@ export class Action extends CoreProperty {
     return this;
   }
 
-  ensureInitialized(): [string, Table] {
+  ensureInitialized(): [Table, string] {
     if (!this.__name || !this.__table) {
       throw new Error(`Action "${toTypeString(this)}" is not initialized`);
     }
-    return [this.__name, this.__table];
+    return [this.__table, this.__name];
   }
 }
 

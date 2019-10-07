@@ -231,40 +231,30 @@ export class Column extends CoreProperty {
     });
   }
 
-  inputName(): string {
-    if (!this.__name) {
-      throw new Error('Property not initialized');
+  ensureInitialized(): [Table | JoinedTable, string] {
+    if (!this.__name || !this.__table) {
+      throw new Error(`Column "${this}" is not initialized`);
     }
-    const curName = utils.toCamelCase(this.__name);
-    if (this.isJoinedColumn()) {
-      return (
-        this.castToJoinedTable().tableInputName() +
-        utils.capitalizeColumnName(curName)
-      );
+    return [this.__table, this.__name];
+  }
+
+  inputName(): string {
+    const [table, name] = this.ensureInitialized();
+    const curName = utils.toCamelCase(name);
+
+    if (table instanceof JoinedTable) {
+      return table.tableInputName() + utils.capitalizeColumnName(curName);
     }
     return curName;
   }
 
-  tableName(dbName = false): string {
-    const { __table: table } = this;
+  tableName(dbName: boolean): string {
+    const [table] = this.ensureInitialized();
     if (table instanceof Table) {
-      const t = this.castToTable();
-      return dbName ? t.getDBName() : t.__name;
+      return dbName ? table.getDBName() : table.__name;
     }
     // JoinedTable
-    return this.castToJoinedTable().tableInputName();
-  }
-
-  isJoinedColumn(): boolean {
-    return this.__table instanceof JoinedTable;
-  }
-
-  castToTable(): Table {
-    return this.__table as Table;
-  }
-
-  castToJoinedTable(): JoinedTable {
-    return this.__table as JoinedTable;
+    return table.tableInputName();
   }
 
   getSourceTable(): Table | null {
@@ -337,30 +327,26 @@ export class JoinedTable {
     public destColumn: Column,
   ) {
     let localPath: string;
-    if (srcColumn.isJoinedColumn()) {
+    const [srcTable] = srcColumn.ensureInitialized();
+    if (srcTable instanceof JoinedTable) {
       // source column is a joined column
-      const srcTableKeyPath = srcColumn.castToJoinedTable().keyPath;
+      const srcTableKeyPath = srcTable.keyPath;
       localPath = `[${srcTableKeyPath}.${srcColumn.__name}]`;
     } else {
-      localPath = `[${srcColumn.castToTable().__name}.${srcColumn.__name}]`;
+      localPath = `[${srcTable.__name}.${srcColumn.__name}]`;
     }
 
-    const remotePath = `[${destColumn.tableName()}.${destColumn.__name}]`;
+    const remotePath = `[${destColumn.tableName(true)}.${destColumn.__name}]`;
     this.keyPath = `[${localPath}.${remotePath}]`;
   }
 
   tableInputName(): string {
     const { srcColumn } = this;
-    if (!srcColumn.__name) {
-      throw new Error('Source column is not initialized');
-    }
-    const curName = makeMiddleName(srcColumn.__name);
-    if (srcColumn.isJoinedColumn()) {
+    const [srcTable, srcName] = srcColumn.ensureInitialized();
+    const curName = makeMiddleName(srcName);
+    if (srcTable instanceof JoinedTable) {
       // If srcColumn is a joined column, e.g. cmt.post_id.join(post).user_id.join(user), returns 'postUser' in this case
-      return (
-        srcColumn.castToJoinedTable().tableInputName() +
-        utils.capitalizeFirstLetter(curName)
-      );
+      return srcTable.tableInputName() + utils.capitalizeFirstLetter(curName);
     }
     // If srcColumn is not a joined column, omit the table name, e.g. (post).user_id.join(user), returns "user"
     return curName;

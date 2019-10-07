@@ -223,3 +223,13 @@ it('Throw on default value of complex SQL', () => {
 it('getSourceTable', () => {
   expect(post.title.getSourceTable(), post);
 });
+
+it('Coluumn.ensureInitialized', () => {
+  class User extends dd.Table {
+    id = dd.pk().setDBName('db_id');
+  }
+  const t = dd.table(User);
+  const v = t.id;
+  assert.deepEqual(v.ensureInitialized(), [t, 'id']);
+  assert.throws(() => dd.pk().ensureInitialized(), 'not initialized');
+});
