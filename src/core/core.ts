@@ -60,6 +60,13 @@ export class CoreProperty {
   __payload!: unknown;
 }
 
+export enum JoinType {
+  inner,
+  left,
+  right,
+  full,
+}
+
 export class Column extends CoreProperty {
   static fromTypes(types: string | string[]): Column {
     types = typeof types === 'string' ? [types] : types;
@@ -192,45 +199,6 @@ export class Column extends CoreProperty {
     return this.__dbName || this.__name || '';
   }
 
-  join<T extends Table>(destTable: T, destCol?: Column): T {
-    throwIfFalsy(destTable, 'destTable');
-    // source column + dest table + dest column = joined table
-    // Simple case: post.user_id.join(user): since post.user_id is a FK to user.id, so dest column here is implicitly user.id
-
-    // Complex case: cmt.post_id.join(post).user_id.join(user): the current object(`this`) is a joined column(`cmt.post_id.join(post).user_id`), and also a FK.
-
-    let destColumn: Column;
-    if (destCol) {
-      destColumn = destCol;
-    } else {
-      // No explicit column set, use the PK from destTable
-      if (!destTable.__pks.length) {
-        throw new Error(`No primary key found on table "${destTable.__name}"`);
-      }
-      destColumn = destTable.__pks[0];
-    }
-
-    // Join returns a proxy, each property access first retrieves the original column from original joined table, then it constructs a new copied column with `props.table` set to a newly created JoinedTable
-    const joinedTable = new JoinedTable(this, destTable, destColumn);
-    return new Proxy<T>(destTable, {
-      get(target, propKey, receiver) {
-        const selectedColumn = Reflect.get(target, propKey, receiver) as
-          | Column
-          | undefined;
-
-        if (!selectedColumn) {
-          throw new Error(
-            `The column "${propKey.toString()}" does not exist on table ${toTypeString(
-              target,
-            )}`,
-          );
-        }
-        // returns a joined column
-        return Column.newJoinedColumn(selectedColumn, joinedTable);
-      },
-    });
-  }
-
   ensureInitialized(): [Table | JoinedTable, string] {
     if (!this.__name || !this.__table) {
       throw new Error(`Column "${this}" is not initialized`);
@@ -275,6 +243,65 @@ export class Column extends CoreProperty {
     }
     const tableStr = this.__table ? this.__table.toString() : '<null>';
     return `Column(${name}, ${tableStr})`;
+  }
+
+  join<T extends Table>(destTable: T, destCol?: Column): T {
+    return this.joinCore(JoinType.inner, destTable, destCol);
+  }
+
+  leftJoin<T extends Table>(destTable: T, destCol?: Column): T {
+    return this.joinCore(JoinType.left, destTable, destCol);
+  }
+
+  rightJoin<T extends Table>(destTable: T, destCol?: Column): T {
+    return this.joinCore(JoinType.right, destTable, destCol);
+  }
+
+  fullJoin<T extends Table>(destTable: T, destCol?: Column): T {
+    return this.joinCore(JoinType.full, destTable, destCol);
+  }
+
+  private joinCore<T extends Table>(
+    type: JoinType,
+    destTable: T,
+    destCol: Column | undefined,
+  ): T {
+    throwIfFalsy(destTable, 'destTable');
+    // source column + dest table + dest column = joined table
+    // Simple case: post.user_id.join(user): since post.user_id is a FK to user.id, so dest column here is implicitly user.id
+
+    // Complex case: cmt.post_id.join(post).user_id.join(user): the current object(`this`) is a joined column(`cmt.post_id.join(post).user_id`), and also a FK.
+
+    let destColumn: Column;
+    if (destCol) {
+      destColumn = destCol;
+    } else {
+      // No explicit column set, use the PK from destTable
+      if (!destTable.__pks.length) {
+        throw new Error(`No primary key found on table "${destTable.__name}"`);
+      }
+      destColumn = destTable.__pks[0];
+    }
+
+    // Join returns a proxy, each property access first retrieves the original column from original joined table, then it constructs a new copied column with `props.table` set to a newly created JoinedTable
+    const joinedTable = new JoinedTable(this, destTable, destColumn, type);
+    return new Proxy<T>(destTable, {
+      get(target, propKey, receiver) {
+        const selectedColumn = Reflect.get(target, propKey, receiver) as
+          | Column
+          | undefined;
+
+        if (!selectedColumn) {
+          throw new Error(
+            `The column "${propKey.toString()}" does not exist on table ${toTypeString(
+              target,
+            )}`,
+          );
+        }
+        // returns a joined column
+        return Column.newJoinedColumn(selectedColumn, joinedTable);
+      },
+    });
   }
 
   private checkMutability() {
@@ -325,6 +352,7 @@ export class JoinedTable {
     public srcColumn: Column,
     public destTable: Table,
     public destColumn: Column,
+    public type: JoinType,
   ) {
     let localPath: string;
     const [srcTable] = srcColumn.ensureInitialized();
