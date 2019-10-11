@@ -124,6 +124,7 @@ export class Column extends CoreProperty {
 
   __dbName: string | null = null;
   __table: Table | JoinedTable | null = null;
+  __inputName: string | null = null;
 
   // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any table, the foreignColumn property only indicates a column property is declared as FK and doesn't have any effect on join(), the real dest table and column are determined by join().
   foreignColumn: Column | null = null;
@@ -195,6 +196,12 @@ export class Column extends CoreProperty {
     return this;
   }
 
+  setInputName(name: string): this {
+    throwIfFalsy(name, 'name');
+    this.__inputName = name;
+    return this;
+  }
+
   getDBName(): string {
     return this.__dbName || this.__name || '';
   }
@@ -208,6 +215,9 @@ export class Column extends CoreProperty {
 
   inputName(): string {
     const [table, name] = this.ensureInitialized();
+    if (this.__inputName) {
+      return this.__inputName;
+    }
     const curName = utils.toCamelCase(name);
 
     if (table instanceof JoinedTable) {
@@ -268,23 +278,19 @@ export class Column extends CoreProperty {
   ): T {
     throwIfFalsy(destTable, 'destTable');
     // source column + dest table + dest column = joined table
-    // Simple case: post.user_id.join(user): since post.user_id is a FK to user.id, so dest column here is implicitly user.id
 
-    // Complex case: cmt.post_id.join(post).user_id.join(user): the current object(`this`) is a joined column(`cmt.post_id.join(post).user_id`), and also a FK.
-
-    let destColumn: Column;
-    if (destCol) {
-      destColumn = destCol;
-    } else {
-      // No explicit column set, use the PK from destTable
-      if (!destTable.__pks.length) {
-        throw new Error(`No primary key found on table "${destTable.__name}"`);
-      }
-      destColumn = destTable.__pks[0];
+    // Try using dest table's PK if destCol is not present
+    if (!destCol && destTable.__pks.length) {
+      destCol = destTable.__pks[0];
+    }
+    if (!destCol) {
+      throw new Error(
+        `Cannot infer target column, please explicitly pass the "destCol" parameter`,
+      );
     }
 
     // Join returns a proxy, each property access first retrieves the original column from original joined table, then it constructs a new copied column with `props.table` set to a newly created JoinedTable
-    const joinedTable = new JoinedTable(this, destTable, destColumn, type);
+    const joinedTable = new JoinedTable(this, destTable, destCol, type);
     return new Proxy<T>(destTable, {
       get(target, propKey, receiver) {
         const selectedColumn = Reflect.get(target, propKey, receiver) as
