@@ -227,14 +227,14 @@ export default dd.table(Post);
 
 ### Overview
 
-Similar to defining a table, to define table actions, we need declare a class inheriting from `dd.TA` (**TA** stands for **t**able **a**ctions), and define actions as properties, finally export a single table actions object via `dd.ta`.
+Similar to defining a table, to define table actions, we need declare a class inheriting from `dd.TableActions` (**TA** stands for **t**able **a**ctions), and define actions as properties, finally export a single table actions object via `dd.ta`.
 
 ```ts
 // Import the underlying table object
 import user from './user';
 
 // --- userTA.ts ---
-export class UserTA extends dd.TA {
+export class UserTA extends dd.TableActions {
   // Selects all users
   selectAllUsers = dd.selectRows(user.id, user.name);
   // Selects a single user by ID
@@ -289,7 +289,7 @@ export default dd.table(User);
 // ----------- user table actions (userTA.ts) -----------
 import user from './user';
 
-export class UserTA extends dd.TA {
+export class UserTA extends dd.TableActions {
   // Select a user profile by ID.
   selectProfile = dd.select(user.id, user.name, user.sig).byID();
   // Select all user profiles.

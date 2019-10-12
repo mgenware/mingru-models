@@ -6,7 +6,7 @@ const expect = assert.equal;
 const ok = assert.ok;
 
 it('Update', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .updateSome()
       .set(user.name, dd.sql`${dd.input(user.name)}`)
@@ -36,7 +36,7 @@ it('Update', () => {
 });
 
 it('Order of setInputs and set', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .unsafeUpdateAll()
       .setInputs(user.snake_case_name)
@@ -52,7 +52,7 @@ it('Order of setInputs and set', () => {
 });
 
 it('setInputs and setDefaults', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .unsafeUpdateAll()
       .setDefaults(user.def_value)
@@ -68,7 +68,7 @@ it('setInputs and setDefaults', () => {
 });
 
 it('setInputs with no args', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .unsafeUpdateAll()
       .setDefaults(user.def_value)
@@ -86,7 +86,7 @@ it('setInputs with no args', () => {
 });
 
 it('setDefaults with no args', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .unsafeUpdateAll()
       .setDefaults(user.def_value)
@@ -105,7 +105,7 @@ it('setDefaults with no args', () => {
 
 it('setInputs and setDefaults twice', () => {
   assert.throws(() => {
-    class UserTA extends dd.TA {
+    class UserTA extends dd.TableActions {
       t = dd
         .unsafeUpdateAll()
         .setInputs()
@@ -114,7 +114,7 @@ it('setInputs and setDefaults twice', () => {
     dd.ta(user, UserTA);
   }, 'already set');
   assert.throws(() => {
-    class UserTA extends dd.TA {
+    class UserTA extends dd.TableActions {
       t = dd
         .unsafeUpdateAll()
         .setDefaults()
@@ -125,7 +125,7 @@ it('setInputs and setDefaults twice', () => {
 });
 
 it('Set same column twice', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .unsafeUpdateAll()
       .set(user.name, user.name.toInput('a'))
@@ -136,7 +136,7 @@ it('Set same column twice', () => {
 });
 
 it('updateOne', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .updateOne()
       .setInputs(user.snake_case_name)
@@ -151,7 +151,7 @@ it('updateOne', () => {
 
   // Throw error when WHERE is empty
   assert.throws(() => {
-    class TA extends dd.TA {
+    class TA extends dd.TableActions {
       t = dd.updateOne().setInputs(user.snake_case_name);
     }
     dd.ta(user, TA);
@@ -159,7 +159,7 @@ it('updateOne', () => {
 });
 
 it('updateSome', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .updateSome()
       .setInputs(user.snake_case_name)
@@ -174,7 +174,7 @@ it('updateSome', () => {
 
   // Throw error when WHERE is empty
   assert.throws(() => {
-    class TA extends dd.TA {
+    class TA extends dd.TableActions {
       t = dd.updateSome().setInputs(user.snake_case_name);
     }
     dd.ta(user, TA);
@@ -182,7 +182,7 @@ it('updateSome', () => {
 });
 
 it('unsafeUpdateAll', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.unsafeUpdateAll().setInputs(user.snake_case_name);
   }
   const ta = dd.ta(user, UserTA);
@@ -194,7 +194,7 @@ it('unsafeUpdateAll', () => {
 });
 
 it('ByID', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .updateOne()
       .setInputs(user.snake_case_name)
@@ -210,7 +210,7 @@ it('ByID', () => {
 });
 
 it('SQLConvertible value', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .updateOne()
       .set(user.name, dd.dateNow())
@@ -227,19 +227,19 @@ it('SQLConvertible value', () => {
 
 it('No setters', () => {
   assert.throws(() => {
-    class UserTA extends dd.TA {
+    class UserTA extends dd.TableActions {
       t = dd.unsafeUpdateAll();
     }
     dd.ta(user, UserTA);
   }, 'setter');
   assert.doesNotThrow(() => {
-    class UserTA extends dd.TA {
+    class UserTA extends dd.TableActions {
       t = dd.unsafeUpdateAll().setInputs();
     }
     dd.ta(user, UserTA);
   });
   assert.doesNotThrow(() => {
-    class UserTA extends dd.TA {
+    class UserTA extends dd.TableActions {
       t = dd.unsafeUpdateAll().setDefaults();
     }
     dd.ta(user, UserTA);
@@ -247,7 +247,7 @@ it('No setters', () => {
 });
 
 it('by', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .updateOne()
       .setInputs(user.def_value)
@@ -262,7 +262,7 @@ it('by', () => {
 });
 
 it('andBy', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t1 = dd
       .updateOne()
       .setInputs(user.name)

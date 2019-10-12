@@ -8,7 +8,7 @@ const expect = assert.equal;
 const ok = assert.ok;
 
 it('Transact', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     insert = dd
       .insert()
       .setInputs(user.follower_count)
@@ -16,7 +16,7 @@ it('Transact', () => {
   }
   const userTA = dd.ta(user, UserTA);
 
-  class PostTA extends dd.TA {
+  class PostTA extends dd.TableActions {
     insert = dd
       .insert()
       .setInputs(post.title, post.snake_case_user_id)
@@ -50,7 +50,7 @@ it('Temp member actions (wrap self)', async () => {
     postCount = dd.int();
   }
   const user2 = dd.table(User2);
-  class User2TA extends dd.TA {
+  class User2TA extends dd.TableActions {
     updatePostCount = dd
       .updateOne()
       .set(
@@ -73,7 +73,7 @@ it('Temp member actions (wrap other)', async () => {
     postCount = dd.int();
   }
   const user2 = dd.table(User2);
-  class User2TA extends dd.TA {
+  class User2TA extends dd.TableActions {
     updatePostCount = dd
       .updateOne()
       .set(
@@ -89,7 +89,7 @@ it('Temp member actions (wrap other)', async () => {
   }
 
   const post2 = dd.table(Post2);
-  class Post2TA extends dd.TA {
+  class Post2TA extends dd.TableActions {
     insert = dd.transact(user2TA.updatePostCount.wrap({ offset: 1 }));
   }
   const postTA = dd.ta(post2, Post2TA);
@@ -100,7 +100,7 @@ it('Temp member actions (wrap other)', async () => {
 });
 
 it('Setting __table or temp members', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     insert = dd
       .insert()
       .setInputs(user.follower_count)
@@ -108,7 +108,7 @@ it('Setting __table or temp members', () => {
   }
   const userTA = dd.ta(user, UserTA);
 
-  class PostTA extends dd.TA {
+  class PostTA extends dd.TableActions {
     insert = dd
       .insert()
       .setInputs(post.title, post.snake_case_user_id)

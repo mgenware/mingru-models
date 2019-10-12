@@ -7,7 +7,7 @@ const expect = assert.equal;
 const ok = assert.ok;
 
 it('select', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.select(user.id, user.name).where(dd.sql`${user.id} = 1`);
   }
   const ta = dd.ta(user, UserTA);
@@ -28,14 +28,14 @@ it('select', () => {
 });
 
 it('Select *', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.select();
   }
   assert.doesNotThrow(() => dd.ta(user, UserTA));
 });
 
 it('selectRows', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .selectRows(user.id, user.name)
       .where(dd.sql`${user.id} = 1`)
@@ -104,7 +104,7 @@ it('RawColumn (types)', () => {
 });
 
 it('RawColumn (count)', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.select(
       dd.sel(
         dd.sql`${dd.count(dd.sql`${post.user_id.join(user).name}`)}`,
@@ -166,7 +166,7 @@ it('dd.select (types)', () => {
 });
 
 it('byID', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.select(user.name).byID();
   }
   const ta = dd.ta(user, UserTA);
@@ -178,7 +178,7 @@ it('byID', () => {
 });
 
 it('byID with inputName', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.select(user.name).byID('haha');
   }
   const ta = dd.ta(user, UserTA);
@@ -190,7 +190,7 @@ it('byID with inputName', () => {
 });
 
 it('by', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.select(user.name).by(user.snake_case_name);
   }
   const ta = dd.ta(user, UserTA);
@@ -202,7 +202,7 @@ it('by', () => {
 });
 
 it('andBy', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t1 = dd
       .select(user.name)
       .by(user.snake_case_name)
@@ -230,7 +230,7 @@ it('andBy', () => {
 
 it('selectField', () => {
   const sc = dd.sel(dd.count('*'), 'c');
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.selectField(user.name).byID();
     t2 = dd.selectField(sc);
   }
@@ -246,7 +246,7 @@ it('selectField', () => {
 
 it('Order by', () => {
   const cc = dd.sel('haha', 'name', new dd.ColumnType('int'));
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .select(user.name, user.follower_count, cc)
       .byID()
@@ -269,7 +269,7 @@ it('Order by', () => {
 it('Validate columns', () => {
   const t = user;
   assert.throws(() => {
-    class UserTA extends dd.TA {
+    class UserTA extends dd.TableActions {
       t = dd.selectRows(
         t.name,
         (null as unknown) as dd.Column,
@@ -279,7 +279,7 @@ it('Validate columns', () => {
     dd.ta(user, UserTA);
   }, 'null');
   assert.throws(() => {
-    class UserTA extends dd.TA {
+    class UserTA extends dd.TableActions {
       t = dd.selectRows(t.name, (32 as unknown) as dd.Column, t.follower_count);
     }
     dd.ta(user, UserTA);
@@ -288,7 +288,7 @@ it('Validate columns', () => {
 
 it('GROUP BY names', () => {
   const col = dd.sel(user.id, 'raw');
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .selectRows(user.id, col)
       .groupBy(user.name, col, 'haha')
@@ -305,7 +305,7 @@ it('GROUP BY names', () => {
 });
 
 it('HAVING', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .selectRows(user.id, user.name)
       .groupBy(user.name)
@@ -324,7 +324,7 @@ it('HAVING', () => {
 it('Throw when limit is called on non-list mode', () => {
   const t = user;
   assert.throws(() => {
-    class UserTA extends dd.TA {
+    class UserTA extends dd.TableActions {
       t = dd.selectField(t.name).limit();
     }
     dd.ta(user, UserTA);
@@ -334,37 +334,37 @@ it('Throw when limit is called on non-list mode', () => {
 it('Throw on selecting collection without ORDER BY', () => {
   const t = user;
   assert.doesNotThrow(() => {
-    class UserTA extends dd.TA {
+    class UserTA extends dd.TableActions {
       t = dd.selectField(t.name);
     }
     dd.ta(user, UserTA);
   });
   assert.doesNotThrow(() => {
-    class UserTA extends dd.TA {
+    class UserTA extends dd.TableActions {
       t = dd.select(t.name);
     }
     dd.ta(user, UserTA);
   });
   assert.doesNotThrow(() => {
-    class UserTA extends dd.TA {
+    class UserTA extends dd.TableActions {
       t = dd.selectRows(t.name).orderByAsc(t.name);
     }
     dd.ta(user, UserTA);
   });
   assert.doesNotThrow(() => {
-    class UserTA extends dd.TA {
+    class UserTA extends dd.TableActions {
       t = dd.selectPage(t.name).orderByAsc(t.name);
     }
     dd.ta(user, UserTA);
   });
   assert.throws(() => {
-    class UserTA extends dd.TA {
+    class UserTA extends dd.TableActions {
       t = dd.selectRows(t.name);
     }
     dd.ta(user, UserTA);
   }, 'ORDER BY');
   assert.throws(() => {
-    class UserTA extends dd.TA {
+    class UserTA extends dd.TableActions {
       t = dd.selectPage(t.name);
     }
     dd.ta(user, UserTA);

@@ -6,7 +6,7 @@ const expect = assert.equal;
 const ok = assert.ok;
 
 it('WrappedAction', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.deleteOne().byID();
     t2 = this.t.wrap({
       id: '1',
@@ -24,7 +24,7 @@ it('WrappedAction', () => {
 });
 
 it('Chaining', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.insert().setInputs();
     t2 = this.t
       .wrap({
@@ -47,7 +47,7 @@ it('Chaining', () => {
 });
 
 it('Uninitialized wrapped action __table n __name', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .deleteOne()
       .byID()

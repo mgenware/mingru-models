@@ -7,7 +7,7 @@ const expect = assert.equal;
 const ok = assert.ok;
 
 it('Insert', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .insert()
       .setInputs(post.title, post.snake_case_user_id)
@@ -27,7 +27,7 @@ it('Insert', () => {
 });
 
 it('Insert one', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .insertOne()
       .setInputs(post.title, post.snake_case_user_id)
@@ -40,7 +40,7 @@ it('Insert one', () => {
 });
 
 it('unsafeInsert', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.unsafeInsert().setInputs(post.title, post.snake_case_user_id);
   }
   const ta = dd.ta(user, UserTA);
@@ -49,7 +49,7 @@ it('unsafeInsert', () => {
 });
 
 it('unsafeInsertOne', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.unsafeInsertOne().setInputs(post.title, post.snake_case_user_id);
   }
   const ta = dd.ta(user, UserTA);
@@ -59,7 +59,7 @@ it('unsafeInsertOne', () => {
 });
 
 it('SQLConvertible value', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd
       .unsafeInsert()
       .set(post.title, dd.dateNow())
@@ -75,7 +75,7 @@ it('SQLConvertible value', () => {
 
 it('No setters', () => {
   assert.throws(() => {
-    class PostTA extends dd.TA {
+    class PostTA extends dd.TableActions {
       t = dd.insert();
     }
     dd.ta(post, PostTA);
@@ -84,19 +84,19 @@ it('No setters', () => {
 
 it('Column number check', () => {
   assert.throws(() => {
-    class PostTA extends dd.TA {
+    class PostTA extends dd.TableActions {
       t = dd.insert().setInputs(post.e_user_id);
     }
     dd.ta(post, PostTA);
   }, 'all columns');
   assert.doesNotThrow(() => {
-    class PostTA extends dd.TA {
+    class PostTA extends dd.TableActions {
       t = dd.insert().setInputs();
     }
     dd.ta(post, PostTA);
   });
   assert.doesNotThrow(() => {
-    class PostTA extends dd.TA {
+    class PostTA extends dd.TableActions {
       t = dd.unsafeInsert().setInputs(post.e_user_id);
     }
     dd.ta(post, PostTA);

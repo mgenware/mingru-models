@@ -6,7 +6,7 @@ const expect = assert.equal;
 const ok = assert.ok;
 
 it('DeleteAction', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.deleteOne().where(dd.sql`${user.id} = 1`);
   }
   const ta = dd.ta(user, UserTA);
@@ -22,7 +22,7 @@ it('DeleteAction', () => {
 });
 
 it('deleteOne', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.deleteOne().where(dd.sql`${user.id} = 1`);
   }
   const ta = dd.ta(user, UserTA);
@@ -34,7 +34,7 @@ it('deleteOne', () => {
 
   // Throw error when WHERE is empty
   assert.throws(() => {
-    class TA extends dd.TA {
+    class TA extends dd.TableActions {
       t = dd.deleteOne();
     }
     dd.ta(user, TA);
@@ -42,7 +42,7 @@ it('deleteOne', () => {
 });
 
 it('deleteSome', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.deleteSome().where(dd.sql`${user.id} = 1`);
   }
   const ta = dd.ta(user, UserTA);
@@ -54,7 +54,7 @@ it('deleteSome', () => {
 
   // Throw error when WHERE is empty
   assert.throws(() => {
-    class TA extends dd.TA {
+    class TA extends dd.TableActions {
       t = dd.deleteSome();
     }
     dd.ta(user, TA);
@@ -62,7 +62,7 @@ it('deleteSome', () => {
 });
 
 it('unsafeDeleteAll', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.unsafeDeleteAll();
   }
   const ta = dd.ta(user, UserTA);

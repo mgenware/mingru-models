@@ -5,7 +5,7 @@ import toTypeString from 'to-type-string';
 import Utils from '../lib/utils';
 import { SQLVariable } from '../core/sql';
 
-export class TA {
+export class TableActions {
   __table: Table | null = null;
 }
 
@@ -50,7 +50,7 @@ export interface EnumerateActionsOptions {
   sorted?: boolean;
 }
 
-export function enumerateActions<T extends TA>(
+export function enumerateActions<T extends TableActions>(
   tableActions: T,
   cb: (action: Action, prop: string) => void,
   opts?: EnumerateActionsOptions,
@@ -97,7 +97,7 @@ export function initializeAction(action: Action, table: Table, name: string) {
   action.validate(table, name);
 }
 
-export function ta<T extends Table, A extends TA>(
+export function ta<T extends Table, A extends TableActions>(
   table: T,
   taCls: new () => A,
 ): A {

@@ -6,7 +6,7 @@ const expect = assert.equal;
 const ok = assert.ok;
 
 it('ta', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     upd = dd
       .unsafeUpdateAll()
       .set(user.name, dd.sql`${dd.input(user.name)}`)
@@ -15,7 +15,7 @@ it('ta', () => {
   }
   const ta = dd.ta(user, UserTA);
 
-  ok(ta instanceof dd.TA);
+  ok(ta instanceof dd.TableActions);
   expect(ta.__table, user);
 
   const v1 = ta.upd;
@@ -36,7 +36,7 @@ it('Register property callback', () => {
   // Register the callback twice
   dd.CoreProperty.registerHandler(action, cb);
   dd.CoreProperty.registerHandler(action, cb);
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = action;
   }
 
@@ -48,7 +48,7 @@ it('Register property callback', () => {
 });
 
 it('enumerateActions', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     upd = dd
       .unsafeUpdateAll()
       .set(user.name, dd.sql`${dd.input(user.name)}`)
@@ -63,7 +63,7 @@ it('enumerateActions', () => {
 });
 
 it('enumerateActions (sorted)', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     upd = dd
       .unsafeUpdateAll()
       .set(user.name, dd.sql`${dd.input(user.name)}`)
@@ -82,7 +82,7 @@ it('Argument stubs', () => {
     new dd.SQLVariable('int', 'id'),
     new dd.SQLVariable('int', 'id2'),
   ];
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.select(user.id).argStubs(...stubs);
   }
   const ta = dd.ta(user, UserTA);
@@ -92,7 +92,7 @@ it('Argument stubs', () => {
 });
 
 it('action.ensureInitialized', () => {
-  class UserTA extends dd.TA {
+  class UserTA extends dd.TableActions {
     t = dd.select(user.id);
   }
   const ta = dd.ta(user, UserTA);
