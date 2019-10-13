@@ -52,7 +52,7 @@ export function byID(
 
 export function by(action: ActionWithWhere, column: Column) {
   throwIfFalsy(column, 'column');
-  where(action, sql`${column.toInput()}`);
+  where(action, sql`${column.isEqualToInput()}`);
 }
 
 export function andBy(action: CoreProperty & ActionWithWhere, column: Column) {
