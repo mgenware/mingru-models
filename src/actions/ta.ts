@@ -19,13 +19,18 @@ export enum ActionType {
 }
 
 export class Action extends CoreProperty {
-  // Will be set after calling dd.ta
+  // Will be set after calling dd.ta. Can be overwritten by from().
   __table: Table | null = null;
 
   __argStubs: SQLVariable[] = [];
 
   constructor(public actionType: ActionType) {
     super();
+  }
+
+  from(table: Table): this {
+    this.__table = table;
+    return this;
   }
 
   // After action is fully initialized, `dd.ta` will call `Action.validate`
@@ -90,7 +95,10 @@ export function enumerateActions<T extends TableActions>(
 export function initializeAction(action: Action, table: Table, name: string) {
   throwIfFalsy(action, 'action');
   action.__name = name;
-  action.__table = table;
+  // action.__table can be set before initialization by from()
+  if (!action.__table) {
+    action.__table = table;
+  }
   // After all properties are set, run property handlers
   CoreProperty.runHandlers(action);
   // Run validate callback

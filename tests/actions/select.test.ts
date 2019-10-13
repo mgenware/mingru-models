@@ -380,3 +380,13 @@ it('RawColumn.toInput', () => {
   v = c.toInput();
   expect(v.toString(), 'SQLVar(haha, desc = Column(name, Table(user)))');
 });
+
+it('Set action.__table via from()', () => {
+  class UserTA extends dd.TableActions {
+    t = dd.select(user.id, user.name);
+    t2 = dd.select(post.id).from(post);
+  }
+  const ta = dd.ta(user, UserTA);
+  expect(ta.t.__table, user);
+  expect(ta.t2.__table, post);
+});
