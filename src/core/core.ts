@@ -246,6 +246,14 @@ export class Column extends CoreProperty {
     return table;
   }
 
+  checkSourceTable(table: Table) {
+    if (table !== this.getSourceTable()) {
+      throw new Error(
+        `Source table assertion failed, expected "${table}", got "${this.getSourceTable()}".`,
+      );
+    }
+  }
+
   toString(): string {
     let name = this.__name;
     if (this.getDBName() !== name) {
