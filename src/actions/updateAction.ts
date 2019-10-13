@@ -46,4 +46,8 @@ export class UpdateAction extends CoreUpdateAction {
       );
     }
   }
+
+  get whereSQLString(): string {
+    return this.whereSQL ? this.whereSQL.toString() : '';
+  }
 }
