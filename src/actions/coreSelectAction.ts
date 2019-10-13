@@ -26,4 +26,9 @@ export class CoreSelectAction extends Action {
     andBy(this, column);
     return this;
   }
+
+  // Mostly for testing and debugging purposes.
+  get whereSQLString(): string {
+    return this.whereSQL ? this.whereSQL.toString() : '';
+  }
 }

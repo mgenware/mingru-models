@@ -185,11 +185,6 @@ export class SelectAction extends CoreSelectAction {
     }
   }
 
-  // Mostly for testing and debugging purposes.
-  get whereSQLString(): string {
-    return this.whereSQL ? this.whereSQL.toString() : '';
-  }
-
   private orderByCore(column: SelectActionColumnNames, desc: boolean): this {
     this.orderByColumns.push(new OrderByColumn(column, desc));
     return this;
