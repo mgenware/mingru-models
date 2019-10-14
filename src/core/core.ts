@@ -393,6 +393,10 @@ export class JoinedTable {
     // If srcColumn is not a joined column, omit the table name, e.g. (post).user_id.join(user), returns "user"
     return curName;
   }
+
+  toString(): string {
+    return `JoinedTable(${this.keyPath})`;
+  }
 }
 
 // Generates a column name for a join, we call it a middle and we need to cut the trailing `_id`, e.g. `SELECT post.user_id.join(user).name`, the `user_id` before the join is the middle name, the input name for this column is `userName`.

@@ -119,7 +119,7 @@ it('RawColumn (count)', () => {
   expect(cc.selectedName, 'count');
   expect(
     cc.core.toString(),
-    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, [object Object]), type = 1))), type = 3))',
+    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, JoinedTable([[post.user_id].[user.id]])), type = 1))), type = 3))',
   );
 });
 
