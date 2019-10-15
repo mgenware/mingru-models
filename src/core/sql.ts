@@ -154,22 +154,32 @@ export class SQL {
     return `SQL(${this.elements.map(e => e.toString()).join(', ')})`;
   }
 
-  findColumn(): Column | null {
+  // This method may be called recursively, in order to make `shouldStop` work, we have to return the `shouldStop` flag to stop all pending function along the call stack.
+  enumerateColumns(cb: (col: Column) => boolean): boolean {
     for (const element of this.elements) {
       if (element.type === SQLElementType.column) {
-        return element.toColumn();
-      }
-      if (element.type === SQLElementType.call) {
+        if (cb(element.toColumn())) {
+          return true;
+        }
+      } else if (element.type === SQLElementType.call) {
         const call = element.toCall();
-        for (const arg of call.params) {
-          const col = arg.findColumn();
-          if (col) {
-            return col;
+        for (const argExpr of call.params) {
+          if (argExpr.enumerateColumns(cb)) {
+            return true;
           }
         }
       }
     }
-    return null;
+    return false;
+  }
+
+  findFirstColumn(): Column | null {
+    let col: Column | null = null;
+    this.enumerateColumns(innerCol => {
+      col = innerCol;
+      return true;
+    });
+    return col;
   }
 
   sniffType(): ColumnType | string | null {

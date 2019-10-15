@@ -40,7 +40,7 @@ export class RawColumn {
         this.selectedName = selectedName;
       } else {
         // Try to extract a column name from SQL expression
-        const col = expr.findColumn();
+        const col = expr.findFirstColumn();
         if (col) {
           if (!col.__name) {
             throw new Error('core is not initialized');

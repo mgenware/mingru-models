@@ -1,8 +1,8 @@
 import * as dd from '../../';
 import user from '../models/user';
 import post from '../models/post';
-import { Column } from '../../';
 import * as assert from 'assert';
+import * as cm from './common';
 
 const expect = assert.equal;
 const ok = assert.ok;
@@ -40,7 +40,7 @@ it('Named input', () => {
 
 it('Input (foreign key)', () => {
   const input = dd.input(post.user_id);
-  expect((input.type as Column).foreignColumn, user.id);
+  expect((input.type as dd.Column).foreignColumn, user.id);
   expect(input.name, 'userID');
 });
 
@@ -167,13 +167,22 @@ it('makeSQL', () => {
   );
 });
 
-it('findColumn', () => {
+it('enumerateColumns', () => {
   let s = dd.sql`haha`;
-  expect(s.findColumn(), null);
+  assert.deepEqual(cm.listColumnsFromSQL(s), []);
+  s = dd.sql`kaokdjdf ${user.name} ${post.id.isEqualToInput()}`;
+  assert.deepEqual(cm.listColumnsFromSQL(s), [user.name, post.id]);
+  s = dd.sql`${dd.coalesce('haha', user.name, post.id)}`;
+  assert.deepEqual(cm.listColumnsFromSQL(s), [user.name, post.id]);
+});
+
+it('findFirstColumn', () => {
+  let s = dd.sql`haha`;
+  expect(s.findFirstColumn(), null);
   s = dd.sql`kaokdjdf ${user.name}`;
-  expect(s.findColumn(), user.name);
+  expect(s.findFirstColumn(), user.name);
   s = dd.sql`${dd.coalesce('haha', user.name)}`;
-  expect(s.findColumn(), user.name);
+  expect(s.findFirstColumn(), user.name);
 });
 
 it('Input.isEqualTo', () => {
