@@ -1,4 +1,4 @@
-import * as dd from '../../';
+import * as mm from '../../';
 import user from '../models/user';
 import post from '../models/post';
 import cmt from '../models/postCmt';
@@ -6,7 +6,7 @@ import * as assert from 'assert';
 
 const expect = assert.equal;
 
-it('Frozen after dd.table', () => {
+it('Frozen after mm.table', () => {
   expect(Object.isFrozen(post.id), true);
   expect(Object.isFrozen(post.user_id), true);
   expect(Object.isFrozen(post.title), true);
@@ -45,7 +45,7 @@ it('Explicit FK (untouched)', () => {
 });
 
 it('freeze', () => {
-  const col = dd.int(234);
+  const col = mm.int(234);
   col.freeze();
   expect(Object.isFrozen(col), true);
   expect(Object.isFrozen(col.type), true);
@@ -53,7 +53,7 @@ it('freeze', () => {
 
 it('Column.newForeignColumn', () => {
   const a = user.id;
-  const b = dd.Column.newForeignColumn(a, post);
+  const b = mm.Column.newForeignColumn(a, post);
   // FK
   expect(b.foreignColumn, a);
   // name is cleared
@@ -75,9 +75,9 @@ it('Column.newForeignColumn', () => {
 });
 
 it('Column.newJoinedColumn', () => {
-  const t = (post.user_id.join(user) as unknown) as dd.JoinedTable;
+  const t = (post.user_id.join(user) as unknown) as mm.JoinedTable;
   const a = user.name;
-  const b = dd.Column.newJoinedColumn(a, t);
+  const b = mm.Column.newJoinedColumn(a, t);
   // mirroredColumn
   expect(b.mirroredColumn, a);
   // Value being reset
@@ -98,36 +98,36 @@ it('Column.newJoinedColumn', () => {
 });
 
 it('Mutate a frozen column', () => {
-  const a = dd.int(234);
+  const a = mm.int(234);
   a.freeze();
   assert.throws(() => a.nullable);
 });
 
 it('notNull (default)', () => {
-  const c = dd.int(123);
+  const c = mm.int(123);
   expect(c.type.nullable, false);
 });
 
 it('nullable', () => {
-  const c = dd.int(123).nullable;
+  const c = mm.int(123).nullable;
   expect(c.type.nullable, true);
 });
 
 it('unique', () => {
-  const c = dd.int(123).unique;
+  const c = mm.int(123).unique;
   expect(c.type.unique, true);
 });
 
 it('unique (default)', () => {
-  const c = dd.int(123);
+  const c = mm.int(123);
   expect(c.type.unique, false);
 });
 
 it('setDefault', () => {
-  let c = dd.int(123).setDefault('omg');
+  let c = mm.int(123).setDefault('omg');
   expect(c.defaultValue, 'omg');
 
-  c = dd.int(123).setDefault(null);
+  c = mm.int(123).setDefault(null);
   expect(c.defaultValue, null);
 });
 
@@ -163,36 +163,36 @@ it('JoinedColumn.inputName', () => {
   );
 });
 
-class JCTable extends dd.Table {
+class JCTable extends mm.Table {
   jc = post.user_id.join(user).name;
 }
 
 it('JoinedColumn in table def', () => {
-  assert.throws(() => dd.table(JCTable), 'JoinedColumn');
+  assert.throws(() => mm.table(JCTable), 'JoinedColumn');
 });
 
-class SCTable extends dd.Table {
-  sc = dd.int().as('haha');
+class SCTable extends mm.Table {
+  sc = mm.int().as('haha');
 }
 
 it('RawColumn in table def', () => {
-  assert.throws(() => dd.table(SCTable), 'RawColumn');
+  assert.throws(() => mm.table(SCTable), 'RawColumn');
 });
 
 it('Register property callback', () => {
   let counter = 0;
   const cb = () => counter++;
-  const col = new dd.Column(new dd.ColumnType('abc'));
+  const col = new mm.Column(new mm.ColumnType('abc'));
   // Register the callback twice
-  dd.CoreProperty.registerHandler(col, cb);
-  dd.CoreProperty.registerHandler(col, cb);
-  class User extends dd.Table {
+  mm.CoreProperty.registerHandler(col, cb);
+  mm.CoreProperty.registerHandler(col, cb);
+  class User extends mm.Table {
     t = col;
   }
 
   assert.deepEqual(col.__handlers, [cb, cb]);
   expect(counter, 0);
-  dd.table(User);
+  mm.table(User);
   expect(col.__handlers, null);
   expect(counter, 2);
 });
@@ -200,23 +200,23 @@ it('Register property callback', () => {
 it('Register property callback on a initialized property', () => {
   let counter = 0;
   const cb = () => counter++;
-  dd.CoreProperty.registerHandler(user.name, cb);
+  mm.CoreProperty.registerHandler(user.name, cb);
   expect(user.name.__handlers, null);
   expect(counter, 1);
 });
 
 it('Throw on default value of complex SQL', () => {
   assert.doesNotThrow(() => {
-    class T extends dd.Table {
-      t = dd.varChar(23).setDefault(dd.datetimeNow());
+    class T extends mm.Table {
+      t = mm.varChar(23).setDefault(mm.datetimeNow());
     }
-    dd.table(T);
+    mm.table(T);
   });
   assert.throws(() => {
-    class T extends dd.Table {
-      t = dd.varChar(23).setDefault(dd.sql`${user.name}`);
+    class T extends mm.Table {
+      t = mm.varChar(23).setDefault(mm.sql`${user.name}`);
     }
-    dd.table(T);
+    mm.table(T);
   }, 'complex SQL');
 });
 
@@ -225,11 +225,11 @@ it('getSourceTable', () => {
 });
 
 it('Coluumn.ensureInitialized', () => {
-  class User extends dd.Table {
-    id = dd.pk().setDBName('db_id');
+  class User extends mm.Table {
+    id = mm.pk().setDBName('db_id');
   }
-  const t = dd.table(User);
+  const t = mm.table(User);
   const v = t.id;
   assert.deepEqual(v.ensureInitialized(), [t, 'id']);
-  assert.throws(() => dd.pk().ensureInitialized(), 'not initialized');
+  assert.throws(() => mm.pk().ensureInitialized(), 'not initialized');
 });

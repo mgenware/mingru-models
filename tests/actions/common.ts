@@ -1,7 +1,7 @@
-import * as dd from '../../';
+import * as mm from '../../';
 
-export function listColumnsFromSQL(sql: dd.SQL) {
-  const arr: dd.Column[] = [];
+export function listColumnsFromSQL(sql: mm.SQL) {
+  const arr: mm.Column[] = [];
   sql.enumerateColumns(col => {
     arr.push(col);
     return false;

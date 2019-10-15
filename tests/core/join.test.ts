@@ -1,4 +1,4 @@
-import * as dd from '../../';
+import * as mm from '../../';
 import user from '../models/user';
 import post from '../models/post';
 import postCmt from '../models/postCmt';
@@ -7,18 +7,18 @@ import * as assert from 'assert';
 const expect = assert.equal;
 
 function testJCCols(
-  jc: dd.Column,
+  jc: mm.Column,
   tableInputName: string,
-  destTable: dd.Table,
-  destColumn: dd.Column,
-  selectedColumn: dd.Column,
-  srcColumn: dd.Column,
+  destTable: mm.Table,
+  destColumn: mm.Column,
+  selectedColumn: mm.Column,
+  srcColumn: mm.Column,
   path: string,
-  sourceTable: dd.Table,
+  sourceTable: mm.Table,
 ) {
-  expect(jc.__table instanceof dd.JoinedTable, true);
+  expect(jc.__table instanceof mm.JoinedTable, true);
   expect(jc.mirroredColumn, selectedColumn);
-  const jt = jc.__table as dd.JoinedTable;
+  const jt = jc.__table as mm.JoinedTable;
   expect(jt.tableInputName(), tableInputName);
   expect(jt.destTable, destTable);
   expect(jt.destColumn, destColumn);

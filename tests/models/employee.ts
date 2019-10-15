@@ -1,12 +1,12 @@
-import * as dd from '../../';
+import * as mm from '../../';
 
-class Employee extends dd.Table {
-  id = dd.pk(dd.int()).setDBName('emp_no').noAutoIncrement;
-  firstName = dd.varChar(50);
-  lastName = dd.varChar(50);
-  gender = dd.varChar(10);
-  birthDate = dd.date();
-  hireDate = dd.date();
+class Employee extends mm.Table {
+  id = mm.pk(mm.int()).setDBName('emp_no').noAutoIncrement;
+  firstName = mm.varChar(50);
+  lastName = mm.varChar(50);
+  gender = mm.varChar(10);
+  birthDate = mm.date();
+  hireDate = mm.date();
 }
 
-export default dd.table(Employee, 'employees');
+export default mm.table(Employee, 'employees');

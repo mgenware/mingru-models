@@ -63,7 +63,7 @@ export function input(
   return new SQLVariable(type, name);
 }
 
-// Allowed types in dd.sql template strings
+// Allowed types in mm.sql template strings
 export type SQLConvertible =
   | string
   | Column

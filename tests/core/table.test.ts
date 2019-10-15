@@ -1,4 +1,4 @@
-import * as dd from '../../';
+import * as mm from '../../';
 import user from '../models/user';
 import employee from '../models/employee';
 import * as assert from 'assert';
@@ -12,8 +12,8 @@ it('Table name', () => {
 });
 
 it('enumerateColumns', () => {
-  const cols: dd.Column[] = [];
-  dd.enumerateColumns(user, col => cols.push(col));
+  const cols: mm.Column[] = [];
+  mm.enumerateColumns(user, col => cols.push(col));
   assert.deepEqual(cols, [
     user.id,
     user.name,
@@ -24,8 +24,8 @@ it('enumerateColumns', () => {
 });
 
 it('enumerateColumns (sorted)', () => {
-  const cols: dd.Column[] = [];
-  dd.enumerateColumns(user, col => cols.push(col), { sorted: true });
+  const cols: mm.Column[] = [];
+  mm.enumerateColumns(user, col => cols.push(col), { sorted: true });
   assert.deepEqual(cols, [
     user.def_value,
     user.follower_count,

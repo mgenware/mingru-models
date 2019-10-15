@@ -71,7 +71,7 @@ export function table<T extends Table>(
     }
 
     let columnToAdd: Column;
-    // A frozen column indicates an implicit foreign key, note: `dd.fk` can set up an explicit foreign key
+    // A frozen column indicates an implicit foreign key, note: `mm.fk` can set up an explicit foreign key
     if (Object.isFrozen(col)) {
       // Copy the frozen column
       columnToAdd = Column.newForeignColumn(col, tableObj);

@@ -1,95 +1,95 @@
-import * as dd from '../../';
+import * as mm from '../../';
 import post from '../models/post';
 import * as assert from 'assert';
 
 const expect = assert.equal;
 
-const { dt } = dd;
-function dtc(dtString: string): dd.ColumnType {
-  return new dd.ColumnType(dtString);
+const { dt } = mm;
+function dtc(dtString: string): mm.ColumnType {
+  return new mm.ColumnType(dtString);
 }
 
 it('SQL calls', () => {
-  let t: dd.SQLCall;
-  t = dd.datetimeNow();
-  expect(t.type, dd.SQLCallType.datetimeNow);
+  let t: mm.SQLCall;
+  t = mm.datetimeNow();
+  expect(t.type, mm.SQLCallType.datetimeNow);
   assert.deepEqual(t.returnType, dtc(dt.datetime));
 
-  t = dd.dateNow();
-  expect(t.type, dd.SQLCallType.dateNow);
+  t = mm.dateNow();
+  expect(t.type, mm.SQLCallType.dateNow);
   assert.deepEqual(t.returnType, dtc(dt.date));
 
-  t = dd.timeNow();
-  expect(t.type, dd.SQLCallType.timeNow);
+  t = mm.timeNow();
+  expect(t.type, mm.SQLCallType.timeNow);
   assert.deepEqual(t.returnType, dtc(dt.time));
 
-  t = dd.count(post.id);
-  expect(t.type, dd.SQLCallType.count);
+  t = mm.count(post.id);
+  expect(t.type, mm.SQLCallType.count);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
-  t = dd.coalesce(dd.sql`haha`, post.title, post.user_id);
-  expect(t.type, dd.SQLCallType.coalesce);
-  assert.deepEqual(t.returnType, dd.varChar(100).type);
+  t = mm.coalesce(mm.sql`haha`, post.title, post.user_id);
+  expect(t.type, mm.SQLCallType.coalesce);
+  assert.deepEqual(t.returnType, mm.varChar(100).type);
 
-  assert.deepEqual(dd.countAll(), dd.count('*'));
+  assert.deepEqual(mm.countAll(), mm.count('*'));
 
-  t = dd.year(post.id);
-  expect(t.type, dd.SQLCallType.year);
+  t = mm.year(post.id);
+  expect(t.type, mm.SQLCallType.year);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
-  t = dd.month(post.id);
-  expect(t.type, dd.SQLCallType.month);
+  t = mm.month(post.id);
+  expect(t.type, mm.SQLCallType.month);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
-  t = dd.day(post.id);
-  expect(t.type, dd.SQLCallType.day);
+  t = mm.day(post.id);
+  expect(t.type, mm.SQLCallType.day);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
-  t = dd.week(post.id);
-  expect(t.type, dd.SQLCallType.week);
+  t = mm.week(post.id);
+  expect(t.type, mm.SQLCallType.week);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
-  t = dd.hour(post.id);
-  expect(t.type, dd.SQLCallType.hour);
+  t = mm.hour(post.id);
+  expect(t.type, mm.SQLCallType.hour);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
-  t = dd.minute(post.id);
-  expect(t.type, dd.SQLCallType.minute);
+  t = mm.minute(post.id);
+  expect(t.type, mm.SQLCallType.minute);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
-  t = dd.second(post.id);
-  expect(t.type, dd.SQLCallType.second);
+  t = mm.second(post.id);
+  expect(t.type, mm.SQLCallType.second);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
-  t = dd.min(post.id);
-  expect(t.type, dd.SQLCallType.min);
+  t = mm.min(post.id);
+  expect(t.type, mm.SQLCallType.min);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
-  t = dd.max(post.id);
-  expect(t.type, dd.SQLCallType.max);
+  t = mm.max(post.id);
+  expect(t.type, mm.SQLCallType.max);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
-  t = dd.avg(post.id);
-  expect(t.type, dd.SQLCallType.avg);
+  t = mm.avg(post.id);
+  expect(t.type, mm.SQLCallType.avg);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
-  t = dd.sum(post.id);
-  expect(t.type, dd.SQLCallType.sum);
+  t = mm.sum(post.id);
+  expect(t.type, mm.SQLCallType.sum);
   assert.deepEqual(t.returnType, dtc(dt.int));
 });
 
 it('Embeded in SQL', () => {
   expect(
-    dd.sql`haha ${dd.datetimeNow()} ${dd.dateNow()}`.toString(),
+    mm.sql`haha ${mm.datetimeNow()} ${mm.dateNow()}`.toString(),
     `SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(SQL.DATE), type = 3))`,
   );
   expect(
-    dd.sql`haha ${new dd.SQLCall(
-      dd.SQLCallType.datetimeNow,
-      new dd.ColumnType('c1'),
-    )} ${new dd.SQLCall(
-      dd.SQLCallType.dateNow,
-      new dd.ColumnType('c2'),
+    mm.sql`haha ${new mm.SQLCall(
+      mm.SQLCallType.datetimeNow,
+      new mm.ColumnType('c1'),
+    )} ${new mm.SQLCall(
+      mm.SQLCallType.dateNow,
+      new mm.ColumnType('c2'),
     )}`.toString(),
     `SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(c1), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(c2), type = 3))`,
   );

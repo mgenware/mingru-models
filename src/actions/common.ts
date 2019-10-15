@@ -25,7 +25,7 @@ export function where(action: ActionWithWhere, value: SQL) {
 function byIDUnsafe(action: ActionWithWhere, inputName: string | undefined) {
   const { __table: table } = action;
   if (!table) {
-    throw new Error(`Action is not initialized by dd.ta`);
+    throw new Error(`Action is not initialized by mm.ta`);
   }
   if (table.__pks.length > 1) {
     throw new Error(

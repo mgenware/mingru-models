@@ -1,4 +1,4 @@
-import * as dd from '../../';
+import * as mm from '../../';
 import user from '../models/user';
 import post from '../models/post';
 import * as assert from 'assert';
@@ -8,16 +8,16 @@ const expect = assert.equal;
 const ok = assert.ok;
 
 it('SQL', () => {
-  const sql = dd.sql`${user.id} = 1 OR ${user.name} = ${dd.input(user.name)}`;
+  const sql = mm.sql`${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}`;
   expect(
     sql.toString(),
     'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
   );
-  ok(sql instanceof dd.SQL);
+  ok(sql instanceof mm.SQL);
 });
 
 it('SQL with input', () => {
-  const sql = dd.sql`START${user.id} = 1 OR ${user.name} = ${dd.input(
+  const sql = mm.sql`START${user.id} = 1 OR ${user.name} = ${mm.input(
     user.name,
   )}END`;
   expect(
@@ -27,42 +27,42 @@ it('SQL with input', () => {
 });
 
 it('Input', () => {
-  const input = dd.input(user.name);
+  const input = mm.input(user.name);
   expect(input.type, user.name);
   expect(input.name, 'name');
 });
 
 it('Named input', () => {
-  const input = dd.input(user.name, 'haha');
+  const input = mm.input(user.name, 'haha');
   expect(input.type, user.name);
   expect(input.name, 'haha');
 });
 
 it('Input (foreign key)', () => {
-  const input = dd.input(post.user_id);
-  expect((input.type as dd.Column).foreignColumn, user.id);
+  const input = mm.input(post.user_id);
+  expect((input.type as mm.Column).foreignColumn, user.id);
   expect(input.name, 'userID');
 });
 
 it('Input (joined key)', () => {
-  const input = dd.input(post.user_id.join(user).name);
-  expect((input.type as dd.Column).mirroredColumn, user.name);
+  const input = mm.input(post.user_id.join(user).name);
+  expect((input.type as mm.Column).mirroredColumn, user.name);
   expect(input.name, 'userName');
 });
 
 it('Raw type input', () => {
-  const input = dd.input('uint32', 'uid');
+  const input = mm.input('uint32', 'uid');
   expect(input.type, 'uint32');
   expect(input.name, 'uid');
 });
 
 it('Empty name for raw type input', () => {
-  assert.throws(() => dd.input('uint32'), 'empty input name');
+  assert.throws(() => mm.input('uint32'), 'empty input name');
 });
 
 it('Embed another sql', () => {
-  const embedded = dd.sql`_${user.id} = ${dd.input(user.id)}`;
-  const sql = dd.sql`START${embedded} OR ${user.name} = ${dd.input(user.name)}`;
+  const embedded = mm.sql`_${user.id} = ${mm.input(user.id)}`;
+  const sql = mm.sql`START${embedded} OR ${user.name} = ${mm.input(user.name)}`;
   expect(
     sql.toString(),
     'SQL(E(START, type = 0), E(_, type = 0), E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2), E( OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
@@ -70,7 +70,7 @@ it('Embed another sql', () => {
 });
 
 it('Embed string', () => {
-  const sql = dd.sql`${user.id} = ${'123'}`;
+  const sql = mm.sql`${user.id} = ${'123'}`;
   expect(
     sql.toString(),
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(123, type = 0))',
@@ -90,7 +90,7 @@ it('toInput(string)', () => {
 });
 
 it('isEqualTo', () => {
-  const sql = user.name.isEqualTo(dd.sql`"haha"`);
+  const sql = user.name.isEqualTo(mm.sql`"haha"`);
   expect(
     sql.toString(),
     'SQL(E(Column(name, Table(user)), type = 1), E( = , type = 0), E("haha", type = 0))',
@@ -114,7 +114,7 @@ it('isEqualToInput(string)', () => {
 });
 
 it('isNotEqualTo', () => {
-  const sql = user.name.isNotEqualTo(dd.sql`"haha"`);
+  const sql = user.name.isNotEqualTo(mm.sql`"haha"`);
   expect(
     sql.toString(),
     'SQL(E(Column(name, Table(user)), type = 1), E( <> , type = 0), E("haha", type = 0))',
@@ -154,43 +154,43 @@ it('isNotNull', () => {
 });
 
 it('makeSQL', () => {
-  const s = dd.sql`haha`;
-  expect(dd.convertToSQL(s), s);
-  expect(dd.convertToSQL('haha').toString(), 'SQL(E(haha, type = 0))');
+  const s = mm.sql`haha`;
+  expect(mm.convertToSQL(s), s);
+  expect(mm.convertToSQL('haha').toString(), 'SQL(E(haha, type = 0))');
   expect(
-    dd.convertToSQL(post.user_id).toString(),
+    mm.convertToSQL(post.user_id).toString(),
     'SQL(E(Column(user_id, Table(post)), type = 1))',
   );
   expect(
-    dd.convertToSQL(dd.count(post.user_id)).toString(),
+    mm.convertToSQL(mm.count(post.user_id)).toString(),
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(user_id, Table(post)), type = 1))), type = 3))',
   );
 });
 
 it('enumerateColumns', () => {
-  let s = dd.sql`haha`;
+  let s = mm.sql`haha`;
   assert.deepEqual(cm.listColumnsFromSQL(s), []);
-  s = dd.sql`kaokdjdf ${user.name} ${post.id.isEqualToInput()}`;
+  s = mm.sql`kaokdjdf ${user.name} ${post.id.isEqualToInput()}`;
   assert.deepEqual(cm.listColumnsFromSQL(s), [user.name, post.id]);
-  s = dd.sql`${dd.coalesce('haha', user.name, post.id)}`;
+  s = mm.sql`${mm.coalesce('haha', user.name, post.id)}`;
   assert.deepEqual(cm.listColumnsFromSQL(s), [user.name, post.id]);
 });
 
 it('findFirstColumn', () => {
-  let s = dd.sql`haha`;
+  let s = mm.sql`haha`;
   expect(s.findFirstColumn(), null);
-  s = dd.sql`kaokdjdf ${user.name}`;
+  s = mm.sql`kaokdjdf ${user.name}`;
   expect(s.findFirstColumn(), user.name);
-  s = dd.sql`${dd.coalesce('haha', user.name)}`;
+  s = mm.sql`${mm.coalesce('haha', user.name)}`;
   expect(s.findFirstColumn(), user.name);
 });
 
 it('Input.isEqualTo', () => {
   const a = user.id.toInput();
   const b = user.id.toInput();
-  const c = dd.input('a', 'id');
-  const d = dd.input('a', 'id');
-  const e = dd.input('b', 'id');
+  const c = mm.input('a', 'id');
+  const d = mm.input('a', 'id');
+  const e = mm.input('b', 'id');
   expect(a.name, c.name);
   expect(a.isEqualTo(b), true);
   expect(a.isEqualTo(c), false);
@@ -199,10 +199,10 @@ it('Input.isEqualTo', () => {
 });
 
 it('hasColumns', () => {
-  const a = dd.sql`sdf sd ${dd.datetimeNow()}`;
-  const b = dd.sql`sisjsdf`;
-  const c = dd.sql`jis df${user.id}`;
-  const d = dd.sql`isjdf${user.name.toInput()}`;
+  const a = mm.sql`sdf sd ${mm.datetimeNow()}`;
+  const b = mm.sql`sisjsdf`;
+  const c = mm.sql`jis df${user.id}`;
+  const d = mm.sql`isjdf${user.name.toInput()}`;
   expect(a.hasColumns, false);
   expect(b.hasColumns, false);
   expect(c.hasColumns, true);
@@ -210,10 +210,10 @@ it('hasColumns', () => {
 });
 
 it('hasCalls', () => {
-  const a = dd.sql`sdf sd ${dd.datetimeNow()}`;
-  const b = dd.sql`sisjsdf`;
-  const c = dd.sql`jis df${user.id}`;
-  const d = dd.sql`isjdf${user.name.toInput()}`;
+  const a = mm.sql`sdf sd ${mm.datetimeNow()}`;
+  const b = mm.sql`sisjsdf`;
+  const c = mm.sql`jis df${user.id}`;
+  const d = mm.sql`isjdf${user.name.toInput()}`;
   expect(a.hasCalls, true);
   expect(b.hasCalls, false);
   expect(c.hasCalls, false);
@@ -221,8 +221,8 @@ it('hasCalls', () => {
 });
 
 it('RawColumn', () => {
-  const rawCol = dd.sel(user.id, 'haha');
-  const sql = dd.sql`${user.id} = ${rawCol}`;
+  const rawCol = mm.sel(user.id, 'haha');
+  const sql = mm.sql`${user.id} = ${rawCol}`;
   expect(
     sql.toString(),
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(RawColumn(haha, core = Column(id, Table(user))), type = 4))',
@@ -231,13 +231,13 @@ it('RawColumn', () => {
 
 it('sniffType', () => {
   // Column
-  expect(dd.sql`haha${user.id}`.sniffType(), 'ColType(SQL.BIGINT)');
+  expect(mm.sql`haha${user.id}`.sniffType(), 'ColType(SQL.BIGINT)');
   // Call
-  expect(dd.sql`${dd.max(dd.sql``)}`.sniffType(), 'ColType(SQL.INT)');
+  expect(mm.sql`${mm.max(mm.sql``)}`.sniffType(), 'ColType(SQL.INT)');
   // RawColumn
-  expect(dd.sql`haha${user.id.as('abc')}`.sniffType(), 'ColType(SQL.BIGINT)');
+  expect(mm.sql`haha${user.id.as('abc')}`.sniffType(), 'ColType(SQL.BIGINT)');
   expect(
-    dd.sql`haha${dd.sel(dd.sql`abc`, 'name', dd.int().type)}`.sniffType(),
+    mm.sql`haha${mm.sel(mm.sql`abc`, 'name', mm.int().type)}`.sniffType(),
     'ColType(SQL.INT)',
   );
 });

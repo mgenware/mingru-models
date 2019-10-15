@@ -1,4 +1,4 @@
-import * as dd from '../../';
+import * as mm from '../../';
 import user from '../models/user';
 import * as assert from 'assert';
 
@@ -6,26 +6,26 @@ const expect = assert.equal;
 const ok = assert.ok;
 
 it('DeleteAction', () => {
-  class UserTA extends dd.TableActions {
-    t = dd.deleteOne().where(dd.sql`${user.id} = 1`);
+  class UserTA extends mm.TableActions {
+    t = mm.deleteOne().where(mm.sql`${user.id} = 1`);
   }
-  const ta = dd.ta(user, UserTA);
+  const ta = mm.ta(user, UserTA);
   const v = ta.t;
-  ok(v instanceof dd.DeleteAction);
-  ok(v instanceof dd.CoreSelectAction);
-  ok(v instanceof dd.Action);
+  ok(v instanceof mm.DeleteAction);
+  ok(v instanceof mm.CoreSelectAction);
+  ok(v instanceof mm.Action);
   expect(
     v.whereSQLString,
     'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
   );
-  expect(v.actionType, dd.ActionType.delete);
+  expect(v.actionType, mm.ActionType.delete);
 });
 
 it('deleteOne', () => {
-  class UserTA extends dd.TableActions {
-    t = dd.deleteOne().where(dd.sql`${user.id} = 1`);
+  class UserTA extends mm.TableActions {
+    t = mm.deleteOne().where(mm.sql`${user.id} = 1`);
   }
-  const ta = dd.ta(user, UserTA);
+  const ta = mm.ta(user, UserTA);
   const v = ta.t;
 
   // extra props
@@ -34,18 +34,18 @@ it('deleteOne', () => {
 
   // Throw error when WHERE is empty
   assert.throws(() => {
-    class TA extends dd.TableActions {
-      t = dd.deleteOne();
+    class TA extends mm.TableActions {
+      t = mm.deleteOne();
     }
-    dd.ta(user, TA);
+    mm.ta(user, TA);
   }, 'unsafeDeleteAll');
 });
 
 it('deleteSome', () => {
-  class UserTA extends dd.TableActions {
-    t = dd.deleteSome().where(dd.sql`${user.id} = 1`);
+  class UserTA extends mm.TableActions {
+    t = mm.deleteSome().where(mm.sql`${user.id} = 1`);
   }
-  const ta = dd.ta(user, UserTA);
+  const ta = mm.ta(user, UserTA);
   const v = ta.t;
 
   // extra props
@@ -54,18 +54,18 @@ it('deleteSome', () => {
 
   // Throw error when WHERE is empty
   assert.throws(() => {
-    class TA extends dd.TableActions {
-      t = dd.deleteSome();
+    class TA extends mm.TableActions {
+      t = mm.deleteSome();
     }
-    dd.ta(user, TA);
+    mm.ta(user, TA);
   }, 'unsafeDeleteAll');
 });
 
 it('unsafeDeleteAll', () => {
-  class UserTA extends dd.TableActions {
-    t = dd.unsafeDeleteAll();
+  class UserTA extends mm.TableActions {
+    t = mm.unsafeDeleteAll();
   }
-  const ta = dd.ta(user, UserTA);
+  const ta = mm.ta(user, UserTA);
   const v = ta.t;
 
   // extra props

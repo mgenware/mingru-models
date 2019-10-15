@@ -1,4 +1,4 @@
-import * as dd from '../../';
+import * as mm from '../../';
 import post from '../models/post';
 import like from '../models/like';
 import * as assert from 'assert';
@@ -8,78 +8,78 @@ const expect = assert.equal;
 const ok = assert.ok;
 
 it('bigInt', () => {
-  const c = dd.bigInt(123);
-  ok(c.type.types.includes(dd.dt.bigInt));
+  const c = mm.bigInt(123);
+  ok(c.type.types.includes(mm.dt.bigInt));
   expect(c.defaultValue, 123);
   expect(c.type.unsigned, false);
 });
 
 it('unsignedBigInt', () => {
-  const c = dd.uBigInt(123);
-  ok(c.type.types.includes(dd.dt.bigInt));
+  const c = mm.uBigInt(123);
+  ok(c.type.types.includes(mm.dt.bigInt));
   expect(c.defaultValue, 123);
   expect(c.type.unsigned, true);
 });
 
 it('int', () => {
-  const c = dd.int(123);
-  ok(c.type.types.includes(dd.dt.int));
+  const c = mm.int(123);
+  ok(c.type.types.includes(mm.dt.int));
   expect(c.defaultValue, 123);
   expect(c.type.unsigned, false);
 });
 
 it('unsignedInt', () => {
-  const c = dd.uInt(123);
-  ok(c.type.types.includes(dd.dt.int));
+  const c = mm.uInt(123);
+  ok(c.type.types.includes(mm.dt.int));
   expect(c.defaultValue, 123);
   expect(c.type.unsigned, true);
 });
 
 it('smallInt', () => {
-  const c = dd.smallInt(123);
-  ok(c.type.types.includes(dd.dt.smallInt));
+  const c = mm.smallInt(123);
+  ok(c.type.types.includes(mm.dt.smallInt));
   expect(c.defaultValue, 123);
   expect(c.type.unsigned, false);
 });
 
 it('unsignedSmallInt', () => {
-  const c = dd.uSmallInt(123);
-  ok(c.type.types.includes(dd.dt.smallInt));
+  const c = mm.uSmallInt(123);
+  ok(c.type.types.includes(mm.dt.smallInt));
   expect(c.defaultValue, 123);
   expect(c.type.unsigned, true);
 });
 
 it('tinyInt', () => {
-  const c = dd.tinyInt(123);
-  ok(c.type.types.includes(dd.dt.tinyInt));
+  const c = mm.tinyInt(123);
+  ok(c.type.types.includes(mm.dt.tinyInt));
   expect(c.defaultValue, 123);
   expect(c.type.unsigned, false);
 });
 
 it('unsignedTinyInt', () => {
-  const c = dd.uTinyInt(123);
-  ok(c.type.types.includes(dd.dt.tinyInt));
+  const c = mm.uTinyInt(123);
+  ok(c.type.types.includes(mm.dt.tinyInt));
   expect(c.defaultValue, 123);
   expect(c.type.unsigned, true);
 });
 
 it('char', () => {
-  const c = dd.char(20, 'ha');
-  ok(c.type.types.includes(dd.dt.char));
+  const c = mm.char(20, 'ha');
+  ok(c.type.types.includes(mm.dt.char));
   expect(c.defaultValue, 'ha');
   expect(c.type.length, 20);
 });
 
 it('varChar', () => {
-  const c = dd.varChar(20, 'ha');
-  ok(c.type.types.includes(dd.dt.varChar));
+  const c = mm.varChar(20, 'ha');
+  ok(c.type.types.includes(mm.dt.varChar));
   expect(c.defaultValue, 'ha');
   expect(c.type.length, 20);
 });
 
 it('pk', () => {
-  const c = dd.pk();
-  ok(c.type.types.includes(dd.dt.bigInt));
+  const c = mm.pk();
+  ok(c.type.types.includes(mm.dt.bigInt));
   expect(c.type.unique, false);
   expect(c.type.nullable, false);
   expect(c.type.unsigned, true);
@@ -87,15 +87,15 @@ it('pk', () => {
 });
 
 it('pk(column)', () => {
-  const charCol = dd.char(3);
-  const c = dd.pk(charCol);
+  const charCol = mm.char(3);
+  const c = mm.pk(charCol);
   expect(c, charCol);
   expect(c.type.unique, false);
   expect(c.type.nullable, false);
 });
 
 it('pk(FK)', () => {
-  const c = dd.pk(post.id);
+  const c = mm.pk(post.id);
   expect(c.type.pk, true);
   expect(c.type.unique, false);
   expect(c.type.nullable, false);
@@ -109,51 +109,51 @@ it('pk(FK)', () => {
 });
 
 it('autoIncrement', () => {
-  expect(dd.pk(dd.int()).type.autoIncrement, false);
-  expect(dd.pk(dd.tinyInt()).type.autoIncrement, false);
-  expect(dd.pk(dd.bool()).type.autoIncrement, false);
-  expect(dd.pk(dd.varChar(3)).type.autoIncrement, false);
+  expect(mm.pk(mm.int()).type.autoIncrement, false);
+  expect(mm.pk(mm.tinyInt()).type.autoIncrement, false);
+  expect(mm.pk(mm.bool()).type.autoIncrement, false);
+  expect(mm.pk(mm.varChar(3)).type.autoIncrement, false);
   // Set the AUTO_INCREMENT explicitly
-  expect(dd.pk(dd.int()).noAutoIncrement.type.autoIncrement, false);
-  expect(dd.pk(dd.varChar(3)).autoIncrement.type.autoIncrement, true);
+  expect(mm.pk(mm.int()).noAutoIncrement.type.autoIncrement, false);
+  expect(mm.pk(mm.varChar(3)).autoIncrement.type.autoIncrement, true);
   // FK
   expect(post.user_id.type.autoIncrement, false);
 });
 
 it('isNoDefaultOnCSQL', () => {
-  expect(dd.pk(dd.int(20)).isNoDefaultOnCSQL, false);
-  expect(dd.pk(dd.int(20)).noDefaultOnCSQL.isNoDefaultOnCSQL, true);
+  expect(mm.pk(mm.int(20)).isNoDefaultOnCSQL, false);
+  expect(mm.pk(mm.int(20)).noDefaultOnCSQL.isNoDefaultOnCSQL, true);
 });
 
 it('text', () => {
-  const c = dd.text('ha');
-  ok(c.type.types.includes(dd.dt.text));
+  const c = mm.text('ha');
+  ok(c.type.types.includes(mm.dt.text));
   expect(c.defaultValue, 'ha');
 });
 
 it('double', () => {
-  const c = dd.double(20);
-  ok(c.type.types.includes(dd.dt.double));
+  const c = mm.double(20);
+  ok(c.type.types.includes(mm.dt.double));
   expect(c.defaultValue, 20);
 });
 
 it('float', () => {
-  const c = dd.float(20);
-  ok(c.type.types.includes(dd.dt.float));
+  const c = mm.float(20);
+  ok(c.type.types.includes(mm.dt.float));
   expect(c.defaultValue, 20);
 });
 
 it('bool', () => {
-  const c = dd.bool(true);
-  ok(c.type.types.includes(dd.dt.bool));
+  const c = mm.bool(true);
+  ok(c.type.types.includes(mm.dt.bool));
   expect(c.defaultValue, true);
 });
 
 it('datetime', () => {
-  let c = dd.datetime();
-  ok(c.type.types.includes(dd.dt.datetime));
+  let c = mm.datetime();
+  ok(c.type.types.includes(mm.dt.datetime));
 
-  c = dd.datetime(true);
+  c = mm.datetime(true);
   expect(
     (c.defaultValue as object).toString(),
     'SQL(E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3))',
@@ -161,10 +161,10 @@ it('datetime', () => {
 });
 
 it('date', () => {
-  let c = dd.date();
-  ok(c.type.types.includes(dd.dt.date));
+  let c = mm.date();
+  ok(c.type.types.includes(mm.dt.date));
 
-  c = dd.date(true);
+  c = mm.date(true);
   expect(
     (c.defaultValue as object).toString(),
     'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
@@ -172,10 +172,10 @@ it('date', () => {
 });
 
 it('time', () => {
-  let c = dd.time();
-  ok(c.type.types.includes(dd.dt.time));
+  let c = mm.time();
+  ok(c.type.types.includes(mm.dt.time));
 
-  c = dd.time(true);
+  c = mm.time(true);
   expect(
     (c.defaultValue as object).toString(),
     'SQL(E(SQLCall(2, return = ColType(SQL.TIME), type = 3))',
@@ -183,7 +183,7 @@ it('time', () => {
 });
 
 it('dt.isInteger', () => {
-  const { dt } = dd;
+  const { dt } = mm;
   expect(dt.isInteger(dt.bigInt), true);
   expect(dt.isInteger(dt.int), true);
   expect(dt.isInteger(dt.smallInt), true);
@@ -196,7 +196,7 @@ it('dt.isInteger', () => {
 });
 
 it('dt.isNumber', () => {
-  const { dt } = dd;
+  const { dt } = mm;
   expect(dt.isNumber(dt.bigInt), true);
   expect(dt.isNumber(dt.int), true);
   expect(dt.isNumber(dt.smallInt), true);
@@ -207,7 +207,7 @@ it('dt.isNumber', () => {
 });
 
 it('dt.isTimeRelated', () => {
-  const { dt } = dd;
+  const { dt } = mm;
   expect(dt.isTimeRelated(dt.datetime), true);
   expect(dt.isTimeRelated(dt.date), true);
   expect(dt.isTimeRelated(dt.time), true);

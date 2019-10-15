@@ -1,13 +1,13 @@
-import * as dd from '../../';
+import * as mm from '../../';
 import user from './user';
 
-class Post extends dd.Table {
-  id = dd.pk();
+class Post extends mm.Table {
+  id = mm.pk();
   user_id = user.id;
-  e_user_id = dd.fk(user.id);
-  e_user_id_n = dd.fk(user.id).nullable;
+  e_user_id = mm.fk(user.id);
+  e_user_id_n = mm.fk(user.id).nullable;
   snake_case_user_id = user.id;
-  title = dd.varChar(100);
+  title = mm.varChar(100);
 }
 
-export default dd.table(Post);
+export default mm.table(Post);

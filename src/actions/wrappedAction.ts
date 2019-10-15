@@ -19,7 +19,7 @@ export class WrappedAction extends Action {
     // Initialize wrapped action if it hasn't done it yet
     if (!this.action.__name) {
       // For an uninitialized wrapped action, table and name default to parent's equivalent,
-      // e.g. dd.wrap(dd.insert(...))
+      // e.g. mm.wrap(mm.insert(...))
       // NOTE: action must be initialized to function properly
       initializeAction(this.action, table, name);
       this.isTemp = true;

@@ -1,4 +1,4 @@
-import * as dd from '../../';
+import * as mm from '../../';
 import user from '../models/user';
 import post from '../models/post';
 import * as assert from 'assert';
@@ -7,19 +7,19 @@ const expect = assert.equal;
 const ok = assert.ok;
 
 it('Insert', () => {
-  class UserTA extends dd.TableActions {
-    t = dd
+  class UserTA extends mm.TableActions {
+    t = mm
       .insert()
       .setInputs(post.title, post.snake_case_user_id)
       .setInputs();
   }
-  const ta = dd.ta(user, UserTA);
+  const ta = mm.ta(user, UserTA);
   const v = ta.t;
 
-  expect(v.actionType, dd.ActionType.insert);
+  expect(v.actionType, mm.ActionType.insert);
   expect(v.ensureOneRowAffected, false);
-  ok(v instanceof dd.InsertAction);
-  ok(v instanceof dd.CoreUpdateAction);
+  ok(v instanceof mm.InsertAction);
+  ok(v instanceof mm.CoreUpdateAction);
   expect(
     v.settersToString(),
     'title: SQL(E(SQLVar(title, desc = Column(title, Table(post))), type = 2)), snake_case_user_id: SQL(E(SQLVar(snakeCaseUserID, desc = Column(snake_case_user_id, Table(post))), type = 2))',
@@ -27,45 +27,45 @@ it('Insert', () => {
 });
 
 it('Insert one', () => {
-  class UserTA extends dd.TableActions {
-    t = dd
+  class UserTA extends mm.TableActions {
+    t = mm
       .insertOne()
       .setInputs(post.title, post.snake_case_user_id)
       .setInputs();
   }
-  const ta = dd.ta(user, UserTA);
+  const ta = mm.ta(user, UserTA);
   const v = ta.t;
 
   expect(v.ensureOneRowAffected, true);
 });
 
 it('unsafeInsert', () => {
-  class UserTA extends dd.TableActions {
-    t = dd.unsafeInsert().setInputs(post.title, post.snake_case_user_id);
+  class UserTA extends mm.TableActions {
+    t = mm.unsafeInsert().setInputs(post.title, post.snake_case_user_id);
   }
-  const ta = dd.ta(user, UserTA);
+  const ta = mm.ta(user, UserTA);
   const v = ta.t;
   expect(v.noColumnNumberCheck, true);
 });
 
 it('unsafeInsertOne', () => {
-  class UserTA extends dd.TableActions {
-    t = dd.unsafeInsertOne().setInputs(post.title, post.snake_case_user_id);
+  class UserTA extends mm.TableActions {
+    t = mm.unsafeInsertOne().setInputs(post.title, post.snake_case_user_id);
   }
-  const ta = dd.ta(user, UserTA);
+  const ta = mm.ta(user, UserTA);
   const v = ta.t;
   expect(v.ensureOneRowAffected, true);
   expect(v.noColumnNumberCheck, true);
 });
 
 it('SQLConvertible value', () => {
-  class UserTA extends dd.TableActions {
-    t = dd
+  class UserTA extends mm.TableActions {
+    t = mm
       .unsafeInsert()
-      .set(post.title, dd.dateNow())
+      .set(post.title, mm.dateNow())
       .setDefaults();
   }
-  const ta = dd.ta(user, UserTA);
+  const ta = mm.ta(user, UserTA);
   const v = ta.t;
   expect(
     v.setters.get(post.title),
@@ -75,30 +75,30 @@ it('SQLConvertible value', () => {
 
 it('No setters', () => {
   assert.throws(() => {
-    class PostTA extends dd.TableActions {
-      t = dd.insert();
+    class PostTA extends mm.TableActions {
+      t = mm.insert();
     }
-    dd.ta(post, PostTA);
+    mm.ta(post, PostTA);
   }, 'setter');
 });
 
 it('Column number check', () => {
   assert.throws(() => {
-    class PostTA extends dd.TableActions {
-      t = dd.insert().setInputs(post.e_user_id);
+    class PostTA extends mm.TableActions {
+      t = mm.insert().setInputs(post.e_user_id);
     }
-    dd.ta(post, PostTA);
+    mm.ta(post, PostTA);
   }, 'all columns');
   assert.doesNotThrow(() => {
-    class PostTA extends dd.TableActions {
-      t = dd.insert().setInputs();
+    class PostTA extends mm.TableActions {
+      t = mm.insert().setInputs();
     }
-    dd.ta(post, PostTA);
+    mm.ta(post, PostTA);
   });
   assert.doesNotThrow(() => {
-    class PostTA extends dd.TableActions {
-      t = dd.unsafeInsert().setInputs(post.e_user_id);
+    class PostTA extends mm.TableActions {
+      t = mm.unsafeInsert().setInputs(post.e_user_id);
     }
-    dd.ta(post, PostTA);
+    mm.ta(post, PostTA);
   });
 });

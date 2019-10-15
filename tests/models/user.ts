@@ -1,11 +1,11 @@
-import * as dd from '../../';
+import * as mm from '../../';
 
-class User extends dd.Table {
-  id = dd.pk();
-  name = dd.varChar(100);
-  snake_case_name = dd.varChar(100);
-  follower_count = dd.int(0);
-  def_value = dd.varChar(20, 'abc');
+class User extends mm.Table {
+  id = mm.pk();
+  name = mm.varChar(100);
+  snake_case_name = mm.varChar(100);
+  follower_count = mm.int(0);
+  def_value = mm.varChar(20, 'abc');
 }
 
-export default dd.table(User);
+export default mm.table(User);

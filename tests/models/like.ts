@@ -1,10 +1,10 @@
-import * as dd from '../../';
+import * as mm from '../../';
 import user from './user';
 
-class Like extends dd.Table {
-  user_id = dd.pk(user.id);
-  type = dd.pk(dd.uInt()).noAutoIncrement;
-  value = dd.bool();
+class Like extends mm.Table {
+  user_id = mm.pk(user.id);
+  type = mm.pk(mm.uInt()).noAutoIncrement;
+  value = mm.bool();
 }
 
-export default dd.table(Like);
+export default mm.table(Like);

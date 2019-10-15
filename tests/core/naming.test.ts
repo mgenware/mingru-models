@@ -1,24 +1,24 @@
-import * as dd from '../../';
+import * as mm from '../../';
 import user from '../models/user';
 import * as assert from 'assert';
 
 const expect = assert.equal;
 
-class ABCTable extends dd.Table {
-  StatusString = dd.varChar(10);
-  statusType = dd.varChar(10);
-  statusID = dd.int().setDBName('customName');
+class ABCTable extends mm.Table {
+  StatusString = mm.varChar(10);
+  statusType = mm.varChar(10);
+  statusID = mm.int().setDBName('customName');
   uid1 = user.id;
   uid2 = user.id;
-  uid3 = dd.fk(user.id).setDBName('UID3');
+  uid3 = mm.fk(user.id).setDBName('UID3');
 }
 
-class DEFTable extends dd.Table {
-  id = dd.pk();
+class DEFTable extends mm.Table {
+  id = mm.pk();
 }
 
-const abcTable = dd.table(ABCTable);
-const defTable = dd.table(DEFTable, 't');
+const abcTable = mm.table(ABCTable);
+const defTable = mm.table(DEFTable, 't');
 
 it('Table name and getDBName', () => {
   expect(abcTable.__name, 'abc_table');

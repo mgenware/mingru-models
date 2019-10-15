@@ -19,7 +19,7 @@ export enum ActionType {
 }
 
 export class Action extends CoreProperty {
-  // Will be set after calling dd.ta. Can be overwritten by from().
+  // Will be set after calling mm.ta. Can be overwritten by from().
   __table: Table | null = null;
 
   __argStubs: SQLVariable[] = [];
@@ -33,7 +33,7 @@ export class Action extends CoreProperty {
     return this;
   }
 
-  // After action is fully initialized, `dd.ta` will call `Action.validate`
+  // After action is fully initialized, `mm.ta` will call `Action.validate`
   validate(_table: Table, _name: string) {
     // Implemented by sub-classes
   }
