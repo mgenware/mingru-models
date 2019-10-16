@@ -114,24 +114,24 @@ it('Setting __table or temp members', () => {
       .setInputs(post.title, post.snake_case_user_id)
       .setInputs();
     t = mm.transact(
+      mm.insert().setDefaults(),
       this.insert,
       userTA.insert,
       this.insert.wrap({ title: 'title' }),
-      mm.insert().setDefaults(),
     );
   }
   const postTA = mm.ta(post, PostTA);
   const members = postTA.t.members;
   expect(members[0].action.__table, post);
-  expect(members[0].action.__name, 'insert');
-  expect(members[0].isTemp, false);
-  expect(members[1].action.__table, user);
+  expect(members[0].action.__name, 'tChild1');
+  expect(members[0].isTemp, true);
+  expect(members[1].action.__table, post);
   expect(members[1].action.__name, 'insert');
   expect(members[1].isTemp, false);
-  expect(members[2].action.__table, post);
-  expect(members[2].action.__name, 'tChild2');
-  expect(members[2].isTemp, true);
+  expect(members[2].action.__table, user);
+  expect(members[2].action.__name, 'insert');
+  expect(members[2].isTemp, false);
   expect(members[3].action.__table, post);
-  expect(members[3].action.__name, 'tChild3');
+  expect(members[3].action.__name, 'tChild4');
   expect(members[3].isTemp, true);
 });
