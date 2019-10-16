@@ -103,3 +103,15 @@ it('action.ensureInitialized', () => {
     'not initialized',
   );
 });
+
+it('action.saveReturnValue', () => {
+  class UserTA extends mm.TableActions {
+    t = mm
+      .select(user.id)
+      .saveReturnValue('a', '1')
+      .saveDefaultReturnValue('2');
+  }
+  const ta = mm.ta(user, UserTA);
+  const v = ta.t;
+  assert.deepEqual(v.__returnMap, { default: '2', a: '1' });
+});
