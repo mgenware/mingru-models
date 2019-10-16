@@ -2,6 +2,11 @@ import { Action, ActionType, initializeAction } from './ta';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table } from '../core/core';
 
+// Use this to reference the value saved by `Action.saveReturnValue`.
+export class SavedContextValue {
+  constructor(public name: string) {}
+}
+
 export class WrappedAction extends Action {
   isTemp = false;
 
