@@ -2,6 +2,7 @@ import * as mm from '../../';
 import user from '../models/user';
 import * as assert from 'assert';
 import post from '../models/post';
+import itThrows from 'it-throws';
 
 const expect = assert.equal;
 const ok = assert.ok;
@@ -105,7 +106,7 @@ it('setDefaults with no args', () => {
 });
 
 it('setInputs and setDefaults twice', () => {
-  assert.throws(() => {
+  itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm
         .unsafeUpdateAll()
@@ -113,8 +114,8 @@ it('setInputs and setDefaults twice', () => {
         .setDefaults();
     }
     mm.ta(user, UserTA);
-  }, 'already set');
-  assert.throws(() => {
+  }, 'All columns are already set to inputs');
+  itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm
         .unsafeUpdateAll()
@@ -122,7 +123,7 @@ it('setInputs and setDefaults twice', () => {
         .setInputs();
     }
     mm.ta(user, UserTA);
-  }, 'already set');
+  }, 'All columns are already set to defaults');
 });
 
 it('Set same column twice', () => {
@@ -133,7 +134,7 @@ it('Set same column twice', () => {
       .setInputs(user.snake_case_name, user.name)
       .set(user.name, user.name.toInput('b'));
   }
-  assert.throws(() => mm.ta(user, UserTA), 'already set');
+  itThrows(() => mm.ta(user, UserTA), 'Column "name" is already set');
 });
 
 it('updateOne', () => {
@@ -150,13 +151,12 @@ it('updateOne', () => {
   expect(v.ensureOneRowAffected, true);
   expect(v.allowNoWhere, false);
 
-  // Throw error when WHERE is empty
-  assert.throws(() => {
+  itThrows(() => {
     class TA extends mm.TableActions {
       t = mm.updateOne().setInputs(user.snake_case_name);
     }
     mm.ta(user, TA);
-  }, 'unsafeUpdateAll');
+  }, "'allowNoWhere' is set to false, you must define an WHERE clause. Otherwise, use 'unsafeUpdateAll'");
 });
 
 it('updateSome', () => {
@@ -173,13 +173,12 @@ it('updateSome', () => {
   expect(v.ensureOneRowAffected, false);
   expect(v.allowNoWhere, false);
 
-  // Throw error when WHERE is empty
-  assert.throws(() => {
+  itThrows(() => {
     class TA extends mm.TableActions {
       t = mm.updateSome().setInputs(user.snake_case_name);
     }
     mm.ta(user, TA);
-  }, 'unsafeUpdateAll');
+  }, "'allowNoWhere' is set to false, you must define an WHERE clause. Otherwise, use 'unsafeUpdateAll'");
 });
 
 it('unsafeUpdateAll', () => {
@@ -227,12 +226,12 @@ it('SQLConvertible value', () => {
 });
 
 it('No setters', () => {
-  assert.throws(() => {
+  itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm.unsafeUpdateAll();
     }
     mm.ta(user, UserTA);
-  }, 'setter');
+  }, 'No setters in action "t"');
   assert.doesNotThrow(() => {
     class UserTA extends mm.TableActions {
       t = mm.unsafeUpdateAll().setInputs();
@@ -295,16 +294,10 @@ it('andBy', () => {
 });
 
 it('Validity check', () => {
-  assert.throws(
-    () => {
-      class PostTA extends mm.TableActions {
-        t = mm.updateOne().setInputs(user.id);
-      }
-      mm.ta(post, PostTA);
-    },
-    {
-      message:
-        'Source table assertion failed, expected "Table(post)", got "Table(user)".',
-    },
-  );
+  itThrows(() => {
+    class PostTA extends mm.TableActions {
+      t = mm.updateOne().setInputs(user.id);
+    }
+    mm.ta(post, PostTA);
+  }, 'Source table assertion failed, expected "Table(post)", got "Table(user)".');
 });

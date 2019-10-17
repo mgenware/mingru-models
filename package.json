@@ -38,6 +38,7 @@
     "@typescript-eslint/eslint-plugin": "^2.3.2",
     "@typescript-eslint/parser": "^2.3.2",
     "eslint": "^6.5.1",
+    "it-throws": "^1.0.0",
     "mocha": "^6.2.1",
     "rimraf": "^3.0.0",
     "typescript": "^3.6.3"

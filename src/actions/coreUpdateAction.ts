@@ -70,7 +70,7 @@ export class CoreUpdateAction extends Action {
 
   private checkNotAllSet() {
     if (this.autoSetter) {
-      throw new Error(`All columns are already set to ${this.autoSetter}`);
+      throw new Error(`All columns are already set to ${this.autoSetter}s`);
     }
   }
 

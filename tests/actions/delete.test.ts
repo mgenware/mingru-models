@@ -1,6 +1,7 @@
 import * as mm from '../../';
 import user from '../models/user';
 import * as assert from 'assert';
+import itThrows from 'it-throws';
 
 const expect = assert.equal;
 const ok = assert.ok;
@@ -33,12 +34,12 @@ it('deleteOne', () => {
   expect(v.allowNoWhere, false);
 
   // Throw error when WHERE is empty
-  assert.throws(() => {
+  itThrows(() => {
     class TA extends mm.TableActions {
       t = mm.deleteOne();
     }
     mm.ta(user, TA);
-  }, 'unsafeDeleteAll');
+  }, "'allowNoWhere' is set to false, you must define an WHERE clause. Otherwise, use 'unsafeDeleteAll'");
 });
 
 it('deleteSome', () => {
@@ -53,12 +54,12 @@ it('deleteSome', () => {
   expect(v.allowNoWhere, false);
 
   // Throw error when WHERE is empty
-  assert.throws(() => {
+  itThrows(() => {
     class TA extends mm.TableActions {
       t = mm.deleteSome();
     }
     mm.ta(user, TA);
-  }, 'unsafeDeleteAll');
+  }, "'allowNoWhere' is set to false, you must define an WHERE clause. Otherwise, use 'unsafeDeleteAll'");
 });
 
 it('unsafeDeleteAll', () => {

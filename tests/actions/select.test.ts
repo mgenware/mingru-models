@@ -2,6 +2,7 @@ import * as mm from '../../';
 import user from '../models/user';
 import post from '../models/post';
 import * as assert from 'assert';
+import itThrows from 'it-throws';
 
 const expect = assert.equal;
 const ok = assert.ok;
@@ -268,7 +269,7 @@ it('Order by', () => {
 
 it('Validate columns', () => {
   const t = user;
-  assert.throws(() => {
+  itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm.selectRows(
         t.name,
@@ -277,13 +278,14 @@ it('Validate columns', () => {
       );
     }
     mm.ta(user, UserTA);
-  }, 'null');
-  assert.throws(() => {
+  }, 'The column at index 1 is null, action name "null"');
+
+  itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm.selectRows(t.name, (32 as unknown) as mm.Column, t.follower_count);
     }
     mm.ta(user, UserTA);
-  }, 'not a valid');
+  }, 'The column at index 1 is not a valid column, got a "number", action name "null"');
 });
 
 it('GROUP BY names', () => {
@@ -323,12 +325,13 @@ it('HAVING', () => {
 
 it('Throw when limit is called on non-list mode', () => {
   const t = user;
-  assert.throws(() => {
+
+  itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm.selectField(t.name).limit();
     }
     mm.ta(user, UserTA);
-  }, 'list');
+  }, "limit can only be used when mode = 'SelectActionMode.list', current mode is 1");
 });
 
 it('Throw on selecting collection without ORDER BY', () => {
@@ -357,18 +360,18 @@ it('Throw on selecting collection without ORDER BY', () => {
     }
     mm.ta(user, UserTA);
   });
-  assert.throws(() => {
+  itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm.selectRows(t.name);
     }
     mm.ta(user, UserTA);
-  }, 'ORDER BY');
-  assert.throws(() => {
+  }, 'An ORDER BY clause is required when select multiple rows, action name "t"');
+  itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm.selectPage(t.name);
     }
     mm.ta(user, UserTA);
-  }, 'ORDER BY');
+  }, 'An ORDER BY clause is required when select multiple rows, action name "t"');
 });
 
 it('RawColumn.toInput', () => {

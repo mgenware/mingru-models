@@ -2,6 +2,7 @@ import * as mm from '../../';
 import user from '../models/user';
 import post from '../models/post';
 import * as assert from 'assert';
+import itThrows from 'it-throws';
 
 const expect = assert.equal;
 const ok = assert.ok;
@@ -74,21 +75,21 @@ it('SQLConvertible value', () => {
 });
 
 it('No setters', () => {
-  assert.throws(() => {
+  itThrows(() => {
     class PostTA extends mm.TableActions {
       t = mm.insert();
     }
     mm.ta(post, PostTA);
-  }, 'setter');
+  }, 'No setters in action "t"');
 });
 
 it('Column number check', () => {
-  assert.throws(() => {
+  itThrows(() => {
     class PostTA extends mm.TableActions {
       t = mm.insert().setInputs(post.e_user_id);
     }
     mm.ta(post, PostTA);
-  }, 'all columns');
+  }, "You only set 1 of all 5 columns (not including AUTO_INCREMENT columns), you should set all columns or use 'unsafeInsert' to bypass this check");
   assert.doesNotThrow(() => {
     class PostTA extends mm.TableActions {
       t = mm.insert().setInputs();
@@ -104,16 +105,10 @@ it('Column number check', () => {
 });
 
 it('Validity check', () => {
-  assert.throws(
-    () => {
-      class PostTA extends mm.TableActions {
-        t = mm.insertOne().setInputs(user.id);
-      }
-      mm.ta(post, PostTA);
-    },
-    {
-      message:
-        'Source table assertion failed, expected "Table(post)", got "Table(user)".',
-    },
-  );
+  itThrows(() => {
+    class PostTA extends mm.TableActions {
+      t = mm.insertOne().setInputs(user.id);
+    }
+    mm.ta(post, PostTA);
+  }, 'Source table assertion failed, expected "Table(post)", got "Table(user)".');
 });

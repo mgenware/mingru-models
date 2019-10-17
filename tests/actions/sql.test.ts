@@ -3,6 +3,7 @@ import user from '../models/user';
 import post from '../models/post';
 import * as assert from 'assert';
 import * as cm from './common';
+import itThrows from 'it-throws';
 
 const expect = assert.equal;
 const ok = assert.ok;
@@ -57,7 +58,10 @@ it('Raw type input', () => {
 });
 
 it('Empty name for raw type input', () => {
-  assert.throws(() => mm.input('uint32'), 'empty input name');
+  itThrows(
+    () => mm.input('uint32'),
+    'Unexpected empty input name for type "uint32"',
+  );
 });
 
 it('Embed another sql', () => {

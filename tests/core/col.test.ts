@@ -3,6 +3,7 @@ import user from '../models/user';
 import post from '../models/post';
 import cmt from '../models/postCmt';
 import * as assert from 'assert';
+import itThrows from 'it-throws';
 
 const expect = assert.equal;
 
@@ -100,7 +101,10 @@ it('Column.newJoinedColumn', () => {
 it('Mutate a frozen column', () => {
   const a = mm.int(234);
   a.freeze();
-  assert.throws(() => a.nullable);
+  itThrows(
+    () => a.nullable,
+    'The current column "null" of type Column cannot be modified, it is frozen. It is mostly likely because you are modifying a column from another table',
+  );
 });
 
 it('notNull (default)', () => {
@@ -168,7 +172,10 @@ class JCTable extends mm.Table {
 }
 
 it('JoinedColumn in table def', () => {
-  assert.throws(() => mm.table(JCTable), 'JoinedColumn');
+  itThrows(
+    () => mm.table(JCTable),
+    'Unexpected Column at column "jc", you should not use JoinedColumn in a table definition, JoinedColumn should be used in SELECT actions',
+  );
 });
 
 class SCTable extends mm.Table {
@@ -176,7 +183,10 @@ class SCTable extends mm.Table {
 }
 
 it('RawColumn in table def', () => {
-  assert.throws(() => mm.table(SCTable), 'RawColumn');
+  itThrows(
+    () => mm.table(SCTable),
+    'The "core" argument is not initialized (did you accidentally put a RawColumn in a SELECT action?)',
+  );
 });
 
 it('Register property callback', () => {
@@ -212,12 +222,12 @@ it('Throw on default value of complex SQL', () => {
     }
     mm.table(T);
   });
-  assert.throws(() => {
+  itThrows(() => {
     class T extends mm.Table {
       t = mm.varChar(23).setDefault(mm.sql`${user.name}`);
     }
     mm.table(T);
-  }, 'complex SQL');
+  }, `Column "t"'s default value cannot be a complex SQL expression`);
 });
 
 it('getSourceTable', () => {
@@ -231,5 +241,8 @@ it('Coluumn.ensureInitialized', () => {
   const t = mm.table(User);
   const v = t.id;
   assert.deepEqual(v.ensureInitialized(), [t, 'id']);
-  assert.throws(() => mm.pk().ensureInitialized(), 'not initialized');
+  itThrows(
+    () => mm.pk().ensureInitialized(),
+    'Column "Column(null|, <null>)" is not initialized',
+  );
 });
