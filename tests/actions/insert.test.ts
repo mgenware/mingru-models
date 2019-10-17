@@ -7,13 +7,13 @@ const expect = assert.equal;
 const ok = assert.ok;
 
 it('Insert', () => {
-  class UserTA extends mm.TableActions {
+  class PostTA extends mm.TableActions {
     t = mm
       .insert()
       .setInputs(post.title, post.snake_case_user_id)
       .setInputs();
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.ta(post, PostTA);
   const v = ta.t;
 
   expect(v.actionType, mm.ActionType.insert);
@@ -27,45 +27,45 @@ it('Insert', () => {
 });
 
 it('Insert one', () => {
-  class UserTA extends mm.TableActions {
+  class PostTA extends mm.TableActions {
     t = mm
       .insertOne()
       .setInputs(post.title, post.snake_case_user_id)
       .setInputs();
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.ta(post, PostTA);
   const v = ta.t;
 
   expect(v.ensureOneRowAffected, true);
 });
 
 it('unsafeInsert', () => {
-  class UserTA extends mm.TableActions {
+  class PostTA extends mm.TableActions {
     t = mm.unsafeInsert().setInputs(post.title, post.snake_case_user_id);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.ta(post, PostTA);
   const v = ta.t;
   expect(v.noColumnNumberCheck, true);
 });
 
 it('unsafeInsertOne', () => {
-  class UserTA extends mm.TableActions {
+  class PostTA extends mm.TableActions {
     t = mm.unsafeInsertOne().setInputs(post.title, post.snake_case_user_id);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.ta(post, PostTA);
   const v = ta.t;
   expect(v.ensureOneRowAffected, true);
   expect(v.noColumnNumberCheck, true);
 });
 
 it('SQLConvertible value', () => {
-  class UserTA extends mm.TableActions {
+  class PostTA extends mm.TableActions {
     t = mm
       .unsafeInsert()
       .set(post.title, mm.dateNow())
       .setDefaults();
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.ta(post, PostTA);
   const v = ta.t;
   expect(
     v.setters.get(post.title),
@@ -101,4 +101,19 @@ it('Column number check', () => {
     }
     mm.ta(post, PostTA);
   });
+});
+
+it('Validity check', () => {
+  assert.throws(
+    () => {
+      class PostTA extends mm.TableActions {
+        t = mm.insertOne().setInputs(user.id);
+      }
+      mm.ta(post, PostTA);
+    },
+    {
+      message:
+        'Source table assertion failed, expected "Table(post)", got "Table(user)".',
+    },
+  );
 });

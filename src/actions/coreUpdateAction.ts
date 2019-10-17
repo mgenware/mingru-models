@@ -55,6 +55,10 @@ export class CoreUpdateAction extends Action {
     if (!this.setters.size && !this.autoSetter) {
       throw new Error(`No setters in action "${this.__name}"`);
     }
+    // Check if all columns belong to current table
+    for (const setter of this.setters.keys()) {
+      setter.checkSourceTable(table);
+    }
   }
 
   // Mostly for testing
