@@ -392,4 +392,9 @@ it('Set action.__table via from()', () => {
   const ta = mm.ta(user, UserTA);
   expect(ta.t.__table, user);
   expect(ta.t2.__table, post);
+
+  let [table] = ta.t.ensureInitialized();
+  expect(table, user);
+  [table] = ta.t2.ensureInitialized();
+  expect(table, post);
 });
