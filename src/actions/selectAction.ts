@@ -180,7 +180,7 @@ export class SelectAction extends CoreSelectAction {
       mode === SelectActionMode.list || mode === SelectActionMode.page;
     if (selectCollection && !this.orderByColumns.length) {
       throw new Error(
-        `An ORDER BY clause is required when select multiple rows, action name "${this.__name}"`,
+        `An ORDER BY clause is required when selecting multiple rows`,
       );
     }
   }
