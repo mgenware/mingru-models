@@ -1,5 +1,4 @@
 import * as mm from '../../';
-import user from '../models/user';
 import post from '../models/post';
 import * as assert from 'assert';
 import itThrows from 'it-throws';
@@ -102,13 +101,4 @@ it('Column number check', () => {
     }
     mm.ta(post, PostTA);
   });
-});
-
-it('Validity check', () => {
-  itThrows(() => {
-    class PostTA extends mm.TableActions {
-      t = mm.insertOne().setInputs(user.id);
-    }
-    mm.ta(post, PostTA);
-  }, 'Source table assertion failed, expected "Table(post)", got "Table(user)". [action "t"]');
 });

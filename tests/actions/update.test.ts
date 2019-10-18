@@ -1,7 +1,6 @@
 import * as mm from '../../';
 import user from '../models/user';
 import * as assert from 'assert';
-import post from '../models/post';
 import itThrows from 'it-throws';
 
 const expect = assert.equal;
@@ -291,13 +290,4 @@ it('andBy', () => {
     ta.t3.whereSQLString,
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
-});
-
-it('Validity check', () => {
-  itThrows(() => {
-    class PostTA extends mm.TableActions {
-      t = mm.updateOne().setInputs(user.id);
-    }
-    mm.ta(post, PostTA);
-  }, 'Source table assertion failed, expected "Table(post)", got "Table(user)". [action "t"]');
 });
