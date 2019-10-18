@@ -365,13 +365,13 @@ it('Throw on selecting collection without ORDER BY', () => {
       t = mm.selectRows(t.name);
     }
     mm.ta(user, UserTA);
-  }, 'An ORDER BY clause is required when select multiple rows, action name "t"');
+  }, 'An ORDER BY clause is required when select multiple rows, action name "t" [action "t"]');
   itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm.selectPage(t.name);
     }
     mm.ta(user, UserTA);
-  }, 'An ORDER BY clause is required when select multiple rows, action name "t"');
+  }, 'An ORDER BY clause is required when select multiple rows, action name "t" [action "t"]');
 });
 
 it('RawColumn.toInput', () => {

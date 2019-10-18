@@ -22,7 +22,7 @@ export class InsertAction extends CoreUpdateAction {
       setterCount < colCount // setterCount can > colCount as you may set all columns but colCount = all - AI columns
     ) {
       throw new Error(
-        `You only set ${setterCount} of all ${colCount} columns (not including AUTO_INCREMENT columns), you should set all columns or use 'unsafeInsert' to bypass this check`,
+        `You only set ${setterCount} of all ${colCount} columns (not including AUTO_INCREMENT columns), you should set all columns or use \`unsafeInsert\` to bypass this check`,
       );
     }
   }

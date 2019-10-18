@@ -42,7 +42,7 @@ export class UpdateAction extends CoreUpdateAction {
 
     if (!this.allowNoWhere && !this.whereSQL) {
       throw new Error(
-        `'allowNoWhere' is set to false, you must define an WHERE clause. Otherwise, use 'unsafeUpdateAll'`,
+        '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll`',
       );
     }
   }

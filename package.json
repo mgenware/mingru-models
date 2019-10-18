@@ -19,7 +19,7 @@
   "license": "MIT",
   "scripts": {
     "test": "yarn run clean && yarn run compile && yarn run lint && yarn run t",
-    "t": "mocha dist_tests/**/*.test.js",
+    "t": "mocha --require source-map-support/register dist_tests/**/*.test.js",
     "build": "yarn test",
     "compile": "tsc -b tests",
     "dev": "yarn run clean && tsc -b tests -w",
@@ -41,6 +41,7 @@
     "it-throws": "^1.0.0",
     "mocha": "^6.2.1",
     "rimraf": "^3.0.0",
+    "source-map-support": "^0.5.13",
     "typescript": "^3.6.3"
   },
   "dependencies": {

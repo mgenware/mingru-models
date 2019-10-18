@@ -59,57 +59,60 @@ export function table<T extends Table>(
   const cols = tableObj.__columns;
 
   enumerateColumns(tableObj, (col, propName) => {
-    if (!col) {
-      throw new Error(`Expected empty column object at column "${propName}"`);
-    }
-    if (col.__table instanceof JoinedTable) {
-      throw new Error(
-        `Unexpected ${toTypeString(
-          col,
-        )} at column "${propName}", you should not use JoinedColumn in a table definition, JoinedColumn should be used in SELECT actions`,
-      );
-    }
-
-    let columnToAdd: Column;
-    // A frozen column indicates an implicit foreign key, note: `mm.fk` can set up an explicit foreign key
-    if (Object.isFrozen(col)) {
-      // Copy the frozen column
-      columnToAdd = Column.newForeignColumn(col, tableObj);
-    } else {
-      columnToAdd = col;
-    }
-
-    // Populate column props
-    if (!columnToAdd.__name) {
-      // column name can be set by setName
-      columnToAdd.__name = utils.toSnakeCase(propName);
-    }
-    columnToAdd.__table = tableObj;
-    if (columnToAdd.type.pk) {
-      tableObj.__pks.push(col);
-      if (columnToAdd.type.autoIncrement) {
-        tableObj.__pkAIs.push(col);
+    try {
+      if (!col) {
+        throw new Error(`Expected empty column object`);
       }
+      if (col.__table instanceof JoinedTable) {
+        throw new Error(
+          `Unexpected table type "${toTypeString(
+            col,
+          )}". You should not use JoinedColumn in a table definition, JoinedColumn can only be used in SELECT actions.`,
+        );
+      }
+
+      let columnToAdd: Column;
+      // A frozen column indicates an implicit foreign key, note: `mm.fk` can set up an explicit foreign key
+      if (Object.isFrozen(col)) {
+        // Copy the frozen column
+        columnToAdd = Column.newForeignColumn(col, tableObj);
+      } else {
+        columnToAdd = col;
+      }
+
+      // Populate column props
+      if (!columnToAdd.__name) {
+        // column name can be set by setName
+        columnToAdd.__name = utils.toSnakeCase(propName);
+      }
+      columnToAdd.__table = tableObj;
+      if (columnToAdd.type.pk) {
+        tableObj.__pks.push(col);
+        if (columnToAdd.type.autoIncrement) {
+          tableObj.__pkAIs.push(col);
+        }
+      }
+
+      // Column default value cannot be a complex SQL
+      if (
+        columnToAdd.defaultValue &&
+        columnToAdd.defaultValue instanceof SQL &&
+        columnToAdd.defaultValue.hasColumns
+      ) {
+        throw new Error(`Default value cannot be a complex SQL expression`);
+      }
+
+      cols.push(columnToAdd);
+      // eslint-disable-next-line
+      (tableObj as any)[propName] = columnToAdd;
+      // After all properties are set, run property handlers
+      CoreProperty.runHandlers(columnToAdd);
+
+      columnToAdd.freeze();
+    } catch (err) {
+      err.message += ` [column "${propName}"]`;
+      throw err;
     }
-
-    // Column default value cannot be a complex SQL
-    if (
-      columnToAdd.defaultValue &&
-      columnToAdd.defaultValue instanceof SQL &&
-      columnToAdd.defaultValue.hasColumns
-    ) {
-      throw new Error(
-        `Column "${propName}"'s default value cannot be a complex SQL expression`,
-      );
-    }
-
-    cols.push(columnToAdd);
-    // eslint-disable-next-line
-    (tableObj as any)[propName] = columnToAdd;
-    // After all properties are set, run property handlers
-    CoreProperty.runHandlers(columnToAdd);
-
-    columnToAdd.freeze();
   });
   return (tableObj as unknown) as T;
 }

@@ -125,7 +125,12 @@ export function ta<T extends Table, A extends TableActions>(
   const group = new taCls();
   group.__table = table;
   enumerateActions(group, (action, name) => {
-    initializeAction(action, table, name);
+    try {
+      initializeAction(action, table, name);
+    } catch (err) {
+      err.message += ` [action "${name}"]`;
+      throw err;
+    }
   });
   return group;
 }

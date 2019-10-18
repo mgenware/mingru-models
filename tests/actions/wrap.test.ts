@@ -1,6 +1,7 @@
 import * as mm from '../../';
 import user from '../models/user';
 import * as assert from 'assert';
+import post from '../models/post';
 
 const expect = assert.equal;
 const ok = assert.ok;
@@ -63,4 +64,32 @@ it('Uninitialized wrapped action __table n __name', () => {
 it('SavedContextValue', () => {
   const v = new mm.SavedContextValue('a');
   expect(v.name, 'a');
+});
+
+it('Wrap and from', async () => {
+  class UserTA extends mm.TableActions {
+    t = mm
+      .updateOne()
+      .setInputs()
+      .byID();
+  }
+  const userTA = mm.ta(user, UserTA);
+  class PostTA extends mm.TableActions {
+    s = mm
+      .updateSome()
+      .from(user)
+      .set(user.name, mm.sql`${mm.input(user.name)}`)
+      .setInputs(user.snake_case_name, user.follower_count)
+      .where(
+        mm.sql`${user.name.toInput()} ${user.id.toInput()} ${user.snake_case_name.toInput()} ${user.name.toInput()}`,
+      );
+    t1 = this.s.wrap({ sig: '"haha"' });
+    t2 = userTA.t.wrap({ sig: '"SIG"' });
+    t3 = mm
+      .updateOne()
+      .setInputs()
+      .byID()
+      .wrap({ title: '"t3"' });
+  }
+  assert.doesNotThrow(() => mm.ta(post, PostTA));
 });

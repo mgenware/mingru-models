@@ -80,7 +80,7 @@ it('No setters', () => {
       t = mm.insert();
     }
     mm.ta(post, PostTA);
-  }, 'No setters in action "t"');
+  }, 'No setters [action "t"]');
 });
 
 it('Column number check', () => {
@@ -89,7 +89,7 @@ it('Column number check', () => {
       t = mm.insert().setInputs(post.e_user_id);
     }
     mm.ta(post, PostTA);
-  }, "You only set 1 of all 5 columns (not including AUTO_INCREMENT columns), you should set all columns or use 'unsafeInsert' to bypass this check");
+  }, 'You only set 1 of all 5 columns (not including AUTO_INCREMENT columns), you should set all columns or use `unsafeInsert` to bypass this check [action "t"]');
   assert.doesNotThrow(() => {
     class PostTA extends mm.TableActions {
       t = mm.insert().setInputs();
@@ -110,5 +110,5 @@ it('Validity check', () => {
       t = mm.insertOne().setInputs(user.id);
     }
     mm.ta(post, PostTA);
-  }, 'Source table assertion failed, expected "Table(post)", got "Table(user)".');
+  }, 'Source table assertion failed, expected "Table(post)", got "Table(user)". [action "t"]');
 });

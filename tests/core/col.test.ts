@@ -174,7 +174,7 @@ class JCTable extends mm.Table {
 it('JoinedColumn in table def', () => {
   itThrows(
     () => mm.table(JCTable),
-    'Unexpected Column at column "jc", you should not use JoinedColumn in a table definition, JoinedColumn should be used in SELECT actions',
+    'Unexpected table type "Column". You should not use JoinedColumn in a table definition, JoinedColumn can only be used in SELECT actions. [column "jc"]',
   );
 });
 
@@ -227,7 +227,7 @@ it('Throw on default value of complex SQL', () => {
       t = mm.varChar(23).setDefault(mm.sql`${user.name}`);
     }
     mm.table(T);
-  }, `Column "t"'s default value cannot be a complex SQL expression`);
+  }, `Default value cannot be a complex SQL expression [column "t"]`);
 });
 
 it('getSourceTable', () => {

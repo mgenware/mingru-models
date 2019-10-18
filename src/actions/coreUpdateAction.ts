@@ -53,7 +53,7 @@ export class CoreUpdateAction extends Action {
   validate(table: Table, name: string) {
     super.validate(table, name);
     if (!this.setters.size && !this.autoSetter) {
-      throw new Error(`No setters in action "${this.__name}"`);
+      throw new Error(`No setters`);
     }
     // Check if all columns belong to current table
     for (const setter of this.setters.keys()) {

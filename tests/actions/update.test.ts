@@ -156,7 +156,7 @@ it('updateOne', () => {
       t = mm.updateOne().setInputs(user.snake_case_name);
     }
     mm.ta(user, TA);
-  }, "'allowNoWhere' is set to false, you must define an WHERE clause. Otherwise, use 'unsafeUpdateAll'");
+  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"]');
 });
 
 it('updateSome', () => {
@@ -178,7 +178,7 @@ it('updateSome', () => {
       t = mm.updateSome().setInputs(user.snake_case_name);
     }
     mm.ta(user, TA);
-  }, "'allowNoWhere' is set to false, you must define an WHERE clause. Otherwise, use 'unsafeUpdateAll'");
+  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"]');
 });
 
 it('unsafeUpdateAll', () => {
@@ -231,7 +231,7 @@ it('No setters', () => {
       t = mm.unsafeUpdateAll();
     }
     mm.ta(user, UserTA);
-  }, 'No setters in action "t"');
+  }, 'No setters [action "t"]');
   assert.doesNotThrow(() => {
     class UserTA extends mm.TableActions {
       t = mm.unsafeUpdateAll().setInputs();
@@ -299,5 +299,5 @@ it('Validity check', () => {
       t = mm.updateOne().setInputs(user.id);
     }
     mm.ta(post, PostTA);
-  }, 'Source table assertion failed, expected "Table(post)", got "Table(user)".');
+  }, 'Source table assertion failed, expected "Table(post)", got "Table(user)". [action "t"]');
 });
