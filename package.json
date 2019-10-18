@@ -24,7 +24,7 @@
     "compile": "tsc -b tests",
     "dev": "yarn run clean && tsc -b tests -w",
     "prepublishOnly": "yarn run test",
-    "lint": "eslint --ext .ts src/ tests/",
+    "lint": "eslint --max-warnings 0 --ext .ts src/ tests/",
     "clean": "rimraf dist && rimraf dist_tests"
   },
   "engines": {
@@ -38,7 +38,7 @@
     "@typescript-eslint/eslint-plugin": "^2.3.2",
     "@typescript-eslint/parser": "^2.3.2",
     "eslint": "^6.5.1",
-    "it-throws": "^1.0.0",
+    "it-throws": "^2.0.0",
     "mocha": "^6.2.1",
     "rimraf": "^3.0.0",
     "source-map-support": "^0.5.13",

@@ -1,7 +1,7 @@
 import * as mm from '../../';
 import user from '../models/user';
 import * as assert from 'assert';
-import itThrows from 'it-throws';
+import { itThrows } from 'it-throws';
 
 const expect = assert.equal;
 const ok = assert.ok;
@@ -155,7 +155,7 @@ it('updateOne', () => {
       t = mm.updateOne().setInputs(user.snake_case_name);
     }
     mm.ta(user, TA);
-  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"]');
+  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"]');
 });
 
 it('updateSome', () => {
@@ -177,7 +177,7 @@ it('updateSome', () => {
       t = mm.updateSome().setInputs(user.snake_case_name);
     }
     mm.ta(user, TA);
-  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"]');
+  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"]');
 });
 
 it('unsafeUpdateAll', () => {
