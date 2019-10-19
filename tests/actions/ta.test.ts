@@ -2,6 +2,7 @@ import * as mm from '../../';
 import user from '../models/user';
 import * as assert from 'assert';
 import { itThrows } from 'it-throws';
+import post from '../models/post';
 
 const expect = assert.equal;
 const ok = assert.ok;
@@ -115,4 +116,39 @@ it('action.saveReturnValue', () => {
   const ta = mm.ta(user, UserTA);
   const v = ta.t;
   assert.deepEqual(v.__returnMap, { default: '2', a: '1' });
+});
+
+class MyInsertAction extends mm.InsertAction {
+  vTable: mm.Table | null = null;
+  vName: string | null = null;
+
+  constructor() {
+    super(true);
+  }
+
+  validate(table: mm.Table, name: string) {
+    super.validate(table, name);
+    this.vTable = table;
+    this.vName = name;
+  }
+}
+
+it('Action.validate', () => {
+  class UserTA extends mm.TableActions {
+    t = new MyInsertAction().setInputs();
+  }
+  const ta = mm.ta(user, UserTA);
+  const v = ta.t;
+  expect(v.vTable, user);
+  expect(v.vName, 't');
+});
+
+it('Action.validate (from)', () => {
+  class UserTA extends mm.TableActions {
+    t = new MyInsertAction().from(post).setInputs();
+  }
+  const ta = mm.ta(user, UserTA);
+  const v = ta.t;
+  expect(v.vTable, post);
+  expect(v.vName, 't');
 });

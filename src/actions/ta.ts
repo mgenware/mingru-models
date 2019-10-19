@@ -108,7 +108,9 @@ export function initializeAction(action: Action, table: Table, name: string) {
   throwIfFalsy(action, 'action');
   action.__name = name;
   // action.__table can be set before initialization by from()
-  if (!action.__table) {
+  if (action.__table) {
+    table = action.__table;
+  } else {
     action.__table = table;
   }
   // After all properties are set, run property handlers
