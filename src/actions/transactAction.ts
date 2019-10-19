@@ -19,6 +19,8 @@ export class TransactAction extends Action {
   }
 
   validate(table: Table, name: string) {
+    super.validate(table, name);
+
     // Initialize member actions
     let idx = 1;
     for (const mem of this.members) {

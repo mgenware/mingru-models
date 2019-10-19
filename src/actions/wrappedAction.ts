@@ -10,7 +10,11 @@ export class SavedContextValue {
 export class WrappedAction extends Action {
   isTemp = false;
 
-  constructor(public action: Action, public args: { [name: string]: unknown }) {
+  constructor(
+    public action: Action,
+    table: Table | null,
+    public args: { [name: string]: unknown },
+  ) {
     super(ActionType.wrap);
     throwIfFalsy(action, 'action');
     throwIfFalsy(args, 'args');
@@ -18,14 +22,17 @@ export class WrappedAction extends Action {
     if (Object.entries(args).length === 0) {
       throw new Error('"args" cannot be empty');
     }
+
+    if (table) {
+      this.__table = table;
+    }
   }
 
   validate(table: Table, name: string) {
-    // Initialize wrapped action if it hasn't done it yet
+    super.validate(table, name);
+
+    // Initialize wrapped action if needed
     if (!this.action.__name) {
-      // For an uninitialized wrapped action, table and name default to parent's equivalent,
-      // e.g. mm.wrap(mm.insert(...))
-      // NOTE: action must be initialized to function properly
       initializeAction(this.action, table, name);
       this.isTemp = true;
     }

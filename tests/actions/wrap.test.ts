@@ -61,6 +61,21 @@ it('Uninitialized wrapped action __table n __name', () => {
   expect(v.isTemp, true);
 });
 
+it('Uninitialized wrapped action __table n __name (with from)', () => {
+  class UserTA extends mm.TableActions {
+    t = mm
+      .deleteOne()
+      .from(post)
+      .byID()
+      .wrap({ id: 23 });
+  }
+  const ta = mm.ta(user, UserTA);
+  const v = ta.t;
+  expect(v.__table, post);
+  expect(v.__name, 't');
+  expect(v.isTemp, true);
+});
+
 it('SavedContextValue', () => {
   const v = new mm.SavedContextValue('a');
   expect(v.name, 'a');
