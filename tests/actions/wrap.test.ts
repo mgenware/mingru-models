@@ -6,44 +6,78 @@ import post from '../models/post';
 const expect = assert.equal;
 const ok = assert.ok;
 
-it('WrappedAction', () => {
+it('Wrap', () => {
+  class PostTA extends mm.TableActions {
+    t = mm
+      .insert()
+      .setInputs(post.title, post.snake_case_user_id)
+      .setInputs();
+  }
+  const postTA = mm.ta(post, PostTA);
   class UserTA extends mm.TableActions {
-    t = mm.deleteOne().byID();
-    t2 = this.t.wrap({
+    s = mm.deleteOne().byID();
+    t = this.s.wrap({
       id: '1',
     });
+    t2 = postTA.t.wrap({ id: '32' });
   }
   const ta = mm.ta(user, UserTA);
-  const v = ta.t2;
+  let v = ta.t;
   ok(v instanceof mm.WrappedAction);
   ok(v instanceof mm.Action);
   expect(v.actionType, mm.ActionType.wrap);
-  expect(v.action, ta.t);
+  expect(v.action, ta.s);
   assert.deepEqual(v.args, {
     id: '1',
   });
+  expect(ta.s.__table, user);
+  expect(v.__table, user);
+  expect(v.isTemp, false);
+
+  v = ta.t2;
+  expect(v.action, postTA.t);
+  expect(postTA.t.__table, post);
+  expect(v.__table, user);
+  expect(v.isTemp, false);
 });
 
-it('Chaining', () => {
+it('Wrap (chains)', () => {
+  class PostTA extends mm.TableActions {
+    t = mm
+      .insert()
+      .setInputs(post.title, post.snake_case_user_id)
+      .setInputs();
+  }
+  const postTA = mm.ta(post, PostTA);
   class UserTA extends mm.TableActions {
-    t = mm.insert().setInputs();
-    t2 = this.t
-      .wrap({
-        name: 'a',
-        def_value: 'b',
-      })
-      .wrap({
-        def_value: 'c',
-        follower_count: 123,
-      });
+    s = mm.deleteOne().byID();
+    t = this.s
+      .wrap({ id: '32' })
+      .wrap({ id: '33' })
+      .wrap({ id2: '34' });
+    t2 = postTA.t
+      .wrap({ id: '32' })
+      .wrap({ id: '33' })
+      .wrap({ id2: '34' });
   }
   const ta = mm.ta(user, UserTA);
-  const v = ta.t2;
+  let v = ta.t;
+  ok(v instanceof mm.WrappedAction);
+  ok(v instanceof mm.Action);
+  expect(v.actionType, mm.ActionType.wrap);
+  expect(v.action, ta.s);
   assert.deepEqual(v.args, {
-    name: 'a',
-    def_value: 'c',
-    follower_count: 123,
+    id: '33',
+    id2: '34',
   });
+  expect(ta.s.__table, user);
+  expect(v.__table, user);
+  expect(v.isTemp, false);
+
+  v = ta.t2;
+  expect(v.action, postTA.t);
+  expect(postTA.t.__table, post);
+  expect(v.__table, user);
   expect(v.isTemp, false);
 });
 
@@ -79,32 +113,4 @@ it('Uninitialized wrapped action __table n __name (with from)', () => {
 it('SavedContextValue', () => {
   const v = new mm.SavedContextValue('a');
   expect(v.name, 'a');
-});
-
-it('Wrap and from', async () => {
-  class UserTA extends mm.TableActions {
-    t = mm
-      .updateOne()
-      .setInputs()
-      .byID();
-  }
-  const userTA = mm.ta(user, UserTA);
-  class PostTA extends mm.TableActions {
-    s = mm
-      .updateSome()
-      .from(user)
-      .set(user.name, mm.sql`${mm.input(user.name)}`)
-      .setInputs(user.snake_case_name, user.follower_count)
-      .where(
-        mm.sql`${user.name.toInput()} ${user.id.toInput()} ${user.snake_case_name.toInput()} ${user.name.toInput()}`,
-      );
-    t1 = this.s.wrap({ sig: '"haha"' });
-    t2 = userTA.t.wrap({ sig: '"SIG"' });
-    t3 = mm
-      .updateOne()
-      .setInputs()
-      .byID()
-      .wrap({ title: '"t3"' });
-  }
-  assert.doesNotThrow(() => mm.ta(post, PostTA));
 });
