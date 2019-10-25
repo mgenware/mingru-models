@@ -221,6 +221,9 @@ export class Column extends CoreProperty {
     const curName = utils.toCamelCase(name);
 
     if (table instanceof JoinedTable) {
+      if (table.associative) {
+        return curName;
+      }
       return table.tableInputName() + utils.capitalizeColumnName(curName);
     }
     return curName;
@@ -264,25 +267,42 @@ export class Column extends CoreProperty {
   }
 
   join<T extends Table>(destTable: T, destCol?: Column): T {
-    return this.joinCore(JoinType.inner, destTable, destCol);
+    return this.joinCore(JoinType.inner, destTable, destCol, false);
   }
 
   leftJoin<T extends Table>(destTable: T, destCol?: Column): T {
-    return this.joinCore(JoinType.left, destTable, destCol);
+    return this.joinCore(JoinType.left, destTable, destCol, false);
   }
 
   rightJoin<T extends Table>(destTable: T, destCol?: Column): T {
-    return this.joinCore(JoinType.right, destTable, destCol);
+    return this.joinCore(JoinType.right, destTable, destCol, false);
   }
 
   fullJoin<T extends Table>(destTable: T, destCol?: Column): T {
-    return this.joinCore(JoinType.full, destTable, destCol);
+    return this.joinCore(JoinType.full, destTable, destCol, false);
+  }
+
+  associativeJoin<T extends Table>(destTable: T, destCol?: Column): T {
+    return this.joinCore(JoinType.inner, destTable, destCol, true);
+  }
+
+  leftAssociativeJoin<T extends Table>(destTable: T, destCol?: Column): T {
+    return this.joinCore(JoinType.left, destTable, destCol, true);
+  }
+
+  rightAssociativeJoin<T extends Table>(destTable: T, destCol?: Column): T {
+    return this.joinCore(JoinType.right, destTable, destCol, true);
+  }
+
+  fullAssociativeJoin<T extends Table>(destTable: T, destCol?: Column): T {
+    return this.joinCore(JoinType.full, destTable, destCol, true);
   }
 
   private joinCore<T extends Table>(
     type: JoinType,
     destTable: T,
     destCol: Column | undefined,
+    associative: boolean,
   ): T {
     throwIfFalsy(destTable, 'destTable');
     // source column + dest table + dest column = joined table
@@ -298,7 +318,13 @@ export class Column extends CoreProperty {
     }
 
     // Join returns a proxy, each property access first retrieves the original column from original joined table, then it constructs a new copied column with `props.table` set to a newly created JoinedTable
-    const joinedTable = new JoinedTable(this, destTable, destCol, type);
+    const joinedTable = new JoinedTable(
+      this,
+      destTable,
+      destCol,
+      type,
+      associative,
+    );
     return new Proxy<T>(destTable, {
       get(target, propKey, receiver) {
         const selectedColumn = Reflect.get(target, propKey, receiver) as
@@ -367,6 +393,7 @@ export class JoinedTable {
     public destTable: Table,
     public destColumn: Column,
     public type: JoinType,
+    public associative: boolean, // If srcColumn is associative
   ) {
     let localPath: string;
     const [srcTable] = srcColumn.ensureInitialized();
@@ -387,10 +414,10 @@ export class JoinedTable {
     const [srcTable, srcName] = srcColumn.ensureInitialized();
     const curName = makeMiddleName(srcName);
     if (srcTable instanceof JoinedTable) {
-      // If srcColumn is a joined column, e.g. cmt.post_id.join(post).user_id.join(user), returns 'postUser' in this case
+      // If srcColumn is a joined column, e.g. cmt.post_id.join(post).user_id.join(user), returns 'postUser' in this case.
       return srcTable.tableInputName() + utils.capitalizeFirstLetter(curName);
     }
-    // If srcColumn is not a joined column, omit the table name, e.g. (post).user_id.join(user), returns "user"
+    // If srcColumn is not a joined column, omit the table name, e.g. post.user_id.join(user), returns "user".
     return curName;
   }
 
