@@ -414,6 +414,9 @@ export class JoinedTable {
     const [srcTable, srcName] = srcColumn.ensureInitialized();
     const curName = makeMiddleName(srcName);
     if (srcTable instanceof JoinedTable) {
+      if (srcTable.associative) {
+        return curName;
+      }
       // If srcColumn is a joined column, e.g. cmt.post_id.join(post).user_id.join(user), returns 'postUser' in this case.
       return srcTable.tableInputName() + utils.capitalizeFirstLetter(curName);
     }

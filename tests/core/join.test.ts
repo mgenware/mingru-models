@@ -138,13 +138,13 @@ it('Associative join', () => {
   const jc2 = jc.join(user).name;
   testJCCols(
     jc2,
-    'cmtUser',
+    'user',
     user,
     user.id,
     user.name,
     jc,
     '[[[[post_cmt_ass.cmt_id].[post_cmt.id]].user_id].[user.id]]',
     postCmtAss,
-    'cmtUserName',
+    'userName',
   );
 });
