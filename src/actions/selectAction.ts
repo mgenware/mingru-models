@@ -15,9 +15,9 @@ export class OrderByColumn {
 }
 
 export class RawColumn {
-  // This is guaranteed not to be empty/null in ctor
-  selectedName = '';
+  selectedName: string;
   core: Column | SQL;
+  __attrs: { [name: string]: unknown } = {};
 
   constructor(
     core: SQLConvertible,
@@ -65,6 +65,11 @@ export class RawColumn {
       return new SQLVariable(inferred, selectedName);
     }
     return new SQLVariable(core, selectedName);
+  }
+
+  attr(name: string, value: unknown = true): this {
+    this.__attrs[name] = value;
+    return this;
   }
 
   toString(): string {

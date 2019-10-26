@@ -234,7 +234,7 @@ it('getSourceTable', () => {
   expect(post.title.getSourceTable(), post);
 });
 
-it('Coluumn.ensureInitialized', () => {
+it('Column.ensureInitialized', () => {
   class User extends mm.Table {
     id = mm.pk().setDBName('db_id');
   }
@@ -245,4 +245,34 @@ it('Coluumn.ensureInitialized', () => {
     () => mm.pk().ensureInitialized(),
     'Column "Column(null|, <null>)" is not initialized',
   );
+});
+
+it('Column.attr', () => {
+  {
+    const col = mm.int(234);
+    col.attr('a');
+    col.attr('b', 's');
+    col.freeze();
+    assert.deepEqual(col.__attrs, {
+      a: true,
+      b: 's',
+    });
+    expect(Object.isFrozen(col.__attrs), true);
+  }
+  {
+    class UserTA extends mm.TableActions {
+      t = mm.select(
+        mm
+          .sel(mm.sql`1`, 'col')
+          .attr('a')
+          .attr('b', 's'),
+      );
+    }
+    const table = mm.ta(user, UserTA);
+    const t = table.t as mm.SelectAction;
+    assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
+      a: true,
+      b: 's',
+    });
+  }
 });
