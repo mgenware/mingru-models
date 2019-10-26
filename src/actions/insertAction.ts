@@ -1,4 +1,4 @@
-import { ActionType } from './ta';
+import { ActionType } from './tableActions';
 import { CoreUpdateAction } from './coreUpdateAction';
 import { Table } from '../core/core';
 

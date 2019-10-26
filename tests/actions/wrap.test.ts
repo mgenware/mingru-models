@@ -13,7 +13,7 @@ it('Wrap', () => {
       .setInputs(post.title, post.snake_case_user_id)
       .setInputs();
   }
-  const postTA = mm.ta(post, PostTA);
+  const postTA = mm.tableActions(post, PostTA);
   class UserTA extends mm.TableActions {
     s = mm.deleteOne().byID();
     t = this.s.wrap({
@@ -21,7 +21,7 @@ it('Wrap', () => {
     });
     t2 = postTA.t.wrap({ id: '32' });
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   let v = ta.t;
   ok(v instanceof mm.WrappedAction);
   ok(v instanceof mm.Action);
@@ -48,7 +48,7 @@ it('Wrap (chains)', () => {
       .setInputs(post.title, post.snake_case_user_id)
       .setInputs();
   }
-  const postTA = mm.ta(post, PostTA);
+  const postTA = mm.tableActions(post, PostTA);
   class UserTA extends mm.TableActions {
     s = mm.deleteOne().byID();
     t = this.s
@@ -60,7 +60,7 @@ it('Wrap (chains)', () => {
       .wrap({ id: '33' })
       .wrap({ id2: '34' });
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   let v = ta.t;
   ok(v instanceof mm.WrappedAction);
   ok(v instanceof mm.Action);
@@ -88,7 +88,7 @@ it('Uninitialized wrapped action __table n __name', () => {
       .byID()
       .wrap({ id: 23 });
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   expect(v.__table, user);
   expect(v.__name, 't');
@@ -103,7 +103,7 @@ it('Uninitialized wrapped action __table n __name (with from)', () => {
       .byID()
       .wrap({ id: 23 });
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   expect(v.__table, post);
   expect(v.__name, 't');

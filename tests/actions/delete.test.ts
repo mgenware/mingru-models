@@ -10,7 +10,7 @@ it('DeleteAction', () => {
   class UserTA extends mm.TableActions {
     t = mm.deleteOne().where(mm.sql`${user.id} = 1`);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   ok(v instanceof mm.DeleteAction);
   ok(v instanceof mm.CoreSelectAction);
@@ -26,7 +26,7 @@ it('deleteOne', () => {
   class UserTA extends mm.TableActions {
     t = mm.deleteOne().where(mm.sql`${user.id} = 1`);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   // extra props
@@ -38,7 +38,7 @@ it('deleteOne', () => {
     class TA extends mm.TableActions {
       t = mm.deleteOne();
     }
-    mm.ta(user, TA);
+    mm.tableActions(user, TA);
   }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"]');
 });
 
@@ -46,7 +46,7 @@ it('deleteSome', () => {
   class UserTA extends mm.TableActions {
     t = mm.deleteSome().where(mm.sql`${user.id} = 1`);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   // extra props
@@ -58,7 +58,7 @@ it('deleteSome', () => {
     class TA extends mm.TableActions {
       t = mm.deleteSome();
     }
-    mm.ta(user, TA);
+    mm.tableActions(user, TA);
   }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"]');
 });
 
@@ -66,7 +66,7 @@ it('unsafeDeleteAll', () => {
   class UserTA extends mm.TableActions {
     t = mm.unsafeDeleteAll();
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   // extra props

@@ -1,5 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { ActionType } from './ta';
+import { ActionType } from './tableActions';
 import { Column, ColumnType, Table } from '../core/core';
 import { SQL, SQLConvertible, convertToSQL, SQLVariable } from '../core/sql';
 import { CoreSelectAction } from './coreSelectAction';

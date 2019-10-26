@@ -268,7 +268,7 @@ it('Column.attr', () => {
           .attr('b', 's'),
       );
     }
-    const table = mm.ta(user, UserTA);
+    const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
     assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
       a: true,

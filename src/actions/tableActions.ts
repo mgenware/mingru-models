@@ -119,7 +119,7 @@ export function initializeAction(action: Action, table: Table, name: string) {
   action.validate(table, name);
 }
 
-export function ta<T extends Table, A extends TableActions>(
+export function tableActions<T extends Table, A extends TableActions>(
   table: T,
   taCls: new () => A,
 ): A {

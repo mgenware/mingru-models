@@ -248,7 +248,7 @@ export class UserTA extends mm.TableActions {
   deleteUser = mm.deleteOne().byID();
 }
 // Export a table actions object
-export default mm.ta(user, UserTA);
+export default mm.tableActions(user, UserTA);
 ```
 
 ### `SELECT` Actions Basics
@@ -298,7 +298,7 @@ export class UserTA extends mm.TableActions {
   selectSig = mm.selectField(user.sig).byID();
 }
 
-export default mm.ta(user, UserTA);
+export default mm.tableActions(user, UserTA);
 ```
 
 It would generate the following Go code (only function headers shown for simplicity):

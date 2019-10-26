@@ -15,7 +15,7 @@ it('ta', () => {
       .set(user.follower_count, mm.sql`${user.follower_count} + 1`);
     sel = mm.select(user.id);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
 
   ok(ta instanceof mm.TableActions);
   expect(ta.__table, user);
@@ -44,7 +44,7 @@ it('Register property callback', () => {
 
   assert.deepEqual(action.__handlers, [cb, cb]);
   expect(counter, 0);
-  mm.ta(user, UserTA);
+  mm.tableActions(user, UserTA);
   expect(action.__handlers, null);
   expect(counter, 2);
 });
@@ -57,7 +57,7 @@ it('enumerateActions', () => {
       .set(user.follower_count, mm.sql`${user.follower_count} + 1`);
     sel = mm.select(user.id);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
 
   const actions: mm.Action[] = [];
   mm.enumerateActions(ta, a => actions.push(a));
@@ -72,7 +72,7 @@ it('enumerateActions (sorted)', () => {
       .set(user.follower_count, mm.sql`${user.follower_count} + 1`);
     sel = mm.select(user.id);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
 
   const actions: mm.Action[] = [];
   mm.enumerateActions(ta, a => actions.push(a), { sorted: true });
@@ -87,7 +87,7 @@ it('Argument stubs', () => {
   class UserTA extends mm.TableActions {
     t = mm.select(user.id).argStubs(...stubs);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
 
   const v = ta.t;
   assert.deepEqual(v.__argStubs, stubs);
@@ -97,7 +97,7 @@ it('action.ensureInitialized', () => {
   class UserTA extends mm.TableActions {
     t = mm.select(user.id);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   assert.deepEqual(v.ensureInitialized(), [user, 't']);
   itThrows(
@@ -113,7 +113,7 @@ it('action.saveReturnValue', () => {
       .saveReturnValue('a', '1')
       .saveDefaultReturnValue('2');
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   assert.deepEqual(v.__returnMap, { default: '2', a: '1' });
 });
@@ -137,7 +137,7 @@ it('Action.validate', () => {
   class UserTA extends mm.TableActions {
     t = new MyInsertAction().setInputs();
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   expect(v.vTable, user);
   expect(v.vName, 't');
@@ -147,7 +147,7 @@ it('Action.validate (from)', () => {
   class UserTA extends mm.TableActions {
     t = new MyInsertAction().from(post).setInputs();
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   expect(v.vTable, post);
   expect(v.vName, 't');

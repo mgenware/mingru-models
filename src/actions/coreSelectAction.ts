@@ -1,4 +1,4 @@
-import { Action } from './ta';
+import { Action } from './tableActions';
 import { SQL } from '../core/sql';
 import { where, byID, by, andBy } from './common';
 import { Column } from '../core/core';

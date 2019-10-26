@@ -1,4 +1,4 @@
-import { ActionType } from './ta';
+import { ActionType } from './tableActions';
 import { CoreSelectAction } from './coreSelectAction';
 import { Table } from '../core/core';
 

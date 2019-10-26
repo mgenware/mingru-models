@@ -1,4 +1,4 @@
-import { Action, ActionType, initializeAction } from './ta';
+import { Action, ActionType, initializeAction } from './tableActions';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table } from '../core/core';
 

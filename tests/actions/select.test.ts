@@ -11,7 +11,7 @@ it('select', () => {
   class UserTA extends mm.TableActions {
     t = mm.select(user.id, user.name).where(mm.sql`${user.id} = 1`);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   ok(v instanceof mm.SelectAction);
@@ -32,7 +32,7 @@ it('Select *', () => {
   class UserTA extends mm.TableActions {
     t = mm.select();
   }
-  assert.doesNotThrow(() => mm.ta(user, UserTA));
+  assert.doesNotThrow(() => mm.tableActions(user, UserTA));
 });
 
 it('selectRows', () => {
@@ -42,7 +42,7 @@ it('selectRows', () => {
       .where(mm.sql`${user.id} = 1`)
       .orderByAsc(user.id);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   expect(v.mode, mm.SelectActionMode.list);
 });
@@ -113,7 +113,7 @@ it('RawColumn (count)', () => {
       ),
     );
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   const cc = v.columns[0] as mm.RawColumn;
@@ -170,7 +170,7 @@ it('byID', () => {
   class UserTA extends mm.TableActions {
     t = mm.select(user.name).byID();
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   expect(
     v.whereSQLString,
@@ -182,7 +182,7 @@ it('byID with inputName', () => {
   class UserTA extends mm.TableActions {
     t = mm.select(user.name).byID('haha');
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   expect(
     v.whereSQLString,
@@ -194,7 +194,7 @@ it('by', () => {
   class UserTA extends mm.TableActions {
     t = mm.select(user.name).by(user.snake_case_name);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   expect(
     v.whereSQLString,
@@ -214,7 +214,7 @@ it('andBy', () => {
       .byID()
       .andBy(user.follower_count);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   expect(
     ta.t1.whereSQLString,
     'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
@@ -235,7 +235,7 @@ it('selectField', () => {
     t = mm.selectField(user.name).byID();
     t2 = mm.selectField(sc);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   expect(v.mode, mm.SelectActionMode.field);
@@ -255,7 +255,7 @@ it('Order by', () => {
       .orderByAsc(cc)
       .orderByDesc(user.follower_count);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   expect(v.orderByColumns.length, 3);
@@ -277,14 +277,14 @@ it('Validate columns', () => {
         t.follower_count,
       );
     }
-    mm.ta(user, UserTA);
+    mm.tableActions(user, UserTA);
   }, 'The column at index 1 is null, action name "null"');
 
   itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm.selectRows(t.name, (32 as unknown) as mm.Column, t.follower_count);
     }
-    mm.ta(user, UserTA);
+    mm.tableActions(user, UserTA);
   }, 'The column at index 1 is not a valid column, got a "number", action name "null"');
 });
 
@@ -297,7 +297,7 @@ it('GROUP BY names', () => {
       .having(mm.sql`${mm.count(user.name)} > 2`)
       .orderByAsc(user.id);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   expect(v.groupByColumns[0], user.name.getDBName());
   expect(
@@ -314,7 +314,7 @@ it('HAVING', () => {
       .having(mm.sql`${mm.count(user.name)} > 2`)
       .orderByAsc(user.id);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   expect(v.groupByColumns[0], user.name.getDBName());
   expect(
@@ -330,7 +330,7 @@ it('Throw when limit is called on non-list mode', () => {
     class UserTA extends mm.TableActions {
       t = mm.selectField(t.name).limit();
     }
-    mm.ta(user, UserTA);
+    mm.tableActions(user, UserTA);
   }, "limit can only be used when mode = 'SelectActionMode.list', current mode is 1");
 });
 
@@ -340,37 +340,37 @@ it('Throw on selecting collection without ORDER BY', () => {
     class UserTA extends mm.TableActions {
       t = mm.selectField(t.name);
     }
-    mm.ta(user, UserTA);
+    mm.tableActions(user, UserTA);
   });
   assert.doesNotThrow(() => {
     class UserTA extends mm.TableActions {
       t = mm.select(t.name);
     }
-    mm.ta(user, UserTA);
+    mm.tableActions(user, UserTA);
   });
   assert.doesNotThrow(() => {
     class UserTA extends mm.TableActions {
       t = mm.selectRows(t.name).orderByAsc(t.name);
     }
-    mm.ta(user, UserTA);
+    mm.tableActions(user, UserTA);
   });
   assert.doesNotThrow(() => {
     class UserTA extends mm.TableActions {
       t = mm.selectPage(t.name).orderByAsc(t.name);
     }
-    mm.ta(user, UserTA);
+    mm.tableActions(user, UserTA);
   });
   itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm.selectRows(t.name);
     }
-    mm.ta(user, UserTA);
+    mm.tableActions(user, UserTA);
   }, 'An ORDER BY clause is required when selecting multiple rows [action "t"]');
   itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm.selectPage(t.name);
     }
-    mm.ta(user, UserTA);
+    mm.tableActions(user, UserTA);
   }, 'An ORDER BY clause is required when selecting multiple rows [action "t"]');
 });
 
@@ -389,7 +389,7 @@ it('Set action.__table via from()', () => {
     t = mm.select(user.id, user.name);
     t2 = mm.select(post.id).from(post);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   expect(ta.t.__table, user);
   expect(ta.t2.__table, post);
 

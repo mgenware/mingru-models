@@ -13,7 +13,7 @@ it('Insert', () => {
       .setInputs(post.title, post.snake_case_user_id)
       .setInputs();
   }
-  const ta = mm.ta(post, PostTA);
+  const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
 
   expect(v.actionType, mm.ActionType.insert);
@@ -33,7 +33,7 @@ it('Insert one', () => {
       .setInputs(post.title, post.snake_case_user_id)
       .setInputs();
   }
-  const ta = mm.ta(post, PostTA);
+  const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
 
   expect(v.ensureOneRowAffected, true);
@@ -43,7 +43,7 @@ it('unsafeInsert', () => {
   class PostTA extends mm.TableActions {
     t = mm.unsafeInsert().setInputs(post.title, post.snake_case_user_id);
   }
-  const ta = mm.ta(post, PostTA);
+  const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
   expect(v.noColumnNumberCheck, true);
 });
@@ -52,7 +52,7 @@ it('unsafeInsertOne', () => {
   class PostTA extends mm.TableActions {
     t = mm.unsafeInsertOne().setInputs(post.title, post.snake_case_user_id);
   }
-  const ta = mm.ta(post, PostTA);
+  const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
   expect(v.ensureOneRowAffected, true);
   expect(v.noColumnNumberCheck, true);
@@ -65,7 +65,7 @@ it('SQLConvertible value', () => {
       .set(post.title, mm.dateNow())
       .setDefaults();
   }
-  const ta = mm.ta(post, PostTA);
+  const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
   expect(
     v.setters.get(post.title),
@@ -78,7 +78,7 @@ it('No setters', () => {
     class PostTA extends mm.TableActions {
       t = mm.insert();
     }
-    mm.ta(post, PostTA);
+    mm.tableActions(post, PostTA);
   }, 'No setters [action "t"]');
 });
 
@@ -87,18 +87,18 @@ it('Column number check', () => {
     class PostTA extends mm.TableActions {
       t = mm.insert().setInputs(post.e_user_id);
     }
-    mm.ta(post, PostTA);
+    mm.tableActions(post, PostTA);
   }, 'You only set 1 of all 5 columns (not including AUTO_INCREMENT columns), you should set all columns or use `unsafeInsert` to bypass this check [action "t"]');
   assert.doesNotThrow(() => {
     class PostTA extends mm.TableActions {
       t = mm.insert().setInputs();
     }
-    mm.ta(post, PostTA);
+    mm.tableActions(post, PostTA);
   });
   assert.doesNotThrow(() => {
     class PostTA extends mm.TableActions {
       t = mm.unsafeInsert().setInputs(post.e_user_id);
     }
-    mm.ta(post, PostTA);
+    mm.tableActions(post, PostTA);
   });
 });

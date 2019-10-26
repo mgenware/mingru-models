@@ -14,7 +14,7 @@ it('Update', () => {
       .set(user.follower_count, mm.sql`${user.follower_count} + 1`)
       .where(mm.sql`${user.id} = 1`);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   expect(v.actionType, mm.ActionType.update);
@@ -43,7 +43,7 @@ it('Order of setInputs and set', () => {
       .setInputs(user.snake_case_name)
       .set(user.name, user.name.toInput('b'));
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   expect(
@@ -59,7 +59,7 @@ it('setInputs and setDefaults', () => {
       .setDefaults(user.def_value)
       .setInputs(user.snake_case_name);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   expect(
@@ -76,7 +76,7 @@ it('setInputs with no args', () => {
       .setInputs(user.snake_case_name)
       .setInputs();
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   expect(
@@ -94,7 +94,7 @@ it('setDefaults with no args', () => {
       .setInputs(user.snake_case_name)
       .setDefaults();
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   expect(
@@ -112,7 +112,7 @@ it('setInputs and setDefaults twice', () => {
         .setInputs()
         .setDefaults();
     }
-    mm.ta(user, UserTA);
+    mm.tableActions(user, UserTA);
   }, 'All columns are already set to inputs');
   itThrows(() => {
     class UserTA extends mm.TableActions {
@@ -121,7 +121,7 @@ it('setInputs and setDefaults twice', () => {
         .setDefaults()
         .setInputs();
     }
-    mm.ta(user, UserTA);
+    mm.tableActions(user, UserTA);
   }, 'All columns are already set to defaults');
 });
 
@@ -133,7 +133,7 @@ it('Set same column twice', () => {
       .setInputs(user.snake_case_name, user.name)
       .set(user.name, user.name.toInput('b'));
   }
-  itThrows(() => mm.ta(user, UserTA), 'Column "name" is already set');
+  itThrows(() => mm.tableActions(user, UserTA), 'Column "name" is already set');
 });
 
 it('updateOne', () => {
@@ -143,7 +143,7 @@ it('updateOne', () => {
       .setInputs(user.snake_case_name)
       .byID();
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   // extra props
@@ -154,7 +154,7 @@ it('updateOne', () => {
     class TA extends mm.TableActions {
       t = mm.updateOne().setInputs(user.snake_case_name);
     }
-    mm.ta(user, TA);
+    mm.tableActions(user, TA);
   }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"]');
 });
 
@@ -165,7 +165,7 @@ it('updateSome', () => {
       .setInputs(user.snake_case_name)
       .byID();
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   // extra props
@@ -176,7 +176,7 @@ it('updateSome', () => {
     class TA extends mm.TableActions {
       t = mm.updateSome().setInputs(user.snake_case_name);
     }
-    mm.ta(user, TA);
+    mm.tableActions(user, TA);
   }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"]');
 });
 
@@ -184,7 +184,7 @@ it('unsafeUpdateAll', () => {
   class UserTA extends mm.TableActions {
     t = mm.unsafeUpdateAll().setInputs(user.snake_case_name);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   // extra props
@@ -199,7 +199,7 @@ it('ByID', () => {
       .setInputs(user.snake_case_name)
       .byID();
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   expect(
@@ -215,7 +215,7 @@ it('SQLConvertible value', () => {
       .set(user.name, mm.dateNow())
       .byID();
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
   expect(
@@ -229,19 +229,19 @@ it('No setters', () => {
     class UserTA extends mm.TableActions {
       t = mm.unsafeUpdateAll();
     }
-    mm.ta(user, UserTA);
+    mm.tableActions(user, UserTA);
   }, 'No setters [action "t"]');
   assert.doesNotThrow(() => {
     class UserTA extends mm.TableActions {
       t = mm.unsafeUpdateAll().setInputs();
     }
-    mm.ta(user, UserTA);
+    mm.tableActions(user, UserTA);
   });
   assert.doesNotThrow(() => {
     class UserTA extends mm.TableActions {
       t = mm.unsafeUpdateAll().setDefaults();
     }
-    mm.ta(user, UserTA);
+    mm.tableActions(user, UserTA);
   });
 });
 
@@ -252,7 +252,7 @@ it('by', () => {
       .setInputs(user.def_value)
       .by(user.snake_case_name);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   expect(
     v.whereSQLString,
@@ -277,7 +277,7 @@ it('andBy', () => {
       .byID()
       .andBy(user.follower_count);
   }
-  const ta = mm.ta(user, UserTA);
+  const ta = mm.tableActions(user, UserTA);
   expect(
     ta.t1.whereSQLString,
     'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',

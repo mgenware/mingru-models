@@ -5,7 +5,7 @@ export * from './core/table';
 export * from './core/sql';
 
 // Table actions
-export * from './actions/ta';
+export * from './actions/tableActions';
 export * from './actions/actionHelper';
 export * from './actions/coreSelectAction';
 export * from './actions/selectAction';

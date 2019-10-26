@@ -1,4 +1,4 @@
-import { Action } from './ta';
+import { Action } from './tableActions';
 import { Column, Table } from '../core/core';
 import { SQL, SQLConvertible, convertToSQL, sql } from '../core/sql';
 import { throwIfFalsy } from 'throw-if-arg-empty';

@@ -14,7 +14,7 @@ it('Transact', () => {
       .setInputs(user.follower_count)
       .setInputs();
   }
-  const userTA = mm.ta(user, UserTA);
+  const userTA = mm.tableActions(user, UserTA);
 
   class PostTA extends mm.TableActions {
     insert = mm
@@ -28,7 +28,7 @@ it('Transact', () => {
     batch = mm.transact(this.insert, userTA.insert, this.update);
     batch2 = mm.transact(this.insert, userTA.insert, this.batch);
   }
-  const postTA = mm.ta(post, PostTA);
+  const postTA = mm.tableActions(post, PostTA);
 
   let v = postTA.batch;
   expect(v.actionType, mm.ActionType.transact);
@@ -60,7 +60,7 @@ it('Temp member actions (wrap self)', async () => {
       .byID();
     t = mm.transact(this.updatePostCount.wrap({ offset: 1 }));
   }
-  const user2TA = mm.ta(user2, User2TA);
+  const user2TA = mm.tableActions(user2, User2TA);
   const v = user2TA.t;
   const wrapped = v.members[0].action as WrappedAction;
   expect(wrapped.action, user2TA.updatePostCount);
@@ -82,7 +82,7 @@ it('Temp member actions (wrap other)', async () => {
       )
       .byID();
   }
-  const user2TA = mm.ta(user2, User2TA);
+  const user2TA = mm.tableActions(user2, User2TA);
   class Post2 extends mm.Table {
     id = mm.pk();
     title = mm.varChar(200);
@@ -92,7 +92,7 @@ it('Temp member actions (wrap other)', async () => {
   class Post2TA extends mm.TableActions {
     insert = mm.transact(user2TA.updatePostCount.wrap({ offset: 1 }));
   }
-  const postTA = mm.ta(post2, Post2TA);
+  const postTA = mm.tableActions(post2, Post2TA);
   const v = postTA.insert;
   const wrapped = v.members[0].action as WrappedAction;
   expect(wrapped.action, user2TA.updatePostCount);
@@ -106,7 +106,7 @@ it('Setting __table or temp members', () => {
       .setInputs(user.follower_count)
       .setInputs();
   }
-  const userTA = mm.ta(user, UserTA);
+  const userTA = mm.tableActions(user, UserTA);
 
   class PostTA extends mm.TableActions {
     insert = mm
@@ -120,7 +120,7 @@ it('Setting __table or temp members', () => {
       this.insert.wrap({ title: 'title' }),
     );
   }
-  const postTA = mm.ta(post, PostTA);
+  const postTA = mm.tableActions(post, PostTA);
   const members = postTA.t.members;
   expect(members[0].action.__table, post);
   expect(members[0].action.__name, 'tChild1');

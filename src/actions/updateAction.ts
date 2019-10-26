@@ -1,4 +1,4 @@
-import { ActionType } from './ta';
+import { ActionType } from './tableActions';
 import { SQL } from '../core/sql';
 import { CoreUpdateAction } from './coreUpdateAction';
 import { where, byID, by, andBy } from './common';

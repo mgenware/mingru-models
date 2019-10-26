@@ -1,7 +1,7 @@
-import { Action } from './ta';
+import { Action } from './tableActions';
 import { WrappedAction } from './wrappedAction';
 
-declare module './ta' {
+declare module './tableActions' {
   interface Action {
     wrap(args: { [name: string]: unknown }): WrappedAction;
   }
