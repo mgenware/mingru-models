@@ -178,17 +178,6 @@ it('JoinedColumn in table def', () => {
   );
 });
 
-class SCTable extends mm.Table {
-  sc = mm.int().as('haha');
-}
-
-it('RawColumn in table def', () => {
-  itThrows(
-    () => mm.table(SCTable),
-    'The "core" argument is not initialized (did you accidentally put a RawColumn in a SELECT action?)',
-  );
-});
-
 it('Register property callback', () => {
   let counter = 0;
   const cb = () => counter++;
@@ -249,15 +238,16 @@ it('Column.ensureInitialized', () => {
 
 it('Column.attr', () => {
   {
-    const col = mm.int(234);
-    col.attr('a');
-    col.attr('b', 's');
-    col.freeze();
-    assert.deepEqual(col.__attrs, {
+    class UserTA extends mm.TableActions {
+      t = mm.select(user.follower_count.attr('a').attr('b', 's'));
+    }
+    const table = mm.tableActions(user, UserTA);
+    const t = table.t as mm.SelectAction;
+    assert.equal((t.columns[0] as mm.RawColumn).core, user.follower_count);
+    assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
       a: true,
       b: 's',
     });
-    expect(Object.isFrozen(col.__attrs), true);
   }
   {
     class UserTA extends mm.TableActions {

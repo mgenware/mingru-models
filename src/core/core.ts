@@ -126,8 +126,6 @@ export class Column extends CoreProperty {
   __table: Table | JoinedTable | null = null;
   __inputName: string | null = null;
 
-  __attrs: { [name: string]: unknown } = {};
-
   // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any table, the foreignColumn property only indicates a column property is declared as FK and doesn't have any effect on join(), the real dest table and column are determined by join().
   foreignColumn: Column | null = null;
 
@@ -182,7 +180,6 @@ export class Column extends CoreProperty {
 
   freeze() {
     Object.freeze(this.type);
-    Object.freeze(this.__attrs);
     Object.freeze(this);
   }
 
@@ -299,11 +296,6 @@ export class Column extends CoreProperty {
 
   fullAssociativeJoin<T extends Table>(destTable: T, destCol?: Column): T {
     return this.joinCore(JoinType.full, destTable, destCol, true);
-  }
-
-  attr(name: string, value: unknown = true): this {
-    this.__attrs[name] = value;
-    return this;
   }
 
   private joinCore<T extends Table>(

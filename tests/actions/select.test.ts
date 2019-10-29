@@ -76,12 +76,12 @@ it('RawColumn', () => {
 
   // new RawColumn
   c = new mm.RawColumn(user.id);
-  expect(c.selectedName, 'id');
+  expect(c.selectedName, undefined);
   expect(c.core, user.id);
 
   // mm.sel
   c = mm.sel(user.id);
-  expect(c.selectedName, 'id');
+  expect(c.selectedName, undefined);
   expect(c.core, user.id);
 });
 
@@ -135,13 +135,6 @@ it('RawColumn (SQLConvertible)', () => {
     cc.core.toString(),
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(id, Table(post)), type = 1))), type = 3))',
   );
-});
-
-it('RawColumn (infer name from columns)', () => {
-  let cc = mm.sel(user.name);
-  expect(cc.selectedName, 'name');
-  cc = new mm.RawColumn(mm.coalesce('a', user.name, user.snake_case_name));
-  expect(cc.selectedName, 'name');
 });
 
 it('RawColumn.toInput', () => {

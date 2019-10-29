@@ -15,30 +15,21 @@ export class OrderByColumn {
 }
 
 export class RawColumn {
-  selectedName: string;
   core: Column | SQL;
   __attrs: { [name: string]: unknown } = {};
 
   constructor(
     core: SQLConvertible,
-    selectedName?: string,
+    public selectedName?: string,
     public type?: ColumnType,
   ) {
     throwIfFalsy(core, 'core');
     if (core instanceof Column) {
-      if (!core.__name) {
-        throw new Error(
-          'The "core" argument is not initialized (did you accidentally put a RawColumn in a SELECT action?)',
-        );
-      }
       this.core = core;
-      this.selectedName = selectedName || core.__name;
     } else {
       const expr = convertToSQL(core);
       this.core = expr;
-      if (selectedName) {
-        this.selectedName = selectedName;
-      } else {
+      if (!selectedName) {
         // Try to extract a column name from SQL expression
         const col = expr.findFirstColumn();
         if (col) {
@@ -62,9 +53,15 @@ export class RawColumn {
       if (!inferred) {
         throw new Error('Cannot convert a RawColumn(SQL) to an SQLVariable');
       }
+      if (!selectedName) {
+        throw new Error(
+          'The argument "selectedName" is required for an SQL expression without any columns inside',
+        );
+      }
       return new SQLVariable(inferred, selectedName);
     }
-    return new SQLVariable(core, selectedName);
+    const [, colName] = core.ensureInitialized();
+    return new SQLVariable(core, selectedName || colName);
   }
 
   attr(name: string, value: unknown = true): this {
@@ -142,6 +139,11 @@ export class SelectAction extends CoreSelectAction {
       if (column instanceof Column) {
         name = column.getDBName();
       } else if (column instanceof RawColumn) {
+        if (!column.selectedName) {
+          throw new Error(
+            `Unexpected empty selected name in ${column.toString()}`,
+          );
+        }
         name = column.selectedName;
       } else {
         name = column;
