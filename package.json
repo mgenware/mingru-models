@@ -22,7 +22,7 @@
     "t": "mocha --require source-map-support/register dist_tests/**/*.test.js",
     "build": "yarn test",
     "compile": "tsc -b tests",
-    "dev": "yarn run clean && yarn && tsc -b tests -w",
+    "dev": "yarn run clean && tsc -b tests -w",
     "prepublishOnly": "yarn run test",
     "lint": "eslint --max-warnings 0 --ext .ts src/ tests/",
     "clean": "rimraf dist && rimraf dist_tests"
