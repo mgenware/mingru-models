@@ -358,7 +358,7 @@ export class Column extends CoreProperty {
 export class Table {
   __columns: Column[] = [];
   __name!: string;
-  __dbName!: string;
+  __dbName: string | null = null;
   // Primary key columns
   __pks: Column[] = [];
   // Primary key with auto_increment columns
@@ -366,6 +366,10 @@ export class Table {
 
   getDBName(): string {
     return this.__dbName || this.__name;
+  }
+
+  inputName(): string {
+    return utils.toCamelCase(this.__name);
   }
 
   toString(): string {

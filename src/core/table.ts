@@ -55,7 +55,7 @@ export function table<T extends Table>(
   const tableObj = new cls();
   const className = tableObj.constructor.name;
   tableObj.__name = utils.toSnakeCase(className);
-  tableObj.__dbName = dbName || tableObj.__name;
+  tableObj.__dbName = dbName || null;
   const cols = tableObj.__columns;
 
   enumerateColumns(tableObj, (col, propName) => {

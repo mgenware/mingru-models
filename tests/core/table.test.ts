@@ -6,9 +6,22 @@ import like from '../models/like';
 
 const expect = assert.equal;
 
-it('Table name', () => {
+it('Table name, DB name and input name', () => {
   expect(user.__name, 'user');
+  expect(user.__dbName, null);
+  expect(user.getDBName(), 'user');
+  expect(user.inputName(), 'user');
   expect(user.toString(), 'Table(user)');
+
+  class MyTable extends mm.Table {
+    id = mm.pk();
+  }
+  const myTable = mm.table(MyTable, 'my_table');
+  expect(myTable.__name, 'my_table');
+  expect(myTable.__dbName, 'my_table');
+  expect(myTable.getDBName(), 'my_table');
+  expect(myTable.inputName(), 'myTable');
+  expect(myTable.toString(), 'Table(my_table)');
 });
 
 it('enumerateColumns', () => {
