@@ -150,6 +150,14 @@ it('RawColumn.toInput', () => {
 
   cc = mm.sel(mm.sql`${mm.max(mm.sql``)}`, 'haha');
   expect(cc.toInput().toString(), 'SQLVar(haha, desc = ColType(SQL.INT))');
+
+  let c = mm.sel(user.name);
+  let v = c.toInput();
+  expect(v.toString(), 'SQLVar(name, desc = Column(name, Table(user)))');
+
+  c = mm.sel(user.name, 'haha', mm.int().type);
+  v = c.toInput();
+  expect(v.toString(), 'SQLVar(haha, desc = Column(name, Table(user)))');
 });
 
 it('mm.select (types)', () => {
@@ -365,16 +373,6 @@ it('Throw on selecting collection without ORDER BY', () => {
     }
     mm.tableActions(user, UserTA);
   }, 'An ORDER BY clause is required when selecting multiple rows [action "t"]');
-});
-
-it('RawColumn.toInput', () => {
-  let c = mm.sel(user.name);
-  let v = c.toInput();
-  expect(v.toString(), 'SQLVar(name, desc = Column(name, Table(user)))');
-
-  c = mm.sel(user.name, 'haha', mm.int().type);
-  v = c.toInput();
-  expect(v.toString(), 'SQLVar(haha, desc = Column(name, Table(user)))');
 });
 
 it('Set action.__table via from()', () => {

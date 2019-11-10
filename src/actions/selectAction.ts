@@ -20,6 +20,8 @@ export class RawColumn {
 
   constructor(
     core: SQLConvertible,
+    // selectedName can be undefined if core is a column
+    // or findFirstColumn returns a column.
     public selectedName?: string,
     public type?: ColumnType,
   ) {
@@ -32,12 +34,7 @@ export class RawColumn {
       if (!selectedName) {
         // Try to extract a column name from SQL expression
         const col = expr.findFirstColumn();
-        if (col) {
-          if (!col.__name) {
-            throw new Error('core is not initialized');
-          }
-          this.selectedName = col.__name;
-        } else {
+        if (!col) {
           throw new Error(
             'The argument "selectedName" is required for an SQL expression without any columns inside',
           );
@@ -47,16 +44,22 @@ export class RawColumn {
   }
 
   toInput(): SQLVariable {
-    const { core, selectedName } = this;
+    const { core } = this;
+    let { selectedName } = this;
     if (core instanceof SQL) {
       const inferred = core.sniffType();
       if (!inferred) {
         throw new Error('Cannot convert a RawColumn(SQL) to an SQLVariable');
       }
       if (!selectedName) {
-        throw new Error(
-          'The argument "selectedName" is required for an SQL expression without any columns inside',
-        );
+        const firstColumn = core.findFirstColumn();
+        if (firstColumn && firstColumn.__name) {
+          selectedName = firstColumn.__name;
+        } else {
+          throw new Error(
+            'The argument "selectedName" is required for an SQL expression without any columns inside',
+          );
+        }
       }
       return new SQLVariable(inferred, selectedName);
     }
