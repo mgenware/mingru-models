@@ -229,15 +229,6 @@ export class Column extends CoreProperty {
     return curName;
   }
 
-  tableName(dbName: boolean): string {
-    const [table] = this.ensureInitialized();
-    if (table instanceof Table) {
-      return dbName ? table.getDBName() : table.__name;
-    }
-    // JoinedTable
-    return table.tableInputName();
-  }
-
   getSourceTable(): Table | null {
     const table = this.__table;
     if (!table) {
@@ -409,7 +400,7 @@ export class JoinedTable {
       localPath = `[${srcTable.__name}.${srcColumn.__name}]`;
     }
 
-    const remotePath = `[${destColumn.tableName(true)}.${destColumn.__name}]`;
+    const remotePath = `[${destTable.__name}.${destColumn.__name}]`;
     this.keyPath = `[${localPath}.${remotePath}]`;
   }
 

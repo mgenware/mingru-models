@@ -33,11 +33,6 @@ it('Table name and getDBName', () => {
   expect(abcTable.statusID.__dbName, 'customName');
 });
 
-it('col.TableName(dbName)', () => {
-  expect(defTable.id.tableName(false), 'def_table');
-  expect(defTable.id.tableName(true), 't');
-});
-
 it('Rename a FK', () => {
   expect(abcTable.uid1.__name, 'uid_1');
   expect(abcTable.uid1.__dbName, null);
