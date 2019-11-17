@@ -239,7 +239,13 @@ it('Column.ensureInitialized', () => {
 it('Column.attr', () => {
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(user.follower_count.attr('a').attr('b', 's'));
+      t = mm.select(
+        user.follower_count
+          .attrs({
+            a: true,
+          })
+          .attrs({ b: 's' }),
+      );
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
@@ -254,8 +260,8 @@ it('Column.attr', () => {
       t = mm.select(
         mm
           .sel(mm.sql`1`, 'col')
-          .attr('a')
-          .attr('b', 's'),
+          .attrs({ a: true })
+          .attrs({ b: 's' }),
       );
     }
     const table = mm.tableActions(user, UserTA);

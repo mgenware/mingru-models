@@ -5,7 +5,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 declare module '../core/core' {
   interface Column {
     as(name: string): RawColumn;
-    attr(name: string, value?: unknown): RawColumn;
+    attrs(values: { [name: string]: unknown }): RawColumn;
   }
 }
 
@@ -14,9 +14,8 @@ Column.prototype.as = function(name: string): RawColumn {
   return new RawColumn(this, name);
 };
 
-Column.prototype.attr = function(
-  name: string,
-  value: unknown = true,
-): RawColumn {
-  return new RawColumn(this).attr(name, value);
+Column.prototype.attrs = function(values: {
+  [name: string]: unknown;
+}): RawColumn {
+  return new RawColumn(this).attrs(values);
 };

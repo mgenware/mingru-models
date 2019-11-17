@@ -67,8 +67,8 @@ export class RawColumn {
     return new SQLVariable(core, selectedName || colName);
   }
 
-  attr(name: string, value: unknown = true): this {
-    this.__attrs[name] = value;
+  attrs(values: { [name: string]: unknown }): this {
+    this.__attrs = { ...this.__attrs, ...values };
     return this;
   }
 

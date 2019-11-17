@@ -25,6 +25,7 @@ export class Action extends CoreProperty {
   __argStubs: SQLVariable[] = [];
 
   __returnMap: { [name: string]: string } = {};
+  __attrs: { [name: string]: unknown } = {};
 
   constructor(public actionType: ActionType) {
     super();
@@ -59,6 +60,11 @@ export class Action extends CoreProperty {
 
   saveDefaultReturnValue(result: string): this {
     this.saveReturnValue('default', result);
+    return this;
+  }
+
+  attrs(values: { [name: string]: unknown }): this {
+    this.__attrs = { ...this.__attrs, ...values };
     return this;
   }
 }
