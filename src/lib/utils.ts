@@ -43,7 +43,11 @@ export default class Utils {
   }
 
   static toPascalCase(s: string): string {
-    return Utils.capitalizeFirstLetter(Utils.toCamelCase(s));
+    const res = Utils.capitalizeFirstLetter(Utils.toCamelCase(s));
+    if (res == 'Id') {
+      return 'ID';
+    }
+    return res;
   }
 
   static compareStrings(a: string, b: string) {
