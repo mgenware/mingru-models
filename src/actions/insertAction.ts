@@ -18,7 +18,7 @@ export class InsertAction extends CoreUpdateAction {
     const colCount = table.__columns.length - table.__pkAIs.length;
     if (
       !this.noColumnNumberCheck &&
-      !this.autoSetter && // allSet mean all columns are set to inputs/defaults, check passed
+      !this.flags.size && // if no wild flags are set
       setterCount < colCount // setterCount can > colCount as you may set all columns but colCount = all - AI columns
     ) {
       throw new Error(

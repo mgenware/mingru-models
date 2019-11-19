@@ -83,7 +83,7 @@ it('setInputs with no args', () => {
     v.settersToString(),
     'def_value: SQL(E(abc, type = 0)), snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
-  expect(v.autoSetter, 'input');
+  assert.deepEqual([...v.flags], [mm.AutoSetterType.input]);
 });
 
 it('setDefaults with no args', () => {
@@ -101,11 +101,11 @@ it('setDefaults with no args', () => {
     v.settersToString(),
     'def_value: SQL(E(abc, type = 0)), snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
-  expect(v.autoSetter, 'default');
+  assert.deepEqual([...v.flags], [mm.AutoSetterType.default]);
 });
 
 it('setInputs and setDefaults twice', () => {
-  itThrows(() => {
+  {
     class UserTA extends mm.TableActions {
       t = mm
         .unsafeUpdateAll()
@@ -113,8 +113,16 @@ it('setInputs and setDefaults twice', () => {
         .setDefaults();
     }
     mm.tableActions(user, UserTA);
-  }, 'All columns are already set to inputs');
-  itThrows(() => {
+
+    const ta = mm.tableActions(user, UserTA);
+    const v = ta.t;
+
+    assert.deepEqual(
+      [...v.flags],
+      [mm.AutoSetterType.input, mm.AutoSetterType.default],
+    );
+  }
+  {
     class UserTA extends mm.TableActions {
       t = mm
         .unsafeUpdateAll()
@@ -122,7 +130,15 @@ it('setInputs and setDefaults twice', () => {
         .setInputs();
     }
     mm.tableActions(user, UserTA);
-  }, 'All columns are already set to defaults');
+
+    const ta = mm.tableActions(user, UserTA);
+    const v = ta.t;
+
+    assert.deepEqual(
+      [...v.flags],
+      [mm.AutoSetterType.default, mm.AutoSetterType.input],
+    );
+  }
 });
 
 it('Set same column twice', () => {

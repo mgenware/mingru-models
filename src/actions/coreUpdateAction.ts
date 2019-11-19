@@ -3,16 +3,20 @@ import { Column, Table } from '../core/core';
 import { SQL, SQLConvertible, convertToSQL, sql } from '../core/sql';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
-export type AutoSetterType = '' | 'default' | 'input';
+export enum AutoSetterType {
+  default = 1,
+  input,
+}
 
 export class CoreUpdateAction extends Action {
   setters = new Map<Column, SQL>();
-  autoSetter: AutoSetterType = '';
+  // You can call both `setInputs()` and `setDefaults()` and the order also matters,
+  // we use `Set` to track these flags and ES6 set also keeps insertion order.
+  flags = new Set<AutoSetterType>();
 
   set(column: Column, value: SQLConvertible): this {
     throwIfFalsy(column, 'column');
     throwIfFalsy(value, 'value');
-    this.checkNotAllSet();
 
     const { setters } = this;
     this.checkColumnFree(column);
@@ -21,9 +25,8 @@ export class CoreUpdateAction extends Action {
   }
 
   setInputs(...columns: Column[]): this {
-    this.checkNotAllSet();
     if (!columns.length) {
-      this.autoSetter = 'input';
+      this.flags.add(AutoSetterType.input);
       return this;
     }
     for (const col of columns) {
@@ -34,9 +37,8 @@ export class CoreUpdateAction extends Action {
   }
 
   setDefaults(...columns: Column[]): this {
-    this.checkNotAllSet();
     if (!columns.length) {
-      this.autoSetter = 'default';
+      this.flags.add(AutoSetterType.default);
       // We can't check whether all remaining columns have a default value cuz this.__table is null here
       // We check it in validate()
       return this;
@@ -52,7 +54,7 @@ export class CoreUpdateAction extends Action {
 
   validate(table: Table, name: string) {
     super.validate(table, name);
-    if (!this.setters.size && !this.autoSetter) {
+    if (!this.setters.size && !this.flags.size) {
       throw new Error(`No setters`);
     }
   }
@@ -62,12 +64,6 @@ export class CoreUpdateAction extends Action {
     return [...this.setters.entries()]
       .map(([k, v]) => `${k.__name}: ${v.toString()}`)
       .join(', ');
-  }
-
-  private checkNotAllSet() {
-    if (this.autoSetter) {
-      throw new Error(`All columns are already set to ${this.autoSetter}s`);
-    }
   }
 
   private checkColumnFree(col: Column) {
