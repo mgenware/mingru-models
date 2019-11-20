@@ -116,48 +116,49 @@ function pk(column?: Column): Column;
 // Foreign key
 function fk(column: Column): Column;
 // VARCHAR column
-function varChar(length: number, defaultValue?: string): Column;
+function varChar(length: number, defaultValue?: string | null): Column;
 // CHAR column
-function char(length: number, defaultValue?: string): Column;
+function char(length: number, defaultValue?: string | null): Column;
 // INT column
-function int(defaultValue?: number): Column;
+function int(defaultValue?: number | null): Column;
 // unsigned INT column
-function uInt(defaultValue?: number): Column;
+function uInt(defaultValue?: number | null): Column;
 // BIGINT column
-function bigInt(defaultValue?: number): Column;
+function bigInt(defaultValue?: number | null): Column;
 // unsigned BIGINT column
-function uBigInt(defaultValue?: number): Column;
+function uBigInt(defaultValue?: number | null): Column;
 // SMALLINT column
-function smallInt(defaultValue?: number): Column;
+function smallInt(defaultValue?: number | null): Column;
 // unsigned SMALLINT column
-function uSmallInt(defaultValue?: number): Column;
+function uSmallInt(defaultValue?: number | null): Column;
 // TINYINT column
-function tinyInt(defaultValue?: number): Column;
+function tinyInt(defaultValue?: number | null): Column;
 // unsigned TINYINT column
-function uTinyInt(defaultValue?: number): Column;
+function uTinyInt(defaultValue?: number | null): Column;
 // FLOAT column
-function float(defaultValue?: number): Column;
+function float(defaultValue?: number | null): Column;
 // DOUBLE column
-function double(defaultValue?: number): Column;
+function double(defaultValue?: number | null): Column;
 // Adds UNIQUE constraint to a column
 function unique(col: Column): Column;
 // TEXT column
-function text(defaultValue?: string): Column;
+function text(defaultValue?: string | null): Column;
 // BOOL column
-function bool(defaultValue?: boolean): Column;
+function bool(defaultValue?: boolean | null): Column;
 // DATETIME column
-function datetime(defaultsToNow?: boolean): Column;
+function datetime(defaultsToNow?: boolean | null): Column;
 // DATE column
-function date(defaultsToNow?: boolean): Column;
+function date(defaultsToNow?: boolean | null): Column;
 // TIME column
-function time(defaultsToNow?: boolean): Column;
+function time(defaultsToNow?: boolean | null): Column;
 ```
 
 NOTE: columns created by column helper methods are **`NOT NULL`** by default, to create nullable (`NULL`) column, use the extra `nullable` property:
 
 ```ts
-name = mm.varChar(100); // `name` is NOT NULL
-sig = mm.text().nullable; // `sig` is NULL
+name = mm.varChar(100); // `name` cannot be NULL
+sig1 = mm.text().nullable; // `sig1` can be NULL
+sig2 = mm.text(null).nullable; // `sig2` can be NULL and also defaults to NULL
 ```
 
 #### Column Name
