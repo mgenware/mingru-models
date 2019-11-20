@@ -18,6 +18,10 @@ export class RawColumn {
   core: Column | SQL;
   __attrs: { [name: string]: unknown } = {};
 
+  get __type(): ColumnType | undefined {
+    return this.type;
+  }
+
   constructor(
     core: SQLConvertible,
     // selectedName can be undefined if core is a column
