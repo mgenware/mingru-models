@@ -20,7 +20,7 @@ function testJCCols(
   inputName: string,
 ) {
   expect(jc.__table instanceof mm.JoinedTable, true);
-  expect(jc.mirroredColumn, selectedColumn);
+  expect(jc.__mirroredColumn, selectedColumn);
   const jt = jc.__table as mm.JoinedTable;
   expect(jt.tableInputName(), tableInputName);
   expect(jt.destTable, destTable);

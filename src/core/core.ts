@@ -80,7 +80,7 @@ export class Column extends CoreProperty {
     throwIfFalsy(srcColumn, 'srcColumn');
 
     const copied = Column.copyFrom(srcColumn, table, null);
-    copied.foreignColumn = srcColumn;
+    copied.__foreignColumn = srcColumn;
     // For foreign column, `__name` is reset to null
     copied.__name = null;
     return copied;
@@ -92,7 +92,7 @@ export class Column extends CoreProperty {
       table,
       mirroredColumn.__name,
     );
-    copied.mirroredColumn = mirroredColumn;
+    copied.__mirroredColumn = mirroredColumn;
     return copied;
   }
 
@@ -101,36 +101,36 @@ export class Column extends CoreProperty {
     newTable: Table | JoinedTable | null,
     newName: string | null,
   ): Column {
-    const res = new Column(column.type);
+    const res = new Column(column.__type);
     // Copy values
-    res.defaultValue = column.defaultValue;
+    res.__defaultValue = column.__defaultValue;
     if (newTable) {
       res.__table = newTable;
     }
     if (newName) {
       res.__name = newName;
     }
-    res.foreignColumn = column.foreignColumn;
-    res.mirroredColumn = column.mirroredColumn;
+    res.__foreignColumn = column.__foreignColumn;
+    res.__mirroredColumn = column.__mirroredColumn;
     // Reset value
-    res.type.pk = false;
-    res.type.autoIncrement = false;
+    res.__type.pk = false;
+    res.__type.autoIncrement = false;
     return res;
   }
 
-  type: ColumnType;
-  defaultValue: unknown;
-  isNoDefaultOnCSQL = false;
+  __type: ColumnType;
+  __defaultValue: unknown;
+  __isNoDefaultOnCSQL = false;
 
   __dbName: string | null = null;
   __table: Table | JoinedTable | null = null;
   __inputName: string | null = null;
 
   // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any table, the foreignColumn property only indicates a column property is declared as FK and doesn't have any effect on join(), the real dest table and column are determined by join().
-  foreignColumn: Column | null = null;
+  __foreignColumn: Column | null = null;
 
   // See `Column.join` for details
-  mirroredColumn: Column | null = null;
+  __mirroredColumn: Column | null = null;
 
   constructor(type: ColumnType) {
     super();
@@ -142,50 +142,50 @@ export class Column extends CoreProperty {
       Object.assign(t, type);
       // Deep copy types
       t.types = [...type.types];
-      this.type = t;
+      this.__type = t;
     } else {
-      this.type = type;
+      this.__type = type;
     }
   }
 
   get nullable(): Column {
     this.checkMutability();
-    this.type.nullable = true;
+    this.__type.nullable = true;
     return this;
   }
 
   get unique(): Column {
     this.checkMutability();
-    this.type.unique = true;
+    this.__type.unique = true;
     return this;
   }
 
   get autoIncrement(): Column {
     this.checkMutability();
-    this.type.autoIncrement = true;
+    this.__type.autoIncrement = true;
     return this;
   }
 
   get noAutoIncrement(): Column {
     this.checkMutability();
-    this.type.autoIncrement = false;
+    this.__type.autoIncrement = false;
     return this;
   }
 
   get noDefaultOnCSQL(): Column {
     this.checkMutability();
-    this.isNoDefaultOnCSQL = true;
+    this.__isNoDefaultOnCSQL = true;
     return this;
   }
 
   freeze() {
-    Object.freeze(this.type);
+    Object.freeze(this.__type);
     Object.freeze(this);
   }
 
   setDefault(value: unknown): this {
     this.checkMutability();
-    this.defaultValue = value;
+    this.__defaultValue = value;
     return this;
   }
 

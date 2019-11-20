@@ -29,7 +29,7 @@ it('SQL calls', () => {
 
   t = mm.coalesce(mm.sql`haha`, post.title, post.user_id);
   expect(t.type, mm.SQLCallType.coalesce);
-  assert.deepEqual(t.returnType, mm.varChar(100).type);
+  assert.deepEqual(t.returnType, mm.varChar(100).__type);
 
   assert.deepEqual(mm.countAll(), mm.count('*'));
 

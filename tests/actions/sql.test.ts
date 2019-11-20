@@ -41,13 +41,13 @@ it('Named input', () => {
 
 it('Input (foreign key)', () => {
   const input = mm.input(post.user_id);
-  expect((input.type as mm.Column).foreignColumn, user.id);
+  expect((input.type as mm.Column).__foreignColumn, user.id);
   expect(input.name, 'userID');
 });
 
 it('Input (joined key)', () => {
   const input = mm.input(post.user_id.join(user).name);
-  expect((input.type as mm.Column).mirroredColumn, user.name);
+  expect((input.type as mm.Column).__mirroredColumn, user.name);
   expect(input.name, 'userName');
 });
 
@@ -241,7 +241,7 @@ it('sniffType', () => {
   // RawColumn
   expect(mm.sql`haha${user.id.as('abc')}`.sniffType(), 'ColType(SQL.BIGINT)');
   expect(
-    mm.sql`haha${mm.sel(mm.sql`abc`, 'name', mm.int().type)}`.sniffType(),
+    mm.sql`haha${mm.sel(mm.sql`abc`, 'name', mm.int().__type)}`.sniffType(),
     'ColType(SQL.INT)',
   );
 });

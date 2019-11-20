@@ -86,18 +86,18 @@ export function table<T extends Table>(
         columnToAdd.__name = utils.toSnakeCase(propName);
       }
       columnToAdd.__table = tableObj;
-      if (columnToAdd.type.pk) {
+      if (columnToAdd.__type.pk) {
         tableObj.__pks.push(col);
-        if (columnToAdd.type.autoIncrement) {
+        if (columnToAdd.__type.autoIncrement) {
           tableObj.__pkAIs.push(col);
         }
       }
 
       // Column default value cannot be a complex SQL
       if (
-        columnToAdd.defaultValue &&
-        columnToAdd.defaultValue instanceof SQL &&
-        columnToAdd.defaultValue.hasColumns
+        columnToAdd.__defaultValue &&
+        columnToAdd.__defaultValue instanceof SQL &&
+        columnToAdd.__defaultValue.hasColumns
       ) {
         throw new Error(`Default value cannot be a complex SQL expression`);
       }

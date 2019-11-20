@@ -19,22 +19,22 @@ export function fk(column: Column): Column {
 
 export function varChar(length: number, defaultValue?: string | null): Column {
   const col = Column.fromTypes(dt.varChar);
-  col.type.length = length;
-  col.defaultValue = defaultValue;
+  col.__type.length = length;
+  col.__defaultValue = defaultValue;
   return col;
 }
 
 export function char(length: number, defaultValue?: string | null): Column {
   const col = Column.fromTypes(dt.char);
-  col.type.length = length;
-  col.defaultValue = defaultValue;
+  col.__type.length = length;
+  col.__defaultValue = defaultValue;
   return col;
 }
 
 function _int(type: string, unsigned: boolean, def?: number | null): Column {
   const col = Column.fromTypes(type);
-  col.type.unsigned = unsigned;
-  col.defaultValue = def;
+  col.__type.unsigned = unsigned;
+  col.__defaultValue = def;
   return col;
 }
 
@@ -80,7 +80,7 @@ export function double(defaultValue?: number | null): Column {
 
 export function unique(col: Column): Column {
   throwIfFalsy(col, 'col');
-  col.type.unique = true;
+  col.__type.unique = true;
   return col;
 }
 
@@ -90,32 +90,32 @@ export function pk(column?: Column): Column {
     col = column;
   } else {
     col = uBigInt();
-    col.type.autoIncrement = true;
+    col.__type.autoIncrement = true;
   }
   if (Object.isFrozen(col)) {
     // col is from another table, therefore an implicit FK
     col = Column.newForeignColumn(col, null);
   }
-  col.type.pk = true;
+  col.__type.pk = true;
   return col;
 }
 
 export function text(defaultValue?: string | null): Column {
   const col = Column.fromTypes(dt.text);
-  col.defaultValue = defaultValue;
+  col.__defaultValue = defaultValue;
   return col;
 }
 
 export function bool(defaultValue?: boolean | null): Column {
   const col = Column.fromTypes(dt.bool);
-  col.defaultValue = defaultValue;
+  col.__defaultValue = defaultValue;
   return col;
 }
 
 export function datetime(defaultsToNow = false): Column {
   const col = Column.fromTypes(dt.datetime);
   if (defaultsToNow) {
-    col.defaultValue = sql`${call.datetimeNow()}`;
+    col.__defaultValue = sql`${call.datetimeNow()}`;
   }
   return col;
 }
@@ -123,7 +123,7 @@ export function datetime(defaultsToNow = false): Column {
 export function date(defaultsToNow = false): Column {
   const col = Column.fromTypes(dt.date);
   if (defaultsToNow) {
-    col.defaultValue = sql`${call.dateNow()}`;
+    col.__defaultValue = sql`${call.dateNow()}`;
   }
   return col;
 }
@@ -131,7 +131,7 @@ export function date(defaultsToNow = false): Column {
 export function time(defaultsToNow = false): Column {
   const col = Column.fromTypes(dt.time);
   if (defaultsToNow) {
-    col.defaultValue = sql`${call.timeNow()}`;
+    col.__defaultValue = sql`${call.timeNow()}`;
   }
   return col;
 }

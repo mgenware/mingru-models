@@ -155,7 +155,7 @@ it('RawColumn.toInput', () => {
   let v = c.toInput();
   expect(v.toString(), 'SQLVar(name, desc = Column(name, Table(user)))');
 
-  c = mm.sel(user.name, 'haha', mm.int().type);
+  c = mm.sel(user.name, 'haha', mm.int().__type);
   v = c.toInput();
   expect(v.toString(), 'SQLVar(haha, desc = Column(name, Table(user)))');
 });

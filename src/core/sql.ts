@@ -186,7 +186,7 @@ export class SQL {
     for (const element of this.elements) {
       const { type } = element;
       if (type === SQLElementType.column) {
-        return element.toColumn().type;
+        return element.toColumn().__type;
       }
       if (type === SQLElementType.call) {
         return element.toCall().returnType;
@@ -197,7 +197,7 @@ export class SQL {
           return raw.type;
         }
         if (raw.core instanceof Column) {
-          return raw.core.type;
+          return raw.core.__type;
         }
       }
     }

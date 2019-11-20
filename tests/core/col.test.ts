@@ -23,56 +23,56 @@ it('Implicit FK', () => {
   const col = post.user_id;
   expect(col.__table, post);
   expect(col.__name, 'user_id');
-  expect(col.foreignColumn, user.id);
-  assert.notEqual(col.type, user.id.type);
+  expect(col.__foreignColumn, user.id);
+  assert.notEqual(col.__type, user.id.__type);
 });
 
 it('Explicit FK', () => {
   const col = post.e_user_id_n;
   expect(col.__table, post);
   expect(col.__name, 'e_user_id_n');
-  expect(col.foreignColumn, user.id);
-  assert.notEqual(col, user.id.type);
-  expect(col.type.nullable, true);
+  expect(col.__foreignColumn, user.id);
+  assert.notEqual(col, user.id.__type);
+  expect(col.__type.nullable, true);
 });
 
 it('Explicit FK (untouched)', () => {
   const col = post.e_user_id;
   expect(col.__table, post);
   expect(col.__name, 'e_user_id');
-  expect(col.foreignColumn, user.id);
-  assert.notEqual(col.type, user.id.type);
-  expect(col.type.nullable, false);
+  expect(col.__foreignColumn, user.id);
+  assert.notEqual(col.__type, user.id.__type);
+  expect(col.__type.nullable, false);
 });
 
 it('freeze', () => {
   const col = mm.int(234);
   col.freeze();
   expect(Object.isFrozen(col), true);
-  expect(Object.isFrozen(col.type), true);
+  expect(Object.isFrozen(col.__type), true);
 });
 
 it('Column.newForeignColumn', () => {
   const a = user.id;
   const b = mm.Column.newForeignColumn(a, post);
   // FK
-  expect(b.foreignColumn, a);
+  expect(b.__foreignColumn, a);
   // name is cleared
   expect(b.__name, null);
   // Value being reset
-  expect(b.type.pk, false);
-  expect(b.type.autoIncrement, false);
+  expect(b.__type.pk, false);
+  expect(b.__type.autoIncrement, false);
   expect(b.__table, post);
   // props is copied
-  assert.notEqual(b.type, a.type);
+  assert.notEqual(b.__type, a.__type);
   // props.types is copied
-  assert.notEqual(b.type.types, a.type.types);
+  assert.notEqual(b.__type.types, a.__type.types);
 
   // Check equality
-  expect(a.defaultValue, b.defaultValue);
-  assert.deepEqual(a.type.types, b.type.types);
-  expect(a.type.nullable, b.type.nullable);
-  expect(a.type.unique, b.type.unique);
+  expect(a.__defaultValue, b.__defaultValue);
+  assert.deepEqual(a.__type.types, b.__type.types);
+  expect(a.__type.nullable, b.__type.nullable);
+  expect(a.__type.unique, b.__type.unique);
 });
 
 it('Column.newJoinedColumn', () => {
@@ -80,22 +80,22 @@ it('Column.newJoinedColumn', () => {
   const a = user.name;
   const b = mm.Column.newJoinedColumn(a, t);
   // mirroredColumn
-  expect(b.mirroredColumn, a);
+  expect(b.__mirroredColumn, a);
   // Value being reset
-  expect(b.type.pk, false);
-  expect(b.type.autoIncrement, false);
+  expect(b.__type.pk, false);
+  expect(b.__type.autoIncrement, false);
   expect(b.__name, a.__name);
   expect(b.__table, t);
   // props is copied
-  assert.notEqual(b.type, a.type);
+  assert.notEqual(b.__type, a.__type);
   // props.types is copied
-  assert.notEqual(b.type.types, a.type.types);
+  assert.notEqual(b.__type.types, a.__type.types);
 
   // Check equality
-  expect(a.defaultValue, b.defaultValue);
-  assert.deepEqual(a.type.types, b.type.types);
-  expect(a.type.nullable, b.type.nullable);
-  expect(a.type.unique, b.type.unique);
+  expect(a.__defaultValue, b.__defaultValue);
+  assert.deepEqual(a.__type.types, b.__type.types);
+  expect(a.__type.nullable, b.__type.nullable);
+  expect(a.__type.unique, b.__type.unique);
 });
 
 it('Mutate a frozen column', () => {
@@ -109,30 +109,30 @@ it('Mutate a frozen column', () => {
 
 it('notNull (default)', () => {
   const c = mm.int(123);
-  expect(c.type.nullable, false);
+  expect(c.__type.nullable, false);
 });
 
 it('nullable', () => {
   const c = mm.int(123).nullable;
-  expect(c.type.nullable, true);
+  expect(c.__type.nullable, true);
 });
 
 it('unique', () => {
   const c = mm.int(123).unique;
-  expect(c.type.unique, true);
+  expect(c.__type.unique, true);
 });
 
 it('unique (default)', () => {
   const c = mm.int(123);
-  expect(c.type.unique, false);
+  expect(c.__type.unique, false);
 });
 
 it('setDefault', () => {
   let c = mm.int(123).setDefault('omg');
-  expect(c.defaultValue, 'omg');
+  expect(c.__defaultValue, 'omg');
 
   c = mm.int(123).setDefault(null);
-  expect(c.defaultValue, null);
+  expect(c.__defaultValue, null);
 });
 
 it('Column.inputName', () => {
