@@ -45,7 +45,7 @@ it('unsafeInsert', () => {
   }
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
-  expect(v.noColumnNumberCheck, true);
+  expect(v.allowUnsetColumns, true);
 });
 
 it('unsafeInsertOne', () => {
@@ -55,7 +55,7 @@ it('unsafeInsertOne', () => {
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
   expect(v.ensureOneRowAffected, true);
-  expect(v.noColumnNumberCheck, true);
+  expect(v.allowUnsetColumns, true);
 });
 
 it('SQLConvertible value', () => {

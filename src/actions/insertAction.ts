@@ -5,7 +5,7 @@ import { Table } from '../core/core';
 export class InsertAction extends CoreUpdateAction {
   constructor(
     public ensureOneRowAffected: boolean,
-    public noColumnNumberCheck = false,
+    public allowUnsetColumns = false,
   ) {
     super(ActionType.insert);
   }
@@ -17,7 +17,7 @@ export class InsertAction extends CoreUpdateAction {
     // Number of columns = total count - number of auto_increment PKs
     const colCount = table.__columns.length - table.__pkAIs.length;
     if (
-      !this.noColumnNumberCheck &&
+      !this.allowUnsetColumns &&
       !this.autoSetters.size && // if no wild flags are set
       setterCount < colCount // setterCount can > colCount as you may set all columns but colCount = all - AI columns
     ) {
