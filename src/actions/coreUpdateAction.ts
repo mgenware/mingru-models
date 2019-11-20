@@ -11,8 +11,8 @@ export enum AutoSetterType {
 export class CoreUpdateAction extends Action {
   setters = new Map<Column, SQL>();
   // You can call both `setInputs()` and `setDefaults()` and the order also matters,
-  // we use `Set` to track these flags and ES6 set also keeps insertion order.
-  flags = new Set<AutoSetterType>();
+  // we use `Set` to track these auto setters and ES6 set also keeps insertion order.
+  autoSetters = new Set<AutoSetterType>();
 
   set(column: Column, value: SQLConvertible): this {
     throwIfFalsy(column, 'column');
@@ -26,7 +26,7 @@ export class CoreUpdateAction extends Action {
 
   setInputs(...columns: Column[]): this {
     if (!columns.length) {
-      this.flags.add(AutoSetterType.input);
+      this.autoSetters.add(AutoSetterType.input);
       return this;
     }
     for (const col of columns) {
@@ -38,7 +38,7 @@ export class CoreUpdateAction extends Action {
 
   setDefaults(...columns: Column[]): this {
     if (!columns.length) {
-      this.flags.add(AutoSetterType.default);
+      this.autoSetters.add(AutoSetterType.default);
       // We can't check whether all remaining columns have a default value cuz this.__table is null here
       // We check it in validate()
       return this;
@@ -54,7 +54,7 @@ export class CoreUpdateAction extends Action {
 
   validate(table: Table, name: string) {
     super.validate(table, name);
-    if (!this.setters.size && !this.flags.size) {
+    if (!this.setters.size && !this.autoSetters.size) {
       throw new Error(`No setters`);
     }
   }

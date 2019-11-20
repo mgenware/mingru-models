@@ -83,7 +83,7 @@ it('setInputs with no args', () => {
     v.settersToString(),
     'def_value: SQL(E(abc, type = 0)), snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
-  assert.deepEqual([...v.flags], [mm.AutoSetterType.input]);
+  assert.deepEqual([...v.autoSetters], [mm.AutoSetterType.input]);
 });
 
 it('setDefaults with no args', () => {
@@ -101,7 +101,7 @@ it('setDefaults with no args', () => {
     v.settersToString(),
     'def_value: SQL(E(abc, type = 0)), snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
-  assert.deepEqual([...v.flags], [mm.AutoSetterType.default]);
+  assert.deepEqual([...v.autoSetters], [mm.AutoSetterType.default]);
 });
 
 it('setInputs and setDefaults twice', () => {
@@ -118,7 +118,7 @@ it('setInputs and setDefaults twice', () => {
     const v = ta.t;
 
     assert.deepEqual(
-      [...v.flags],
+      [...v.autoSetters],
       [mm.AutoSetterType.input, mm.AutoSetterType.default],
     );
   }
@@ -135,7 +135,7 @@ it('setInputs and setDefaults twice', () => {
     const v = ta.t;
 
     assert.deepEqual(
-      [...v.flags],
+      [...v.autoSetters],
       [mm.AutoSetterType.default, mm.AutoSetterType.input],
     );
   }
