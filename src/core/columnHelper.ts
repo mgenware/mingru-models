@@ -17,64 +17,64 @@ export function fk(column: Column): Column {
   return Column.newForeignColumn(column, null);
 }
 
-export function varChar(length: number, defaultValue?: string): Column {
+export function varChar(length: number, defaultValue?: string | null): Column {
   const col = Column.fromTypes(dt.varChar);
   col.type.length = length;
   col.defaultValue = defaultValue;
   return col;
 }
 
-export function char(length: number, defaultValue?: string): Column {
+export function char(length: number, defaultValue?: string | null): Column {
   const col = Column.fromTypes(dt.char);
   col.type.length = length;
   col.defaultValue = defaultValue;
   return col;
 }
 
-function _int(type: string, unsigned: boolean, def?: number): Column {
+function _int(type: string, unsigned: boolean, def?: number | null): Column {
   const col = Column.fromTypes(type);
   col.type.unsigned = unsigned;
   col.defaultValue = def;
   return col;
 }
 
-export function int(defaultValue?: number): Column {
+export function int(defaultValue?: number | null): Column {
   return _int(dt.int, false, defaultValue);
 }
 
-export function uInt(defaultValue?: number): Column {
+export function uInt(defaultValue?: number | null): Column {
   return _int(dt.int, true, defaultValue);
 }
 
-export function bigInt(defaultValue?: number): Column {
+export function bigInt(defaultValue?: number | null): Column {
   return _int(dt.bigInt, false, defaultValue);
 }
 
-export function uBigInt(defaultValue?: number): Column {
+export function uBigInt(defaultValue?: number | null): Column {
   return _int(dt.bigInt, true, defaultValue);
 }
 
-export function smallInt(defaultValue?: number): Column {
+export function smallInt(defaultValue?: number | null): Column {
   return _int(dt.smallInt, false, defaultValue);
 }
 
-export function uSmallInt(defaultValue?: number): Column {
+export function uSmallInt(defaultValue?: number | null): Column {
   return _int(dt.smallInt, true, defaultValue);
 }
 
-export function tinyInt(defaultValue?: number): Column {
+export function tinyInt(defaultValue?: number | null): Column {
   return _int(dt.tinyInt, false, defaultValue);
 }
 
-export function uTinyInt(defaultValue?: number): Column {
+export function uTinyInt(defaultValue?: number | null): Column {
   return _int(dt.tinyInt, true, defaultValue);
 }
 
-export function float(defaultValue?: number): Column {
+export function float(defaultValue?: number | null): Column {
   return _int(dt.float, true, defaultValue);
 }
 
-export function double(defaultValue?: number): Column {
+export function double(defaultValue?: number | null): Column {
   return _int(dt.double, true, defaultValue);
 }
 
@@ -100,13 +100,13 @@ export function pk(column?: Column): Column {
   return col;
 }
 
-export function text(defaultValue?: string): Column {
+export function text(defaultValue?: string | null): Column {
   const col = Column.fromTypes(dt.text);
   col.defaultValue = defaultValue;
   return col;
 }
 
-export function bool(defaultValue?: boolean): Column {
+export function bool(defaultValue?: boolean | null): Column {
   const col = Column.fromTypes(dt.bool);
   col.defaultValue = defaultValue;
   return col;

@@ -213,3 +213,10 @@ it('dt.isTimeRelated', () => {
   expect(dt.isTimeRelated(dt.time), true);
   expect(dt.isTimeRelated(dt.int), false);
 });
+
+it('Allow null as default value', () => {
+  let c = mm.int(null);
+  expect(c.defaultValue, null);
+  c = mm.bool(null);
+  expect(c.defaultValue, null);
+});
