@@ -39,7 +39,7 @@ it('Transact', () => {
   assert.deepEqual(
     v.members,
     [postTA.insert, userTA.insert, postTA.batch].map(
-      m => new mm.TransactionMember(m, undefined, {}),
+      m => new mm.TransactionMember(m, undefined, undefined),
     ),
   );
 });
@@ -134,4 +134,29 @@ it('Setting __table or temp members', () => {
   expect(members[3].action.__table, post);
   expect(members[3].action.__name, 'tChild4');
   expect(members[3].isTemp, true);
+});
+
+it('Declare returns', () => {
+  class UserTA extends mm.TableActions {
+    insert1 = mm.insert().setInputs();
+    insert2 = mm.insert().setInputs();
+  }
+  const userTA = mm.tableActions(user, UserTA);
+
+  class PostTA extends mm.TableActions {
+    batch = mm
+      .transact(
+        userTA.insert1,
+        userTA.insert2.declareReturnValues({ a: '_a' }),
+        userTA.insert1.declareReturnValues({ b: '_b' }),
+      )
+      .setReturnValues('_b', '_a');
+  }
+  const postTA = mm.tableActions(post, PostTA);
+
+  let v = postTA.batch;
+  assert.ok(v.members[0].returnValues === undefined);
+  assert.deepEqual(v.members[1].returnValues, { a: '_a' });
+  assert.deepEqual(v.members[2].returnValues, { b: '_b' });
+  assert.deepEqual(v.__returnValues, ['_b', '_a']);
 });

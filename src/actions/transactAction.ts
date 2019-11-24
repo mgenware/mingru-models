@@ -20,15 +20,17 @@ export class TransactionMember {
 
   constructor(
     public action: Action,
-    public name: string | undefined,
-    public returnValues: { [name: string]: string },
+    public name?: string,
+    public returnValues?: { [name: string]: string },
   ) {
     throwIfFalsy(action, 'action');
   }
 }
 
 export class TransactAction extends Action {
-  constructor(public members: TransactionMember[], public resultName?: string) {
+  __returnValues?: string[];
+
+  constructor(public members: TransactionMember[]) {
     super(ActionType.transact);
     throwIfFalsy(members, 'members');
   }
@@ -36,7 +38,7 @@ export class TransactAction extends Action {
   validate(table: Table, name: string) {
     super.validate(table, name);
 
-    // Initialize member actions
+    // Initialize member actions.
     let idx = 1;
     for (const mem of this.members) {
       const mAction = mem.action;
@@ -46,5 +48,12 @@ export class TransactAction extends Action {
       }
       idx++;
     }
+  }
+
+  setReturnValues(...values: string[]): this {
+    throwIfFalsy(values, 'values');
+
+    this.__returnValues = values;
+    return this;
   }
 }
