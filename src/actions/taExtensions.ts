@@ -1,9 +1,11 @@
 import { Action } from './tableActions';
 import { WrappedAction } from './wrappedAction';
+import { TransactionMember } from './transactAction';
 
 declare module './tableActions' {
   interface Action {
     wrap(args: { [name: string]: unknown }): WrappedAction;
+    declareReturnValues(values: { [name: string]: string }): TransactionMember;
   }
 }
 
@@ -34,4 +36,10 @@ Action.prototype.wrap = function(args: {
   // triggers the `validate` method, which then initializes the internal
   // action it wraps.
   return new WrappedAction(this, args);
+};
+
+Action.prototype.declareReturnValues = function(values: {
+  [name: string]: string;
+}): TransactionMember {
+  return new TransactionMember(this, undefined, values);
 };

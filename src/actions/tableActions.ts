@@ -23,8 +23,6 @@ export class Action extends CoreProperty {
   __table: Table | null = null;
 
   __argStubs: SQLVariable[] = [];
-
-  __returnMap: { [name: string]: string } = {};
   __attrs: { [name: string]: unknown } = {};
 
   constructor(public actionType: ActionType) {
@@ -51,16 +49,6 @@ export class Action extends CoreProperty {
       throw new Error(`Action "${toTypeString(this)}" is not initialized`);
     }
     return [this.__table, this.__name];
-  }
-
-  saveReturnValue(name: string, result: string): this {
-    this.__returnMap[name] = result;
-    return this;
-  }
-
-  saveDefaultReturnValue(result: string): this {
-    this.saveReturnValue('default', result);
-    return this;
   }
 
   attrs(values: { [name: string]: unknown }): this {

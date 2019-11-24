@@ -39,7 +39,7 @@ it('Transact', () => {
   assert.deepEqual(
     v.members,
     [postTA.insert, userTA.insert, postTA.batch].map(
-      m => new mm.TransactionMember(m),
+      m => new mm.TransactionMember(m, undefined, {}),
     ),
   );
 });

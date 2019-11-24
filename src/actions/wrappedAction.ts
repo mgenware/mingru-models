@@ -2,8 +2,8 @@ import { Action, ActionType, initializeAction } from './tableActions';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table } from '../core/core';
 
-// Use this to reference the value saved by `Action.saveReturnValue`.
-export class SavedContextValue {
+// Use this to use a value set by `.declareReturnValues` in a transaction.
+export class ReturnValueDef {
   constructor(public name: string) {}
 }
 

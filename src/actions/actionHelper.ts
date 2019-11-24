@@ -8,8 +8,9 @@ import {
 } from './selectAction';
 import {
   TransactAction,
-  TransactionMemberHelper,
+  TransactionMemberTypes,
   TransactionMember,
+  ActionWithReturnValues,
 } from './transactAction';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
@@ -69,12 +70,17 @@ export function unsafeDeleteAll(): DeleteAction {
   return new DeleteAction(true, false);
 }
 
-export function transact(
-  ...actions: TransactionMemberHelper[]
-): TransactAction {
+export function transact(...actions: TransactionMemberTypes[]): TransactAction {
   throwIfFalsy(actions, 'actions');
-  const converted = actions.map(a =>
-    a instanceof TransactionMember ? a : new TransactionMember(a),
+  return new TransactAction(
+    actions.map(a => {
+      if (a instanceof TransactionMember) {
+        return a;
+      }
+      if (a instanceof ActionWithReturnValues) {
+        return new TransactionMember(a.action, undefined, a.returnValues);
+      }
+      return new TransactionMember(a, undefined, {});
+    }),
   );
-  return new TransactAction(converted);
 }

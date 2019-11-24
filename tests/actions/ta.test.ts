@@ -106,18 +106,6 @@ it('action.ensureInitialized', () => {
   );
 });
 
-it('action.saveReturnValue', () => {
-  class UserTA extends mm.TableActions {
-    t = mm
-      .select(user.id)
-      .saveReturnValue('a', '1')
-      .saveDefaultReturnValue('2');
-  }
-  const ta = mm.tableActions(user, UserTA);
-  const v = ta.t;
-  assert.deepEqual(v.__returnMap, { default: '2', a: '1' });
-});
-
 class MyInsertAction extends mm.InsertAction {
   vTable: mm.Table | null = null;
   vName: string | null = null;

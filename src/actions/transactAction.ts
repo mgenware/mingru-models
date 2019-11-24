@@ -2,12 +2,27 @@ import { Action, ActionType, initializeAction } from './tableActions';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table } from '../core/core';
 
-export type TransactionMemberHelper = TransactionMember | Action;
+export class ActionWithReturnValues {
+  constructor(
+    public action: Action,
+    public returnValues: { [name: string]: string },
+  ) {}
+}
+
+export type TransactionMemberTypes =
+  | TransactionMember
+  | Action
+  | ActionWithReturnValues;
 
 export class TransactionMember {
   // True if this member is created inside transaction function block.
   isTemp = false;
-  constructor(public action: Action, public name?: string) {
+
+  constructor(
+    public action: Action,
+    public name: string | undefined,
+    public returnValues: { [name: string]: string },
+  ) {
     throwIfFalsy(action, 'action');
   }
 }
