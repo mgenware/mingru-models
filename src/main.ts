@@ -3,6 +3,7 @@ export { default as dt } from './core/dt';
 export * from './core/columnHelper';
 export * from './core/table';
 export * from './core/sql';
+export * from './returnValues';
 
 // Table actions
 export * from './actions/tableActions';

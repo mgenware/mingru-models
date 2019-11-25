@@ -149,6 +149,7 @@ it('Declare returns', () => {
         userTA.insert1,
         userTA.insert2.declareReturnValues({ a: '_a' }),
         userTA.insert1.declareReturnValue('b', '_b'),
+        userTA.insert1.declareInsertedID('i'),
       )
       .setReturnValues('_b', '_a');
   }
@@ -158,5 +159,8 @@ it('Declare returns', () => {
   assert.ok(v.members[0].returnValues === undefined);
   assert.deepEqual(v.members[1].returnValues, { a: '_a' });
   assert.deepEqual(v.members[2].returnValues, { b: '_b' });
+  assert.deepEqual(v.members[3].returnValues, {
+    [mm.ReturnValues.insertedID]: 'i',
+  });
   assert.deepEqual(v.__returnValues, ['_b', '_a']);
 });
