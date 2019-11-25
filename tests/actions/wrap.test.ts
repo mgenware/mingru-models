@@ -1,6 +1,6 @@
 import * as mm from '../../';
-import user from '../models/user';
 import * as assert from 'assert';
+import user from '../models/user';
 import post from '../models/post';
 
 const expect = assert.equal;
@@ -113,4 +113,20 @@ it('Uninitialized wrapped action __table n __name (with from)', () => {
 it('ValueRef', () => {
   const v = new mm.ValueRef('a');
   expect(v.name, 'a');
+});
+
+it('wrapAsRefs', () => {
+  class UserTA extends mm.TableActions {
+    t = mm
+      .deleteOne()
+      .from(post)
+      .byID()
+      .wrapAsRefs({ id: 23, id2: 'abc' });
+  }
+  const ta = mm.tableActions(user, UserTA);
+  const v = ta.t;
+  assert.deepEqual(v.args, {
+    id: new mm.ValueRef('23'),
+    id2: new mm.ValueRef('abc'),
+  });
 });

@@ -1,10 +1,11 @@
 import { Action } from './tableActions';
-import { WrappedAction } from './wrappedAction';
+import { WrappedAction, ValueRef } from './wrappedAction';
 import { TransactionMember } from './transactAction';
 
 declare module './tableActions' {
   interface Action {
     wrap(args: { [name: string]: unknown }): WrappedAction;
+    wrapAsRefs(args: { [name: string]: unknown }): WrappedAction;
     declareReturnValues(values: { [name: string]: string }): TransactionMember;
     declareReturnValue(name: string, value: string): TransactionMember;
   }
@@ -50,4 +51,14 @@ Action.prototype.declareReturnValue = function(
   value: string,
 ): TransactionMember {
   return this.declareReturnValues({ [name]: value });
+};
+
+Action.prototype.wrapAsRefs = function(args: {
+  [name: string]: unknown;
+}): WrappedAction {
+  const converted: { [name: string]: ValueRef } = {};
+  for (const [k, v] of Object.entries(args)) {
+    converted[k] = new ValueRef(`${v}`);
+  }
+  return this.wrap(converted);
 };
