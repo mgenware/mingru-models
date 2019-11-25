@@ -60,6 +60,10 @@ export class Action extends CoreProperty {
     this.attrs({ [name]: value });
     return this;
   }
+
+  toString(): string {
+    return `${toTypeString(this)}(${this.__name}, ${this.__table})`;
+  }
 }
 
 export interface EnumerateActionsOptions {

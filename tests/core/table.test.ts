@@ -53,6 +53,14 @@ it('__pks', () => {
   assert.deepEqual(user.__pkAIs, [user.id]);
   assert.deepEqual(employee.__pks, [employee.id]);
   assert.deepEqual(employee.__pkAIs, []);
+
+  class Employee2 extends mm.Table {
+    id = mm.pk(mm.int()).setDBName('emp_no').autoIncrement;
+    firstName = mm.varChar(50);
+  }
+  const emp2 = mm.table(Employee2, 'employees');
+  assert.deepEqual(emp2.__pks, [emp2.id]);
+  assert.deepEqual(emp2.__pkAIs, [emp2.id]);
 });
 
 it('Composite PKs', () => {
