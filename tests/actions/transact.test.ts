@@ -154,7 +154,7 @@ it('Declare returns', () => {
   }
   const postTA = mm.tableActions(post, PostTA);
 
-  let v = postTA.batch;
+  const v = postTA.batch;
   assert.ok(v.members[0].returnValues === undefined);
   assert.deepEqual(v.members[1].returnValues, { a: '_a' });
   assert.deepEqual(v.members[2].returnValues, { b: '_b' });
