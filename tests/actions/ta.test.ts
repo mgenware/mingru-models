@@ -140,3 +140,42 @@ it('Action.validate (from)', () => {
   expect(v.vTable, post);
   expect(v.vName, 't');
 });
+
+it('Action.attr/attrs', () => {
+  {
+    class UserTA extends mm.TableActions {
+      t = mm.select(
+        mm
+          .sel(mm.sql`1`, 'col')
+          .attrs({ a: true })
+          .attr('c', 4)
+          .attrs({ b: 's' }),
+      );
+    }
+    const table = mm.tableActions(user, UserTA);
+    const t = table.t as mm.SelectAction;
+    assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
+      a: true,
+      b: 's',
+      c: 4,
+    });
+  }
+  {
+    class UserTA extends mm.TableActions {
+      t = mm.select(
+        mm
+          .sel(mm.sql`1`, 'col')
+          .attr('a', true)
+          .attrs({ c: 4 })
+          .attrs({ b: 's', c: 5 }),
+      );
+    }
+    const table = mm.tableActions(user, UserTA);
+    const t = table.t as mm.SelectAction;
+    assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
+      a: true,
+      b: 's',
+      c: 5,
+    });
+  }
+});

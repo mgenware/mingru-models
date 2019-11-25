@@ -55,6 +55,11 @@ export class Action extends CoreProperty {
     this.__attrs = { ...this.__attrs, ...values };
     return this;
   }
+
+  attr(name: string, value: unknown): this {
+    this.attrs({ [name]: value });
+    return this;
+  }
 }
 
 export interface EnumerateActionsOptions {

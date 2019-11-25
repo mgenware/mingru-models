@@ -236,39 +236,41 @@ it('Column.ensureInitialized', () => {
   );
 });
 
-it('Column.attr', () => {
+it('Column.attr/attrs n RawColumn.attr/attrs', () => {
   {
     class UserTA extends mm.TableActions {
       t = mm.select(
         user.follower_count
-          .attrs({
-            a: true,
-          })
-          .attrs({ b: 's' }),
+          .attr('a', true)
+          .attrs({ a: 3, b: 's' })
+          .attr('d', 3),
       );
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
     assert.equal((t.columns[0] as mm.RawColumn).core, user.follower_count);
     assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
-      a: true,
+      a: 3,
       b: 's',
+      d: 3,
     });
   }
   {
     class UserTA extends mm.TableActions {
       t = mm.select(
-        mm
-          .sel(mm.sql`1`, 'col')
+        user.follower_count
           .attrs({ a: true })
-          .attrs({ b: 's' }),
+          .attrs({ a: 3, b: 's' })
+          .attr('d', 3),
       );
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
+    assert.equal((t.columns[0] as mm.RawColumn).core, user.follower_count);
     assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
-      a: true,
+      a: 3,
       b: 's',
+      d: 3,
     });
   }
 });

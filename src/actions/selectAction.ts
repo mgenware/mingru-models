@@ -76,6 +76,11 @@ export class RawColumn {
     return this;
   }
 
+  attr(name: string, value: unknown): this {
+    this.attrs({ [name]: value });
+    return this;
+  }
+
   toString(): string {
     return `RawColumn(${this.selectedName}, core = ${this.core.toString()})`;
   }

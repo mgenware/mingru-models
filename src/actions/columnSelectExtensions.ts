@@ -6,6 +6,7 @@ declare module '../core/core' {
   interface Column {
     as(name: string): RawColumn;
     attrs(values: { [name: string]: unknown }): RawColumn;
+    attr(name: string, value: unknown): RawColumn;
   }
 }
 
@@ -18,4 +19,8 @@ Column.prototype.attrs = function(values: {
   [name: string]: unknown;
 }): RawColumn {
   return new RawColumn(this).attrs(values);
+};
+
+Column.prototype.attr = function(name: string, value: unknown): RawColumn {
+  return this.attrs({ [name]: value });
 };
