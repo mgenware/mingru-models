@@ -6,6 +6,7 @@ declare module './tableActions' {
   interface Action {
     wrap(args: { [name: string]: unknown }): WrappedAction;
     declareReturnValues(values: { [name: string]: string }): TransactionMember;
+    declareReturnValue(name: string, value: string): TransactionMember;
   }
 }
 
@@ -42,4 +43,11 @@ Action.prototype.declareReturnValues = function(values: {
   [name: string]: string;
 }): TransactionMember {
   return new TransactionMember(this, undefined, values);
+};
+
+Action.prototype.declareReturnValue = function(
+  name: string,
+  value: string,
+): TransactionMember {
+  return this.declareReturnValues({ [name]: value });
 };

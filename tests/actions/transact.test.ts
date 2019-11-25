@@ -148,7 +148,7 @@ it('Declare returns', () => {
       .transact(
         userTA.insert1,
         userTA.insert2.declareReturnValues({ a: '_a' }),
-        userTA.insert1.declareReturnValues({ b: '_b' }),
+        userTA.insert1.declareReturnValue('b', '_b'),
       )
       .setReturnValues('_b', '_a');
   }
