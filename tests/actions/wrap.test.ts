@@ -110,7 +110,7 @@ it('Uninitialized wrapped action __table n __name (with from)', () => {
   expect(v.isTemp, true);
 });
 
-it('ReturnValueDef', () => {
-  const v = new mm.ReturnValueDef('a');
+it('ValueRef', () => {
+  const v = new mm.ValueRef('a');
   expect(v.name, 'a');
 });
