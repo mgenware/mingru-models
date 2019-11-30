@@ -4,6 +4,7 @@ export * from './core/columnHelper';
 export * from './core/table';
 export * from './core/sql';
 export * from './returnValues';
+export * from './attrs';
 
 // Table actions
 export * from './actions/tableActions';
