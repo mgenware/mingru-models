@@ -30,6 +30,11 @@
   "engines": {
     "node": ">=10.0.0"
   },
+  "files": [
+    "/dist/**/*.js",
+    "/dist/**/*.ts",
+    "/dist/**/*.map"
+  ],
   "devDependencies": {
     "@types/lodash.camelcase": "^4.3.6",
     "@types/lodash.snakecase": "^4.1.6",
