@@ -91,10 +91,10 @@ age = mm.int(18); // `age` defaults to 18
 // `mm.varChar` accepts an optional string as default value, the first param `100` indicates the `VARCHAR` length
 name = mm.varChar(100, 'Liu'); // `name` defaults to "Liu"
 
-// `mm.datetime` `mm.date`, and `mm.time` accept an optional boolean indicating if defaults to current date/time
-datetime_updated = mm.datetime(true);
-date_updated mm.date(true);
-time_updated = mm.time(true);
+// `mm.datetime` `mm.date`, and `mm.time` accept an optional enum indicating whether it defaults to current date/time in local or UTC time zone.
+datetime_updated = mm.datetime('local');
+date_updated mm.date('utc');
+time_updated = mm.time('utc');
 ```
 
 Sometimes, we need to fully customize a default value, e.g. an SQL expression, then we can call `Column.setDefault` and pass an SQL expression (will be covered in [Raw SQL Expressions](#where-and-raw-sql-expressions) below):
@@ -104,8 +104,8 @@ Sometimes, we need to fully customize a default value, e.g. an SQL expression, t
 age = mm.int(18).setDefault(mm.sql`FLOOR(RAND() * 401) + 100`);
 
 // These two lines are equivalent
-datetime_updated = mm.datetime(true);
-datetime_updated = mm.datetime().setDefault(mm.sql`${mm.datetimeNow()}`);
+datetime_updated = mm.datetime('utc');
+datetime_updated = mm.datetime().setDefault(mm.sql`${mm.utcDatetimeNow()}`);
 ```
 
 Here is a full list of column creation helper methods:
@@ -146,11 +146,13 @@ function text(defaultValue?: string | null): Column;
 // BOOL column
 function bool(defaultValue?: boolean | null): Column;
 // DATETIME column
-function datetime(defaultsToNow?: boolean | null): Column;
+function datetime(defaultsToNow?: DateTimeDefaultValue): Column;
 // DATE column
-function date(defaultsToNow?: boolean | null): Column;
+function date(defaultsToNow?: DateTimeDefaultValue): Column;
 // TIME column
-function time(defaultsToNow?: boolean | null): Column;
+function time(defaultsToNow?: DateTimeDefaultValue): Column;
+
+export type DateTimeDefaultValue = 'none' | 'local' | 'utc';
 ```
 
 NOTE: columns created by column helper methods are **`NOT NULL`** by default, to create nullable (`NULL`) column, use the extra `nullable` property:
@@ -483,15 +485,29 @@ As these system calls are commonly used, mingru-models supports them as predefin
 
 ```ts
 enum SQLCallType {
-  datetimeNow, // NOW() for DATETIME
-  dateNow, // NOW() for DATE
-  timeNow, // NOW() for TIME
+  localDatetimeNow, // NOW() for DATETIME
+  localDateNow, // NOW() for DATE
+  localTimeNow, // NOW() for TIME
   count, // COUNT()
   avg, // AVG()
   sum, // SUM()
   coalesce, // COALESCE()
   min, // MIN()
   max, // MAX()
+
+  // Time-related.
+  year,
+  month,
+  week,
+  day,
+  hour,
+  minute,
+  second,
+
+  // UTC version of NOW().
+  utcDatetimeNow,
+  utcDateNow,
+  utcTimeNow,
 }
 ```
 
@@ -506,12 +522,12 @@ updateLastLogin = dd
 
 updateLastLogin = dd
   .updateOne()
-  .set(user.lastLogin, mm.sql`${mm.datetimeNow()}`)
+  .set(user.lastLogin, mm.sql`${mm.localDatetimeNow()}`)
   .byID();
 
 updateLastLogin = dd
   .updateOne()
-  .set(user.lastLogin, mm.datetimeNow())
+  .set(user.lastLogin, mm.localDatetimeNow())
   .byID();
 ```
 
@@ -762,7 +778,7 @@ When set a default value to a column, two things happen:
 - Default values are included in `CREATE TABLE` SQL.
 - Default values are also explicitly set in `INSERT` and `UPDATE` actions.
 
-Setting default values in `CREATE TABLE` also makes it hard to attach a dynamic value to a column, e.g. setting `NOW()` in a `DATETIME` column, in this case, you can use the `noDefaultOnCSQL` property to disable setting default value on generated `CREATE TABLE` SQL:
+Setting default values in `CREATE TABLE` also makes it hard to attach a dynamic value to a column, e.g. setting `NOW()` in a `DATETIME` column. In this case, you can use the `noDefaultOnCSQL` property to disable setting default value on generated `CREATE TABLE` SQL:
 
 ```ts
 a = mm.int(1);
