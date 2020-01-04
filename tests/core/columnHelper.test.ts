@@ -162,7 +162,7 @@ it('datetime', () => {
   c = mm.datetime('utc');
   expect(
     (c.__defaultValue as object).toString(),
-    'SQL(E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3))',
+    'SQL(E(SQLCall(16, return = ColType(SQL.DATETIME), type = 3))',
   );
 });
 
@@ -179,7 +179,7 @@ it('date', () => {
   c = mm.date('utc');
   expect(
     (c.__defaultValue as object).toString(),
-    'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
+    'SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3))',
   );
 });
 
@@ -196,7 +196,7 @@ it('time', () => {
   c = mm.time('utc');
   expect(
     (c.__defaultValue as object).toString(),
-    'SQL(E(SQLCall(2, return = ColType(SQL.TIME), type = 3))',
+    'SQL(E(SQLCall(18, return = ColType(SQL.TIME), type = 3))',
   );
 });
 

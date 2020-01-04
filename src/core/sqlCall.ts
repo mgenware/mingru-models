@@ -7,9 +7,6 @@ export enum SQLCallType {
   localDatetimeNow, // NOW() for DATETIME
   localDateNow, // NOW() for DATE
   localTimeNow, // NOW() for TIME
-  utcDatetimeNow,
-  utcDateNow,
-  utcTimeNow,
   count, // COUNT()
   avg, // AVG()
   sum, // SUM()
@@ -17,7 +14,7 @@ export enum SQLCallType {
   min, // MIN()
   max, // MAX()
 
-  // Time related
+  // Time-related.
   year,
   month,
   week,
@@ -25,6 +22,11 @@ export enum SQLCallType {
   hour,
   minute,
   second,
+
+  // UTC version of NOW().
+  utcDatetimeNow,
+  utcDateNow,
+  utcTimeNow,
 }
 
 export class SQLCall {
