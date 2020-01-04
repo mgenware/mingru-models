@@ -4,9 +4,12 @@ import dt from './dt';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export enum SQLCallType {
-  datetimeNow, // NOW() for DATETIME
-  dateNow, // NOW() for DATE
-  timeNow, // NOW() for TIME
+  localDatetimeNow, // NOW() for DATETIME
+  localDateNow, // NOW() for DATE
+  localTimeNow, // NOW() for TIME
+  utcDatetimeNow,
+  utcDateNow,
+  utcTimeNow,
   count, // COUNT()
   avg, // AVG()
   sum, // SUM()
@@ -45,16 +48,28 @@ export class SQLCall {
   }
 }
 
-export function datetimeNow(): SQLCall {
-  return new SQLCall(SQLCallType.datetimeNow, new ColumnType(dt.datetime));
+export function localDatetimeNow(): SQLCall {
+  return new SQLCall(SQLCallType.localDatetimeNow, new ColumnType(dt.datetime));
 }
 
-export function timeNow(): SQLCall {
-  return new SQLCall(SQLCallType.timeNow, new ColumnType(dt.time));
+export function localTimeNow(): SQLCall {
+  return new SQLCall(SQLCallType.localTimeNow, new ColumnType(dt.time));
 }
 
-export function dateNow(): SQLCall {
-  return new SQLCall(SQLCallType.dateNow, new ColumnType(dt.date));
+export function localDateNow(): SQLCall {
+  return new SQLCall(SQLCallType.localDateNow, new ColumnType(dt.date));
+}
+
+export function utcDatetimeNow(): SQLCall {
+  return new SQLCall(SQLCallType.utcDatetimeNow, new ColumnType(dt.datetime));
+}
+
+export function utcTimeNow(): SQLCall {
+  return new SQLCall(SQLCallType.utcTimeNow, new ColumnType(dt.time));
+}
+
+export function utcDateNow(): SQLCall {
+  return new SQLCall(SQLCallType.utcDateNow, new ColumnType(dt.date));
 }
 
 export function count(column: SQLConvertible): SQLCall {

@@ -62,7 +62,7 @@ it('SQLConvertible value', () => {
   class PostTA extends mm.TableActions {
     t = mm
       .unsafeInsert()
-      .set(post.title, mm.dateNow())
+      .set(post.title, mm.localDateNow())
       .setDefaults();
   }
   const ta = mm.tableActions(post, PostTA);

@@ -228,7 +228,7 @@ it('SQLConvertible value', () => {
   class UserTA extends mm.TableActions {
     t = mm
       .updateOne()
-      .set(user.name, mm.dateNow())
+      .set(user.name, mm.localDateNow())
       .byID();
   }
   const ta = mm.tableActions(user, UserTA);

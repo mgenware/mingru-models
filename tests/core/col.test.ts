@@ -207,7 +207,7 @@ it('Register property callback on a initialized property', () => {
 it('Throw on default value of complex SQL', () => {
   assert.doesNotThrow(() => {
     class T extends mm.Table {
-      t = mm.varChar(23).setDefault(mm.datetimeNow());
+      t = mm.varChar(23).setDefault(mm.localDatetimeNow());
     }
     mm.table(T);
   });

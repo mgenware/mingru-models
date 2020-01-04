@@ -11,16 +11,28 @@ function dtc(dtString: string): mm.ColumnType {
 
 it('SQL calls', () => {
   let t: mm.SQLCall;
-  t = mm.datetimeNow();
-  expect(t.type, mm.SQLCallType.datetimeNow);
+  t = mm.localDatetimeNow();
+  expect(t.type, mm.SQLCallType.localDatetimeNow);
   assert.deepEqual(t.returnType, dtc(dt.datetime));
 
-  t = mm.dateNow();
-  expect(t.type, mm.SQLCallType.dateNow);
+  t = mm.utcDatetimeNow();
+  expect(t.type, mm.SQLCallType.utcDatetimeNow);
+  assert.deepEqual(t.returnType, dtc(dt.datetime));
+
+  t = mm.localDateNow();
+  expect(t.type, mm.SQLCallType.localDateNow);
   assert.deepEqual(t.returnType, dtc(dt.date));
 
-  t = mm.timeNow();
-  expect(t.type, mm.SQLCallType.timeNow);
+  t = mm.utcDateNow();
+  expect(t.type, mm.SQLCallType.utcDateNow);
+  assert.deepEqual(t.returnType, dtc(dt.date));
+
+  t = mm.localTimeNow();
+  expect(t.type, mm.SQLCallType.localTimeNow);
+  assert.deepEqual(t.returnType, dtc(dt.time));
+
+  t = mm.utcTimeNow();
+  expect(t.type, mm.SQLCallType.utcTimeNow);
   assert.deepEqual(t.returnType, dtc(dt.time));
 
   t = mm.count(post.id);
@@ -80,15 +92,15 @@ it('SQL calls', () => {
 
 it('Embeded in SQL', () => {
   expect(
-    mm.sql`haha ${mm.datetimeNow()} ${mm.dateNow()}`.toString(),
+    mm.sql`haha ${mm.localDatetimeNow()} ${mm.localDateNow()}`.toString(),
     `SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(SQL.DATE), type = 3))`,
   );
   expect(
     mm.sql`haha ${new mm.SQLCall(
-      mm.SQLCallType.datetimeNow,
+      mm.SQLCallType.localDatetimeNow,
       new mm.ColumnType('c1'),
     )} ${new mm.SQLCall(
-      mm.SQLCallType.dateNow,
+      mm.SQLCallType.localDateNow,
       new mm.ColumnType('c2'),
     )}`.toString(),
     `SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(c1), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(c2), type = 3))`,

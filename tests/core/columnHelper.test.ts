@@ -153,7 +153,13 @@ it('datetime', () => {
   let c = mm.datetime();
   ok(c.__type.types.includes(mm.dt.datetime));
 
-  c = mm.datetime(true);
+  c = mm.datetime('local');
+  expect(
+    (c.__defaultValue as object).toString(),
+    'SQL(E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3))',
+  );
+
+  c = mm.datetime('utc');
   expect(
     (c.__defaultValue as object).toString(),
     'SQL(E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3))',
@@ -164,7 +170,13 @@ it('date', () => {
   let c = mm.date();
   ok(c.__type.types.includes(mm.dt.date));
 
-  c = mm.date(true);
+  c = mm.date('local');
+  expect(
+    (c.__defaultValue as object).toString(),
+    'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
+  );
+
+  c = mm.date('utc');
   expect(
     (c.__defaultValue as object).toString(),
     'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
@@ -175,7 +187,13 @@ it('time', () => {
   let c = mm.time();
   ok(c.__type.types.includes(mm.dt.time));
 
-  c = mm.time(true);
+  c = mm.time('local');
+  expect(
+    (c.__defaultValue as object).toString(),
+    'SQL(E(SQLCall(2, return = ColType(SQL.TIME), type = 3))',
+  );
+
+  c = mm.time('utc');
   expect(
     (c.__defaultValue as object).toString(),
     'SQL(E(SQLCall(2, return = ColType(SQL.TIME), type = 3))',

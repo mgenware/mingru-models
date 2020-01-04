@@ -5,6 +5,8 @@ import dt from './dt';
 import * as call from './sqlCall';
 import toTypeString from 'to-type-string';
 
+export type DateTimeDefaultValue = 'none' | 'local' | 'utc';
+
 export function fk(column: Column): Column {
   throwIfFalsy(column, 'column');
   if (!Object.isFrozen(column)) {
@@ -112,26 +114,32 @@ export function bool(defaultValue?: boolean | null): Column {
   return col;
 }
 
-export function datetime(defaultsToNow = false): Column {
+export function datetime(defaultsToNow = 'none'): Column {
   const col = Column.fromTypes(dt.datetime);
   if (defaultsToNow) {
-    col.__defaultValue = sql`${call.datetimeNow()}`;
+    col.__defaultValue = sql`${
+      defaultsToNow === 'utc' ? call.utcDatetimeNow() : call.localDatetimeNow()
+    }`;
   }
   return col;
 }
 
-export function date(defaultsToNow = false): Column {
+export function date(defaultsToNow = 'none'): Column {
   const col = Column.fromTypes(dt.date);
   if (defaultsToNow) {
-    col.__defaultValue = sql`${call.dateNow()}`;
+    col.__defaultValue = sql`${
+      defaultsToNow === 'utc' ? call.utcDateNow() : call.localDateNow()
+    }`;
   }
   return col;
 }
 
-export function time(defaultsToNow = false): Column {
+export function time(defaultsToNow = 'none'): Column {
   const col = Column.fromTypes(dt.time);
   if (defaultsToNow) {
-    col.__defaultValue = sql`${call.timeNow()}`;
+    col.__defaultValue = sql`${
+      defaultsToNow === 'utc' ? call.utcTimeNow() : call.localTimeNow()
+    }`;
   }
   return col;
 }

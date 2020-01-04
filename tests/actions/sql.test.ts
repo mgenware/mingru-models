@@ -203,7 +203,7 @@ it('Input.isEqualTo', () => {
 });
 
 it('hasColumns', () => {
-  const a = mm.sql`sdf sd ${mm.datetimeNow()}`;
+  const a = mm.sql`sdf sd ${mm.localDatetimeNow()}`;
   const b = mm.sql`sisjsdf`;
   const c = mm.sql`jis df${user.id}`;
   const d = mm.sql`isjdf${user.name.toInput()}`;
@@ -214,7 +214,7 @@ it('hasColumns', () => {
 });
 
 it('hasCalls', () => {
-  const a = mm.sql`sdf sd ${mm.datetimeNow()}`;
+  const a = mm.sql`sdf sd ${mm.localDatetimeNow()}`;
   const b = mm.sql`sisjsdf`;
   const c = mm.sql`jis df${user.id}`;
   const d = mm.sql`isjdf${user.name.toInput()}`;
