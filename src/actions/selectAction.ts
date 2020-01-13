@@ -4,6 +4,7 @@ import { Column, ColumnType, Table } from '../core/core';
 import { SQL, SQLConvertible, convertToSQL, SQLVariable } from '../core/sql';
 import { CoreSelectAction } from './coreSelectAction';
 import toTypeString from 'to-type-string';
+import { ColumnAttributes } from '../attrs';
 
 export type SelectActionColumns = Column | RawColumn;
 export type SelectActionColumnNames = SelectActionColumns | string;
@@ -79,6 +80,10 @@ export class RawColumn {
   attr(name: string, value: unknown): this {
     this.attrs({ [name]: value });
     return this;
+  }
+
+  privateAttr(): this {
+    return this.attr(ColumnAttributes.isPrivate, true);
   }
 
   toString(): string {

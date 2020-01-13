@@ -274,3 +274,42 @@ it('Column.attr/attrs n RawColumn.attr/attrs', () => {
     });
   }
 });
+
+it('Column.privateAttr n RawColumn.privateAttr', () => {
+  {
+    class UserTA extends mm.TableActions {
+      t = mm.select(
+        user.follower_count
+          .attr('a', true)
+          .attrs({ a: 3, b: 's' })
+          .privateAttr(),
+      );
+    }
+    const table = mm.tableActions(user, UserTA);
+    const t = table.t as mm.SelectAction;
+    assert.equal((t.columns[0] as mm.RawColumn).core, user.follower_count);
+    assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
+      a: 3,
+      b: 's',
+      [mm.ColumnAttributes.isPrivate]: true,
+    });
+  }
+  {
+    class UserTA extends mm.TableActions {
+      t = mm.select(
+        user.follower_count
+          .attrs({ a: true })
+          .attrs({ a: 3, b: 's' })
+          .privateAttr(),
+      );
+    }
+    const table = mm.tableActions(user, UserTA);
+    const t = table.t as mm.SelectAction;
+    assert.equal((t.columns[0] as mm.RawColumn).core, user.follower_count);
+    assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
+      a: 3,
+      b: 's',
+      [mm.ColumnAttributes.isPrivate]: true,
+    });
+  }
+});
