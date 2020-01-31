@@ -2,9 +2,9 @@ export enum ColumnAttributes {
   // Whether this column is excluded in JSON serialization.
   isPrivate = '_is_private',
 
-  // Whether this column is included in JSON serialization even though it's empty.
+  // Whether this column is excluded in JSON serialization if it's empty.
   // NOTE: 0, false, nil, empty string, empty collection are all considered empty values.
-  serializeEmptyValue = '_include_empty',
+  excludeEmptyValue = '_exclude_empty',
 }
 
 export enum ActionAttributes {
