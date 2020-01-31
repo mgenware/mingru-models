@@ -1,5 +1,6 @@
 export enum ColumnAttributes {
   isPrivate = '_is_private',
+  includeEmpty = '_include_empty',
 }
 
 export enum ActionAttributes {
