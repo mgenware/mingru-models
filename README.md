@@ -1,7 +1,7 @@
 # mingru-models (WIP)
 
+[![Build Status](https://github.com/mgenware/mingru-models/workflows/Build/badge.svg)](https://github.com/mgenware/mingru-models/actions)
 [![MEAN Module](https://img.shields.io/badge/MEAN%20Module-TypeScript-blue.svg?style=flat-square)](https://github.com/mgenware/MEAN-Module)
-[![Build Status](https://img.shields.io/travis/mgenware/mingru-models.svg?style=flat-square&label=Build+Status)](https://travis-ci.org/mgenware/mingru-models)
 [![npm version](https://img.shields.io/npm/v/mingru-models.svg?style=flat-square)](https://npmjs.com/package/mingru-models)
 [![Node.js Version](http://img.shields.io/node/v/mingru-models.svg?style=flat-square)](https://nodejs.org/en/)
 
