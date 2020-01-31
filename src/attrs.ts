@@ -1,5 +1,5 @@
 export enum ColumnAttributes {
-  isPrivate = '_isPrivate',
+  isPrivate = '_is_private',
 }
 
 export enum ActionAttributes {
