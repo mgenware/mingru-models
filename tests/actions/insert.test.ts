@@ -67,6 +67,10 @@ it('SQLConvertible value', () => {
   }
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
+  assert.deepStrictEqual(
+    v.setters,
+    new Map<mm.Column, unknown>([[post.title, mm.sql`${mm.localDateNow()}`]]),
+  );
   expect(
     v.setters.get(post.title),
     'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',

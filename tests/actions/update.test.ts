@@ -64,7 +64,7 @@ it('setInputs and setDefaults', () => {
 
   expect(
     v.settersToString(),
-    'def_value: SQL(E(abc, type = 0)), snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
+    'def_value: abc, snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
 });
 
@@ -81,7 +81,7 @@ it('setInputs with no args', () => {
 
   expect(
     v.settersToString(),
-    'def_value: SQL(E(abc, type = 0)), snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
+    'def_value: abc, snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
   assert.deepEqual([...v.autoSetters], [mm.AutoSetterType.input]);
 });
@@ -99,7 +99,7 @@ it('setDefaults with no args', () => {
 
   expect(
     v.settersToString(),
-    'def_value: SQL(E(abc, type = 0)), snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
+    'def_value: abc, snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
   assert.deepEqual([...v.autoSetters], [mm.AutoSetterType.default]);
 });

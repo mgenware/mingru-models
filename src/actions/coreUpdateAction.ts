@@ -1,6 +1,6 @@
 import { Action } from './tableActions';
 import { Column, Table } from '../core/core';
-import { SQL, SQLConvertible, convertToSQL, sql } from '../core/sql';
+import { SQLConvertible, convertToSQL, sql } from '../core/sql';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export enum AutoSetterType {
@@ -9,7 +9,7 @@ export enum AutoSetterType {
 }
 
 export class CoreUpdateAction extends Action {
-  setters = new Map<Column, SQL>();
+  setters = new Map<Column, unknown>();
   // You can call both `setInputs()` and `setDefaults()` and the order also matters,
   // we use `Set` to track these auto setters and ES6 set also keeps insertion order.
   autoSetters = new Set<AutoSetterType>();
@@ -39,15 +39,14 @@ export class CoreUpdateAction extends Action {
   setDefaults(...columns: Column[]): this {
     if (!columns.length) {
       this.autoSetters.add(AutoSetterType.default);
-      // We can't check whether all remaining columns have a default value cuz this.__table is null here
-      // We check it in validate()
+      // We don't know if all other columns have a default value as `this.__table` is null here.
+      // We check it later in validate().
       return this;
     }
     for (const col of columns) {
       this.checkColumnFree(col);
       this.checkHasDefault(col);
-      const defaultValueStr = `${col.__defaultValue}`;
-      this.setters.set(col, sql`${defaultValueStr}`);
+      this.setters.set(col, col.__defaultValue);
     }
     return this;
   }
@@ -59,10 +58,9 @@ export class CoreUpdateAction extends Action {
     }
   }
 
-  // Mostly for testing
   settersToString(): string {
     return [...this.setters.entries()]
-      .map(([k, v]) => `${k.__name}: ${v.toString()}`)
+      .map(([k, v]) => `${k.__name}: ${v}`)
       .join(', ');
   }
 
