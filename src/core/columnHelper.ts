@@ -114,7 +114,7 @@ export function bool(defaultValue?: boolean | null): Column {
   return col;
 }
 
-export function datetime(defaultsToNow = 'none'): Column {
+export function datetime(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
   const col = Column.fromTypes(dt.datetime);
   if (defaultsToNow) {
     col.__defaultValue = sql`${
@@ -124,7 +124,7 @@ export function datetime(defaultsToNow = 'none'): Column {
   return col;
 }
 
-export function date(defaultsToNow = 'none'): Column {
+export function date(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
   const col = Column.fromTypes(dt.date);
   if (defaultsToNow) {
     col.__defaultValue = sql`${
@@ -134,7 +134,7 @@ export function date(defaultsToNow = 'none'): Column {
   return col;
 }
 
-export function time(defaultsToNow = 'none'): Column {
+export function time(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
   const col = Column.fromTypes(dt.time);
   if (defaultsToNow) {
     col.__defaultValue = sql`${
