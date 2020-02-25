@@ -98,9 +98,7 @@ export function enumerateActions<T extends TableActions>(
     }
     if (value instanceof Action === false) {
       throw new Error(
-        `The property "${name}" is not a Action object, got "${toTypeString(
-          value,
-        )}"`,
+        `The property "${name}" is not an Action, got "${toTypeString(value)}"`,
       );
     }
     cb(value, name);

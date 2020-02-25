@@ -38,9 +38,7 @@ export function enumerateColumns(
     }
     if (value instanceof Column === false) {
       throw new Error(
-        `The property "${name}" is not a Column object, got "${toTypeString(
-          value,
-        )}"`,
+        `The property "${name}" is not a Column, got "${toTypeString(value)}"`,
       );
     }
     cb(value, name);
