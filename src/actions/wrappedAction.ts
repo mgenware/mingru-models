@@ -11,6 +11,10 @@ export class ValueRef {
   }
 }
 
+export function valueRef(name: string): ValueRef {
+  return new ValueRef(name);
+}
+
 export class WrappedAction extends Action {
   isTemp = false;
 

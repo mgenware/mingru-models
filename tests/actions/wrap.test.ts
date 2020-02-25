@@ -115,6 +115,11 @@ it('ValueRef', () => {
   expect(v.name, 'a');
 });
 
+it('mm.valueRef', () => {
+  const v = mm.valueRef('a');
+  expect(v.name, 'a');
+});
+
 it('wrapAsRefs', () => {
   class UserTA extends mm.TableActions {
     t = mm
