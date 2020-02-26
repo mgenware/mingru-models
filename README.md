@@ -872,6 +872,35 @@ const joinedUser = comment.post_id.join(post).user_id.join(user);
 const cols = [joinedUser.name, joinedUser.url];
 ```
 
----
+### Return values in a transaction
 
-**Work in progress**
+Imagine we need to return some values in a transaction like below:
+
+```go
+// ===== Pseudo code for demonstration only =====
+// TX body
+var insertedID;
+{
+  // TX inner body
+  _, insertedID, err = txMemberFunc1(/** ... */)
+  , err = txMemberFunc2(/** ... */)
+  userName, err = txMemberFunc3(/** ... */)
+}
+return insertedID, userName
+```
+
+You can see `insertedID` is from the second return value of `txMemberFunc1`, and `userName` is the first return value of `txMemberFunc3`. But things in mingru-models here are a bit different, we're not actually using a index-based way to reference a return value because index numbers always look magic, we're using a key-based approach! The above example could be written as:
+
+```ts
+class MyTableTA extends mm.TableActions {
+  exampleTransaction = mm
+    .transact(
+      txMemberFunc1,
+      txMemberFunc2.declareReturnValues({
+        exportedNameOfInsertedID: 'insertedID',
+      }),
+      txMemberFunc3.declareReturnValue(exportedNameOfUserName, 'userName'),
+    )
+    .setReturnValues('insertedID', 'userName');
+}
+```
