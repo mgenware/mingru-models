@@ -874,22 +874,24 @@ const cols = [joinedUser.name, joinedUser.url];
 
 ### Return values in a transaction
 
-Imagine we need to return some values in a transaction like below:
+First, mingru-models use a key-based return value reference approach. So instead of saying "declare the second return value of a func as `insertedUserID`", we say "declare the return value named `id` of a func named as `insertedUserID`". This way our code looks more readable but it also requires us to give each return value a name. To name return values of a transaction, use `TransactAction.setReturnValues`.
+
+Let's take a look at the transaction func below:
 
 ```go
 // ===== Pseudo code for demonstration only =====
 // TX body
-var insertedID;
+var insertedUserID;
 {
   // TX inner body
-  _, insertedID, err = txMemberFunc1(/** ... */)
-  , err = txMemberFunc2(/** ... */)
-  userName, err = txMemberFunc3(/** ... */)
+  _, insertedUserID, err = txMemberFunc1(/** ... */)
+  userName, err = txMemberFunc2(/** ... */)
+  _, err = txMemberFunc3(userName, /** ... */)
 }
-return insertedID, userName
+return insertedUserID
 ```
 
-You can see `insertedID` is from the second return value of `txMemberFunc1`, and `userName` is the first return value of `txMemberFunc3`. But things in mingru-models here are a bit different, we're not actually using a index-based way to reference a return value because index numbers always look magic, we're using a key-based approach! The above example could be written as:
+There are actually 3 types of variables above, those used as transaction func return values, those used by other transaction member functions, and those are both. To use a return value from other function, you have to declare it first by calling `Action.declareReturnValue`:
 
 ```ts
 class MyTableTA extends mm.TableActions {
