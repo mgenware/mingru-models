@@ -33,7 +33,10 @@ export function valueRef(name: string): ValueRef {
 export class WrappedAction extends Action {
   isTemp = false;
 
-  constructor(public action: Action, public args: { [name: string]: unknown }) {
+  constructor(
+    public action: Action,
+    public args: { [name: string]: string | ValueRef },
+  ) {
     super(ActionType.wrap);
     throwIfFalsy(action, 'action');
     throwIfFalsy(args, 'args');

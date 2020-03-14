@@ -14,7 +14,7 @@ declare module './tableActions' {
 }
 
 Action.prototype.wrap = function(args: {
-  [name: string]: unknown;
+  [name: string]: string | ValueRef;
 }): WrappedAction {
   // For a tmp wrapped action, e.g. mm.select(...).wrap
   // If tmp action is also a wrapped action, we can modify it in place
