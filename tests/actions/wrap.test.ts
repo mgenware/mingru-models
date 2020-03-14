@@ -86,7 +86,7 @@ it('Uninitialized wrapped action __table n __name', () => {
     t = mm
       .deleteOne()
       .byID()
-      .wrap({ id: 23 });
+      .wrap({ id: '23' });
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -101,7 +101,7 @@ it('Uninitialized wrapped action __table n __name (with from)', () => {
       .deleteOne()
       .from(post)
       .byID()
-      .wrap({ id: 23 });
+      .wrap({ id: '23' });
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -126,7 +126,7 @@ it('wrapAsRefs', () => {
       .deleteOne()
       .from(post)
       .byID()
-      .wrapAsRefs({ id: 23, id2: 'abc' });
+      .wrapAsRefs({ id: '23', id2: 'abc' });
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;

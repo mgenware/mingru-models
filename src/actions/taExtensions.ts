@@ -1,12 +1,12 @@
 import { Action } from './tableActions';
-import { WrappedAction, ValueRef } from './wrappedAction';
+import { WrappedAction, ValueRef, WrapActionArgValue } from './wrappedAction';
 import { TransactionMember } from './transactAction';
 import { ReturnValues } from '../returnValues';
 
 declare module './tableActions' {
   interface Action {
-    wrap(args: { [name: string]: unknown }): WrappedAction;
-    wrapAsRefs(args: { [name: string]: unknown }): WrappedAction;
+    wrap(args: { [name: string]: WrapActionArgValue }): WrappedAction;
+    wrapAsRefs(args: { [name: string]: string }): WrappedAction;
     declareReturnValues(values: { [name: string]: string }): TransactionMember;
     declareReturnValue(name: string, value: string): TransactionMember;
     declareInsertedID(value: string): TransactionMember;
@@ -14,7 +14,7 @@ declare module './tableActions' {
 }
 
 Action.prototype.wrap = function(args: {
-  [name: string]: string | ValueRef;
+  [name: string]: WrapActionArgValue;
 }): WrappedAction {
   // For a tmp wrapped action, e.g. mm.select(...).wrap
   // If tmp action is also a wrapped action, we can modify it in place
@@ -62,11 +62,11 @@ Action.prototype.declareInsertedID = function(
 };
 
 Action.prototype.wrapAsRefs = function(args: {
-  [name: string]: unknown;
+  [name: string]: string;
 }): WrappedAction {
   const converted: { [name: string]: ValueRef } = {};
   for (const [k, v] of Object.entries(args)) {
-    converted[k] = new ValueRef(`${v}`);
+    converted[k] = new ValueRef(v);
   }
   return this.wrap(converted);
 };

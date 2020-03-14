@@ -58,13 +58,13 @@ it('Temp member actions (wrap self)', async () => {
         mm.sql`${user2.postCount} + ${mm.input(mm.int(), 'offset')}`,
       )
       .byID();
-    t = mm.transact(this.updatePostCount.wrap({ offset: 1 }));
+    t = mm.transact(this.updatePostCount.wrap({ offset: '1' }));
   }
   const user2TA = mm.tableActions(user2, User2TA);
   const v = user2TA.t;
   const wrapped = v.members[0].action as WrappedAction;
   expect(wrapped.action, user2TA.updatePostCount);
-  assert.deepEqual(wrapped.args, { offset: 1 });
+  assert.deepEqual(wrapped.args, { offset: '1' });
 });
 
 it('Temp member actions (wrap other)', async () => {
@@ -90,7 +90,7 @@ it('Temp member actions (wrap other)', async () => {
 
   const post2 = mm.table(Post2);
   class Post2TA extends mm.TableActions {
-    insert = mm.transact(user2TA.updatePostCount.wrap({ offset: 1 }));
+    insert = mm.transact(user2TA.updatePostCount.wrap({ offset: '1' }));
   }
   const postTA = mm.tableActions(post2, Post2TA);
   const v = postTA.insert;

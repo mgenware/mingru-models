@@ -3,6 +3,8 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table } from '../core/core';
 import camelCase = require('lodash.camelcase');
 
+export type WrapActionArgValue = string | ValueRef;
+
 // Use this to reference an external from outer context.
 export class ValueRef {
   // Returns the first variable name if path contains property access.
@@ -35,7 +37,7 @@ export class WrappedAction extends Action {
 
   constructor(
     public action: Action,
-    public args: { [name: string]: string | ValueRef },
+    public args: { [name: string]: WrapActionArgValue },
   ) {
     super(ActionType.wrap);
     throwIfFalsy(action, 'action');
