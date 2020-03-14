@@ -1,13 +1,28 @@
 import { Action, ActionType, initializeAction } from './tableActions';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table } from '../core/core';
+import camelCase = require('lodash.camelcase');
 
 // Use this to reference an external from outer context.
 export class ValueRef {
-  constructor(public name: string) {}
+  // Returns the first variable name if path contains property access.
+  firstName: string;
+  hasPropertyAccess: boolean;
+
+  constructor(public path: string) {
+    const nameComponents = path.split('.');
+    this.firstName = nameComponents[nameComponents.length - 1];
+    if (nameComponents.length > 1) {
+      // Use lowercase name for property access input.
+      this.firstName = camelCase(nameComponents[0]);
+      this.hasPropertyAccess = true;
+    } else {
+      this.hasPropertyAccess = false;
+    }
+  }
 
   toString(): string {
-    return `ValueRef(${this.name})`;
+    return `ValueRef(${this.path})`;
   }
 }
 

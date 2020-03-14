@@ -112,12 +112,12 @@ it('Uninitialized wrapped action __table n __name (with from)', () => {
 
 it('ValueRef', () => {
   const v = new mm.ValueRef('a');
-  expect(v.name, 'a');
+  expect(v.firstName, 'a');
 });
 
 it('mm.valueRef', () => {
   const v = mm.valueRef('a');
-  expect(v.name, 'a');
+  expect(v.firstName, 'a');
 });
 
 it('wrapAsRefs', () => {
