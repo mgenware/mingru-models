@@ -79,7 +79,7 @@ it('varChar', () => {
 
 it('binary', () => {
   const c = mm.binary(20);
-  ok(c.__type.types.includes(mm.dt.char));
+  ok(c.__type.types.includes(mm.dt.binary));
   expect(c.__type.length, 20);
 });
 
