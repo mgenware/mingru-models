@@ -33,6 +33,18 @@ export function char(length: number, defaultValue?: string | null): Column {
   return col;
 }
 
+export function varBinary(length: number): Column {
+  const col = Column.fromTypes(dt.varBinary);
+  col.__type.length = length;
+  return col;
+}
+
+export function binary(length: number): Column {
+  const col = Column.fromTypes(dt.binary);
+  col.__type.length = length;
+  return col;
+}
+
 function _int(type: string, unsigned: boolean, def?: number | null): Column {
   const col = Column.fromTypes(type);
   col.__type.unsigned = unsigned;

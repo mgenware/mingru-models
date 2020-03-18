@@ -3,6 +3,8 @@ const Prefix = 'SQL.';
 export class DataTypes {
   char = Prefix + 'CHAR';
   varChar = Prefix + 'VARCHAR';
+  binary = Prefix + 'BINARY';
+  varBinary = Prefix + 'VARBINARY';
 
   int = Prefix + 'INT';
   bigInt = Prefix + 'BIGINT';

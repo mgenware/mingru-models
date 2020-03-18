@@ -77,6 +77,18 @@ it('varChar', () => {
   expect(c.__type.length, 20);
 });
 
+it('binary', () => {
+  const c = mm.binary(20);
+  ok(c.__type.types.includes(mm.dt.char));
+  expect(c.__type.length, 20);
+});
+
+it('varBinary', () => {
+  const c = mm.varBinary(20);
+  ok(c.__type.types.includes(mm.dt.varBinary));
+  expect(c.__type.length, 20);
+});
+
 it('pk', () => {
   const c = mm.pk();
   ok(c.__type.types.includes(mm.dt.bigInt));

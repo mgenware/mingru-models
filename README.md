@@ -151,6 +151,10 @@ function datetime(defaultsToNow?: DateTimeDefaultValue): Column;
 function date(defaultsToNow?: DateTimeDefaultValue): Column;
 // TIME column
 function time(defaultsToNow?: DateTimeDefaultValue): Column;
+// VARBINARY column
+function varBinary(length: number): Column;
+// BINARY column
+function binary(length: number): Column;
 
 export type DateTimeDefaultValue = 'none' | 'local' | 'utc';
 ```
