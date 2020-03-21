@@ -56,8 +56,8 @@ By default, class name is used as table name, and mingru-models automatially con
 ```ts
 class User extends mm.MyTable {}
 
-export default mm.table(MyTable); // Table name is "my_table" in SQL
-export default mm.table(MyTable, 'haha'); // Table name is "haha" in SQL
+export default mm.table(MyTable); // Table name is "my_table" in SQL.
+export default mm.table(MyTable, 'haha'); // Table name is "haha" in SQL.
 ```
 
 ### Columns
@@ -69,43 +69,36 @@ Columns are nothing but `mm.Column` objects, but we actually seldom need to manu
 For example:
 
 ```ts
-// `id` is a primary key, data type defaults to unsigned `BIGINT`
+// `id` is a primary key, data type defaults to unsigned `BIGINT`.
 id = mm.pk();
 
-// `age` is `INT`
+// `age` is `INT`.
 age = mm.int();
 
-// `name` is `VARCHAR(100)`
-name = mm.varChar(100);
+// `name` is `VARCHAR(100)`, and defaults to 'abc'.
+name = mm.varChar(100).default('abc');
 
-// Set primary key underlying data type to `INT`
+// Set primary key underlying data type to `INT`.
 id = mm.pk(mm.int());
 ```
 
-In the code above, `mm.pk`, `mm.int` and `mm.varChar` are all column helper methods. You can also set a default value in most of the column helper methods:
+For date time columns, you can also make them default to a `NOW()` value.
 
 ```ts
-// `mm.int` accepts an optional number as default value
-age = mm.int(18); // `age` defaults to 18
-
-// `mm.varChar` accepts an optional string as default value, the first param `100` indicates the `VARCHAR` length
-name = mm.varChar(100, 'Liu'); // `name` defaults to "Liu"
-
-// `mm.datetime` `mm.date`, and `mm.time` accept an optional enum indicating whether it defaults to current date/time in local or UTC time zone.
-datetime_updated = mm.datetime('local');
-date_updated mm.date('utc');
-time_updated = mm.time('utc');
+datetime_updated = mm.datetime('local'); // Defaults to local time NOW().
+date_updated mm.date('utc'); // Defaults to UTC NOW().
+time_updated = mm.time('utc'); // Defaults to UTC NOW().
 ```
 
-Sometimes, we need to fully customize a default value, e.g. an SQL expression, then we can call `Column.setDefault` and pass an SQL expression (will be covered in [Raw SQL Expressions](#where-and-raw-sql-expressions) below):
+Sometimes, we need to fully customize a default value, e.g. an SQL expression, you can always call `Column.default` and pass an SQL expression (will be covered in [Raw SQL Expressions](#where-and-raw-sql-expressions) below):
 
 ```ts
-// Set it to an custom SQL expression once inserted
-age = mm.int(18).setDefault(mm.sql`FLOOR(RAND() * 401) + 100`);
+// Set it to an custom SQL expression once inserted.
+age = mm.int().default(mm.sql`FLOOR(RAND() * 401) + 100`);
 
-// These two lines are equivalent
+// These two lines are equivalent.
 datetime_updated = mm.datetime('utc');
-datetime_updated = mm.datetime().setDefault(mm.sql`${mm.utcDatetimeNow()}`);
+datetime_updated = mm.datetime().default(mm.sql`${mm.utcDatetimeNow()}`);
 ```
 
 Here is a full list of column creation helper methods:
@@ -116,35 +109,35 @@ function pk(column?: Column): Column;
 // Foreign key
 function fk(column: Column): Column;
 // VARCHAR column
-function varChar(length: number, defaultValue?: string | null): Column;
+function varChar(length: number): Column;
 // CHAR column
-function char(length: number, defaultValue?: string | null): Column;
+function char(length: number): Column;
 // INT column
-function int(defaultValue?: number | null): Column;
+function int(length?: number): Column;
 // unsigned INT column
-function uInt(defaultValue?: number | null): Column;
+function uInt(length?: number | null): Column;
 // BIGINT column
-function bigInt(defaultValue?: number | null): Column;
+function bigInt(length?: number | null): Column;
 // unsigned BIGINT column
-function uBigInt(defaultValue?: number | null): Column;
+function uBigInt(length?: number | null): Column;
 // SMALLINT column
-function smallInt(defaultValue?: number | null): Column;
+function smallInt(length?: number | null): Column;
 // unsigned SMALLINT column
-function uSmallInt(defaultValue?: number | null): Column;
+function uSmallInt(length?: number | null): Column;
 // TINYINT column
-function tinyInt(defaultValue?: number | null): Column;
+function tinyInt(length?: number | null): Column;
 // unsigned TINYINT column
-function uTinyInt(defaultValue?: number | null): Column;
+function uTinyInt(length?: number | null): Column;
 // FLOAT column
-function float(defaultValue?: number | null): Column;
+function float(precision?: number | null): Column;
 // DOUBLE column
-function double(defaultValue?: number | null): Column;
+function double(precision?: number | null): Column;
 // Adds UNIQUE constraint to a column
 function unique(col: Column): Column;
 // TEXT column
-function text(defaultValue?: string | null): Column;
+function text(): Column;
 // BOOL column
-function bool(defaultValue?: boolean | null): Column;
+function bool(): Column;
 // DATETIME column
 function datetime(defaultsToNow?: DateTimeDefaultValue): Column;
 // DATE column
@@ -785,8 +778,8 @@ When set a default value to a column, two things happen:
 Setting default values in `CREATE TABLE` also makes it hard to attach a dynamic value to a column, e.g. setting `NOW()` in a `DATETIME` column. In this case, you can use the `noDefaultOnCSQL` property to disable setting default value on generated `CREATE TABLE` SQL:
 
 ```ts
-a = mm.int(1);
-b = mm.int(1).noDefaultOnCSQL;
+a = mm.int().default(1);
+b = mm.int().default(1).noDefaultOnCSQL;
 ```
 
 The generated `CREATE TABLE` SQL:
