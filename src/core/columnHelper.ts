@@ -85,11 +85,11 @@ export function uTinyInt(length?: number): Column {
 }
 
 export function float(precision?: number): Column {
-  return _int(dt.float, true, precision);
+  return _int(dt.float, false, precision);
 }
 
 export function double(precision?: number): Column {
-  return _int(dt.double, true, precision);
+  return _int(dt.double, false, precision);
 }
 
 export function unique(col: Column): Column {

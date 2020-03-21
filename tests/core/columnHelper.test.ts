@@ -70,24 +70,28 @@ it('char', () => {
   const c = mm.char(20);
   ok(c.__type.types.includes(mm.dt.char));
   expect(c.__type.length, 20);
+  expect(c.__type.unsigned, false);
 });
 
 it('varChar', () => {
   const c = mm.varChar(20);
   ok(c.__type.types.includes(mm.dt.varChar));
   expect(c.__type.length, 20);
+  expect(c.__type.unsigned, false);
 });
 
 it('binary', () => {
   const c = mm.binary(20);
   ok(c.__type.types.includes(mm.dt.binary));
   expect(c.__type.length, 20);
+  expect(c.__type.unsigned, false);
 });
 
 it('varBinary', () => {
   const c = mm.varBinary(20);
   ok(c.__type.types.includes(mm.dt.varBinary));
   expect(c.__type.length, 20);
+  expect(c.__type.unsigned, false);
 });
 
 it('pk', () => {
@@ -142,12 +146,14 @@ it('text', () => {
   const c = mm.text();
   ok(c.__type.types.includes(mm.dt.text));
   expect(c.__type.length, 0);
+  expect(c.__type.unsigned, false);
 });
 
 it('double', () => {
   const c = mm.double(20);
   ok(c.__type.types.includes(mm.dt.double));
   expect(c.__type.length, 20);
+  expect(c.__type.unsigned, false);
 
   const c2 = mm.double();
   expect(c2.__type.length, 0);
@@ -157,11 +163,13 @@ it('float', () => {
   const c = mm.float(20);
   ok(c.__type.types.includes(mm.dt.float));
   expect(c.__type.length, 20);
+  expect(c.__type.unsigned, false);
 });
 
 it('bool', () => {
   const c = mm.bool();
   ok(c.__type.types.includes(mm.dt.bool));
+  expect(c.__type.unsigned, false);
 });
 
 it('datetime', () => {
