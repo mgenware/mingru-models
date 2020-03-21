@@ -128,10 +128,10 @@ it('unique (default)', () => {
 });
 
 it('setDefault', () => {
-  let c = mm.int(123).setDefault('omg');
+  let c = mm.int(123).default('omg');
   expect(c.__defaultValue, 'omg');
 
-  c = mm.int(123).setDefault(null);
+  c = mm.int(123).default(null);
   expect(c.__defaultValue, null);
 });
 
@@ -207,13 +207,13 @@ it('Register property callback on a initialized property', () => {
 it('Throw on default value of complex SQL', () => {
   assert.doesNotThrow(() => {
     class T extends mm.Table {
-      t = mm.varChar(23).setDefault(mm.localDatetimeNow());
+      t = mm.varChar(23).default(mm.localDatetimeNow());
     }
     mm.table(T);
   });
   itThrows(() => {
     class T extends mm.Table {
-      t = mm.varChar(23).setDefault(mm.sql`${user.name}`);
+      t = mm.varChar(23).default(mm.sql`${user.name}`);
     }
     mm.table(T);
   }, `Default value cannot be a complex SQL expression [column "t"]`);

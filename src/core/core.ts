@@ -183,7 +183,7 @@ export class Column extends CoreProperty {
     Object.freeze(this);
   }
 
-  setDefault(value: unknown): this {
+  default(value: unknown): this {
     this.checkMutability();
     this.__defaultValue = value;
     return this;

@@ -8,57 +8,65 @@ const expect = assert.equal;
 const ok = assert.ok;
 
 it('bigInt', () => {
-  const c = mm.bigInt(123);
+  const c = mm.bigInt(20).default(123);
   ok(c.__type.types.includes(mm.dt.bigInt));
+  expect(c.__type.length, 20);
   expect(c.__defaultValue, 123);
   expect(c.__type.unsigned, false);
 });
 
 it('unsignedBigInt', () => {
-  const c = mm.uBigInt(123);
+  const c = mm.uBigInt(20).default(123);
   ok(c.__type.types.includes(mm.dt.bigInt));
+  expect(c.__type.length, 20);
   expect(c.__defaultValue, 123);
   expect(c.__type.unsigned, true);
 });
 
 it('int', () => {
-  const c = mm.int(123);
+  const c = mm.int(20).default(123);
   ok(c.__type.types.includes(mm.dt.int));
+  expect(c.__type.length, 20);
   expect(c.__defaultValue, 123);
   expect(c.__type.unsigned, false);
 });
 
 it('unsignedInt', () => {
-  const c = mm.uInt(123);
+  const c = mm.uInt(20).default(123);
   ok(c.__type.types.includes(mm.dt.int));
+  expect(c.__type.length, 20);
   expect(c.__defaultValue, 123);
   expect(c.__type.unsigned, true);
 });
 
 it('smallInt', () => {
-  const c = mm.smallInt(123);
+  const c = mm.smallInt(20).default(123);
   ok(c.__type.types.includes(mm.dt.smallInt));
+  expect(c.__type.length, 20);
   expect(c.__defaultValue, 123);
   expect(c.__type.unsigned, false);
 });
 
 it('unsignedSmallInt', () => {
-  const c = mm.uSmallInt(123);
+  const c = mm.uSmallInt(20).default(123);
   ok(c.__type.types.includes(mm.dt.smallInt));
+  expect(c.__type.length, 20);
   expect(c.__defaultValue, 123);
   expect(c.__type.unsigned, true);
 });
 
 it('tinyInt', () => {
-  const c = mm.tinyInt(123);
+  const c = mm.tinyInt(20).default(123);
   ok(c.__type.types.includes(mm.dt.tinyInt));
+  expect(c.__type.length, 20);
   expect(c.__defaultValue, 123);
   expect(c.__type.unsigned, false);
 });
 
 it('unsignedTinyInt', () => {
-  const c = mm.uTinyInt(123);
+  const c = mm.uTinyInt(20).default(123);
   ok(c.__type.types.includes(mm.dt.tinyInt));
+  expect(c.__type.length, 20);
   expect(c.__defaultValue, 123);
   expect(c.__type.unsigned, true);
 });
@@ -144,19 +152,21 @@ it('text', () => {
 });
 
 it('double', () => {
-  const c = mm.double(20);
+  const c = mm.double(20).default(123);
   ok(c.__type.types.includes(mm.dt.double));
-  expect(c.__defaultValue, 20);
+  expect(c.__type.length, 20);
+  expect(c.__defaultValue, 123);
 });
 
 it('float', () => {
-  const c = mm.float(20);
+  const c = mm.float(20).default(123);
   ok(c.__type.types.includes(mm.dt.float));
-  expect(c.__defaultValue, 20);
+  expect(c.__type.length, 20);
+  expect(c.__defaultValue, 123);
 });
 
 it('bool', () => {
-  const c = mm.bool(true);
+  const c = mm.bool().default(true);
   ok(c.__type.types.includes(mm.dt.bool));
   expect(c.__defaultValue, true);
 });
@@ -245,8 +255,8 @@ it('dt.isTimeRelated', () => {
 });
 
 it('Allow null as default value', () => {
-  let c = mm.int(null);
-  expect(c.__defaultValue, null);
-  c = mm.bool(null);
-  expect(c.__defaultValue, null);
+  let c = mm.int();
+  expect(c.__defaultValue, undefined);
+  c = mm.bool();
+  expect(c.__defaultValue, undefined);
 });
