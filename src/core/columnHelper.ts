@@ -43,53 +43,58 @@ export function binary(length: number): Column {
   return col;
 }
 
-function _int(type: string, unsigned: boolean, length?: number): Column {
+function _numeric(type: string, unsigned: boolean, length?: number): Column {
   const col = Column.fromTypes(type);
   col.__type.unsigned = unsigned;
   if (length !== undefined) {
+    if (length === 0) {
+      throw new Error(
+        `You should omit length parameter instead of passing a zero`,
+      );
+    }
     col.__type.length = length;
   }
   return col;
 }
 
 export function int(length?: number): Column {
-  return _int(dt.int, false, length);
+  return _numeric(dt.int, false, length);
 }
 
 export function uInt(length?: number): Column {
-  return _int(dt.int, true, length);
+  return _numeric(dt.int, true, length);
 }
 
 export function bigInt(length?: number): Column {
-  return _int(dt.bigInt, false, length);
+  return _numeric(dt.bigInt, false, length);
 }
 
 export function uBigInt(length?: number): Column {
-  return _int(dt.bigInt, true, length);
+  return _numeric(dt.bigInt, true, length);
 }
 
 export function smallInt(length?: number): Column {
-  return _int(dt.smallInt, false, length);
+  return _numeric(dt.smallInt, false, length);
 }
 
 export function uSmallInt(length?: number): Column {
-  return _int(dt.smallInt, true, length);
+  return _numeric(dt.smallInt, true, length);
 }
 
 export function tinyInt(length?: number): Column {
-  return _int(dt.tinyInt, false, length);
+  return _numeric(dt.tinyInt, false, length);
 }
 
 export function uTinyInt(length?: number): Column {
-  return _int(dt.tinyInt, true, length);
+  return _numeric(dt.tinyInt, true, length);
 }
 
 export function float(precision?: number): Column {
-  return _int(dt.float, false, precision);
+  return _numeric(dt.float, false, precision);
 }
 
 export function double(precision?: number): Column {
-  return _int(dt.double, false, precision);
+  return _numeric(dt.double, false, precision);
 }
 
 export function unique(col: Column): Column {
