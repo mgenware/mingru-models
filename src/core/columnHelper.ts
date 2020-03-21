@@ -19,17 +19,15 @@ export function fk(column: Column): Column {
   return Column.newForeignColumn(column, null);
 }
 
-export function varChar(length: number, defaultValue?: string | null): Column {
+export function varChar(length: number): Column {
   const col = Column.fromTypes(dt.varChar);
   col.__type.length = length;
-  col.__defaultValue = defaultValue;
   return col;
 }
 
-export function char(length: number, defaultValue?: string | null): Column {
+export function char(length: number): Column {
   const col = Column.fromTypes(dt.char);
   col.__type.length = length;
-  col.__defaultValue = defaultValue;
   return col;
 }
 
@@ -116,9 +114,8 @@ export function pk(column?: Column): Column {
   return col;
 }
 
-export function text(defaultValue?: string | null): Column {
+export function text(): Column {
   const col = Column.fromTypes(dt.text);
-  col.__defaultValue = defaultValue;
   return col;
 }
 

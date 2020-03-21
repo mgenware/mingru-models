@@ -29,6 +29,9 @@ it('int', () => {
   expect(c.__type.length, 20);
   expect(c.__defaultValue, 123);
   expect(c.__type.unsigned, false);
+
+  const c2 = mm.int();
+  expect(c2.__type.length, undefined);
 });
 
 it('unsignedInt', () => {
@@ -72,16 +75,14 @@ it('unsignedTinyInt', () => {
 });
 
 it('char', () => {
-  const c = mm.char(20, 'ha');
+  const c = mm.char(20);
   ok(c.__type.types.includes(mm.dt.char));
-  expect(c.__defaultValue, 'ha');
   expect(c.__type.length, 20);
 });
 
 it('varChar', () => {
-  const c = mm.varChar(20, 'ha');
+  const c = mm.varChar(20);
   ok(c.__type.types.includes(mm.dt.varChar));
-  expect(c.__defaultValue, 'ha');
   expect(c.__type.length, 20);
 });
 
@@ -146,9 +147,8 @@ it('isNoDefaultOnCSQL', () => {
 });
 
 it('text', () => {
-  const c = mm.text('ha');
+  const c = mm.text();
   ok(c.__type.types.includes(mm.dt.text));
-  expect(c.__defaultValue, 'ha');
 });
 
 it('double', () => {
@@ -156,6 +156,9 @@ it('double', () => {
   ok(c.__type.types.includes(mm.dt.double));
   expect(c.__type.length, 20);
   expect(c.__defaultValue, 123);
+
+  const c2 = mm.double();
+  expect(c2.__type.length, undefined);
 });
 
 it('float', () => {
