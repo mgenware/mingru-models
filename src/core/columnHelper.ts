@@ -84,12 +84,12 @@ export function uTinyInt(length?: number): Column {
   return _int(dt.tinyInt, true, length);
 }
 
-export function float(length?: number): Column {
-  return _int(dt.float, true, length);
+export function float(precision?: number): Column {
+  return _int(dt.float, true, precision);
 }
 
-export function double(length?: number): Column {
-  return _int(dt.double, true, length);
+export function double(precision?: number): Column {
+  return _int(dt.double, true, precision);
 }
 
 export function unique(col: Column): Column {
