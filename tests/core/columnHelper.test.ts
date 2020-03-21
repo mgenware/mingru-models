@@ -28,7 +28,7 @@ it('int', () => {
   expect(c.__type.unsigned, false);
 
   const c2 = mm.int();
-  expect(c2.__type.length, undefined);
+  expect(c2.__type.length, 0);
 });
 
 it('unsignedInt', () => {
@@ -141,7 +141,7 @@ it('isNoDefaultOnCSQL', () => {
 it('text', () => {
   const c = mm.text();
   ok(c.__type.types.includes(mm.dt.text));
-  expect(c.__type.length, undefined);
+  expect(c.__type.length, 0);
 });
 
 it('double', () => {
@@ -150,7 +150,7 @@ it('double', () => {
   expect(c.__type.length, 20);
 
   const c2 = mm.double();
-  expect(c2.__type.length, undefined);
+  expect(c2.__type.length, 0);
 });
 
 it('float', () => {
