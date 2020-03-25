@@ -20,6 +20,8 @@ export class DataTypes {
   date = Prefix + 'DATE';
   time = Prefix + 'TIME';
 
+  decimal = 'DECIMAL';
+
   private integerSet = new Set<string>([
     this.int,
     this.bigInt,
@@ -29,7 +31,7 @@ export class DataTypes {
 
   private numberSet = new Set<string>([
     ...this.integerSet,
-    ...[this.double, this.float],
+    ...[this.double, this.float, this.decimal],
   ]);
 
   private timeRelatedSet = new Set<string>([

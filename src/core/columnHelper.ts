@@ -97,6 +97,14 @@ export function double(precision?: number): Column {
   return _numeric(dt.double, false, precision);
 }
 
+export function decimal(length: number, scale: number): Column {
+  const col = Column.fromTypes(dt.decimal);
+  const colType = col.__type;
+  colType.length = length;
+  colType.extraLength = scale;
+  return col;
+}
+
 export function unique(col: Column): Column {
   throwIfFalsy(col, 'col');
   col.__type.unique = true;

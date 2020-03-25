@@ -10,6 +10,8 @@ export class ColumnType {
   unique = false;
   length = 0;
   autoIncrement = false;
+  // Used in DECIMAL data type.
+  extraLength = 0;
 
   constructor(types: string | string[]) {
     throwIfFalsy(types, 'types');

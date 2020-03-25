@@ -223,6 +223,14 @@ it('time', () => {
   );
 });
 
+it('decimal', () => {
+  const c = mm.decimal(5, 2);
+  ok(c.__type.types.includes(mm.dt.decimal));
+  expect(c.__type.length, 5);
+  expect(c.__type.extraLength, 2);
+  expect(c.__type.unsigned, false);
+});
+
 it('dt.isInteger', () => {
   const { dt } = mm;
   expect(dt.isInteger(dt.bigInt), true);
@@ -234,6 +242,7 @@ it('dt.isInteger', () => {
   expect(dt.isInteger(dt.bool), false);
   expect(dt.isInteger(dt.varChar), false);
   expect(dt.isInteger(dt.char), false);
+  expect(dt.isInteger(dt.decimal), false);
 });
 
 it('dt.isNumber', () => {
@@ -245,6 +254,7 @@ it('dt.isNumber', () => {
   expect(dt.isNumber(dt.float), true);
   expect(dt.isNumber(dt.double), true);
   expect(dt.isNumber(dt.bool), false);
+  expect(dt.isNumber(dt.decimal), true);
 });
 
 it('dt.isTimeRelated', () => {
@@ -253,6 +263,8 @@ it('dt.isTimeRelated', () => {
   expect(dt.isTimeRelated(dt.date), true);
   expect(dt.isTimeRelated(dt.time), true);
   expect(dt.isTimeRelated(dt.int), false);
+  expect(dt.isTimeRelated(dt.decimal), false);
+  expect(dt.isTimeRelated(dt.varChar), false);
 });
 
 it('Allow null as default value', () => {
