@@ -13,8 +13,6 @@ export enum SQLCallType {
   coalesce, // COALESCE()
   min, // MIN()
   max, // MAX()
-
-  // Time-related.
   year,
   month,
   week,
@@ -22,11 +20,10 @@ export enum SQLCallType {
   hour,
   minute,
   second,
-
-  // UTC version of NOW().
   utcDatetimeNow,
   utcDateNow,
   utcTimeNow,
+  timestampNow,
 }
 
 export class SQLCall {
@@ -72,6 +69,10 @@ export function utcTimeNow(): SQLCall {
 
 export function utcDateNow(): SQLCall {
   return new SQLCall(SQLCallType.utcDateNow, new ColumnType(dt.date));
+}
+
+export function timestampNow(): SQLCall {
+  return new SQLCall(SQLCallType.timestampNow, new ColumnType(dt.timestamp));
 }
 
 export function count(column: SQLConvertible): SQLCall {

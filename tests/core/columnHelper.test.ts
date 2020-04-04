@@ -223,6 +223,17 @@ it('time', () => {
   );
 });
 
+it('timestamp', () => {
+  let c = mm.timestamp();
+  ok(c.__type.types.includes(mm.dt.timestamp));
+
+  c = mm.timestamp(true);
+  expect(
+    (c.__defaultValue as object).toString(),
+    'SQL(E(SQLCall(19, return = ColType(SQL.TIMESTAMP), type = 3))',
+  );
+});
+
 it('decimal', () => {
   const c = mm.decimal(5, 2);
   ok(c.__type.types.includes(mm.dt.decimal));

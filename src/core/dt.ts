@@ -19,6 +19,7 @@ export class DataTypes {
   datetime = Prefix + 'DATETIME';
   date = Prefix + 'DATE';
   time = Prefix + 'TIME';
+  timestamp = Prefix + 'TIMESTAMP';
 
   decimal = 'DECIMAL';
 
@@ -38,6 +39,7 @@ export class DataTypes {
     this.date,
     this.datetime,
     this.time,
+    this.timestamp,
   ]);
 
   isInteger(s: string) {

@@ -166,3 +166,11 @@ export function time(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
   }
   return col;
 }
+
+export function timestamp(defaultsToNow = false): Column {
+  const col = Column.fromTypes(dt.timestamp);
+  if (defaultsToNow) {
+    col.__defaultValue = sql`${call.timestampNow()}`;
+  }
+  return col;
+}
