@@ -144,6 +144,8 @@ function datetime(defaultsToNow?: DateTimeDefaultValue): Column;
 function date(defaultsToNow?: DateTimeDefaultValue): Column;
 // TIME column
 function time(defaultsToNow?: DateTimeDefaultValue): Column;
+// TIMESTAMP column
+function timestamp(defaultsToNow?: boolean): Column;
 // VARBINARY column
 function varBinary(length: number): Column;
 // BINARY column
@@ -491,8 +493,6 @@ enum SQLCallType {
   coalesce, // COALESCE()
   min, // MIN()
   max, // MAX()
-
-  // Time-related.
   year,
   month,
   week,
@@ -500,11 +500,10 @@ enum SQLCallType {
   hour,
   minute,
   second,
-
-  // UTC version of NOW().
   utcDatetimeNow,
   utcDateNow,
   utcTimeNow,
+  timestampNow,
 }
 ```
 
