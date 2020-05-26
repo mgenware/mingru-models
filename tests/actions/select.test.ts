@@ -130,7 +130,7 @@ it('RawColumn (SQLConvertible)', () => {
   expect(cc.core, post.user_id);
   cc = new mm.RawColumn(mm.sql`str`, 't');
   expect(cc.core.toString(), 'SQL(E(str, type = 0))');
-  cc = new mm.RawColumn(mm.sql`mm.count(post.id)`, 't');
+  cc = new mm.RawColumn(mm.sql`${mm.count(post.id)}`, 't');
   expect(
     cc.core.toString(),
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(id, Table(post)), type = 1))), type = 3))',

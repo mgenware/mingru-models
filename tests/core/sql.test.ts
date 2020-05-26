@@ -3,7 +3,7 @@ import { itThrows } from 'it-throws';
 import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
-import * as cm from './common';
+import * as cm from '../actions/common';
 
 const expect = assert.equal;
 const { ok } = assert;

@@ -1,6 +1,6 @@
 import * as assert from 'assert';
-import * as mm from '..';
-import user from './models/user';
+import * as mm from '../..';
+import user from '../models/user';
 
 const expect = assert.equal;
 

@@ -29,5 +29,6 @@ export { default as utils } from './lib/utils';
 
 // Extensions
 import './core/columnSQLExtensions';
+import './core/sqlExtensions';
 import './actions/columnSelectExtensions';
 import './actions/taExtensions';
