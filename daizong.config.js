@@ -14,4 +14,7 @@ module.exports = {
   test: {
     run: ['#clean', 'tsc -b tests', '#lint', '#t'],
   },
+  build: {
+    run: '#test',
+  },
 };
