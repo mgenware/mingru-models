@@ -1,7 +1,7 @@
-import * as mm from '../../';
+import * as assert from 'assert';
+import * as mm from '../..';
 import user from '../models/user';
 import employee from '../models/employee';
-import * as assert from 'assert';
 import like from '../models/like';
 
 const expect = assert.equal;
@@ -26,7 +26,7 @@ it('Table name, DB name and input name', () => {
 
 it('enumerateColumns', () => {
   const cols: mm.Column[] = [];
-  mm.enumerateColumns(user, col => cols.push(col));
+  mm.enumerateColumns(user, (col) => cols.push(col));
   assert.deepEqual(cols, [
     user.id,
     user.name,
@@ -38,7 +38,7 @@ it('enumerateColumns', () => {
 
 it('enumerateColumns (sorted)', () => {
   const cols: mm.Column[] = [];
-  mm.enumerateColumns(user, col => cols.push(col), { sorted: true });
+  mm.enumerateColumns(user, (col) => cols.push(col), { sorted: true });
   assert.deepEqual(cols, [
     user.def_value,
     user.follower_count,

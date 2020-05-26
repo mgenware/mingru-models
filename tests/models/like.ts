@@ -1,4 +1,4 @@
-import * as mm from '../../';
+import * as mm from '../..';
 import user from './user';
 
 class Like extends mm.Table {

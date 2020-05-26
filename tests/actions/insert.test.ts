@@ -1,17 +1,14 @@
-import * as mm from '../../';
-import post from '../models/post';
 import * as assert from 'assert';
 import { itThrows } from 'it-throws';
+import * as mm from '../..';
+import post from '../models/post';
 
 const expect = assert.equal;
-const ok = assert.ok;
+const { ok } = assert;
 
 it('Insert', () => {
   class PostTA extends mm.TableActions {
-    t = mm
-      .insert()
-      .setInputs(post.title, post.snake_case_user_id)
-      .setInputs();
+    t = mm.insert().setInputs(post.title, post.snake_case_user_id).setInputs();
   }
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
@@ -60,10 +57,7 @@ it('unsafeInsertOne', () => {
 
 it('SQLConvertible value', () => {
   class PostTA extends mm.TableActions {
-    t = mm
-      .unsafeInsert()
-      .set(post.title, mm.localDateNow())
-      .setDefaults();
+    t = mm.unsafeInsert().set(post.title, mm.localDateNow()).setDefaults();
   }
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;

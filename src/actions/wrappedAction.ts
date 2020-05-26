@@ -1,5 +1,5 @@
-import { Action, ActionType, initializeAction } from './tableActions';
 import { throwIfFalsy } from 'throw-if-arg-empty';
+import { Action, ActionType, initializeAction } from './tableActions';
 import { Table } from '../core/core';
 import camelCase = require('lodash.camelcase');
 

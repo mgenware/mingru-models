@@ -1,5 +1,6 @@
 import { Column } from './core';
-import { SQL, SQLVariable, input, sql } from './sql';
+import { SQL, SQLVariable } from './sql';
+import { input, sql } from './sqlHelper';
 
 declare module './core' {
   interface Column {
@@ -13,30 +14,30 @@ declare module './core' {
   }
 }
 
-Column.prototype.toInput = function(name?: string) {
+Column.prototype.toInput = function (name?: string) {
   return input(this, name);
 };
 
-Column.prototype.isEqualTo = function(valueSQL: SQL) {
+Column.prototype.isEqualTo = function (valueSQL: SQL) {
   return sql`${this} = ${valueSQL}`;
 };
 
-Column.prototype.isEqualToInput = function(name?: string) {
+Column.prototype.isEqualToInput = function (name?: string) {
   return this.isEqualTo(sql`${this.toInput(name)}`);
 };
 
-Column.prototype.isNotEqualTo = function(valueSQL: SQL) {
+Column.prototype.isNotEqualTo = function (valueSQL: SQL) {
   return sql`${this} <> ${valueSQL}`;
 };
 
-Column.prototype.isNotEqualToInput = function(name?: string) {
+Column.prototype.isNotEqualToInput = function (name?: string) {
   return this.isNotEqualTo(sql`${this.toInput(name)}`);
 };
 
-Column.prototype.isNull = function() {
+Column.prototype.isNull = function () {
   return sql`${this} IS NULL`;
 };
 
-Column.prototype.isNotNull = function() {
+Column.prototype.isNotNull = function () {
   return sql`${this} IS NOT NULL`;
 };

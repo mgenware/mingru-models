@@ -1,18 +1,15 @@
-import * as mm from '../../';
+import * as assert from 'assert';
+import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
-import { WrappedAction } from '../../';
-import * as assert from 'assert';
+import { WrappedAction } from '../..';
 
 const expect = assert.equal;
-const ok = assert.ok;
+const { ok } = assert;
 
 it('Transact', () => {
   class UserTA extends mm.TableActions {
-    insert = mm
-      .insert()
-      .setInputs(user.follower_count)
-      .setInputs();
+    insert = mm.insert().setInputs(user.follower_count).setInputs();
   }
   const userTA = mm.tableActions(user, UserTA);
 
@@ -21,10 +18,8 @@ it('Transact', () => {
       .insert()
       .setInputs(post.title, post.snake_case_user_id)
       .setInputs();
-    update = mm
-      .updateOne()
-      .setInputs(post.e_user_id_n)
-      .byID();
+
+    update = mm.updateOne().setInputs(post.e_user_id_n).byID();
     batch = mm.transact(this.insert, userTA.insert, this.update);
     batch2 = mm.transact(this.insert, userTA.insert, this.batch);
   }
@@ -39,7 +34,7 @@ it('Transact', () => {
   assert.deepEqual(
     v.members,
     [postTA.insert, userTA.insert, postTA.batch].map(
-      m => new mm.TransactionMember(m, undefined, undefined),
+      (m) => new mm.TransactionMember(m, undefined, undefined),
     ),
   );
 });
@@ -58,6 +53,7 @@ it('Temp member actions (wrap self)', async () => {
         mm.sql`${user2.postCount} + ${mm.input(mm.int(), 'offset')}`,
       )
       .byID();
+
     t = mm.transact(this.updatePostCount.wrap({ offset: '1' }));
   }
   const user2TA = mm.tableActions(user2, User2TA);
@@ -101,10 +97,7 @@ it('Temp member actions (wrap other)', async () => {
 
 it('Setting __table or temp members', () => {
   class UserTA extends mm.TableActions {
-    insert = mm
-      .insert()
-      .setInputs(user.follower_count)
-      .setInputs();
+    insert = mm.insert().setInputs(user.follower_count).setInputs();
   }
   const userTA = mm.tableActions(user, UserTA);
 
@@ -113,6 +106,7 @@ it('Setting __table or temp members', () => {
       .insert()
       .setInputs(post.title, post.snake_case_user_id)
       .setInputs();
+
     t = mm.transact(
       mm.insert().setDefaults(),
       this.insert,
@@ -121,7 +115,7 @@ it('Setting __table or temp members', () => {
     );
   }
   const postTA = mm.tableActions(post, PostTA);
-  const members = postTA.t.members;
+  const { members } = postTA.t;
   expect(members[0].action.__table, post);
   expect(members[0].action.__name, 'tChild1');
   expect(members[0].isTemp, true);

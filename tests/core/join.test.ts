@@ -1,9 +1,9 @@
-import * as mm from '../../';
+import * as assert from 'assert';
+import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
 import postCmt from '../models/postCmt';
 import postCmtAss from '../models/postCmtAss';
-import * as assert from 'assert';
 import cmt from '../models/cmt';
 
 const expect = assert.equal;

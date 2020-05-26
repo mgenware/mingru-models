@@ -1,4 +1,4 @@
-import * as mm from '../../';
+import * as mm from '../..';
 import user from './user';
 import post from './post';
 

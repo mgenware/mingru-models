@@ -1,11 +1,11 @@
-import * as mm from '../../';
+import * as assert from 'assert';
+import * as mm from '../..';
 import post from '../models/post';
 import like from '../models/like';
-import * as assert from 'assert';
 import user from '../models/user';
 
 const expect = assert.equal;
-const ok = assert.ok;
+const { ok } = assert;
 
 it('bigInt', () => {
   const c = mm.bigInt(20);

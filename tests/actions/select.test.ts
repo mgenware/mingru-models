@@ -1,11 +1,11 @@
-import * as mm from '../../';
-import user from '../models/user';
-import post from '../models/post';
 import * as assert from 'assert';
 import { itThrows } from 'it-throws';
+import * as mm from '../..';
+import user from '../models/user';
+import post from '../models/post';
 
 const expect = assert.equal;
-const ok = assert.ok;
+const { ok } = assert;
 
 it('select', () => {
   class UserTA extends mm.TableActions {
@@ -128,9 +128,9 @@ it('RawColumn (SQLConvertible)', () => {
   let cc = new mm.RawColumn(post.user_id, 't');
   // Column should not be wrapped in SQL
   expect(cc.core, post.user_id);
-  cc = new mm.RawColumn('str', 't');
+  cc = new mm.RawColumn(mm.sql`str`, 't');
   expect(cc.core.toString(), 'SQL(E(str, type = 0))');
-  cc = new mm.RawColumn(mm.count(post.id), 't');
+  cc = new mm.RawColumn(mm.sql`mm.count(post.id)`, 't');
   expect(
     cc.core.toString(),
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(id, Table(post)), type = 1))), type = 3))',
@@ -209,11 +209,9 @@ it('andBy', () => {
       .select(user.name)
       .by(user.snake_case_name)
       .andBy(user.follower_count);
+
     t2 = mm.select(user.name).andBy(user.follower_count);
-    t3 = mm
-      .select(user.name)
-      .byID()
-      .andBy(user.follower_count);
+    t3 = mm.select(user.name).byID().andBy(user.follower_count);
   }
   const ta = mm.tableActions(user, UserTA);
   expect(
@@ -231,7 +229,7 @@ it('andBy', () => {
 });
 
 it('selectField', () => {
-  const sc = mm.sel(mm.count('*'), 'c');
+  const sc = mm.sel(mm.sql`mm.count('*')`, 'c');
   class UserTA extends mm.TableActions {
     t = mm.selectField(user.name).byID();
     t2 = mm.selectField(sc);
@@ -247,7 +245,7 @@ it('selectField', () => {
 });
 
 it('Order by', () => {
-  const cc = mm.sel('haha', 'name', new mm.ColumnType('int'));
+  const cc = mm.sel(mm.sql`haha`, 'name', new mm.ColumnType('int'));
   class UserTA extends mm.TableActions {
     t = mm
       .select(user.name, user.follower_count, cc)

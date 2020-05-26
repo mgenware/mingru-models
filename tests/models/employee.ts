@@ -1,4 +1,4 @@
-import * as mm from '../../';
+import * as mm from '../..';
 
 class Employee extends mm.Table {
   id = mm.pk(mm.int()).setDBName('emp_no').noAutoIncrement;

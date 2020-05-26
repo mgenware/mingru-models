@@ -1,7 +1,8 @@
-import { SQL, sql } from '../core/sql';
-import { Table, CoreProperty, Column } from '../core/core';
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { and } from '../sqlHelper';
+import { SQL } from '../core/sql';
+import { Table, CoreProperty, Column } from '../core/core';
+import { and } from '../sqlLangHelper';
+import { sql } from '../core/sqlHelper';
 
 export interface ActionWithWhere {
   __table: Table | null;
@@ -18,6 +19,7 @@ export function where(action: ActionWithWhere, value: SQL) {
   if (action.whereSQL) {
     throw new Error('"where" is called twice');
   }
+  // eslint-disable-next-line no-param-reassign
   action.whereSQL = value;
 }
 
@@ -25,7 +27,7 @@ export function where(action: ActionWithWhere, value: SQL) {
 function byIDUnsafe(action: ActionWithWhere, inputName: string | undefined) {
   const { __table: table } = action;
   if (!table) {
-    throw new Error(`Action is not initialized by mm.ta`);
+    throw new Error('Action is not initialized by mm.ta');
   }
   if (table.__pks.length > 1) {
     throw new Error(

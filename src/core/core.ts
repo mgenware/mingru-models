@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import utils from '../lib/utils';
 import toTypeString from 'to-type-string';
+import utils from '../lib/utils';
 
 export class ColumnType {
   types: string[];
@@ -15,8 +15,7 @@ export class ColumnType {
 
   constructor(types: string | string[]) {
     throwIfFalsy(types, 'types');
-    types = typeof types === 'string' ? [types] : types;
-    this.types = types;
+    this.types = typeof types === 'string' ? [types] : types;
   }
 
   toString(): string {
@@ -39,7 +38,7 @@ export class CoreProperty {
   }
 
   static wait(property: CoreProperty): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       CoreProperty.registerHandler(property, () => resolve());
     });
   }
@@ -51,6 +50,7 @@ export class CoreProperty {
         handler();
       }
       // Set handlers to null cuz handlers are meant to be run only once
+      // eslint-disable-next-line no-param-reassign
       property.__handlers = null;
     }
   }
@@ -71,8 +71,9 @@ export enum JoinType {
 
 export class Column extends CoreProperty {
   static fromTypes(types: string | string[]): Column {
-    types = typeof types === 'string' ? [types] : types;
-    return new Column(new ColumnType(types));
+    return new Column(
+      new ColumnType(typeof types === 'string' ? [types] : types),
+    );
   }
 
   static newForeignColumn(
@@ -128,7 +129,9 @@ export class Column extends CoreProperty {
   __table: Table | JoinedTable | null = null;
   __inputName: string | null = null;
 
-  // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any table, the foreignColumn property only indicates a column property is declared as FK and doesn't have any effect on join(), the real dest table and column are determined by join().
+  // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any table,
+  // the foreignColumn property only indicates a column property is declared as FK and doesn't have any
+  // effect on join(), the real dest table and column are determined by join().
   __foreignColumn: Column | null = null;
 
   // See `Column.join` for details

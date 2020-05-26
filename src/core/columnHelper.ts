@@ -1,9 +1,9 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Column } from './core';
-import { sql } from '../core/sql';
-import dt from './dt';
-import * as call from './sqlCall';
 import toTypeString from 'to-type-string';
+import { Column } from './core';
+import dt from './dt';
+import * as call from './sqlCallHelper';
+import { sql } from './sqlHelper';
 
 export type DateTimeDefaultValue = 'none' | 'local' | 'utc';
 
@@ -49,7 +49,7 @@ function _numeric(type: string, unsigned: boolean, length?: number): Column {
   if (length !== undefined) {
     if (length === 0) {
       throw new Error(
-        `You should omit length parameter instead of passing a zero`,
+        'You should omit length parameter instead of passing a zero',
       );
     }
     col.__type.length = length;

@@ -1,3 +1,4 @@
+/* eslint-disable prefer-template */
 const Prefix = 'SQL.';
 
 export class DataTypes {

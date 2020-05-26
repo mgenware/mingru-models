@@ -1,10 +1,10 @@
-import * as mm from '../../';
-import user from '../models/user';
 import * as assert from 'assert';
 import { itThrows } from 'it-throws';
+import * as mm from '../..';
+import user from '../models/user';
 
 const expect = assert.equal;
-const ok = assert.ok;
+const { ok } = assert;
 
 it('DeleteAction', () => {
   class UserTA extends mm.TableActions {

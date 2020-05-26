@@ -1,3 +1,4 @@
+import { throwIfFalsy } from 'throw-if-arg-empty';
 import { UpdateAction } from './updateAction';
 import { InsertAction } from './insertAction';
 import { DeleteAction } from './deleteAction';
@@ -12,7 +13,6 @@ import {
   TransactionMember,
   ActionWithReturnValues,
 } from './transactAction';
-import { throwIfFalsy } from 'throw-if-arg-empty';
 
 export function select(...columns: SelectActionColumns[]): SelectAction {
   return new SelectAction(columns, SelectActionMode.row);
@@ -73,7 +73,7 @@ export function unsafeDeleteAll(): DeleteAction {
 export function transact(...actions: TransactionMemberTypes[]): TransactAction {
   throwIfFalsy(actions, 'actions');
   return new TransactAction(
-    actions.map(a => {
+    actions.map((a) => {
       if (a instanceof TransactionMember) {
         return a;
       }

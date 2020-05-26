@@ -1,10 +1,10 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { ActionType } from './tableActions';
-import { Column, ColumnType, Table } from '../core/core';
-import { SQL, SQLConvertible, convertToSQL, SQLVariable } from '../core/sql';
-import { CoreSelectAction } from './coreSelectAction';
 import toTypeString from 'to-type-string';
-import { ColumnAttributes } from '../attrs';
+import { ActionType } from './tableActions';
+import { Column, Table } from '../core/core';
+import { SQL } from '../core/sql';
+import { CoreSelectAction } from './coreSelectAction';
+import { RawColumn } from './rawColumn';
 
 export type SelectActionColumns = Column | RawColumn;
 export type SelectActionColumnNames = SelectActionColumns | string;
@@ -13,90 +13,6 @@ export class OrderByColumn {
   constructor(public column: SelectActionColumnNames, public desc = false) {
     throwIfFalsy(column, 'column');
   }
-}
-
-export class RawColumn {
-  core: Column | SQL;
-  __attrs: { [name: string]: unknown } = {};
-
-  get __type(): ColumnType | undefined {
-    return this.type;
-  }
-
-  constructor(
-    core: SQLConvertible,
-    // selectedName can be undefined if core is a column
-    // or findFirstColumn returns a column.
-    public selectedName?: string,
-    public type?: ColumnType,
-  ) {
-    throwIfFalsy(core, 'core');
-    if (core instanceof Column) {
-      this.core = core;
-    } else {
-      const expr = convertToSQL(core);
-      this.core = expr;
-      if (!selectedName) {
-        // Try to extract a column name from SQL expression
-        const col = expr.findFirstColumn();
-        if (!col) {
-          throw new Error(
-            'The argument "selectedName" is required for an SQL expression without any columns inside',
-          );
-        }
-      }
-    }
-  }
-
-  toInput(): SQLVariable {
-    const { core } = this;
-    let { selectedName } = this;
-    if (core instanceof SQL) {
-      const inferred = core.sniffType();
-      if (!inferred) {
-        throw new Error('Cannot convert a RawColumn(SQL) to an SQLVariable');
-      }
-      if (!selectedName) {
-        const firstColumn = core.findFirstColumn();
-        if (firstColumn && firstColumn.__name) {
-          selectedName = firstColumn.__name;
-        } else {
-          throw new Error(
-            'The argument "selectedName" is required for an SQL expression without any columns inside',
-          );
-        }
-      }
-      return new SQLVariable(inferred, selectedName);
-    }
-    const [, colName] = core.ensureInitialized();
-    return new SQLVariable(core, selectedName || colName);
-  }
-
-  attrs(values: { [name: string]: unknown }): this {
-    this.__attrs = { ...this.__attrs, ...values };
-    return this;
-  }
-
-  attr(name: string, value: unknown): this {
-    this.attrs({ [name]: value });
-    return this;
-  }
-
-  privateAttr(): this {
-    return this.attr(ColumnAttributes.isPrivate, true);
-  }
-
-  toString(): string {
-    return `RawColumn(${this.selectedName}, core = ${this.core.toString()})`;
-  }
-}
-
-export function sel(
-  sql: SQLConvertible,
-  selectedName?: string,
-  type?: ColumnType,
-): RawColumn {
-  return new RawColumn(sql, selectedName, type);
 }
 
 export enum SelectActionMode {
@@ -204,7 +120,7 @@ export class SelectAction extends CoreSelectAction {
       mode === SelectActionMode.list || mode === SelectActionMode.page;
     if (selectCollection && !this.orderByColumns.length) {
       throw new Error(
-        `An ORDER BY clause is required when selecting multiple rows`,
+        'An ORDER BY clause is required when selecting multiple rows',
       );
     }
   }

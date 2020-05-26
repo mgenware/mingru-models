@@ -1,7 +1,7 @@
-import { Column } from '../core/core';
-import { RawColumn } from './selectAction';
 import { throwIfFalsy } from 'throw-if-arg-empty';
+import { Column } from '../core/core';
 import { ColumnAttributes } from '../attrs';
+import { RawColumn } from './rawColumn';
 
 declare module '../core/core' {
   interface Column {
@@ -12,21 +12,21 @@ declare module '../core/core' {
   }
 }
 
-Column.prototype.as = function(name: string): RawColumn {
+Column.prototype.as = function (name: string): RawColumn {
   throwIfFalsy(name, 'name');
   return new RawColumn(this, name);
 };
 
-Column.prototype.attrs = function(values: {
+Column.prototype.attrs = function (values: {
   [name: string]: unknown;
 }): RawColumn {
   return new RawColumn(this).attrs(values);
 };
 
-Column.prototype.attr = function(name: string, value: unknown): RawColumn {
+Column.prototype.attr = function (name: string, value: unknown): RawColumn {
   return this.attrs({ [name]: value });
 };
 
-Column.prototype.privateAttr = function(): RawColumn {
+Column.prototype.privateAttr = function (): RawColumn {
   return this.attr(ColumnAttributes.isPrivate, true);
 };

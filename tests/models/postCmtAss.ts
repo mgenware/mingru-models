@@ -1,4 +1,4 @@
-import * as mm from '../../';
+import * as mm from '../..';
 import post from './post';
 import cmt from './cmt';
 

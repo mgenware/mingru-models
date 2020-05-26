@@ -21,5 +21,19 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/switch-exhaustiveness-check': 'error',
+    'lines-between-class-members': [
+      'error',
+      'always',
+      { exceptAfterSingleLine: true },
+    ],
+    'no-underscore-dangle': 'off',
+    'max-classes-per-file': 'off',
+    'import/prefer-default-export': 'off',
+    'no-continue': 'off',
+    'object-curly-newline': [
+      'error',
+      { ImportDeclaration: 'never', ExportDeclaration: 'never' },
+    ],
+    'func-names': 'off',
   },
 };

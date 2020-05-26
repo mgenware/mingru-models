@@ -1,7 +1,8 @@
+import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action } from './tableActions';
 import { Column, Table } from '../core/core';
-import { SQLConvertible, convertToSQL, sql } from '../core/sql';
-import { throwIfFalsy } from 'throw-if-arg-empty';
+import SQLConvertible from '../core/sqlConvertible';
+import { convertToSQL, sql } from '../core/sqlHelper';
 
 export enum AutoSetterType {
   default = 1,
@@ -54,7 +55,7 @@ export class CoreUpdateAction extends Action {
   validate(table: Table, name: string) {
     super.validate(table, name);
     if (!this.setters.size && !this.autoSetters.size) {
-      throw new Error(`No setters`);
+      throw new Error('No setters');
     }
   }
 

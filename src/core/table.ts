@@ -1,7 +1,6 @@
+import toTypeString from 'to-type-string';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table, Column, CoreProperty, JoinedTable } from './core';
-import { utils } from '../main';
-import toTypeString from 'to-type-string';
 import * as defs from './defs';
 import Utils from '../lib/utils';
 import { SQL } from './sql';
@@ -17,6 +16,7 @@ export function enumerateColumns(
 ) {
   throwIfFalsy(tableObject, 'tableObject');
 
+  // eslint-disable-next-line no-param-reassign
   opts = opts || {};
   if (!cb) {
     return;
@@ -46,20 +46,20 @@ export function enumerateColumns(
 }
 
 export function table<T extends Table>(
-  cls: new (name?: string) => T,
+  CLASS: new (name?: string) => T,
   dbName?: string,
 ): T {
-  throwIfFalsy(cls, 'cls');
-  const tableObj = new cls();
+  throwIfFalsy(CLASS, 'CLASS');
+  const tableObj = new CLASS();
   const className = tableObj.constructor.name;
-  tableObj.__name = utils.toSnakeCase(className);
+  tableObj.__name = Utils.toSnakeCase(className);
   tableObj.__dbName = dbName || null;
   const cols = tableObj.__columns;
 
   enumerateColumns(tableObj, (col, propName) => {
     try {
       if (!col) {
-        throw new Error(`Expected empty column object`);
+        throw new Error('Expected empty column object');
       }
       if (col.__table instanceof JoinedTable) {
         throw new Error(
@@ -70,7 +70,9 @@ export function table<T extends Table>(
       }
 
       let columnToAdd: Column;
-      // A frozen column indicates an implicit foreign key, note: `mm.fk` can set up an explicit foreign key
+
+      // A frozen column indicates an implicit foreign key.
+      // Note: `mm.fk` can set up an explicit foreign key.
       if (Object.isFrozen(col)) {
         // Copy the frozen column
         columnToAdd = Column.newForeignColumn(col, tableObj);
@@ -81,7 +83,7 @@ export function table<T extends Table>(
       // Populate column props
       if (!columnToAdd.__name) {
         // column name can be set by setName
-        columnToAdd.__name = utils.toSnakeCase(propName);
+        columnToAdd.__name = Utils.toSnakeCase(propName);
       }
       columnToAdd.__table = tableObj;
       if (columnToAdd.__type.pk) {
@@ -97,7 +99,7 @@ export function table<T extends Table>(
         columnToAdd.__defaultValue instanceof SQL &&
         columnToAdd.__defaultValue.hasColumns
       ) {
-        throw new Error(`Default value cannot be a complex SQL expression`);
+        throw new Error('Default value cannot be a complex SQL expression');
       }
 
       cols.push(columnToAdd);

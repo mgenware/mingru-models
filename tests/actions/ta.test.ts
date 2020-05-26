@@ -1,19 +1,19 @@
-import * as mm from '../../';
-import user from '../models/user';
 import * as assert from 'assert';
 import { itThrows } from 'it-throws';
+import * as mm from '../..';
+import user from '../models/user';
 import post from '../models/post';
 
 const expect = assert.equal;
-const ok = assert.ok;
+const { ok } = assert;
 
 it('ta', () => {
   class UserTA extends mm.TableActions {
+    sel = mm.select(user.id);
     upd = mm
       .unsafeUpdateAll()
       .set(user.name, mm.sql`${mm.input(user.name)}`)
       .set(user.follower_count, mm.sql`${user.follower_count} + 1`);
-    sel = mm.select(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
 
@@ -55,12 +55,13 @@ it('enumerateActions', () => {
       .unsafeUpdateAll()
       .set(user.name, mm.sql`${mm.input(user.name)}`)
       .set(user.follower_count, mm.sql`${user.follower_count} + 1`);
+
     sel = mm.select(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
 
   const actions: mm.Action[] = [];
-  mm.enumerateActions(ta, a => actions.push(a));
+  mm.enumerateActions(ta, (a) => actions.push(a));
   assert.deepEqual(actions, [ta.upd, ta.sel]);
 });
 
@@ -70,12 +71,13 @@ it('enumerateActions (sorted)', () => {
       .unsafeUpdateAll()
       .set(user.name, mm.sql`${mm.input(user.name)}`)
       .set(user.follower_count, mm.sql`${user.follower_count} + 1`);
+
     sel = mm.select(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
 
   const actions: mm.Action[] = [];
-  mm.enumerateActions(ta, a => actions.push(a), { sorted: true });
+  mm.enumerateActions(ta, (a) => actions.push(a), { sorted: true });
   assert.deepEqual(actions, [ta.sel, ta.upd]);
 });
 

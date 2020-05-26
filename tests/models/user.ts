@@ -1,4 +1,4 @@
-import * as mm from '../../';
+import * as mm from '../..';
 
 class User extends mm.Table {
   id = mm.pk();

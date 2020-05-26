@@ -1,12 +1,12 @@
-import * as mm from '../../';
+import * as assert from 'assert';
+import { itThrows } from 'it-throws';
+import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
-import * as assert from 'assert';
 import * as cm from './common';
-import { itThrows } from 'it-throws';
 
 const expect = assert.equal;
-const ok = assert.ok;
+const { ok } = assert;
 
 it('SQL', () => {
   const sql = mm.sql`${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}`;

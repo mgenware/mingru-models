@@ -1,10 +1,10 @@
-import * as mm from '../../';
-import user from '../models/user';
 import * as assert from 'assert';
 import { itThrows } from 'it-throws';
+import * as mm from '../..';
+import user from '../models/user';
 
 const expect = assert.equal;
-const ok = assert.ok;
+const { ok } = assert;
 
 it('Update', () => {
   class UserTA extends mm.TableActions {
@@ -107,10 +107,7 @@ it('setDefaults with no args', () => {
 it('setInputs and setDefaults twice', () => {
   {
     class UserTA extends mm.TableActions {
-      t = mm
-        .unsafeUpdateAll()
-        .setInputs()
-        .setDefaults();
+      t = mm.unsafeUpdateAll().setInputs().setDefaults();
     }
     mm.tableActions(user, UserTA);
 
@@ -124,10 +121,7 @@ it('setInputs and setDefaults twice', () => {
   }
   {
     class UserTA extends mm.TableActions {
-      t = mm
-        .unsafeUpdateAll()
-        .setDefaults()
-        .setInputs();
+      t = mm.unsafeUpdateAll().setDefaults().setInputs();
     }
     mm.tableActions(user, UserTA);
 
@@ -154,10 +148,7 @@ it('Set same column twice', () => {
 
 it('updateOne', () => {
   class UserTA extends mm.TableActions {
-    t = mm
-      .updateOne()
-      .setInputs(user.snake_case_name)
-      .byID();
+    t = mm.updateOne().setInputs(user.snake_case_name).byID();
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -176,10 +167,7 @@ it('updateOne', () => {
 
 it('updateSome', () => {
   class UserTA extends mm.TableActions {
-    t = mm
-      .updateSome()
-      .setInputs(user.snake_case_name)
-      .byID();
+    t = mm.updateSome().setInputs(user.snake_case_name).byID();
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -210,10 +198,7 @@ it('unsafeUpdateAll', () => {
 
 it('ByID', () => {
   class UserTA extends mm.TableActions {
-    t = mm
-      .updateOne()
-      .setInputs(user.snake_case_name)
-      .byID();
+    t = mm.updateOne().setInputs(user.snake_case_name).byID();
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -226,10 +211,7 @@ it('ByID', () => {
 
 it('SQLConvertible value', () => {
   class UserTA extends mm.TableActions {
-    t = mm
-      .updateOne()
-      .set(user.name, mm.localDateNow())
-      .byID();
+    t = mm.updateOne().set(user.name, mm.localDateNow()).byID();
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -263,10 +245,7 @@ it('No setters', () => {
 
 it('by', () => {
   class UserTA extends mm.TableActions {
-    t = mm
-      .updateOne()
-      .setInputs(user.def_value)
-      .by(user.snake_case_name);
+    t = mm.updateOne().setInputs(user.def_value).by(user.snake_case_name);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -283,15 +262,9 @@ it('andBy', () => {
       .setInputs(user.name)
       .by(user.snake_case_name)
       .andBy(user.follower_count);
-    t2 = mm
-      .updateOne()
-      .setInputs(user.name)
-      .andBy(user.follower_count);
-    t3 = mm
-      .updateOne()
-      .setInputs(user.name)
-      .byID()
-      .andBy(user.follower_count);
+
+    t2 = mm.updateOne().setInputs(user.name).andBy(user.follower_count);
+    t3 = mm.updateOne().setInputs(user.name).byID().andBy(user.follower_count);
   }
   const ta = mm.tableActions(user, UserTA);
   expect(

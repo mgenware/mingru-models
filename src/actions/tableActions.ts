@@ -1,7 +1,7 @@
-import { Table, CoreProperty } from '../core/core';
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import * as defs from '../core/defs';
 import toTypeString from 'to-type-string';
+import { Table, CoreProperty } from '../core/core';
+import * as defs from '../core/defs';
 import Utils from '../lib/utils';
 import { SQLVariable } from '../core/sql';
 

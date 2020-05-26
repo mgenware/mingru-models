@@ -29,6 +29,7 @@ export default class Utils {
 
   static makeTrailingIDAllCaps(s: string): string {
     if (s.endsWith('Id')) {
+      // eslint-disable-next-line prefer-template
       return s.substr(0, s.length - 'Id'.length) + 'ID';
     }
     return s;
@@ -44,7 +45,7 @@ export default class Utils {
 
   static toPascalCase(s: string): string {
     const res = Utils.capitalizeFirstLetter(Utils.toCamelCase(s));
-    if (res == 'Id') {
+    if (res === 'Id') {
       return 'ID';
     }
     return res;

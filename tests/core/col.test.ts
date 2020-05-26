@@ -1,9 +1,9 @@
-import * as mm from '../../';
+import * as assert from 'assert';
+import { itThrows } from 'it-throws';
+import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
 import cmt from '../models/postCmt';
-import * as assert from 'assert';
-import { itThrows } from 'it-throws';
 
 const expect = assert.equal;
 
@@ -152,17 +152,11 @@ it('JoinedColumn.inputName', () => {
     'snakeCaseUserName',
   );
   expect(
-    cmt.post_id
-      .join(post)
-      .user_id.join(user)
-      .id.inputName(),
+    cmt.post_id.join(post).user_id.join(user).id.inputName(),
     'postUserID',
   );
   expect(
-    cmt.post_id
-      .join(post)
-      .snake_case_user_id.join(user)
-      .name.inputName(),
+    cmt.post_id.join(post).snake_case_user_id.join(user).name.inputName(),
     'postSnakeCaseUserName',
   );
 });
@@ -216,7 +210,7 @@ it('Throw on default value of complex SQL', () => {
       t = mm.varChar(23).default(mm.sql`${user.name}`);
     }
     mm.table(T);
-  }, `Default value cannot be a complex SQL expression [column "t"]`);
+  }, 'Default value cannot be a complex SQL expression [column "t"]');
 });
 
 it('getSourceTable', () => {

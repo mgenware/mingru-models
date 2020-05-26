@@ -1,5 +1,5 @@
-import { utils } from '../../';
 import * as assert from 'assert';
+import { utils } from '../..';
 
 const expect = assert.equal;
 

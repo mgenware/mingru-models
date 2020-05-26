@@ -1,6 +1,6 @@
-import * as mm from '../../';
-import post from '../models/post';
 import * as assert from 'assert';
+import * as mm from '../..';
+import post from '../models/post';
 
 const expect = assert.equal;
 
@@ -93,16 +93,16 @@ it('SQL calls', () => {
 it('Embeded in SQL', () => {
   expect(
     mm.sql`haha ${mm.localDatetimeNow()} ${mm.localDateNow()}`.toString(),
-    `SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(SQL.DATE), type = 3))`,
+    'SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
   );
   expect(
-    mm.sql`haha ${new mm.SQLCall(
+    mm.sql`haha ${mm.sqlCall(
       mm.SQLCallType.localDatetimeNow,
       new mm.ColumnType('c1'),
-    )} ${new mm.SQLCall(
+    )} ${mm.sqlCall(
       mm.SQLCallType.localDateNow,
       new mm.ColumnType('c2'),
     )}`.toString(),
-    `SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(c1), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(c2), type = 3))`,
+    'SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(c1), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(c2), type = 3))',
   );
 });
