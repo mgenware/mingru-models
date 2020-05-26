@@ -107,6 +107,7 @@ export function decimal(length: number, scale: number): Column {
 
 export function unique(col: Column): Column {
   throwIfFalsy(col, 'col');
+  // eslint-disable-next-line no-param-reassign
   col.__type.unique = true;
   return col;
 }

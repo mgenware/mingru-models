@@ -129,9 +129,9 @@ export class Column extends CoreProperty {
   __table: Table | JoinedTable | null = null;
   __inputName: string | null = null;
 
-  // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any table,
-  // the foreignColumn property only indicates a column property is declared as FK and doesn't have any
-  // effect on join(), the real dest table and column are determined by join().
+  // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any
+  // table, the foreignColumn property only indicates a column property is declared as FK and
+  // doesn't have any effect on join(), the real dest table and column are determined by join().
   __foreignColumn: Column | null = null;
 
   // See `Column.join` for details
@@ -225,6 +225,7 @@ export class Column extends CoreProperty {
     }
     const curName = utils.toCamelCase(name);
 
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     if (table instanceof JoinedTable) {
       if (table.associative) {
         return curName;
@@ -239,6 +240,7 @@ export class Column extends CoreProperty {
     if (!table) {
       return null;
     }
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     if (table instanceof JoinedTable) {
       return table.srcColumn.getSourceTable();
     }
@@ -305,15 +307,19 @@ export class Column extends CoreProperty {
 
     // Try using dest table's PK if destCol is not present
     if (!destCol && destTable.__pks.length) {
+      // eslint-disable-next-line prefer-destructuring, no-param-reassign
       destCol = destTable.__pks[0];
     }
     if (!destCol) {
       throw new Error(
-        `Cannot infer target column, please explicitly pass the "destCol" parameter`,
+        'Cannot infer target column, please explicitly pass the "destCol" parameter',
       );
     }
 
-    // Join returns a proxy, each property access first retrieves the original column from original joined table, then it constructs a new copied column with `props.table` set to a newly created JoinedTable
+    // Join returns a proxy, each property access first retrieves the original column
+    // from original joined table, then it constructs a new copied column with
+    // `props.table` set to a newly created JoinedTable.
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const joinedTable = new JoinedTable(
       this,
       destTable,
@@ -385,7 +391,8 @@ export class Table {
  destColumn: user.id (Column)
 */
 export class JoinedTable {
-  // keyPath is useful to detect duplicate joins, if multiple JoinedTable instances are created with same columns and tables, they'd have same `keyPath`s.
+  // keyPath is useful to detect duplicate joins, if multiple JoinedTable instances are
+  // created with same columns and tables, they'd have same `keyPath`s.
   keyPath: string;
 
   constructor(
@@ -412,15 +419,18 @@ export class JoinedTable {
   tableInputName(): string {
     const { srcColumn } = this;
     const [srcTable, srcName] = srcColumn.ensureInitialized();
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const curName = makeMiddleName(srcName);
     if (srcTable instanceof JoinedTable) {
       if (srcTable.associative) {
         return curName;
       }
-      // If srcColumn is a joined column, e.g. cmt.post_id.join(post).user_id.join(user), returns 'postUser' in this case.
+      // If srcColumn is a joined column, e.g.
+      // `cmt.post_id.join(post).user_id.join(user)`, returns 'postUser' in this case.
       return srcTable.tableInputName() + utils.capitalizeFirstLetter(curName);
     }
-    // If srcColumn is not a joined column, omit the table name, e.g. post.user_id.join(user), returns "user".
+    // If srcColumn is not a joined column, omit the table name,
+    // e.g. post.user_id.join(user), returns "user".
     return curName;
   }
 
@@ -429,10 +439,12 @@ export class JoinedTable {
   }
 }
 
-// Generates a column name for a join, we call it a middle and we need to cut the trailing `_id`, e.g. `SELECT post.user_id.join(user).name`, the `user_id` before the join is the middle name, the input name for this column is `userName`.
+// Generates a column name for a join, we call it a middle and we need to cut the trailing `_id`,
+// e.g. `SELECT post.user_id.join(user).name`, the `user_id` before the join is the middle name,
+// the input name for this column is `userName`.
 function makeMiddleName(s: string): string {
   if (!s) {
-    throw new Error(`Unexpected empty value in "makeMiddleName"`);
+    throw new Error('Unexpected empty value in "makeMiddleName"');
   }
   return utils.toCamelCase(utils.stripTrailingSnakeID(s));
 }

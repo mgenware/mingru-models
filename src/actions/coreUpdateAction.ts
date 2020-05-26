@@ -71,6 +71,7 @@ export class CoreUpdateAction extends Action {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private checkHasDefault(col: Column) {
     const def = col.__defaultValue;
     if (def === undefined || def === null) {

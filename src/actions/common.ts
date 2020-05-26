@@ -23,7 +23,8 @@ export function where(action: ActionWithWhere, value: SQL) {
   action.whereSQL = value;
 }
 
-// Unsafe means it accesses `__table` which is not available during property initialization, and should be wrapped inside `CoreProperty.registerHandler`.
+// Unsafe means it accesses `__table` which is not available during property initialization,
+// and should be wrapped inside `CoreProperty.registerHandler`.
 function byIDUnsafe(action: ActionWithWhere, inputName: string | undefined) {
   const { __table: table } = action;
   if (!table) {
@@ -65,6 +66,7 @@ export function andBy(action: CoreProperty & ActionWithWhere, column: Column) {
     if (action.whereSQL) {
       s = and(action.whereSQL, sql`${column.toInput()}`);
       // Set whereSQL to null cuz `where` doesn't allow whereSQL to be set twice
+      // eslint-disable-next-line no-param-reassign
       action.whereSQL = null;
     } else {
       s = sql`${column.toInput()}`;

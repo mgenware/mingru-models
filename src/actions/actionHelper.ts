@@ -1,3 +1,4 @@
+/* eslint-disable object-curly-newline */
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { UpdateAction } from './updateAction';
 import { InsertAction } from './insertAction';

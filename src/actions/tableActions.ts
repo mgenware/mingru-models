@@ -35,6 +35,7 @@ export class Action extends CoreProperty {
   }
 
   // After action is fully initialized, `mm.ta` will call `Action.validate`
+  // eslint-disable-next-line class-methods-use-this
   validate(_table: Table, _name: string) {
     // Implemented by sub-classes
   }
@@ -71,18 +72,19 @@ export interface EnumerateActionsOptions {
 }
 
 export function enumerateActions<T extends TableActions>(
-  tableActions: T,
+  ta: T,
   cb: (action: Action, prop: string) => void,
   opts?: EnumerateActionsOptions,
 ) {
-  throwIfFalsy(tableActions, 'tableActions');
+  throwIfFalsy(ta, 'ta');
 
+  // eslint-disable-next-line no-param-reassign
   opts = opts || {};
   if (!cb) {
     return;
   }
 
-  const entries = Object.entries(tableActions);
+  const entries = Object.entries(ta);
   if (opts.sorted) {
     entries.sort((a, b) => Utils.compareStrings(a[0], b[0]));
   }
@@ -107,11 +109,14 @@ export function enumerateActions<T extends TableActions>(
 
 export function initializeAction(action: Action, table: Table, name: string) {
   throwIfFalsy(action, 'action');
+  // eslint-disable-next-line no-param-reassign
   action.__name = name;
   // action.__table can be set before initialization by from()
   if (action.__table) {
+    // eslint-disable-next-line no-param-reassign
     table = action.__table;
   } else {
+    // eslint-disable-next-line no-param-reassign
     action.__table = table;
   }
   // After all properties are set, run property handlers
@@ -122,10 +127,10 @@ export function initializeAction(action: Action, table: Table, name: string) {
 
 export function tableActions<T extends Table, A extends TableActions>(
   table: T,
-  taCls: new () => A,
+  TACls: new () => A,
 ): A {
   throwIfFalsy(table, 'table');
-  const group = new taCls();
+  const group = new TACls();
   group.__table = table;
   enumerateActions(group, (action, name) => {
     try {
