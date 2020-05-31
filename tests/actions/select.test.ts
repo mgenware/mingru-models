@@ -5,7 +5,6 @@ import user from '../models/user';
 import post from '../models/post';
 
 const expect = assert.equal;
-const { ok } = assert;
 
 it('select', () => {
   class UserTA extends mm.TableActions {
@@ -14,9 +13,9 @@ it('select', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  ok(v instanceof mm.SelectAction);
-  ok(v instanceof mm.CoreSelectAction);
-  ok(v instanceof mm.Action);
+  assert.ok(v instanceof mm.SelectAction);
+  assert.ok(v instanceof mm.CoreSelectAction);
+  assert.ok(v instanceof mm.Action);
   expect(v.columns.length, 2);
   expect(v.columns[0], user.id);
   expect(v.columns[1], user.name);
@@ -52,7 +51,7 @@ it('as', () => {
   const b = user.name.as('b');
   const c = user.id.as('c');
 
-  ok(a instanceof mm.RawColumn);
+  assert.ok(a instanceof mm.RawColumn);
   expect(a.selectedName, 'a');
   expect(b.selectedName, 'b');
   expect(c.selectedName, 'c');

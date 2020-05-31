@@ -4,7 +4,6 @@ import * as mm from '../..';
 import user from '../models/user';
 
 const expect = assert.equal;
-const { ok } = assert;
 
 it('DeleteAction', () => {
   class UserTA extends mm.TableActions {
@@ -12,9 +11,9 @@ it('DeleteAction', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  ok(v instanceof mm.DeleteAction);
-  ok(v instanceof mm.CoreSelectAction);
-  ok(v instanceof mm.Action);
+  assert.ok(v instanceof mm.DeleteAction);
+  assert.ok(v instanceof mm.CoreSelectAction);
+  assert.ok(v instanceof mm.Action);
   expect(
     v.whereSQLString,
     'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',

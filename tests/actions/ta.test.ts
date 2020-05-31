@@ -5,7 +5,6 @@ import user from '../models/user';
 import post from '../models/post';
 
 const expect = assert.equal;
-const { ok } = assert;
 
 it('ta', () => {
   class UserTA extends mm.TableActions {
@@ -17,18 +16,18 @@ it('ta', () => {
   }
   const ta = mm.tableActions(user, UserTA);
 
-  ok(ta instanceof mm.TableActions);
+  assert.ok(ta instanceof mm.TableActions);
   expect(ta.__table, user);
 
   const v1 = ta.upd;
   expect(v1.__name, 'upd');
   expect(v1.__table, user);
-  ok(v1 instanceof mm.UpdateAction);
+  assert.ok(v1 instanceof mm.UpdateAction);
 
   const v2 = ta.sel;
   expect(v2.__name, 'sel');
   expect(v2.__table, user);
-  ok(v2 instanceof mm.SelectAction);
+  assert.ok(v2 instanceof mm.SelectAction);
 });
 
 it('Register property callback', () => {

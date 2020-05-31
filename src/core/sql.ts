@@ -52,7 +52,7 @@ export class SQLElement {
   constructor(public type: SQLElementType, public value: unknown) {}
 
   toString(): string {
-    return `E(${(this.value as object).toString()}, type = ${this.type})`;
+    return `E(${this.value}, type = ${this.type})`;
   }
 }
 

@@ -13,7 +13,7 @@ export function enumerateColumns(
   tableObject: Table,
   cb: (column: Column, prop: string) => void,
   opts?: EnumerateColumnsOptions,
-) {
+): void {
   throwIfFalsy(tableObject, 'tableObject');
 
   // eslint-disable-next-line no-param-reassign

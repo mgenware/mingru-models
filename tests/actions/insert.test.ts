@@ -4,7 +4,6 @@ import * as mm from '../..';
 import post from '../models/post';
 
 const expect = assert.equal;
-const { ok } = assert;
 
 it('Insert', () => {
   class PostTA extends mm.TableActions {
@@ -15,8 +14,8 @@ it('Insert', () => {
 
   expect(v.actionType, mm.ActionType.insert);
   expect(v.ensureOneRowAffected, false);
-  ok(v instanceof mm.InsertAction);
-  ok(v instanceof mm.CoreUpdateAction);
+  assert.ok(v instanceof mm.InsertAction);
+  assert.ok(v instanceof mm.CoreUpdateAction);
   expect(
     v.settersToString(),
     'title: SQL(E(SQLVar(title, desc = Column(title, Table(post))), type = 2)), snake_case_user_id: SQL(E(SQLVar(snakeCaseUserID, desc = Column(snake_case_user_id, Table(post))), type = 2))',

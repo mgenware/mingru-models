@@ -6,7 +6,6 @@ import post from '../models/post';
 import * as cm from '../actions/common';
 
 const expect = assert.equal;
-const { ok } = assert;
 
 it('SQL', () => {
   const sql = mm.sql`${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}`;
@@ -14,7 +13,7 @@ it('SQL', () => {
     sql.toString(),
     'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
   );
-  ok(sql instanceof mm.SQL);
+  assert.ok(sql instanceof mm.SQL);
 });
 
 it('SQL with input', () => {

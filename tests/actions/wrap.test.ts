@@ -4,7 +4,6 @@ import user from '../models/user';
 import post from '../models/post';
 
 const expect = assert.equal;
-const { ok } = assert;
 
 it('Wrap', () => {
   class PostTA extends mm.TableActions {
@@ -21,8 +20,8 @@ it('Wrap', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   let v = ta.t;
-  ok(v instanceof mm.WrappedAction);
-  ok(v instanceof mm.Action);
+  assert.ok(v instanceof mm.WrappedAction);
+  assert.ok(v instanceof mm.Action);
   expect(v.actionType, mm.ActionType.wrap);
   expect(v.action, ta.s);
   assert.deepEqual(v.args, {
@@ -51,8 +50,8 @@ it('Wrap (chains)', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   let v = ta.t;
-  ok(v instanceof mm.WrappedAction);
-  ok(v instanceof mm.Action);
+  assert.ok(v instanceof mm.WrappedAction);
+  assert.ok(v instanceof mm.Action);
   expect(v.actionType, mm.ActionType.wrap);
   expect(v.action, ta.s);
   assert.deepEqual(v.args, {

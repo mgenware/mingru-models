@@ -5,25 +5,24 @@ import like from '../models/like';
 import user from '../models/user';
 
 const expect = assert.equal;
-const { ok } = assert;
 
 it('bigInt', () => {
   const c = mm.bigInt(20);
-  ok(c.__type.types.includes(mm.dt.bigInt));
+  assert.ok(c.__type.types.includes(mm.dt.bigInt));
   expect(c.__type.length, 20);
   expect(c.__type.unsigned, false);
 });
 
 it('unsignedBigInt', () => {
   const c = mm.uBigInt(20);
-  ok(c.__type.types.includes(mm.dt.bigInt));
+  assert.ok(c.__type.types.includes(mm.dt.bigInt));
   expect(c.__type.length, 20);
   expect(c.__type.unsigned, true);
 });
 
 it('int', () => {
   const c = mm.int(20);
-  ok(c.__type.types.includes(mm.dt.int));
+  assert.ok(c.__type.types.includes(mm.dt.int));
   expect(c.__type.length, 20);
   expect(c.__type.unsigned, false);
 
@@ -33,70 +32,70 @@ it('int', () => {
 
 it('unsignedInt', () => {
   const c = mm.uInt(20);
-  ok(c.__type.types.includes(mm.dt.int));
+  assert.ok(c.__type.types.includes(mm.dt.int));
   expect(c.__type.length, 20);
   expect(c.__type.unsigned, true);
 });
 
 it('smallInt', () => {
   const c = mm.smallInt(20);
-  ok(c.__type.types.includes(mm.dt.smallInt));
+  assert.ok(c.__type.types.includes(mm.dt.smallInt));
   expect(c.__type.length, 20);
   expect(c.__type.unsigned, false);
 });
 
 it('unsignedSmallInt', () => {
   const c = mm.uSmallInt(20);
-  ok(c.__type.types.includes(mm.dt.smallInt));
+  assert.ok(c.__type.types.includes(mm.dt.smallInt));
   expect(c.__type.length, 20);
   expect(c.__type.unsigned, true);
 });
 
 it('tinyInt', () => {
   const c = mm.tinyInt(20);
-  ok(c.__type.types.includes(mm.dt.tinyInt));
+  assert.ok(c.__type.types.includes(mm.dt.tinyInt));
   expect(c.__type.length, 20);
   expect(c.__type.unsigned, false);
 });
 
 it('unsignedTinyInt', () => {
   const c = mm.uTinyInt(20);
-  ok(c.__type.types.includes(mm.dt.tinyInt));
+  assert.ok(c.__type.types.includes(mm.dt.tinyInt));
   expect(c.__type.length, 20);
   expect(c.__type.unsigned, true);
 });
 
 it('char', () => {
   const c = mm.char(20);
-  ok(c.__type.types.includes(mm.dt.char));
+  assert.ok(c.__type.types.includes(mm.dt.char));
   expect(c.__type.length, 20);
   expect(c.__type.unsigned, false);
 });
 
 it('varChar', () => {
   const c = mm.varChar(20);
-  ok(c.__type.types.includes(mm.dt.varChar));
+  assert.ok(c.__type.types.includes(mm.dt.varChar));
   expect(c.__type.length, 20);
   expect(c.__type.unsigned, false);
 });
 
 it('binary', () => {
   const c = mm.binary(20);
-  ok(c.__type.types.includes(mm.dt.binary));
+  assert.ok(c.__type.types.includes(mm.dt.binary));
   expect(c.__type.length, 20);
   expect(c.__type.unsigned, false);
 });
 
 it('varBinary', () => {
   const c = mm.varBinary(20);
-  ok(c.__type.types.includes(mm.dt.varBinary));
+  assert.ok(c.__type.types.includes(mm.dt.varBinary));
   expect(c.__type.length, 20);
   expect(c.__type.unsigned, false);
 });
 
 it('pk', () => {
   const c = mm.pk();
-  ok(c.__type.types.includes(mm.dt.bigInt));
+  assert.ok(c.__type.types.includes(mm.dt.bigInt));
   expect(c.__type.unique, false);
   expect(c.__type.nullable, false);
   expect(c.__type.unsigned, true);
@@ -144,14 +143,14 @@ it('isNoDefaultOnCSQL', () => {
 
 it('text', () => {
   const c = mm.text();
-  ok(c.__type.types.includes(mm.dt.text));
+  assert.ok(c.__type.types.includes(mm.dt.text));
   expect(c.__type.length, 0);
   expect(c.__type.unsigned, false);
 });
 
 it('double', () => {
   const c = mm.double(20);
-  ok(c.__type.types.includes(mm.dt.double));
+  assert.ok(c.__type.types.includes(mm.dt.double));
   expect(c.__type.length, 20);
   expect(c.__type.unsigned, false);
 
@@ -161,82 +160,82 @@ it('double', () => {
 
 it('float', () => {
   const c = mm.float(20);
-  ok(c.__type.types.includes(mm.dt.float));
+  assert.ok(c.__type.types.includes(mm.dt.float));
   expect(c.__type.length, 20);
   expect(c.__type.unsigned, false);
 });
 
 it('bool', () => {
   const c = mm.bool();
-  ok(c.__type.types.includes(mm.dt.bool));
+  assert.ok(c.__type.types.includes(mm.dt.bool));
   expect(c.__type.unsigned, false);
 });
 
 it('datetime', () => {
   let c = mm.datetime();
-  ok(c.__type.types.includes(mm.dt.datetime));
+  assert.ok(c.__type.types.includes(mm.dt.datetime));
 
   c = mm.datetime('local');
   expect(
-    (c.__defaultValue as object).toString(),
+    `${c.__defaultValue}`,
     'SQL(E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3))',
   );
 
   c = mm.datetime('utc');
   expect(
-    (c.__defaultValue as object).toString(),
+    `${c.__defaultValue}`,
     'SQL(E(SQLCall(16, return = ColType(SQL.DATETIME), type = 3))',
   );
 });
 
 it('date', () => {
   let c = mm.date();
-  ok(c.__type.types.includes(mm.dt.date));
+  assert.ok(c.__type.types.includes(mm.dt.date));
 
   c = mm.date('local');
   expect(
-    (c.__defaultValue as object).toString(),
+    `${c.__defaultValue}`,
     'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
   );
 
   c = mm.date('utc');
   expect(
-    (c.__defaultValue as object).toString(),
+    `${c.__defaultValue}`,
     'SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3))',
   );
 });
 
 it('time', () => {
   let c = mm.time();
-  ok(c.__type.types.includes(mm.dt.time));
+  assert.ok(c.__type.types.includes(mm.dt.time));
 
   c = mm.time('local');
   expect(
-    (c.__defaultValue as object).toString(),
+    `${c.__defaultValue}`,
     'SQL(E(SQLCall(2, return = ColType(SQL.TIME), type = 3))',
   );
 
   c = mm.time('utc');
   expect(
-    (c.__defaultValue as object).toString(),
+    `${c.__defaultValue}`,
     'SQL(E(SQLCall(18, return = ColType(SQL.TIME), type = 3))',
   );
 });
 
 it('timestamp', () => {
   let c = mm.timestamp();
-  ok(c.__type.types.includes(mm.dt.timestamp));
+  assert.ok(c.__type.types.includes(mm.dt.timestamp));
 
   c = mm.timestamp(true);
   expect(
-    (c.__defaultValue as object).toString(),
+    `${c.__defaultValue}`,
     'SQL(E(SQLCall(19, return = ColType(SQL.TIMESTAMP), type = 3))',
   );
 });
 
 it('decimal', () => {
   const c = mm.decimal(5, 2);
-  ok(c.__type.types.includes(mm.dt.decimal));
+  assert.ok(c.__type.types.includes(mm.dt.decimal));
   expect(c.__type.length, 5);
   expect(c.__type.extraLength, 2);
   expect(c.__type.unsigned, false);

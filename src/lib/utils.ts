@@ -2,7 +2,7 @@ import snakeCase = require('lodash.snakecase');
 import camelCase = require('lodash.camelcase');
 
 export default class Utils {
-  static capitalizeFirstLetter(s: string) {
+  static capitalizeFirstLetter(s: string): string {
     if (!s) {
       return s;
     }
@@ -51,7 +51,7 @@ export default class Utils {
     return res;
   }
 
-  static compareStrings(a: string, b: string) {
+  static compareStrings(a: string, b: string): number {
     if (a < b) {
       return -1;
     }

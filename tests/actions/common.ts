@@ -1,6 +1,6 @@
 import * as mm from '../..';
 
-export function listColumnsFromSQL(sql: mm.SQL) {
+export function listColumnsFromSQL(sql: mm.SQL): mm.Column[] {
   const arr: mm.Column[] = [];
   sql.enumerateColumns((col) => {
     arr.push(col);

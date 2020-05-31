@@ -5,7 +5,6 @@ import post from '../models/post';
 import { WrappedAction } from '../..';
 
 const expect = assert.equal;
-const { ok } = assert;
 
 it('Transact', () => {
   class UserTA extends mm.TableActions {
@@ -27,8 +26,8 @@ it('Transact', () => {
 
   let v = postTA.batch;
   expect(v.actionType, mm.ActionType.transact);
-  ok(v instanceof mm.TransactAction);
-  ok(v instanceof mm.Action);
+  assert.ok(v instanceof mm.TransactAction);
+  assert.ok(v instanceof mm.Action);
 
   v = postTA.batch2;
   assert.deepEqual(

@@ -43,15 +43,15 @@ export class DataTypes {
     this.timestamp,
   ]);
 
-  isInteger(s: string) {
+  isInteger(s: string): boolean {
     return this.integerSet.has(s);
   }
 
-  isNumber(s: string) {
+  isNumber(s: string): boolean {
     return this.numberSet.has(s);
   }
 
-  isTimeRelated(s: string) {
+  isTimeRelated(s: string): boolean {
     return this.timeRelatedSet.has(s);
   }
 }
