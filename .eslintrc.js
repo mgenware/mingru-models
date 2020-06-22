@@ -23,7 +23,7 @@ module.exports = {
     '@typescript-eslint/switch-exhaustiveness-check': 'error',
     '@typescript-eslint/naming-convention': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    'lines-between-class-members': [
+    '@typescript-eslint/lines-between-class-members': [
       'error',
       'always',
       { exceptAfterSingleLine: true },

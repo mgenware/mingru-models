@@ -1,5 +1,5 @@
-import snakeCase = require('lodash.snakecase');
-import camelCase = require('lodash.camelcase');
+import snakeCase from 'lodash.snakecase';
+import camelCase from 'lodash.camelcase';
 
 export default class Utils {
   static capitalizeFirstLetter(s: string): string {
