@@ -1,6 +1,8 @@
 module.exports = {
   clean: {
-    run: ['rimraf dist', 'rimraf dist_tests'],
+    run: {
+      del: 'dist dist_tests',
+    },
   },
   lint: {
     run: 'eslint --max-warnings 0 --ext .ts src/ tests/',
