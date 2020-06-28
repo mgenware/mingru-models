@@ -88,6 +88,14 @@ it('SQL calls', () => {
   t = mm.sum(post.id);
   expect(t.type, mm.SQLCallType.sum);
   assert.deepEqual(t.returnType, dtc(dt.int));
+
+  t = mm.exists(post.id);
+  expect(t.type, mm.SQLCallType.exists);
+  assert.deepEqual(t.returnType, dtc(dt.bool));
+
+  t = mm.notExists(post.id);
+  expect(t.type, mm.SQLCallType.notExists);
+  assert.deepEqual(t.returnType, dtc(dt.bool));
 });
 
 it('Embeded in SQL', () => {

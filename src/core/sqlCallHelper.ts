@@ -99,3 +99,11 @@ export function avg(column: SQLConvertible): SQLCall {
 export function sum(column: SQLConvertible): SQLCall {
   return sqlCall(SQLCallType.sum, new ColumnType(dt.int), [column]);
 }
+
+export function exists(expr: SQLConvertible): SQLCall {
+  return sqlCall(SQLCallType.exists, new ColumnType(dt.bool), [expr]);
+}
+
+export function notExists(expr: SQLConvertible): SQLCall {
+  return sqlCall(SQLCallType.notExists, new ColumnType(dt.bool), [expr]);
+}

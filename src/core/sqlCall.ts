@@ -22,6 +22,8 @@ export enum SQLCallType {
   utcDateNow,
   utcTimeNow,
   timestampNow,
+  exists,
+  notExists,
 }
 
 export class SQLCall {
