@@ -4,6 +4,7 @@ import { SQL, SQLElement, SQLElementType, SQLVariable } from './sql';
 import { RawColumn } from '../actions/rawColumn';
 import { Column, ColumnType } from './core';
 import { SQLCall, SQLCallType } from './sqlCall';
+import { Action } from '../actions/tableActions';
 
 class SQLBuilder {
   elements: SQLElement[] = [];
@@ -31,6 +32,8 @@ class SQLBuilder {
         this.pushElement(new SQLElement(SQLElementType.call, param));
       } else if (param instanceof RawColumn) {
         this.pushElement(new SQLElement(SQLElementType.rawColumn, param));
+      } else if (param instanceof Action) {
+        this.pushElement(new SQLElement(SQLElementType.action, param));
       } else {
         throw new Error(
           `Unsupported SQL parameter type "${toTypeString(param)}"`,

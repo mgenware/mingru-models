@@ -80,6 +80,11 @@ it('Embed string', () => {
   );
 });
 
+it('Embed an action', () => {
+  const sql = mm.sql`${mm.select(user.id)}`;
+  expect(sql.toString(), 'SQL(E(SelectAction(null, null), type = 5))');
+});
+
 it('toInput', () => {
   const input = user.name.toInput();
   expect(input.type, user.name);

@@ -46,6 +46,7 @@ export enum SQLElementType {
   input,
   call,
   rawColumn,
+  action,
 }
 
 export class SQLElement {
