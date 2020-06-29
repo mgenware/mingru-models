@@ -104,7 +104,7 @@ export function input(
 
 export function sqlCall(
   type: SQLCallType,
-  returnType: ColumnType,
+  returnType: ColumnType | number,
   params?: SQLConvertible[],
 ): SQLCall {
   const sqls = params ? params.map((p) => convertToSQL(p)) : [];

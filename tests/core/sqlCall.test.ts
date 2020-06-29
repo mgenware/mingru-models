@@ -96,6 +96,10 @@ it('SQL calls', () => {
   t = mm.notExists(post.id);
   expect(t.type, mm.SQLCallType.notExists);
   assert.deepEqual(t.returnType, dtc(dt.bool));
+
+  t = mm.ifNull(post.id, post.title);
+  expect(t.type, mm.SQLCallType.ifNull);
+  assert.deepEqual(t.returnType, 1);
 });
 
 it('Embeded in SQL', () => {
