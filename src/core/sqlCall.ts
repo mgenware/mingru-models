@@ -24,12 +24,14 @@ export enum SQLCallType {
   timestampNow,
   exists,
   notExists,
+  ifNull,
 }
 
 export class SQLCall {
   constructor(
     public type: SQLCallType,
-    public returnType: ColumnType,
+    // A number value indicates the return value is inferred from the index of a params.
+    public returnType: ColumnType | number,
     public params: SQL[],
   ) {}
 
