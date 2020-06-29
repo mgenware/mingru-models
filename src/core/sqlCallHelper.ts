@@ -109,5 +109,5 @@ export function notExists(expr: SQLConvertible): SQLCall {
 }
 
 export function ifNull(expr1: SQLConvertible, expr2: SQLConvertible): SQLCall {
-  return sqlCall(SQLCallType.ifNull, 1, [expr1, expr2]);
+  return sqlCall(SQLCallType.ifNull, 0, [expr1, expr2]);
 }
