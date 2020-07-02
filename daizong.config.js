@@ -1,7 +1,7 @@
 module.exports = {
   clean: {
     run: {
-      del: 'dist dist_tests',
+      del: ['dist', 'dist_tests'],
     },
   },
   lint: {
