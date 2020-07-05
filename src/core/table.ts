@@ -6,27 +6,13 @@ import * as defs from './defs';
 import Utils from '../lib/utils';
 import { SQL } from './sql';
 
-export interface EnumerateColumnsOptions {
-  sorted?: boolean;
-}
-
-export function enumerateColumns(
+function enumerateColumns(
   tableObject: Table,
   cb: (column: Column, prop: string) => void,
-  opts?: EnumerateColumnsOptions,
 ): void {
   throwIfFalsy(tableObject, 'tableObject');
 
-  // eslint-disable-next-line no-param-reassign
-  opts = opts || {};
-  if (!cb) {
-    return;
-  }
-
   const entries = Object.entries(tableObject);
-  if (opts.sorted) {
-    entries.sort((a, b) => Utils.compareStrings(a[0], b[0]));
-  }
   for (const pair of entries) {
     const name = pair[0] as string;
     const value = pair[1];
@@ -50,15 +36,15 @@ export function tableCore(
   tableName: string,
   dbName: string | null,
   tableObj: Table | null,
-  columns: [string, Column][],
+  columns: Record<string, Column>,
 ): Table {
   throwIfFalsy(tableName, 'tableName');
   tableObj = tableObj || new Table();
   tableObj.__name = Utils.toSnakeCase(tableName);
   tableObj.__dbName = dbName || null;
 
-  const cols = tableObj.__columns;
-  for (const [propName, col] of columns) {
+  const convertedColumns: Record<string, Column> = {};
+  for (const [propName, col] of Object.entries(columns)) {
     try {
       if (!col) {
         throw new Error('Expected empty column object');
@@ -104,7 +90,7 @@ export function tableCore(
         throw new Error('Default value cannot be a complex SQL expression');
       }
 
-      cols.push(columnToAdd);
+      convertedColumns[propName] = columnToAdd;
       // eslint-disable-next-line
       (tableObj as any)[propName] = columnToAdd;
       // After all properties are set, run property handlers
@@ -116,6 +102,8 @@ export function tableCore(
       throw err;
     }
   }
+
+  tableObj.__columns = convertedColumns;
   return tableObj;
 }
 
@@ -127,9 +115,9 @@ export function table<T extends Table>(
   const tableObj = new CLASS();
   const tableName = tableObj.constructor.name;
 
-  const columns: [string, Column][] = [];
+  const columns: Record<string, Column> = {};
   enumerateColumns(tableObj, (col, propName) => {
-    columns.push([propName, col]);
+    columns[propName] = col;
   });
   return tableCore(tableName, dbName || null, tableObj, columns) as T;
 }

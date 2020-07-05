@@ -358,7 +358,7 @@ export class Column extends CoreProperty {
 }
 
 export class Table {
-  __columns: Column[] = [];
+  __columns: Record<string, Column> = {};
   __name!: string;
   __dbName: string | null = null;
   // Primary key columns

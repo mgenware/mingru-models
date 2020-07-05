@@ -165,7 +165,30 @@ it('Action.attr/attrs', () => {
   }
 });
 
-it('taCore', () => {
+it('__actions and props', () => {
+  class UserTA extends mm.TableActions {
+    upd = mm
+      .unsafeUpdateAll()
+      .set(user.name, mm.sql`${mm.input(user.name)}`)
+      .set(user.follower_count, mm.sql`${user.follower_count} + 1`);
+
+    sel = mm.select(user.id);
+  }
+  const ta = mm.tableActions(user, UserTA);
+
+  expect(ta.__table, user);
+  expect(ta instanceof mm.TableActions, true);
+  assert.deepEqual(ta.__actions, {
+    upd: ta.upd,
+    sel: ta.sel,
+  });
+  for (const [name, action] of Object.entries(ta.__actions)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((ta as any)[name], action);
+  }
+});
+
+it('__actions and props (taCore)', () => {
   const sel = mm.select();
   const del = mm.deleteOne().byID();
   const actions: Record<string, mm.Action> = {
@@ -177,4 +200,8 @@ it('taCore', () => {
   expect(ta.__table, user);
   expect(ta instanceof mm.TableActions, true);
   assert.deepEqual(ta.__actions, actions);
+  for (const [name, action] of Object.entries(ta.__actions)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((ta as any)[name], action);
+  }
 });

@@ -121,7 +121,6 @@ export function tableActionsCore(
 
   taObj = taObj || new TableActions();
   taObj.__table = table;
-  taObj.__actions = actions;
   for (const [name, action] of Object.entries(actions)) {
     try {
       initializeAction(action, table, name);
@@ -129,7 +128,10 @@ export function tableActionsCore(
       err.message += ` [action "${name}"]`;
       throw err;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (taObj as any)[name] = action;
   }
+  taObj.__actions = actions;
 
   return taObj;
 }

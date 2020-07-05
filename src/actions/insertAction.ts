@@ -15,7 +15,8 @@ export class InsertAction extends CoreUpdateAction {
 
     const setterCount = this.setters.size;
     // Number of columns = total count - number of auto_increment PKs
-    const colCount = table.__columns.length - table.__pkAIs.length;
+    const colCount =
+      Object.entries(table.__columns).length - table.__pkAIs.length;
     if (
       !this.allowUnsetColumns &&
       // if no wild flags are set
