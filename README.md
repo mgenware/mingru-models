@@ -196,9 +196,9 @@ class Column extends ColumnBase {
 
 <TODO: Add example code>
 
-### Joins
+### Foreign keys
 
-Joins can be created by simply assigning a foreign column to the target column, for example, let's say `post` table has a foreign key to `user` table at `user_id` column, here is what `user` looks like (`user.ts`):
+Foreign keys can be created by simply assigning an imported column to another column, for example, let's say `post` table has a foreign key to `user` table at `user_id` column, here is what `user` looks like (`user.ts`):
 
 ```ts
 import * as mm from 'mingru-models';
@@ -211,7 +211,7 @@ class User extends mm.Table {
 export default mm.table(User);
 ```
 
-To create a join to `user` table, inside `post` table (`post.ts`), you need to import `user` table, and set `user.id` to the `user_id` column:
+To create a foreign key to `user` table, inside `post` table (`post.ts`), you need to import `user` table, and set `user.id` to the `user_id` column:
 
 ```ts
 import * as mm from 'mingru-models';
