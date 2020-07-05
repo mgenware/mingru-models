@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Column, ColumnType } from './core';
 import toTypeString from 'to-type-string';
+import { Column, ColumnType } from './core';
 
 export class SQLVariable {
   constructor(
