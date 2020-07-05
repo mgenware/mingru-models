@@ -52,9 +52,11 @@ export function tableCore(
   tableObj: Table | null,
   columns: [string, Column][],
 ): Table {
+  throwIfFalsy(tableName, 'tableName');
   tableObj = tableObj || new Table();
   tableObj.__name = Utils.toSnakeCase(tableName);
   tableObj.__dbName = dbName || null;
+
   const cols = tableObj.__columns;
   for (const [propName, col] of columns) {
     try {

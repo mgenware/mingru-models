@@ -58,26 +58,10 @@ it('enumerateActions', () => {
     sel = mm.select(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
-
-  const actions: mm.Action[] = [];
-  mm.enumerateActions(ta, (a) => actions.push(a));
-  assert.deepEqual(actions, [ta.upd, ta.sel]);
-});
-
-it('enumerateActions (sorted)', () => {
-  class UserTA extends mm.TableActions {
-    upd = mm
-      .unsafeUpdateAll()
-      .set(user.name, mm.sql`${mm.input(user.name)}`)
-      .set(user.follower_count, mm.sql`${user.follower_count} + 1`);
-
-    sel = mm.select(user.id);
-  }
-  const ta = mm.tableActions(user, UserTA);
-
-  const actions: mm.Action[] = [];
-  mm.enumerateActions(ta, (a) => actions.push(a), { sorted: true });
-  assert.deepEqual(actions, [ta.sel, ta.upd]);
+  assert.deepEqual(ta.__actions, {
+    upd: ta.upd,
+    sel: ta.sel,
+  });
 });
 
 it('Argument stubs', () => {
@@ -179,4 +163,18 @@ it('Action.attr/attrs', () => {
       c: 5,
     });
   }
+});
+
+it('taCore', () => {
+  const sel = mm.select();
+  const del = mm.deleteOne().byID();
+  const actions: Record<string, mm.Action> = {
+    del,
+    sel,
+  };
+  const ta = mm.tableActionsCore(user, null, actions);
+
+  expect(ta.__table, user);
+  expect(ta instanceof mm.TableActions, true);
+  assert.deepEqual(ta.__actions, actions);
 });

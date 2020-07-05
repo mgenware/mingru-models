@@ -1,12 +1,13 @@
+/* eslint-disable no-param-reassign */
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import toTypeString from 'to-type-string';
 import { Table, CoreProperty } from '../core/core';
 import * as defs from '../core/defs';
-import Utils from '../lib/utils';
 import { SQLVariable } from '../core/sql';
 
 export class TableActions {
   __table: Table | null = null;
+  __actions: Record<string, Action> = {};
 }
 
 export enum ActionType {
@@ -67,27 +68,13 @@ export class Action extends CoreProperty {
   }
 }
 
-export interface EnumerateActionsOptions {
-  sorted?: boolean;
-}
-
-export function enumerateActions<T extends TableActions>(
+function enumerateActions<T extends TableActions>(
   ta: T,
   cb: (action: Action, prop: string) => void,
-  opts?: EnumerateActionsOptions,
 ) {
   throwIfFalsy(ta, 'ta');
 
-  // eslint-disable-next-line no-param-reassign
-  opts = opts || {};
-  if (!cb) {
-    return;
-  }
-
   const entries = Object.entries(ta);
-  if (opts.sorted) {
-    entries.sort((a, b) => Utils.compareStrings(a[0], b[0]));
-  }
   for (const pair of entries) {
     const name = pair[0] as string;
     const value = pair[1];
@@ -125,20 +112,38 @@ export function initializeAction(action: Action, table: Table, name: string) {
   action.validate(table, name);
 }
 
-export function tableActions<T extends Table, A extends TableActions>(
-  table: T,
-  TACls: new () => A,
-): A {
+export function tableActionsCore(
+  table: Table,
+  taObj: TableActions | null,
+  actions: Record<string, Action>,
+): TableActions {
   throwIfFalsy(table, 'table');
-  const group = new TACls();
-  group.__table = table;
-  enumerateActions(group, (action, name) => {
+
+  taObj = taObj || new TableActions();
+  taObj.__table = table;
+  taObj.__actions = actions;
+  for (const [name, action] of Object.entries(actions)) {
     try {
       initializeAction(action, table, name);
     } catch (err) {
       err.message += ` [action "${name}"]`;
       throw err;
     }
+  }
+
+  return taObj;
+}
+
+export function tableActions<T extends Table, A extends TableActions>(
+  table: T,
+  TACls: new () => A,
+): A {
+  throwIfFalsy(table, 'table');
+  const taObj = new TACls();
+
+  const actions: Record<string, Action> = {};
+  enumerateActions(taObj, (action, name) => {
+    actions[name] = action;
   });
-  return group;
+  return tableActionsCore(table, taObj, actions) as A;
 }
