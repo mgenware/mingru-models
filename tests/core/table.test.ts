@@ -80,4 +80,5 @@ it('tableCore', () => {
   assert.deepEqual(table.__pks, [id]);
   assert.deepEqual(table.__pkAIs, [id]);
   assert.deepEqual(table.__columns, [id, name]);
+  expect(table instanceof mm.Table, true);
 });
