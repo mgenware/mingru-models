@@ -67,3 +67,17 @@ it('Composite PKs', () => {
   assert.deepEqual(like.__pks, [like.user_id, like.type]);
   assert.deepEqual(like.__pkAIs, []);
 });
+
+it('tableCore', () => {
+  const id = mm.pk();
+  const name = mm.varChar(250);
+  const table = mm.tableCore('A', 'a_a', null, [
+    ['id', id],
+    ['name', name],
+  ]);
+  expect(table.__name, 'a');
+  expect(table.__dbName, 'a_a');
+  assert.deepEqual(table.__pks, [id]);
+  assert.deepEqual(table.__pkAIs, [id]);
+  assert.deepEqual(table.__columns, [id, name]);
+});

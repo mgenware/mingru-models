@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import toTypeString from 'to-type-string';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table, Column, CoreProperty, JoinedTable } from './core';
@@ -45,18 +46,17 @@ export function enumerateColumns(
   }
 }
 
-export function table<T extends Table>(
-  CLASS: new (name?: string) => T,
-  dbName?: string,
-): T {
-  throwIfFalsy(CLASS, 'CLASS');
-  const tableObj = new CLASS();
-  const className = tableObj.constructor.name;
-  tableObj.__name = Utils.toSnakeCase(className);
+export function tableCore(
+  tableName: string,
+  dbName: string | null,
+  tableObj: Table | null,
+  columns: [string, Column][],
+): Table {
+  tableObj = tableObj || new Table();
+  tableObj.__name = Utils.toSnakeCase(tableName);
   tableObj.__dbName = dbName || null;
   const cols = tableObj.__columns;
-
-  enumerateColumns(tableObj, (col, propName) => {
+  for (const [propName, col] of columns) {
     try {
       if (!col) {
         throw new Error('Expected empty column object');
@@ -113,6 +113,21 @@ export function table<T extends Table>(
       err.message += ` [column "${propName}"]`;
       throw err;
     }
+  }
+  return tableObj;
+}
+
+export function table<T extends Table>(
+  CLASS: new (name?: string) => T,
+  dbName?: string,
+): T {
+  throwIfFalsy(CLASS, 'CLASS');
+  const tableObj = new CLASS();
+  const tableName = tableObj.constructor.name;
+
+  const columns: [string, Column][] = [];
+  enumerateColumns(tableObj, (col, propName) => {
+    columns.push([propName, col]);
   });
-  return (tableObj as unknown) as T;
+  return tableCore(tableName, dbName || null, tableObj, columns) as T;
 }
