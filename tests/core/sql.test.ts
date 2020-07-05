@@ -239,9 +239,15 @@ it('RawColumn', () => {
 
 it('sniffType', () => {
   // Column
+  expect(mm.sql`${user.id}`.sniffType(), 'ColType(SQL.BIGINT)');
   expect(mm.sql`haha${user.id}`.sniffType(), 'ColType(SQL.BIGINT)');
   // Call
   expect(mm.sql`${mm.max(mm.sql``)}`.sniffType(), 'ColType(SQL.INT)');
+  // Call with a index-based return type from one of its params.
+  expect(
+    mm.sql`${mm.ifNull(post.title, post.id)}`.sniffType(),
+    'ColType(SQL.VARCHAR)',
+  );
   // RawColumn
   expect(mm.sql`haha${user.id.as('abc')}`.sniffType(), 'ColType(SQL.BIGINT)');
   expect(

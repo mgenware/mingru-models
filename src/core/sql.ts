@@ -1,5 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Column, ColumnType } from './core';
+import toTypeString from 'to-type-string';
 
 export class SQLVariable {
   constructor(
@@ -106,7 +107,29 @@ export class SQL {
         return element.toColumn().__type;
       }
       if (type === SQLElementType.call) {
-        return element.toCall().returnType;
+        const call = element.toCall();
+        const { returnType } = call;
+        if (returnType instanceof ColumnType) {
+          return returnType;
+        }
+        // `returnType` is the index of the specified param that indicates the return type.
+        const param = call.params[returnType];
+        if (!param) {
+          throw new Error(
+            `Unexpected empty param from return type index ${returnType}`,
+          );
+        }
+        if (param instanceof Column) {
+          return param.__type;
+        }
+        if (param instanceof SQL) {
+          return param.sniffType();
+        }
+        throw new Error(
+          `Return type index must point to a column-like value, got a "${toTypeString(
+            param,
+          )}" at index ${returnType}`,
+        );
       }
       if (type === SQLElementType.rawColumn) {
         const raw = element.toRawColumn();
