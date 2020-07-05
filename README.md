@@ -54,7 +54,7 @@ You may wonder why a two-step process, why not export the table type directly? w
 By default, class name is used as table name, and mingru-models automatially converts it to snake_case in SQL, for example, `class MyTable` would be `my_table`. Use the second parameter of `mm.table` to customize the name used in SQL.
 
 ```ts
-class User extends mm.MyTable {}
+class MyTable extends mm.Table {}
 
 export default mm.table(MyTable); // Table name is "my_table" in SQL.
 export default mm.table(MyTable, 'haha'); // Table name is "haha" in SQL.
@@ -242,10 +242,7 @@ export class UserTA extends mm.TableActions {
   // Selects a single user by ID
   selectUser = mm.select(user.id, user.name).byID();
   // Updates an user by ID
-  updateUser = dd
-    .updateOne()
-    .setInputs(user.name, user.sig)
-    .byID();
+  updateUser = dd.updateOne().setInputs(user.name, user.sig).byID();
   // Delete an user by ID
   deleteUser = mm.deleteOne().byID();
 }
@@ -614,10 +611,7 @@ updateUserSig = dd
 Or, use user input as column value:
 
 ```ts
-updateUserSig = dd
-  .updateOne()
-  .set(user.sig, user.sig.toInput())
-  .byID();
+updateUserSig = dd.updateOne().set(user.sig, user.sig.toInput()).byID();
 ```
 
 To set multiple columns, just call `set` one by one:
@@ -667,10 +661,7 @@ updateManyColumns = dd
 `setInputs` can also be called with no arguments, in this case, all remaining columns (haven't been set yet) will be automatically set as inputs:
 
 ```ts
-updateManyColumns = dd
-  .updateOne()
-  .setInputs(user.sig)
-  .setInputs(); // All columns other than `user.sig` will be set as inputs
+updateManyColumns = dd.updateOne().setInputs(user.sig).setInputs(); // All columns other than `user.sig` will be set as inputs
 ```
 
 ### `INSERT` actions
