@@ -321,6 +321,22 @@ it('HAVING', () => {
   );
 });
 
+it('Pagination', () => {
+  class UserTA extends mm.TableActions {
+    t = mm.selectRows(user.name).paginate().orderByAsc(user.name);
+  }
+  const ta = mm.tableActions(user, UserTA);
+  expect(ta.t.pagination, true);
+});
+
+it('limit', () => {
+  class UserTA extends mm.TableActions {
+    t = mm.selectRows(user.name).paginate().orderByAsc(user.name).limit(20);
+  }
+  const ta = mm.tableActions(user, UserTA);
+  expect(ta.t.top, 20);
+});
+
 it('Throw when paginate is called on non-list mode', () => {
   const t = user;
 

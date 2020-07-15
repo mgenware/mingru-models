@@ -29,6 +29,7 @@ export class SelectAction extends CoreSelectAction {
   pagination = false;
   orderByColumns: OrderByColumn[] = [];
   groupByColumns: string[] = [];
+  top = -1;
 
   constructor(
     public columns: SelectActionColumns[],
@@ -93,6 +94,11 @@ export class SelectAction extends CoreSelectAction {
       );
     }
     this.pagination = true;
+    return this;
+  }
+
+  limit(limit: number): this {
+    this.top = limit;
     return this;
   }
 
