@@ -321,15 +321,15 @@ it('HAVING', () => {
   );
 });
 
-it('Throw when limit is called on non-list mode', () => {
+it('Throw when paginate is called on non-list mode', () => {
   const t = user;
 
   itThrows(() => {
     class UserTA extends mm.TableActions {
-      t = mm.selectField(t.name).limit();
+      t = mm.selectField(t.name).paginate();
     }
     mm.tableActions(user, UserTA);
-  }, "limit can only be used when mode = 'SelectActionMode.list', current mode is 1");
+  }, "'paginate' can only be used when mode = 'SelectActionMode.list', current mode is 1");
 });
 
 it('Throw on selecting collection without ORDER BY', () => {

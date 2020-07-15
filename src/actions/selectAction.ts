@@ -26,7 +26,7 @@ export class SelectAction extends CoreSelectAction {
   havingSQL: SQL | null = null;
   havingValidator: ((value: SQL) => void) | null = null;
   // Only used in rows mode.
-  hasLimit = false;
+  pagination = false;
   orderByColumns: OrderByColumn[] = [];
   groupByColumns: string[] = [];
 
@@ -86,13 +86,13 @@ export class SelectAction extends CoreSelectAction {
     return this;
   }
 
-  limit(): this {
+  paginate(): this {
     if (this.mode !== SelectActionMode.list) {
       throw new Error(
-        `limit can only be used when mode = 'SelectActionMode.list', current mode is ${this.mode}`,
+        `'paginate' can only be used when mode = 'SelectActionMode.list', current mode is ${this.mode}`,
       );
     }
-    this.hasLimit = true;
+    this.pagination = true;
     return this;
   }
 
