@@ -329,12 +329,28 @@ it('Pagination', () => {
   expect(ta.t.pagination, true);
 });
 
-it('limit', () => {
+it('LIMIT', () => {
   class UserTA extends mm.TableActions {
-    t = mm.selectRows(user.name).paginate().orderByAsc(user.name).limit(20);
+    t = mm.selectRows(user.name).orderByAsc(user.name).limit(20);
   }
   const ta = mm.tableActions(user, UserTA);
-  expect(ta.t.top, 20);
+  expect(ta.t.limitValue, 20);
+});
+
+it('LIMIT and OFFSET', () => {
+  class UserTA extends mm.TableActions {
+    t = mm
+      .selectRows(user.name)
+      .orderByAsc(user.name)
+      .limit(new mm.SQLVariable(mm.int(), 'limit'))
+      .offset(12);
+  }
+  const ta = mm.tableActions(user, UserTA);
+  expect(
+    ta.t.limitValue?.toString(),
+    'SQLVar(limit, desc = Column(null|, <null>))',
+  );
+  expect(ta.t.offsetValue, 12);
 });
 
 it('Throw when paginate is called on non-list mode', () => {

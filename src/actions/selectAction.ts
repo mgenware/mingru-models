@@ -2,7 +2,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import toTypeString from 'to-type-string';
 import { ActionType } from './tableActions';
 import { Column, Table } from '../core/core';
-import { SQL } from '../core/sql';
+import { SQL, SQLVariable } from '../core/sql';
 import { CoreSelectAction } from './coreSelectAction';
 import { RawColumn } from './rawColumn';
 
@@ -25,11 +25,11 @@ export enum SelectActionMode {
 export class SelectAction extends CoreSelectAction {
   havingSQL: SQL | null = null;
   havingValidator: ((value: SQL) => void) | null = null;
-  // Only used in rows mode.
-  pagination = false;
   orderByColumns: OrderByColumn[] = [];
   groupByColumns: string[] = [];
-  top = -1;
+  limitValue: SQLVariable | number | undefined;
+  offsetValue: SQLVariable | number | undefined;
+  pagination = false;
 
   constructor(
     public columns: SelectActionColumns[],
@@ -97,8 +97,13 @@ export class SelectAction extends CoreSelectAction {
     return this;
   }
 
-  limit(limit: number): this {
-    this.top = limit;
+  limit(limit: SQLVariable | number): this {
+    this.setLimitValue(limit);
+    return this;
+  }
+
+  offset(offset: SQLVariable | number): this {
+    this.setOffsetValue(offset);
     return this;
   }
 
@@ -134,5 +139,22 @@ export class SelectAction extends CoreSelectAction {
   private orderByCore(column: SelectActionColumnNames, desc: boolean): this {
     this.orderByColumns.push(new OrderByColumn(column, desc));
     return this;
+  }
+
+  private setLimitValue(limit: SQLVariable | number) {
+    if (this.limitValue !== undefined) {
+      throw new Error(`LIMIT has been set to ${this.limitValue}`);
+    }
+    this.limitValue = limit;
+  }
+
+  private setOffsetValue(offset: SQLVariable | number) {
+    if (this.limitValue === undefined) {
+      throw new Error('OFFSET cannot be set before LIMIT');
+    }
+    if (this.offsetValue !== undefined) {
+      throw new Error(`OFFSET has been set to ${this.offsetValue}`);
+    }
+    this.offsetValue = offset;
   }
 }
