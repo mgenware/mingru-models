@@ -111,3 +111,12 @@ export function notExists(expr: SQLConvertible): SQLCall {
 export function ifNull(expr1: SQLConvertible, expr2: SQLConvertible): SQLCall {
   return sqlCall(SQLCallType.ifNull, 0, [expr1, expr2]);
 }
+
+// Use uppercase to not conflict with the if keyword.
+export function IF(
+  cond: SQLConvertible,
+  expr1: SQLConvertible,
+  expr2: SQLConvertible,
+): SQLCall {
+  return sqlCall(SQLCallType.IF, 1, [cond, expr1, expr2]);
+}

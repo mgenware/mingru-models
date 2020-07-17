@@ -25,6 +25,8 @@ export enum SQLCallType {
   exists,
   notExists,
   ifNull,
+  // Use uppercase to not conflict with the if keyword.
+  IF,
 }
 
 export class SQLCall {

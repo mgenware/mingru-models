@@ -100,6 +100,10 @@ it('SQL calls', () => {
   t = mm.ifNull(post.id, post.title);
   expect(t.type, mm.SQLCallType.ifNull);
   assert.deepEqual(t.returnType, 0);
+
+  t = mm.IF(post.id, post.title, post.snake_case_user_id);
+  expect(t.type, mm.SQLCallType.IF);
+  assert.deepEqual(t.returnType, 1);
 });
 
 it('Embeded in SQL', () => {
