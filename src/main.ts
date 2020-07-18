@@ -25,6 +25,7 @@ export * from './actions/deleteAction';
 export * from './actions/wrappedAction';
 export * from './actions/transactAction';
 export * from './actions/rawColumn';
+export * from './actions/rawColumnBuilder';
 export { default as utils } from './lib/utils';
 
 // Extensions

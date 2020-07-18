@@ -79,8 +79,8 @@ it('RawColumn', () => {
   expect(c.core, user.id);
 
   // mm.sel
-  c = mm.sel(user.id);
-  expect(c.selectedName, undefined);
+  c = mm.sel(user.id, 'id');
+  expect(c.selectedName, 'id');
   expect(c.core, user.id);
 });
 
@@ -138,19 +138,19 @@ it('RawColumn (SQLConvertible)', () => {
 
 it('RawColumn.toInput', () => {
   // .core is column
-  let cc = mm.sel(user.name);
+  let cc = mm.sel(user.name, 'name');
   expect(
     cc.toInput().toString(),
     'SQLVar(name, desc = Column(name, Table(user)))',
   );
   // .core is SQL
-  cc = mm.sel(mm.sql`haha${user.id}`);
+  cc = mm.sel(mm.sql`haha${user.id}`, 'id');
   expect(cc.toInput().toString(), 'SQLVar(id, desc = ColType(SQL.BIGINT))');
 
   cc = mm.sel(mm.sql`${mm.max(mm.sql``)}`, 'haha');
   expect(cc.toInput().toString(), 'SQLVar(haha, desc = ColType(SQL.INT))');
 
-  let c = mm.sel(user.name);
+  let c = mm.sel(user.name, 'name');
   let v = c.toInput();
   expect(v.toString(), 'SQLVar(name, desc = Column(name, Table(user)))');
 

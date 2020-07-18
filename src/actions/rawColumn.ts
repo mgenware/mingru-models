@@ -13,8 +13,9 @@ export class RawColumn {
 
   constructor(
     core: Column | SQL,
-    // selectedName can be undefined if core is a column
-    // or findFirstColumn returns a column.
+    // `selectedName` can be undefined if `core` is a column.
+    // In that case, when you call `toInput`, a name will be generated from all its joined columns,
+    // so that you don't need to specify names when using joins.
     public selectedName?: string,
     public type?: ColumnType,
   ) {
@@ -24,11 +25,11 @@ export class RawColumn {
     } else {
       this.core = core;
       if (!selectedName) {
-        // Try to extract a column name from SQL expression
+        // Try to extract a column name from SQL expression.
         const col = core.findFirstColumn();
         if (!col) {
           throw new Error(
-            'The argument "selectedName" is required for an SQL expression without any columns inside',
+            'The argument `selectedName` is required for an SQL expression with no columns',
           );
         }
       }
@@ -41,7 +42,9 @@ export class RawColumn {
     if (core instanceof SQL) {
       const inferred = core.sniffType();
       if (!inferred) {
-        throw new Error('Cannot convert a RawColumn(SQL) to an SQLVariable');
+        throw new Error(
+          'Cannot convert a `RawColumn(SQL)` to an `SQLVariable`',
+        );
       }
       if (!selectedName) {
         const firstColumn = core.findFirstColumn();
@@ -49,7 +52,7 @@ export class RawColumn {
           selectedName = firstColumn.__name;
         } else {
           throw new Error(
-            'The argument "selectedName" is required for an SQL expression without any columns inside',
+            'The argument `selectedName` is required for an SQL expression with no columns',
           );
         }
       }
@@ -76,12 +79,4 @@ export class RawColumn {
   toString(): string {
     return `RawColumn(${this.selectedName}, core = ${this.core.toString()})`;
   }
-}
-
-export function sel(
-  sql: Column | SQL,
-  selectedName?: string,
-  type?: ColumnType,
-): RawColumn {
-  return new RawColumn(sql, selectedName, type);
 }
