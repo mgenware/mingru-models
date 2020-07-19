@@ -3,7 +3,7 @@ import { itThrows } from 'it-throws';
 import * as mm from '../..';
 import post from '../models/post';
 
-const expect = assert.equal;
+const eq = assert.equal;
 
 it('Insert', () => {
   class PostTA extends mm.TableActions {
@@ -12,11 +12,11 @@ it('Insert', () => {
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
 
-  expect(v.actionType, mm.ActionType.insert);
-  expect(v.ensureOneRowAffected, false);
+  eq(v.actionType, mm.ActionType.insert);
+  eq(v.ensureOneRowAffected, false);
   assert.ok(v instanceof mm.InsertAction);
   assert.ok(v instanceof mm.CoreUpdateAction);
-  expect(
+  eq(
     v.settersToString(),
     'title: SQL(E(SQLVar(title, desc = Column(title, Table(post))), type = 2)), snake_case_user_id: SQL(E(SQLVar(snakeCaseUserID, desc = Column(snake_case_user_id, Table(post))), type = 2))',
   );
@@ -32,7 +32,7 @@ it('Insert one', () => {
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
 
-  expect(v.ensureOneRowAffected, true);
+  eq(v.ensureOneRowAffected, true);
 });
 
 it('unsafeInsert', () => {
@@ -41,7 +41,7 @@ it('unsafeInsert', () => {
   }
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
-  expect(v.allowUnsetColumns, true);
+  eq(v.allowUnsetColumns, true);
 });
 
 it('unsafeInsertOne', () => {
@@ -50,8 +50,8 @@ it('unsafeInsertOne', () => {
   }
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
-  expect(v.ensureOneRowAffected, true);
-  expect(v.allowUnsetColumns, true);
+  eq(v.ensureOneRowAffected, true);
+  eq(v.allowUnsetColumns, true);
 });
 
 it('SQLConvertible value', () => {
@@ -64,7 +64,7 @@ it('SQLConvertible value', () => {
     v.setters,
     new Map<mm.Column, unknown>([[post.title, mm.sql`${mm.localDateNow()}`]]),
   );
-  expect(
+  eq(
     v.setters.get(post.title),
     'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
   );

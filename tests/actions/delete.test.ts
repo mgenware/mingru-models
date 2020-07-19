@@ -3,7 +3,7 @@ import { itThrows } from 'it-throws';
 import * as mm from '../..';
 import user from '../models/user';
 
-const expect = assert.equal;
+const eq = assert.equal;
 
 it('DeleteAction', () => {
   class UserTA extends mm.TableActions {
@@ -14,11 +14,11 @@ it('DeleteAction', () => {
   assert.ok(v instanceof mm.DeleteAction);
   assert.ok(v instanceof mm.CoreSelectAction);
   assert.ok(v instanceof mm.Action);
-  expect(
+  eq(
     v.whereSQLString,
     'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
   );
-  expect(v.actionType, mm.ActionType.delete);
+  eq(v.actionType, mm.ActionType.delete);
 });
 
 it('deleteOne', () => {
@@ -29,8 +29,8 @@ it('deleteOne', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.ensureOneRowAffected, true);
-  expect(v.allowNoWhere, false);
+  eq(v.ensureOneRowAffected, true);
+  eq(v.allowNoWhere, false);
 
   // Throw error when WHERE is empty
   itThrows(() => {
@@ -49,8 +49,8 @@ it('deleteSome', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.ensureOneRowAffected, false);
-  expect(v.allowNoWhere, false);
+  eq(v.ensureOneRowAffected, false);
+  eq(v.allowNoWhere, false);
 
   // Throw error when WHERE is empty
   itThrows(() => {
@@ -69,6 +69,6 @@ it('unsafeDeleteAll', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.ensureOneRowAffected, false);
-  expect(v.allowNoWhere, true);
+  eq(v.ensureOneRowAffected, false);
+  eq(v.allowNoWhere, true);
 });

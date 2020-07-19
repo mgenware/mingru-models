@@ -4,24 +4,24 @@ import user from '../models/user';
 import employee from '../models/employee';
 import like from '../models/like';
 
-const expect = assert.equal;
+const eq = assert.equal;
 
 it('Table name, DB name and input name', () => {
-  expect(user.__name, 'user');
-  expect(user.__dbName, null);
-  expect(user.getDBName(), 'user');
-  expect(user.inputName(), 'user');
-  expect(user.toString(), 'Table(user)');
+  eq(user.__name, 'user');
+  eq(user.__dbName, null);
+  eq(user.getDBName(), 'user');
+  eq(user.inputName(), 'user');
+  eq(user.toString(), 'Table(user)');
 
   class MyTable extends mm.Table {
     id = mm.pk();
   }
   const myTable = mm.table(MyTable, 'my_table');
-  expect(myTable.__name, 'my_table');
-  expect(myTable.__dbName, 'my_table');
-  expect(myTable.getDBName(), 'my_table');
-  expect(myTable.inputName(), 'myTable');
-  expect(myTable.toString(), 'Table(my_table)');
+  eq(myTable.__name, 'my_table');
+  eq(myTable.__dbName, 'my_table');
+  eq(myTable.getDBName(), 'my_table');
+  eq(myTable.inputName(), 'myTable');
+  eq(myTable.toString(), 'Table(my_table)');
 });
 
 it('enumerateColumns', () => {
@@ -64,7 +64,7 @@ it('__actions and props', () => {
   });
   for (const [prop, column] of Object.entries(user.__columns)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect((user as any)[prop], column);
+    eq((user as any)[prop], column);
   }
 });
 
@@ -72,14 +72,14 @@ it('__actions and props (tableCore)', () => {
   const id = mm.pk();
   const name = mm.varChar(250);
   const table = mm.tableCore('A', 'a_a', null, { id, name });
-  expect(table.__name, 'a');
-  expect(table.__dbName, 'a_a');
-  expect(table instanceof mm.Table, true);
+  eq(table.__name, 'a');
+  eq(table.__dbName, 'a_a');
+  eq(table instanceof mm.Table, true);
   assert.deepEqual(table.__pks, [id]);
   assert.deepEqual(table.__pkAIs, [id]);
   assert.deepEqual(table.__columns, { id, name });
   for (const [prop, column] of Object.entries(table.__columns)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect((table as any)[prop], column);
+    eq((table as any)[prop], column);
   }
 });

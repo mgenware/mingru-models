@@ -3,7 +3,7 @@ import { itThrows } from 'it-throws';
 import * as mm from '../..';
 import user from '../models/user';
 
-const expect = assert.equal;
+const eq = assert.equal;
 
 it('Update', () => {
   class UserTA extends mm.TableActions {
@@ -16,20 +16,20 @@ it('Update', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  expect(v.actionType, mm.ActionType.update);
+  eq(v.actionType, mm.ActionType.update);
   assert.ok(v instanceof mm.UpdateAction);
   assert.ok(v instanceof mm.CoreUpdateAction);
   assert.ok(v instanceof mm.Action);
-  expect(
+  eq(
     v.whereSQLString,
     'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
   );
-  expect(v.setters.size, 2);
+  eq(v.setters.size, 2);
 
   // extra props
-  expect(v.ensureOneRowAffected, false);
-  expect(v.allowNoWhere, false);
-  expect(
+  eq(v.ensureOneRowAffected, false);
+  eq(v.allowNoWhere, false);
+  eq(
     v.settersToString(),
     'name: SQL(E(SQLVar(name, desc = Column(name, Table(user))), type = 2)), follower_count: SQL(E(Column(follower_count, Table(user)), type = 1), E( + 1, type = 0))',
   );
@@ -45,7 +45,7 @@ it('Order of setInputs and set', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  expect(
+  eq(
     v.settersToString(),
     'snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2)), name: SQL(E(SQLVar(b, desc = Column(name, Table(user))), type = 2))',
   );
@@ -61,7 +61,7 @@ it('setInputs and setDefaults', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  expect(
+  eq(
     v.settersToString(),
     'def_value: abc, snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
@@ -78,7 +78,7 @@ it('setInputs with no args', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  expect(
+  eq(
     v.settersToString(),
     'def_value: abc, snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
@@ -96,7 +96,7 @@ it('setDefaults with no args', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  expect(
+  eq(
     v.settersToString(),
     'def_value: abc, snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
@@ -153,8 +153,8 @@ it('updateOne', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.ensureOneRowAffected, true);
-  expect(v.allowNoWhere, false);
+  eq(v.ensureOneRowAffected, true);
+  eq(v.allowNoWhere, false);
 
   itThrows(() => {
     class TA extends mm.TableActions {
@@ -172,8 +172,8 @@ it('updateSome', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.ensureOneRowAffected, false);
-  expect(v.allowNoWhere, false);
+  eq(v.ensureOneRowAffected, false);
+  eq(v.allowNoWhere, false);
 
   itThrows(() => {
     class TA extends mm.TableActions {
@@ -191,8 +191,8 @@ it('unsafeUpdateAll', () => {
   const v = ta.t;
 
   // extra props
-  expect(v.ensureOneRowAffected, false);
-  expect(v.allowNoWhere, true);
+  eq(v.ensureOneRowAffected, false);
+  eq(v.allowNoWhere, true);
 });
 
 it('ByID', () => {
@@ -202,7 +202,7 @@ it('ByID', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  expect(
+  eq(
     v.whereSQLString,
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2))',
   );
@@ -215,7 +215,7 @@ it('SQLConvertible value', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  expect(
+  eq(
     v.setters.get(user.name),
     'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
   );
@@ -248,7 +248,7 @@ it('by', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  expect(
+  eq(
     v.whereSQLString,
     'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
@@ -266,15 +266,15 @@ it('andBy', () => {
     t3 = mm.updateOne().setInputs(user.name).byID().andBy(user.follower_count);
   }
   const ta = mm.tableActions(user, UserTA);
-  expect(
+  eq(
     ta.t1.whereSQLString,
     'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
-  expect(
+  eq(
     ta.t2.whereSQLString,
     'SQL(E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
-  expect(
+  eq(
     ta.t3.whereSQLString,
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );

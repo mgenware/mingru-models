@@ -3,7 +3,7 @@ import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
 
-const expect = assert.equal;
+const eq = assert.equal;
 
 it('Wrap', () => {
   class PostTA extends mm.TableActions {
@@ -22,20 +22,20 @@ it('Wrap', () => {
   let v = ta.t;
   assert.ok(v instanceof mm.WrappedAction);
   assert.ok(v instanceof mm.Action);
-  expect(v.actionType, mm.ActionType.wrap);
-  expect(v.action, ta.s);
+  eq(v.actionType, mm.ActionType.wrap);
+  eq(v.action, ta.s);
   assert.deepEqual(v.args, {
     id: '1',
   });
-  expect(ta.s.__table, user);
-  expect(v.__table, user);
-  expect(v.isTemp, false);
+  eq(ta.s.__table, user);
+  eq(v.__table, user);
+  eq(v.isTemp, false);
 
   v = ta.t2;
-  expect(v.action, postTA.t);
-  expect(postTA.t.__table, post);
-  expect(v.__table, user);
-  expect(v.isTemp, false);
+  eq(v.action, postTA.t);
+  eq(postTA.t.__table, post);
+  eq(v.__table, user);
+  eq(v.isTemp, false);
 });
 
 it('Wrap (chains)', () => {
@@ -52,21 +52,21 @@ it('Wrap (chains)', () => {
   let v = ta.t;
   assert.ok(v instanceof mm.WrappedAction);
   assert.ok(v instanceof mm.Action);
-  expect(v.actionType, mm.ActionType.wrap);
-  expect(v.action, ta.s);
+  eq(v.actionType, mm.ActionType.wrap);
+  eq(v.action, ta.s);
   assert.deepEqual(v.args, {
     id: '33',
     id2: '34',
   });
-  expect(ta.s.__table, user);
-  expect(v.__table, user);
-  expect(v.isTemp, false);
+  eq(ta.s.__table, user);
+  eq(v.__table, user);
+  eq(v.isTemp, false);
 
   v = ta.t2;
-  expect(v.action, postTA.t);
-  expect(postTA.t.__table, post);
-  expect(v.__table, user);
-  expect(v.isTemp, false);
+  eq(v.action, postTA.t);
+  eq(postTA.t.__table, post);
+  eq(v.__table, user);
+  eq(v.isTemp, false);
 });
 
 it('Uninitialized wrapped action __table n __name', () => {
@@ -75,9 +75,9 @@ it('Uninitialized wrapped action __table n __name', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  expect(v.__table, user);
-  expect(v.__name, 't');
-  expect(v.isTemp, true);
+  eq(v.__table, user);
+  eq(v.__name, 't');
+  eq(v.isTemp, true);
 });
 
 it('Uninitialized wrapped action __table n __name (with from)', () => {
@@ -86,19 +86,19 @@ it('Uninitialized wrapped action __table n __name (with from)', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  expect(v.__table, post);
-  expect(v.__name, 't');
-  expect(v.isTemp, true);
+  eq(v.__table, post);
+  eq(v.__name, 't');
+  eq(v.isTemp, true);
 });
 
 it('ValueRef', () => {
   const v = new mm.ValueRef('a');
-  expect(v.firstName, 'a');
+  eq(v.firstName, 'a');
 });
 
 it('mm.valueRef', () => {
   const v = mm.valueRef('a');
-  expect(v.firstName, 'a');
+  eq(v.firstName, 'a');
 });
 
 it('wrapAsRefs', () => {

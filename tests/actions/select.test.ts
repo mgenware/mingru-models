@@ -4,7 +4,7 @@ import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
 
-const expect = assert.equal;
+const eq = assert.equal;
 
 it('select', () => {
   class UserTA extends mm.TableActions {
@@ -16,15 +16,15 @@ it('select', () => {
   assert.ok(v instanceof mm.SelectAction);
   assert.ok(v instanceof mm.CoreSelectAction);
   assert.ok(v instanceof mm.Action);
-  expect(v.columns.length, 2);
-  expect(v.columns[0], user.id);
-  expect(v.columns[1], user.name);
-  expect(
+  eq(v.columns.length, 2);
+  eq(v.columns[0], user.id);
+  eq(v.columns[1], user.name);
+  eq(
     v.whereSQLString,
     'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
   );
-  expect(v.mode, mm.SelectActionMode.row);
-  expect(v.actionType, mm.ActionType.select);
+  eq(v.mode, mm.SelectActionMode.row);
+  eq(v.actionType, mm.ActionType.select);
 });
 
 it('Select *', () => {
@@ -43,7 +43,7 @@ it('selectRows', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  expect(v.mode, mm.SelectActionMode.list);
+  eq(v.mode, mm.SelectActionMode.list);
 });
 
 it('as', () => {
@@ -52,45 +52,45 @@ it('as', () => {
   const c = user.id.as('c');
 
   assert.ok(a instanceof mm.RawColumn);
-  expect(a.selectedName, 'a');
-  expect(b.selectedName, 'b');
-  expect(c.selectedName, 'c');
+  eq(a.selectedName, 'a');
+  eq(b.selectedName, 'b');
+  eq(c.selectedName, 'c');
 });
 
 it('RawColumn', () => {
   // as
   let c = user.id.as('x');
-  expect(c.selectedName, 'x');
-  expect(c.core, user.id);
+  eq(c.selectedName, 'x');
+  eq(c.core, user.id);
 
   // new RawColumn
   c = new mm.RawColumn(user.id, 'y');
-  expect(c.selectedName, 'y');
-  expect(c.core, user.id);
+  eq(c.selectedName, 'y');
+  eq(c.core, user.id);
 
   // mm.sel
   c = mm.sel(user.id, 'x');
-  expect(c.selectedName, 'x');
-  expect(c.core, user.id);
+  eq(c.selectedName, 'x');
+  eq(c.core, user.id);
 
   // new RawColumn
   c = new mm.RawColumn(user.id);
-  expect(c.selectedName, undefined);
-  expect(c.core, user.id);
+  eq(c.selectedName, undefined);
+  eq(c.core, user.id);
 
   // mm.sel
   c = mm.sel(user.id, 'id');
-  expect(c.selectedName, 'id');
-  expect(c.core, user.id);
+  eq(c.selectedName, 'id');
+  eq(c.core, user.id);
 });
 
 it('RawColumn (raw SQL)', () => {
   const a = new mm.RawColumn(mm.sql`123`, 'x');
   const b = new mm.RawColumn(mm.sql`COUNT(${user.name})`, 'y');
-  expect(a.selectedName, 'x');
-  expect(a.core.toString(), 'SQL(E(123, type = 0))');
-  expect(b.selectedName, 'y');
-  expect(
+  eq(a.selectedName, 'x');
+  eq(a.core.toString(), 'SQL(E(123, type = 0))');
+  eq(b.selectedName, 'y');
+  eq(
     b.core.toString(),
     'SQL(E(COUNT(, type = 0), E(Column(name, Table(user)), type = 1), E(), type = 0))',
   );
@@ -98,8 +98,8 @@ it('RawColumn (raw SQL)', () => {
 
 it('RawColumn (types)', () => {
   const a = new mm.RawColumn(mm.sql`123`, 'x', new mm.ColumnType(['t1', 't2']));
-  expect(a.selectedName, 'x');
-  expect(a.core.toString(), 'SQL(E(123, type = 0))');
+  eq(a.selectedName, 'x');
+  eq(a.core.toString(), 'SQL(E(123, type = 0))');
   assert.deepEqual(a.type, new mm.ColumnType(['t1', 't2']));
 });
 
@@ -116,8 +116,8 @@ it('RawColumn (count)', () => {
   const v = ta.t;
 
   const cc = v.columns[0] as mm.RawColumn;
-  expect(cc.selectedName, 'count');
-  expect(
+  eq(cc.selectedName, 'count');
+  eq(
     cc.core.toString(),
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, JoinedTable([[post.user_id].[user.id]])), type = 1))), type = 3))',
   );
@@ -126,11 +126,11 @@ it('RawColumn (count)', () => {
 it('RawColumn (SQLConvertible)', () => {
   let cc = new mm.RawColumn(post.user_id, 't');
   // Column should not be wrapped in SQL
-  expect(cc.core, post.user_id);
+  eq(cc.core, post.user_id);
   cc = new mm.RawColumn(mm.sql`str`, 't');
-  expect(cc.core.toString(), 'SQL(E(str, type = 0))');
+  eq(cc.core.toString(), 'SQL(E(str, type = 0))');
   cc = new mm.RawColumn(mm.sql`${mm.count(post.id)}`, 't');
-  expect(
+  eq(
     cc.core.toString(),
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(id, Table(post)), type = 1))), type = 3))',
   );
@@ -139,30 +139,27 @@ it('RawColumn (SQLConvertible)', () => {
 it('RawColumn.toInput', () => {
   // .core is column
   let cc = mm.sel(user.name, 'name');
-  expect(
-    cc.toInput().toString(),
-    'SQLVar(name, desc = Column(name, Table(user)))',
-  );
+  eq(cc.toInput().toString(), 'SQLVar(name, desc = Column(name, Table(user)))');
   // .core is SQL
   cc = mm.sel(mm.sql`haha${user.id}`, 'id');
-  expect(cc.toInput().toString(), 'SQLVar(id, desc = ColType(SQL.BIGINT))');
+  eq(cc.toInput().toString(), 'SQLVar(id, desc = ColType(SQL.BIGINT))');
 
   cc = mm.sel(mm.sql`${mm.max(mm.sql``)}`, 'haha');
-  expect(cc.toInput().toString(), 'SQLVar(haha, desc = ColType(SQL.INT))');
+  eq(cc.toInput().toString(), 'SQLVar(haha, desc = ColType(SQL.INT))');
 
   let c = mm.sel(user.name, 'name');
   let v = c.toInput();
-  expect(v.toString(), 'SQLVar(name, desc = Column(name, Table(user)))');
+  eq(v.toString(), 'SQLVar(name, desc = Column(name, Table(user)))');
 
   c = mm.sel(user.name, 'haha', mm.int().__type);
   v = c.toInput();
-  expect(v.toString(), 'SQLVar(haha, desc = Column(name, Table(user)))');
+  eq(v.toString(), 'SQLVar(haha, desc = Column(name, Table(user)))');
 });
 
 it('mm.select (types)', () => {
   const a = mm.sel(mm.sql`123`, 'x', new mm.ColumnType(['t1', 't2']));
-  expect(a.selectedName, 'x');
-  expect(a.core.toString(), 'SQL(E(123, type = 0))');
+  eq(a.selectedName, 'x');
+  eq(a.core.toString(), 'SQL(E(123, type = 0))');
   assert.deepEqual(a.type, new mm.ColumnType(['t1', 't2']));
 });
 
@@ -172,7 +169,7 @@ it('byID', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  expect(
+  eq(
     v.whereSQLString,
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2))',
   );
@@ -184,7 +181,7 @@ it('byID with inputName', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  expect(
+  eq(
     v.whereSQLString,
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(haha, desc = Column(id, Table(user))), type = 2))',
   );
@@ -196,7 +193,7 @@ it('by', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  expect(
+  eq(
     v.whereSQLString,
     'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
@@ -213,15 +210,15 @@ it('andBy', () => {
     t3 = mm.select(user.name).byID().andBy(user.follower_count);
   }
   const ta = mm.tableActions(user, UserTA);
-  expect(
+  eq(
     ta.t1.whereSQLString,
     'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
-  expect(
+  eq(
     ta.t2.whereSQLString,
     'SQL(E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
-  expect(
+  eq(
     ta.t3.whereSQLString,
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
   );
@@ -236,8 +233,8 @@ it('selectField', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  expect(v.mode, mm.SelectActionMode.field);
-  expect(v.columns[0], user.name);
+  eq(v.mode, mm.SelectActionMode.field);
+  eq(v.columns[0], user.name);
 
   const v2 = ta.t2;
   assert.deepEqual(v2.columns[0], sc);
@@ -249,7 +246,7 @@ it('selectExists', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  expect(v.mode, mm.SelectActionMode.exists);
+  eq(v.mode, mm.SelectActionMode.exists);
 });
 
 it('Order by', () => {
@@ -265,13 +262,13 @@ it('Order by', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  expect(v.orderByColumns.length, 3);
-  expect(v.orderByColumns[0].column, user.name);
-  expect(v.orderByColumns[0].desc, false);
-  expect(v.orderByColumns[1].column, cc);
-  expect(v.orderByColumns[1].desc, false);
-  expect(v.orderByColumns[2].column, user.follower_count);
-  expect(v.orderByColumns[2].desc, true);
+  eq(v.orderByColumns.length, 3);
+  eq(v.orderByColumns[0].column, user.name);
+  eq(v.orderByColumns[0].desc, false);
+  eq(v.orderByColumns[1].column, cc);
+  eq(v.orderByColumns[1].desc, false);
+  eq(v.orderByColumns[2].column, user.follower_count);
+  eq(v.orderByColumns[2].desc, true);
 });
 
 it('Validate columns', () => {
@@ -306,8 +303,8 @@ it('GROUP BY names', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  expect(v.groupByColumns[0], user.name.getDBName());
-  expect(
+  eq(v.groupByColumns[0], user.name.getDBName());
+  eq(
     v.havingSQL,
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
   );
@@ -323,8 +320,8 @@ it('HAVING', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  expect(v.groupByColumns[0], user.name.getDBName());
-  expect(
+  eq(v.groupByColumns[0], user.name.getDBName());
+  eq(
     v.havingSQL,
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
   );
@@ -335,7 +332,7 @@ it('Pagination', () => {
     t = mm.selectRows(user.name).paginate().orderByAsc(user.name);
   }
   const ta = mm.tableActions(user, UserTA);
-  expect(ta.t.pagination, true);
+  eq(ta.t.pagination, true);
 });
 
 it('LIMIT', () => {
@@ -343,7 +340,7 @@ it('LIMIT', () => {
     t = mm.selectRows(user.name).orderByAsc(user.name).limit(20);
   }
   const ta = mm.tableActions(user, UserTA);
-  expect(ta.t.limitValue, 20);
+  eq(ta.t.limitValue, 20);
 });
 
 it('LIMIT and OFFSET', () => {
@@ -355,11 +352,11 @@ it('LIMIT and OFFSET', () => {
       .offset(12);
   }
   const ta = mm.tableActions(user, UserTA);
-  expect(
+  eq(
     ta.t.limitValue?.toString(),
     'SQLVar(limit, desc = Column(null|, <null>))',
   );
-  expect(ta.t.offsetValue, 12);
+  eq(ta.t.offsetValue, 12);
 });
 
 it('Throw when paginate is called on non-list mode', () => {
@@ -419,11 +416,11 @@ it('Set action.__table via from()', () => {
     t2 = mm.select(post.id).from(post);
   }
   const ta = mm.tableActions(user, UserTA);
-  expect(ta.t.__table, user);
-  expect(ta.t2.__table, post);
+  eq(ta.t.__table, user);
+  eq(ta.t2.__table, post);
 
   let [table] = ta.t.ensureInitialized();
-  expect(table, user);
+  eq(table, user);
   [table] = ta.t2.ensureInitialized();
-  expect(table, post);
+  eq(table, post);
 });

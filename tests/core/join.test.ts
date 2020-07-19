@@ -6,7 +6,7 @@ import postCmt from '../models/postCmt';
 import postCmtAss from '../models/postCmtAss';
 import cmt from '../models/cmt';
 
-const expect = assert.equal;
+const eq = assert.equal;
 
 function testJCCols(
   jc: mm.Column,
@@ -19,16 +19,16 @@ function testJCCols(
   sourceTable: mm.Table,
   inputName: string,
 ) {
-  expect(jc.__table instanceof mm.JoinedTable, true);
-  expect(jc.__mirroredColumn, selectedColumn);
+  eq(jc.__table instanceof mm.JoinedTable, true);
+  eq(jc.__mirroredColumn, selectedColumn);
   const jt = jc.__table as mm.JoinedTable;
-  expect(jt.tableInputName(), tableInputName);
-  expect(jt.destTable, destTable);
-  expect(jt.destColumn, destColumn);
-  expect(jt.srcColumn, srcColumn);
-  expect(jt.keyPath, path);
-  expect(jc.getSourceTable(), sourceTable);
-  expect(jc.inputName(), inputName);
+  eq(jt.tableInputName(), tableInputName);
+  eq(jt.destTable, destTable);
+  eq(jt.destColumn, destColumn);
+  eq(jt.srcColumn, srcColumn);
+  eq(jt.keyPath, path);
+  eq(jc.getSourceTable(), sourceTable);
+  eq(jc.inputName(), inputName);
 }
 
 it('JoinedColumn', () => {
@@ -122,7 +122,7 @@ it('Join arbitrary table and column', () => {
 
 it('Associative join', () => {
   const jc = postCmtAss.cmt_id.associativeJoin(cmt).user_id;
-  expect((jc.__table as mm.JoinedTable).associative, true);
+  eq((jc.__table as mm.JoinedTable).associative, true);
   testJCCols(
     jc,
     'cmt',

@@ -5,74 +5,74 @@ import user from '../models/user';
 import post from '../models/post';
 import cmt from '../models/postCmt';
 
-const expect = assert.equal;
+const eq = assert.equal;
 
 it('Frozen after mm.table', () => {
-  expect(Object.isFrozen(post.id), true);
-  expect(Object.isFrozen(post.user_id), true);
-  expect(Object.isFrozen(post.title), true);
+  eq(Object.isFrozen(post.id), true);
+  eq(Object.isFrozen(post.user_id), true);
+  eq(Object.isFrozen(post.title), true);
 });
 
 it('Normal col', () => {
-  expect(post.id.__name, 'id');
-  expect(post.id.__table, post);
-  expect(post.id.toString(), 'Column(id, Table(post))');
+  eq(post.id.__name, 'id');
+  eq(post.id.__table, post);
+  eq(post.id.toString(), 'Column(id, Table(post))');
 });
 
 it('Implicit FK', () => {
   const col = post.user_id;
-  expect(col.__table, post);
-  expect(col.__name, 'user_id');
-  expect(col.__foreignColumn, user.id);
+  eq(col.__table, post);
+  eq(col.__name, 'user_id');
+  eq(col.__foreignColumn, user.id);
   assert.notEqual(col.__type, user.id.__type);
 });
 
 it('Explicit FK', () => {
   const col = post.e_user_id_n;
-  expect(col.__table, post);
-  expect(col.__name, 'e_user_id_n');
-  expect(col.__foreignColumn, user.id);
+  eq(col.__table, post);
+  eq(col.__name, 'e_user_id_n');
+  eq(col.__foreignColumn, user.id);
   assert.notEqual(col, user.id.__type);
-  expect(col.__type.nullable, true);
+  eq(col.__type.nullable, true);
 });
 
 it('Explicit FK (untouched)', () => {
   const col = post.e_user_id;
-  expect(col.__table, post);
-  expect(col.__name, 'e_user_id');
-  expect(col.__foreignColumn, user.id);
+  eq(col.__table, post);
+  eq(col.__name, 'e_user_id');
+  eq(col.__foreignColumn, user.id);
   assert.notEqual(col.__type, user.id.__type);
-  expect(col.__type.nullable, false);
+  eq(col.__type.nullable, false);
 });
 
 it('freeze', () => {
   const col = mm.int(234);
   col.freeze();
-  expect(Object.isFrozen(col), true);
-  expect(Object.isFrozen(col.__type), true);
+  eq(Object.isFrozen(col), true);
+  eq(Object.isFrozen(col.__type), true);
 });
 
 it('Column.newForeignColumn', () => {
   const a = user.id;
   const b = mm.Column.newForeignColumn(a, post);
   // FK
-  expect(b.__foreignColumn, a);
+  eq(b.__foreignColumn, a);
   // name is cleared
-  expect(b.__name, null);
+  eq(b.__name, null);
   // Value being reset
-  expect(b.__type.pk, false);
-  expect(b.__type.autoIncrement, false);
-  expect(b.__table, post);
+  eq(b.__type.pk, false);
+  eq(b.__type.autoIncrement, false);
+  eq(b.__table, post);
   // props is copied
   assert.notEqual(b.__type, a.__type);
   // props.types is copied
   assert.notEqual(b.__type.types, a.__type.types);
 
   // Check equality
-  expect(a.__defaultValue, b.__defaultValue);
+  eq(a.__defaultValue, b.__defaultValue);
   assert.deepEqual(a.__type.types, b.__type.types);
-  expect(a.__type.nullable, b.__type.nullable);
-  expect(a.__type.unique, b.__type.unique);
+  eq(a.__type.nullable, b.__type.nullable);
+  eq(a.__type.unique, b.__type.unique);
 });
 
 it('Column.newJoinedColumn', () => {
@@ -80,22 +80,22 @@ it('Column.newJoinedColumn', () => {
   const a = user.name;
   const b = mm.Column.newJoinedColumn(a, t);
   // mirroredColumn
-  expect(b.__mirroredColumn, a);
+  eq(b.__mirroredColumn, a);
   // Value being reset
-  expect(b.__type.pk, false);
-  expect(b.__type.autoIncrement, false);
-  expect(b.__name, a.__name);
-  expect(b.__table, t);
+  eq(b.__type.pk, false);
+  eq(b.__type.autoIncrement, false);
+  eq(b.__name, a.__name);
+  eq(b.__table, t);
   // props is copied
   assert.notEqual(b.__type, a.__type);
   // props.types is copied
   assert.notEqual(b.__type.types, a.__type.types);
 
   // Check equality
-  expect(a.__defaultValue, b.__defaultValue);
+  eq(a.__defaultValue, b.__defaultValue);
   assert.deepEqual(a.__type.types, b.__type.types);
-  expect(a.__type.nullable, b.__type.nullable);
-  expect(a.__type.unique, b.__type.unique);
+  eq(a.__type.nullable, b.__type.nullable);
+  eq(a.__type.unique, b.__type.unique);
 });
 
 it('Mutate a frozen column', () => {
@@ -109,53 +109,47 @@ it('Mutate a frozen column', () => {
 
 it('notNull (default)', () => {
   const c = mm.int(123);
-  expect(c.__type.nullable, false);
+  eq(c.__type.nullable, false);
 });
 
 it('nullable', () => {
   const c = mm.int(123).nullable;
-  expect(c.__type.nullable, true);
+  eq(c.__type.nullable, true);
 });
 
 it('unique', () => {
   const c = mm.int(123).unique;
-  expect(c.__type.unique, true);
+  eq(c.__type.unique, true);
 });
 
 it('unique (default)', () => {
   const c = mm.int(123);
-  expect(c.__type.unique, false);
+  eq(c.__type.unique, false);
 });
 
 it('setDefault', () => {
   let c = mm.int(123).default('omg');
-  expect(c.__defaultValue, 'omg');
+  eq(c.__defaultValue, 'omg');
 
   c = mm.int(123).default(null);
-  expect(c.__defaultValue, null);
+  eq(c.__defaultValue, null);
 });
 
 it('Column.inputName', () => {
-  expect(user.id.inputName(), 'id');
-  expect(user.snake_case_name.inputName(), 'snakeCaseName');
-  expect(cmt.snake_case_post_id.inputName(), 'snakeCasePostID');
+  eq(user.id.inputName(), 'id');
+  eq(user.snake_case_name.inputName(), 'snakeCaseName');
+  eq(cmt.snake_case_post_id.inputName(), 'snakeCasePostID');
 });
 
 it('ForeignColumn.inputName', () => {
-  expect(post.snake_case_user_id.inputName(), 'snakeCaseUserID');
+  eq(post.snake_case_user_id.inputName(), 'snakeCaseUserID');
 });
 
 it('JoinedColumn.inputName', () => {
-  expect(post.snake_case_user_id.join(user).id.inputName(), 'snakeCaseUserID');
-  expect(
-    post.snake_case_user_id.join(user).name.inputName(),
-    'snakeCaseUserName',
-  );
-  expect(
-    cmt.post_id.join(post).user_id.join(user).id.inputName(),
-    'postUserID',
-  );
-  expect(
+  eq(post.snake_case_user_id.join(user).id.inputName(), 'snakeCaseUserID');
+  eq(post.snake_case_user_id.join(user).name.inputName(), 'snakeCaseUserName');
+  eq(cmt.post_id.join(post).user_id.join(user).id.inputName(), 'postUserID');
+  eq(
     cmt.post_id.join(post).snake_case_user_id.join(user).name.inputName(),
     'postSnakeCaseUserName',
   );
@@ -184,18 +178,18 @@ it('Register property callback', () => {
   }
 
   assert.deepEqual(col.__handlers, [cb, cb]);
-  expect(counter, 0);
+  eq(counter, 0);
   mm.table(User);
-  expect(col.__handlers, null);
-  expect(counter, 2);
+  eq(col.__handlers, null);
+  eq(counter, 2);
 });
 
 it('Register property callback on a initialized property', () => {
   let counter = 0;
   const cb = () => counter++;
   mm.CoreProperty.registerHandler(user.name, cb);
-  expect(user.name.__handlers, null);
-  expect(counter, 1);
+  eq(user.name.__handlers, null);
+  eq(counter, 1);
 });
 
 it('Throw on default value of complex SQL', () => {
@@ -214,7 +208,7 @@ it('Throw on default value of complex SQL', () => {
 });
 
 it('getSourceTable', () => {
-  expect(post.title.getSourceTable(), post);
+  eq(post.title.getSourceTable(), post);
 });
 
 it('Column.ensureInitialized', () => {

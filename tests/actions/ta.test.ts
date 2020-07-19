@@ -4,7 +4,7 @@ import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
 
-const expect = assert.equal;
+const eq = assert.equal;
 
 it('ta', () => {
   class UserTA extends mm.TableActions {
@@ -17,16 +17,16 @@ it('ta', () => {
   const ta = mm.tableActions(user, UserTA);
 
   assert.ok(ta instanceof mm.TableActions);
-  expect(ta.__table, user);
+  eq(ta.__table, user);
 
   const v1 = ta.upd;
-  expect(v1.__name, 'upd');
-  expect(v1.__table, user);
+  eq(v1.__name, 'upd');
+  eq(v1.__table, user);
   assert.ok(v1 instanceof mm.UpdateAction);
 
   const v2 = ta.sel;
-  expect(v2.__name, 'sel');
-  expect(v2.__table, user);
+  eq(v2.__name, 'sel');
+  eq(v2.__table, user);
   assert.ok(v2 instanceof mm.SelectAction);
 });
 
@@ -42,10 +42,10 @@ it('Register property callback', () => {
   }
 
   assert.deepEqual(action.__handlers, [cb, cb]);
-  expect(counter, 0);
+  eq(counter, 0);
   mm.tableActions(user, UserTA);
-  expect(action.__handlers, null);
-  expect(counter, 2);
+  eq(action.__handlers, null);
+  eq(counter, 2);
 });
 
 it('enumerateActions', () => {
@@ -112,8 +112,8 @@ it('Action.validate', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  expect(v.vTable, user);
-  expect(v.vName, 't');
+  eq(v.vTable, user);
+  eq(v.vName, 't');
 });
 
 it('Action.validate (from)', () => {
@@ -122,8 +122,8 @@ it('Action.validate (from)', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  expect(v.vTable, post);
-  expect(v.vName, 't');
+  eq(v.vTable, post);
+  eq(v.vName, 't');
 });
 
 it('Action.attr/attrs', () => {
@@ -176,15 +176,15 @@ it('__actions and props', () => {
   }
   const ta = mm.tableActions(user, UserTA);
 
-  expect(ta.__table, user);
-  expect(ta instanceof mm.TableActions, true);
+  eq(ta.__table, user);
+  eq(ta instanceof mm.TableActions, true);
   assert.deepEqual(ta.__actions, {
     upd: ta.upd,
     sel: ta.sel,
   });
   for (const [name, action] of Object.entries(ta.__actions)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect((ta as any)[name], action);
+    eq((ta as any)[name], action);
   }
 });
 
@@ -197,11 +197,11 @@ it('__actions and props (taCore)', () => {
   };
   const ta = mm.tableActionsCore(user, null, actions);
 
-  expect(ta.__table, user);
-  expect(ta instanceof mm.TableActions, true);
+  eq(ta.__table, user);
+  eq(ta instanceof mm.TableActions, true);
   assert.deepEqual(ta.__actions, actions);
   for (const [name, action] of Object.entries(ta.__actions)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect((ta as any)[name], action);
+    eq((ta as any)[name], action);
   }
 });

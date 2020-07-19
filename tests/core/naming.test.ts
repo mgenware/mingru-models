@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as mm from '../..';
 import user from '../models/user';
 
-const expect = assert.equal;
+const eq = assert.equal;
 
 class ABCTable extends mm.Table {
   StatusString = mm.varChar(10);
@@ -21,27 +21,27 @@ const abcTable = mm.table(ABCTable);
 const defTable = mm.table(DEFTable, 't');
 
 it('Table name and getDBName', () => {
-  expect(abcTable.__name, 'abc_table');
-  expect(abcTable.getDBName(), 'abc_table');
-  expect(defTable.__name, 'def_table');
-  expect(defTable.__dbName, 't');
-  expect(defTable.getDBName(), 't');
-  expect(defTable.toString(), 'Table(def_table|t)');
-  expect(abcTable.StatusString.__name, 'status_string');
-  expect(abcTable.statusType.__name, 'status_type');
-  expect(abcTable.statusID.__name, 'status_id');
-  expect(abcTable.statusID.__dbName, 'customName');
+  eq(abcTable.__name, 'abc_table');
+  eq(abcTable.getDBName(), 'abc_table');
+  eq(defTable.__name, 'def_table');
+  eq(defTable.__dbName, 't');
+  eq(defTable.getDBName(), 't');
+  eq(defTable.toString(), 'Table(def_table|t)');
+  eq(abcTable.StatusString.__name, 'status_string');
+  eq(abcTable.statusType.__name, 'status_type');
+  eq(abcTable.statusID.__name, 'status_id');
+  eq(abcTable.statusID.__dbName, 'customName');
 });
 
 it('Rename a FK', () => {
-  expect(abcTable.uid1.__name, 'uid_1');
-  expect(abcTable.uid1.__dbName, null);
-  expect(abcTable.uid1.getDBName(), 'uid_1');
-  expect(abcTable.uid2.__name, 'uid_2');
-  expect(abcTable.uid2.__dbName, null);
-  expect(abcTable.uid2.getDBName(), 'uid_2');
-  expect(abcTable.uid3.__name, 'uid_3');
-  expect(abcTable.uid3.__dbName, 'UID3');
-  expect(abcTable.uid3.getDBName(), 'UID3');
-  expect(abcTable.uid3.toString(), 'Column(uid_3|UID3, Table(abc_table))');
+  eq(abcTable.uid1.__name, 'uid_1');
+  eq(abcTable.uid1.__dbName, null);
+  eq(abcTable.uid1.getDBName(), 'uid_1');
+  eq(abcTable.uid2.__name, 'uid_2');
+  eq(abcTable.uid2.__dbName, null);
+  eq(abcTable.uid2.getDBName(), 'uid_2');
+  eq(abcTable.uid3.__name, 'uid_3');
+  eq(abcTable.uid3.__dbName, 'UID3');
+  eq(abcTable.uid3.getDBName(), 'UID3');
+  eq(abcTable.uid3.toString(), 'Column(uid_3|UID3, Table(abc_table))');
 });

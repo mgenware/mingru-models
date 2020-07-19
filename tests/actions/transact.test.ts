@@ -4,7 +4,7 @@ import user from '../models/user';
 import post from '../models/post';
 import { WrappedAction } from '../..';
 
-const expect = assert.equal;
+const eq = assert.equal;
 
 it('Transact', () => {
   class UserTA extends mm.TableActions {
@@ -25,7 +25,7 @@ it('Transact', () => {
   const postTA = mm.tableActions(post, PostTA);
 
   let v = postTA.batch;
-  expect(v.actionType, mm.ActionType.transact);
+  eq(v.actionType, mm.ActionType.transact);
   assert.ok(v instanceof mm.TransactAction);
   assert.ok(v instanceof mm.Action);
 
@@ -58,7 +58,7 @@ it('Temp member actions (wrap self)', async () => {
   const user2TA = mm.tableActions(user2, User2TA);
   const v = user2TA.t;
   const wrapped = v.members[0].action as WrappedAction;
-  expect(wrapped.action, user2TA.updatePostCount);
+  eq(wrapped.action, user2TA.updatePostCount);
   assert.deepEqual(wrapped.args, { offset: '1' });
 });
 
@@ -90,7 +90,7 @@ it('Temp member actions (wrap other)', async () => {
   const postTA = mm.tableActions(post2, Post2TA);
   const v = postTA.insert;
   const wrapped = v.members[0].action as WrappedAction;
-  expect(wrapped.action, user2TA.updatePostCount);
+  eq(wrapped.action, user2TA.updatePostCount);
   assert.deepEqual(wrapped.args, { offset: 1 });
 });
 
@@ -115,18 +115,18 @@ it('Setting __table or temp members', () => {
   }
   const postTA = mm.tableActions(post, PostTA);
   const { members } = postTA.t;
-  expect(members[0].action.__table, post);
-  expect(members[0].action.__name, 'tChild1');
-  expect(members[0].isTemp, true);
-  expect(members[1].action.__table, post);
-  expect(members[1].action.__name, 'insert');
-  expect(members[1].isTemp, false);
-  expect(members[2].action.__table, user);
-  expect(members[2].action.__name, 'insert');
-  expect(members[2].isTemp, false);
-  expect(members[3].action.__table, post);
-  expect(members[3].action.__name, 'tChild4');
-  expect(members[3].isTemp, true);
+  eq(members[0].action.__table, post);
+  eq(members[0].action.__name, 'tChild1');
+  eq(members[0].isTemp, true);
+  eq(members[1].action.__table, post);
+  eq(members[1].action.__name, 'insert');
+  eq(members[1].isTemp, false);
+  eq(members[2].action.__table, user);
+  eq(members[2].action.__name, 'insert');
+  eq(members[2].isTemp, false);
+  eq(members[3].action.__table, post);
+  eq(members[3].action.__name, 'tChild4');
+  eq(members[3].isTemp, true);
 });
 
 it('Declare returns', () => {

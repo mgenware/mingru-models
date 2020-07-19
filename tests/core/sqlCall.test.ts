@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as mm from '../..';
 import post from '../models/post';
 
-const expect = assert.equal;
+const eq = assert.equal;
 
 const { dt } = mm;
 function dtc(dtString: string): mm.ColumnType {
@@ -12,106 +12,106 @@ function dtc(dtString: string): mm.ColumnType {
 it('SQL calls', () => {
   let t: mm.SQLCall;
   t = mm.localDatetimeNow();
-  expect(t.type, mm.SQLCallType.localDatetimeNow);
+  eq(t.type, mm.SQLCallType.localDatetimeNow);
   assert.deepEqual(t.returnType, dtc(dt.datetime));
 
   t = mm.utcDatetimeNow();
-  expect(t.type, mm.SQLCallType.utcDatetimeNow);
+  eq(t.type, mm.SQLCallType.utcDatetimeNow);
   assert.deepEqual(t.returnType, dtc(dt.datetime));
 
   t = mm.localDateNow();
-  expect(t.type, mm.SQLCallType.localDateNow);
+  eq(t.type, mm.SQLCallType.localDateNow);
   assert.deepEqual(t.returnType, dtc(dt.date));
 
   t = mm.utcDateNow();
-  expect(t.type, mm.SQLCallType.utcDateNow);
+  eq(t.type, mm.SQLCallType.utcDateNow);
   assert.deepEqual(t.returnType, dtc(dt.date));
 
   t = mm.localTimeNow();
-  expect(t.type, mm.SQLCallType.localTimeNow);
+  eq(t.type, mm.SQLCallType.localTimeNow);
   assert.deepEqual(t.returnType, dtc(dt.time));
 
   t = mm.utcTimeNow();
-  expect(t.type, mm.SQLCallType.utcTimeNow);
+  eq(t.type, mm.SQLCallType.utcTimeNow);
   assert.deepEqual(t.returnType, dtc(dt.time));
 
   t = mm.count(post.id);
-  expect(t.type, mm.SQLCallType.count);
+  eq(t.type, mm.SQLCallType.count);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
   t = mm.coalesce(mm.sql`haha`, post.title, post.user_id);
-  expect(t.type, mm.SQLCallType.coalesce);
+  eq(t.type, mm.SQLCallType.coalesce);
   assert.deepEqual(t.returnType, mm.varChar(100).__type);
 
   assert.deepEqual(mm.countAll(), mm.count('*'));
 
   t = mm.year(post.id);
-  expect(t.type, mm.SQLCallType.year);
+  eq(t.type, mm.SQLCallType.year);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
   t = mm.month(post.id);
-  expect(t.type, mm.SQLCallType.month);
+  eq(t.type, mm.SQLCallType.month);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
   t = mm.day(post.id);
-  expect(t.type, mm.SQLCallType.day);
+  eq(t.type, mm.SQLCallType.day);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
   t = mm.week(post.id);
-  expect(t.type, mm.SQLCallType.week);
+  eq(t.type, mm.SQLCallType.week);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
   t = mm.hour(post.id);
-  expect(t.type, mm.SQLCallType.hour);
+  eq(t.type, mm.SQLCallType.hour);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
   t = mm.minute(post.id);
-  expect(t.type, mm.SQLCallType.minute);
+  eq(t.type, mm.SQLCallType.minute);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
   t = mm.second(post.id);
-  expect(t.type, mm.SQLCallType.second);
+  eq(t.type, mm.SQLCallType.second);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
   t = mm.min(post.id);
-  expect(t.type, mm.SQLCallType.min);
+  eq(t.type, mm.SQLCallType.min);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
   t = mm.max(post.id);
-  expect(t.type, mm.SQLCallType.max);
+  eq(t.type, mm.SQLCallType.max);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
   t = mm.avg(post.id);
-  expect(t.type, mm.SQLCallType.avg);
+  eq(t.type, mm.SQLCallType.avg);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
   t = mm.sum(post.id);
-  expect(t.type, mm.SQLCallType.sum);
+  eq(t.type, mm.SQLCallType.sum);
   assert.deepEqual(t.returnType, dtc(dt.int));
 
   t = mm.exists(post.id);
-  expect(t.type, mm.SQLCallType.exists);
+  eq(t.type, mm.SQLCallType.exists);
   assert.deepEqual(t.returnType, dtc(dt.bool));
 
   t = mm.notExists(post.id);
-  expect(t.type, mm.SQLCallType.notExists);
+  eq(t.type, mm.SQLCallType.notExists);
   assert.deepEqual(t.returnType, dtc(dt.bool));
 
   t = mm.ifNull(post.id, post.title);
-  expect(t.type, mm.SQLCallType.ifNull);
+  eq(t.type, mm.SQLCallType.ifNull);
   assert.deepEqual(t.returnType, 0);
 
   t = mm.IF(post.id, post.title, post.snake_case_user_id);
-  expect(t.type, mm.SQLCallType.IF);
+  eq(t.type, mm.SQLCallType.IF);
   assert.deepEqual(t.returnType, 1);
 });
 
 it('Embeded in SQL', () => {
-  expect(
+  eq(
     mm.sql`haha ${mm.localDatetimeNow()} ${mm.localDateNow()}`.toString(),
     'SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
   );
-  expect(
+  eq(
     mm.sql`haha ${mm.sqlCall(
       mm.SQLCallType.localDatetimeNow,
       new mm.ColumnType('c1'),
@@ -128,5 +128,5 @@ it('setReturnType', () => {
   const call = mm
     .IF(mm.exists(mm.select(post.title).byID()), '1', '2')
     .setReturnType(type);
-  expect(call.returnType, type);
+  eq(call.returnType, type);
 });
