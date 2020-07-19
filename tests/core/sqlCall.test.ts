@@ -122,3 +122,11 @@ it('Embeded in SQL', () => {
     'SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(c1), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(c2), type = 3))',
   );
 });
+
+it('setReturnType', () => {
+  const type = mm.int().__type;
+  const call = mm
+    .IF(mm.exists(mm.select(post.title).byID()), '1', '2')
+    .setReturnType(type);
+  expect(call.returnType, type);
+});

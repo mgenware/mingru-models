@@ -243,6 +243,15 @@ it('selectField', () => {
   assert.deepEqual(v2.columns[0], sc);
 });
 
+it('selectExists', () => {
+  class UserTA extends mm.TableActions {
+    t = mm.selectExists().byID();
+  }
+  const ta = mm.tableActions(user, UserTA);
+  const v = ta.t;
+  expect(v.mode, mm.SelectActionMode.exists);
+});
+
 it('Order by', () => {
   const cc = mm.sel(mm.sql`haha`, 'name', new mm.ColumnType('int'));
   class UserTA extends mm.TableActions {

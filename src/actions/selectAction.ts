@@ -20,6 +20,7 @@ export enum SelectActionMode {
   field,
   list,
   page,
+  exists,
 }
 
 export class SelectAction extends CoreSelectAction {

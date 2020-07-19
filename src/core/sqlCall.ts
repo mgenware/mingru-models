@@ -46,4 +46,9 @@ export class SQLCall {
       this.type
     }, return = ${this.returnType.toString()}${paramsDesc}`;
   }
+
+  setReturnType(type: ColumnType): this {
+    this.returnType = type;
+    return this;
+  }
 }

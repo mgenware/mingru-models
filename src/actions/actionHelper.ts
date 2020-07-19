@@ -31,6 +31,10 @@ export function selectPage(...columns: SelectActionColumns[]): SelectAction {
   return new SelectAction(columns, SelectActionMode.page);
 }
 
+export function selectExists(): SelectAction {
+  return new SelectAction([], SelectActionMode.exists);
+}
+
 export function unsafeUpdateAll(): UpdateAction {
   return new UpdateAction(true, false);
 }
