@@ -5,6 +5,8 @@ import { Column, Table } from '../core/core';
 import { SQL, SQLVariable } from '../core/sql';
 import { CoreSelectAction } from './coreSelectAction';
 import { RawColumn } from './rawColumn';
+import SQLConvertible from '../core/sqlConvertible';
+import { sql } from '../core/sqlHelper';
 
 export type SelectActionColumns = Column | RawColumn;
 export type SelectActionColumnNames = SelectActionColumns | string;
@@ -24,7 +26,7 @@ export enum SelectActionMode {
 }
 
 export class SelectAction extends CoreSelectAction {
-  havingSQL: SQL | null = null;
+  havingSQLValue: SQL | null = null;
   havingValidator: ((value: SQL) => void) | null = null;
   orderByColumns: OrderByColumn[] = [];
   groupByColumns: string[] = [];
@@ -108,7 +110,7 @@ export class SelectAction extends CoreSelectAction {
     return this;
   }
 
-  having(value: SQL): this {
+  havingSQL(value: SQL): this {
     throwIfFalsy(value, 'value');
     if (!this.groupByColumns) {
       throw new Error('You have to call `having` after `groupBy`');
@@ -117,10 +119,15 @@ export class SelectAction extends CoreSelectAction {
       this.havingValidator(value);
     }
 
-    if (this.havingSQL) {
+    if (this.havingSQLValue) {
       throw new Error('`having` is called twice');
     }
-    this.havingSQL = value;
+    this.havingSQLValue = value;
+    return this;
+  }
+
+  having(literals: TemplateStringsArray, ...params: SQLConvertible[]): this {
+    this.havingSQL(sql(literals, ...params));
     return this;
   }
 

@@ -314,31 +314,39 @@ it('GROUP BY names', () => {
     t = mm
       .selectRows(user.id, col)
       .groupBy(user.name, col, 'haha')
-      .having(mm.sql`${mm.count(user.name)} > 2`)
+      .havingSQL(mm.sql`${mm.count(user.name)} > 2`)
       .orderByAsc(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   eq(v.groupByColumns[0], user.name.getDBName());
   eq(
-    v.havingSQL,
+    v.havingSQLValue,
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
   );
 });
 
 it('HAVING', () => {
   class UserTA extends mm.TableActions {
-    t = mm
+    t = mm.selectRows(user.id, user.name).groupBy(user.name).having`${mm.count(
+      user.name,
+    )} > 2`.orderByAsc(user.id);
+
+    t2 = mm
       .selectRows(user.id, user.name)
       .groupBy(user.name)
-      .having(mm.sql`${mm.count(user.name)} > 2`)
+      .havingSQL(mm.sql`${mm.count(user.name)} > 2`)
       .orderByAsc(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   eq(v.groupByColumns[0], user.name.getDBName());
   eq(
-    v.havingSQL,
+    v.havingSQLValue,
+    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
+  );
+  eq(
+    ta.t2.havingSQLValue,
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
   );
 });
