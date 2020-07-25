@@ -455,7 +455,7 @@ it('Subquery', () => {
       .select(mm.max(user.id).toColumn('maxID'))
       .from(user)}`}`;
   }
-  const ta = mm.tableActions(user, PostTA);
+  const ta = mm.tableActions(post, PostTA);
   eq(
     ta.t.whereSQLString,
     'SQL(E(Column(user_id, Table(post)), type = 1), E( = , type = 0), E(SelectAction(null, Table(user)), type = 5))',
