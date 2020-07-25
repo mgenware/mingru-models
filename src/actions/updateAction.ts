@@ -4,9 +4,11 @@ import { SQL } from '../core/sql';
 import { CoreUpdateAction } from './coreUpdateAction';
 import { where, byID, by, andBy } from './common';
 import { Table, Column } from '../core/core';
+import { sql } from '../core/sqlHelper';
+import SQLConvertible from '../core/sqlConvertible';
 
 export class UpdateAction extends CoreUpdateAction {
-  whereSQL: SQL | null = null;
+  whereSQLValue: SQL | null = null;
   whereValidator: ((value: SQL) => void) | null = null;
 
   constructor(
@@ -16,9 +18,14 @@ export class UpdateAction extends CoreUpdateAction {
     super(ActionType.update);
   }
 
-  where(value: SQL): this {
+  whereSQL(value: SQL): this {
     throwIfFalsy(value, 'value');
     where(this, value);
+    return this;
+  }
+
+  where(literals: TemplateStringsArray, ...params: SQLConvertible[]): this {
+    this.whereSQL(sql(literals, ...params));
     return this;
   }
 
@@ -40,7 +47,7 @@ export class UpdateAction extends CoreUpdateAction {
   validate(table: Table, name: string) {
     super.validate(table, name);
 
-    if (!this.allowNoWhere && !this.whereSQL) {
+    if (!this.allowNoWhere && !this.whereSQLValue) {
       throw new Error(
         '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll`',
       );
@@ -48,6 +55,6 @@ export class UpdateAction extends CoreUpdateAction {
   }
 
   get whereSQLString(): string {
-    return this.whereSQL ? this.whereSQL.toString() : '';
+    return this.whereSQLValue ? this.whereSQLValue.toString() : '';
   }
 }

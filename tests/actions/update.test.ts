@@ -11,7 +11,7 @@ it('Update', () => {
       .updateSome()
       .set(user.name, mm.sql`${mm.input(user.name)}`)
       .set(user.follower_count, mm.sql`${user.follower_count} + 1`)
-      .where(mm.sql`${user.id} = 1`);
+      .whereSQL(mm.sql`${user.id} = 1`);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -277,5 +277,26 @@ it('andBy', () => {
   eq(
     ta.t3.whereSQLString,
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
+  );
+});
+
+it('where and whereSQL', () => {
+  class UserTA extends mm.TableActions {
+    t1 = mm
+      .updateOne()
+      .set(user.name, user.name.toInput())
+      .whereSQL(mm.sql`${user.id} = 1`);
+
+    t2 = mm.updateOne().set(user.name, user.name.toInput())
+      .where`${user.id} = 1`;
+  }
+  const ta = mm.tableActions(user, UserTA);
+  eq(
+    ta.t1.whereSQLString,
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
+  );
+  eq(
+    ta.t2.whereSQLString,
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
   );
 });

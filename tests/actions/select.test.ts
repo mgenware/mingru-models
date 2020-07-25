@@ -8,7 +8,7 @@ const eq = assert.equal;
 
 it('select', () => {
   class UserTA extends mm.TableActions {
-    t = mm.select(user.id, user.name).where(mm.sql`${user.id} = 1`);
+    t = mm.select(user.id, user.name).whereSQL(mm.sql`${user.id} = 1`);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -27,6 +27,22 @@ it('select', () => {
   eq(v.actionType, mm.ActionType.select);
 });
 
+it('where and whereSQL', () => {
+  class UserTA extends mm.TableActions {
+    t1 = mm.select(user.id, user.name).whereSQL(mm.sql`${user.id} = 1`);
+    t2 = mm.select(user.id, user.name).where`${user.id} = 1`;
+  }
+  const ta = mm.tableActions(user, UserTA);
+  eq(
+    ta.t1.whereSQLString,
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
+  );
+  eq(
+    ta.t2.whereSQLString,
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
+  );
+});
+
 it('Select *', () => {
   class UserTA extends mm.TableActions {
     t = mm.select();
@@ -38,7 +54,7 @@ it('selectRows', () => {
   class UserTA extends mm.TableActions {
     t = mm
       .selectRows(user.id, user.name)
-      .where(mm.sql`${user.id} = 1`)
+      .whereSQL(mm.sql`${user.id} = 1`)
       .orderByAsc(user.id);
   }
   const ta = mm.tableActions(user, UserTA);

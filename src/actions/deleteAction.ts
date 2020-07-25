@@ -12,7 +12,7 @@ export class DeleteAction extends CoreSelectAction {
 
   validate(table: Table, name: string) {
     super.validate(table, name);
-    if (!this.allowNoWhere && !this.whereSQL) {
+    if (!this.allowNoWhere && !this.whereSQLValue) {
       throw new Error(
         '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll`',
       );

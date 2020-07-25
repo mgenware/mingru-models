@@ -6,7 +6,7 @@ import { sql } from '../core/sqlHelper';
 
 export interface ActionWithWhere {
   __table: Table | null;
-  whereSQL: SQL | null;
+  whereSQLValue: SQL | null;
   whereValidator: ((value: SQL) => void) | null;
 }
 
@@ -16,11 +16,11 @@ export function where(action: ActionWithWhere, value: SQL) {
     action.whereValidator(value);
   }
 
-  if (action.whereSQL) {
-    throw new Error('"where" is called twice');
+  if (action.whereSQLValue) {
+    throw new Error('`where` cannot be called twice');
   }
   // eslint-disable-next-line no-param-reassign
-  action.whereSQL = value;
+  action.whereSQLValue = value;
 }
 
 // Unsafe means it accesses `__table` which is not available during property initialization,
@@ -28,16 +28,16 @@ export function where(action: ActionWithWhere, value: SQL) {
 function byIDUnsafe(action: ActionWithWhere, inputName: string | undefined) {
   const { __table: table } = action;
   if (!table) {
-    throw new Error('Action is not initialized by mm.ta');
+    throw new Error('Action is not initialized by `mm.ta`');
   }
   if (table.__pks.length > 1) {
     throw new Error(
-      `byID cannot handle tables with more than 1 PKs, table name: "${table.__name}"`,
+      `\`byID\` cannot handle tables with more than 1 PKs, table name: "${table.__name}"`,
     );
   }
   if (table.__pks.length === 0) {
     throw new Error(
-      `byID cannot handle tables with no PKs, table name: "${table.__name}"`,
+      `\`byID\` cannot handle tables with no PKs, table name: "${table.__name}"`,
     );
   }
   const pk = table.__pks[0];
@@ -61,13 +61,13 @@ export function by(action: ActionWithWhere, column: Column) {
 export function andBy(action: CoreProperty & ActionWithWhere, column: Column) {
   throwIfFalsy(column, 'column');
   CoreProperty.registerHandler(action, () => {
-    // Combine existing WHERE
+    // Combine existing WHERE expression.
     let s: SQL;
-    if (action.whereSQL) {
-      s = and(action.whereSQL, sql`${column.toInput()}`);
-      // Set whereSQL to null cuz `where` doesn't allow whereSQL to be set twice
+    if (action.whereSQLValue) {
+      s = and(action.whereSQLValue, sql`${column.toInput()}`);
+      // Set `whereSQLValue` to null cuz `where` doesn't allow `whereSQLValue` to be set twice.
       // eslint-disable-next-line no-param-reassign
-      action.whereSQL = null;
+      action.whereSQLValue = null;
     } else {
       s = sql`${column.toInput()}`;
     }

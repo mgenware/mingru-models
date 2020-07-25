@@ -7,7 +7,7 @@ const eq = assert.equal;
 
 it('DeleteAction', () => {
   class UserTA extends mm.TableActions {
-    t = mm.deleteOne().where(mm.sql`${user.id} = 1`);
+    t = mm.deleteOne().whereSQL(mm.sql`${user.id} = 1`);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -23,7 +23,7 @@ it('DeleteAction', () => {
 
 it('deleteOne', () => {
   class UserTA extends mm.TableActions {
-    t = mm.deleteOne().where(mm.sql`${user.id} = 1`);
+    t = mm.deleteOne().whereSQL(mm.sql`${user.id} = 1`);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -43,7 +43,7 @@ it('deleteOne', () => {
 
 it('deleteSome', () => {
   class UserTA extends mm.TableActions {
-    t = mm.deleteSome().where(mm.sql`${user.id} = 1`);
+    t = mm.deleteSome().whereSQL(mm.sql`${user.id} = 1`);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -71,4 +71,21 @@ it('unsafeDeleteAll', () => {
   // extra props
   eq(v.ensureOneRowAffected, false);
   eq(v.allowNoWhere, true);
+});
+
+it('where and whereSQL', () => {
+  class UserTA extends mm.TableActions {
+    t1 = mm.deleteOne().whereSQL(mm.sql`${user.id} = 1`);
+
+    t2 = mm.deleteOne().where`${user.id} = 1`;
+  }
+  const ta = mm.tableActions(user, UserTA);
+  eq(
+    ta.t1.whereSQLString,
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
+  );
+  eq(
+    ta.t2.whereSQLString,
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
+  );
 });
