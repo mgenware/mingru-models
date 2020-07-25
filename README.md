@@ -322,9 +322,8 @@ We haven't used any `WHERE` clause in the `SELECT` actions above, to add a `WHER
 You can pass a column object to template string, it will be converted to a column name in SQL, for example:
 
 ```ts
-selectUserProfile = dd
-  .select(user.id, user.name, user.sig)
-  .where(mm.sql`${user.id} = 1`);
+selectUserProfile = dd.select(user.id, user.name, user.sig)
+  .where`${user.id} = 1`;
 ```
 
 [mingru](https://github.com/mgenware/mingru) translates this into:
@@ -336,9 +335,8 @@ SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1
 More complex queries:
 
 ```ts
-selectUserProfile = dd
-  .select(user.id, user.name, user.sig)
-  .where(mm.sql`${user.id} = 1 AND ${user.sig} <> 'haha'`);
+selectUserProfile = dd.select(user.id, user.name, user.sig)
+  .where`${user.id} = 1 AND ${user.sig} <> 'haha'`;
 ```
 
 [mingru](https://github.com/mgenware/mingru) translates this into:
@@ -352,9 +350,9 @@ SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1 AND `sig` <> 'haha'
 Your actions often require user input parameters, e.g. to select a single profile from user table, we need a `id` parameter which can uniquely identify an user record. Use `mm.input` for this purpose:
 
 ```ts
-selectUserProfile = dd
-  .select(user.id, user.name, user.sig)
-  .where(mm.sql`${user.id} = ${mm.input(user.id)}`);
+selectUserProfile = dd.select(user.id, user.name, user.sig).where`${
+  user.id
+} = ${mm.input(user.id)}`;
 ```
 
 [mingru](https://github.com/mgenware/mingru) translates this to the following Go code:
@@ -373,9 +371,9 @@ func (da *TableTypeUser) SelectUserProfile(queryable dbx.Queryable, id uint64) (
 The `mm.input(user.id)` instructs builder to include a parameter named `id` and pass it to SQL query function. If you don't like the auto inferred name, can use the second optional `name` argument of `mm.input`:
 
 ```ts
-selectUserProfile = dd
-  .select(user.id, user.name, user.sig)
-  .where(mm.sql`${user.id} = ${mm.input(user.id, 'uid')}`);
+selectUserProfile = dd.select(user.id, user.name, user.sig).where`${
+  user.id
+} = ${mm.input(user.id, 'uid')}`;
 // Now input name is `uid` instead of `name`
 ```
 
@@ -398,9 +396,9 @@ Writing `mm.input`s in `mm.sql` can be tedious, mingru-models comes with a bunch
 Shortcut to `mm.input(column, optionalName)`:
 
 ```ts
-selectUserProfile = dd
-  .select(user.id, user.name, user.sig)
-  .where(mm.sql`${user.id} = ${user.id.toInput()}`);
+selectUserProfile = dd.select(user.id, user.name, user.sig).where`${
+  user.id
+} = ${user.id.toInput()}`;
 ```
 
 ##### `Column.isEqualTo(sql): SQL`
@@ -408,15 +406,14 @@ selectUserProfile = dd
 ```ts
 selectUserProfile = dd
   .select(user.id, user.name, user.sig)
-  .where(user.name.isEqualTo(mm.sql`"Admin"`));
+  .whereSQL(user.name.isEqualTo(mm.sql`"Admin"`));
 ```
 
 Is equivalent to:
 
 ```ts
-selectProfile = dd
-  .select(user.id, user.name, user.sig)
-  .where(mm.sql`${user.name} = "Admin"`);
+selectProfile = dd.select(user.id, user.name, user.sig)
+  .where`${user.name} = "Admin"`;
 ```
 
 ##### `Column.isEqualToInput(optionalName): SQL`
@@ -424,15 +421,15 @@ selectProfile = dd
 ```ts
 selectProfile = dd
   .select(user.id, user.name, user.sig)
-  .where(user.name.isEqualToInput());
+  .whereSQL(user.name.isEqualToInput());
 ```
 
 Is equivalent to:
 
 ```ts
-selectProfile = dd
-  .select(user.id, user.name, user.sig)
-  .where(mm.sql`${user.name} = ${mm.input(user.name)}`);
+selectProfile = dd.select(user.id, user.name, user.sig).where`${
+  user.name
+} = ${mm.input(user.name)}`;
 ```
 
 ##### `Column.isNotEqualTo` and `Column.isNotEqualToInput`
@@ -449,15 +446,15 @@ Is equivalent to 3 expressions listed below:
 
 ```ts
 // 1
-mm.select(user.id, user.name, user.sig).where(
-  `${user.id} = ${user.id.toInput()}`,
-);
+mm.select(user.id, user.name, user.sig).where`${
+  user.id
+} = ${user.id.toInput()}`;
 // 2
-mm.select(user.id, user.name, user.sig).where(
+mm.select(user.id, user.name, user.sig).whereSQL(
   user.id.isEqualTo(user.id.toInput()),
 );
 // 3
-mm.select(user.id, user.name, user.sig).where(user.id.isEqualToInput());
+mm.select(user.id, user.name, user.sig).whereSQL(user.id.isEqualToInput());
 ```
 
 `byID` automatically sets table's primary key as input as `WHERE`, to specify another column, use `by` instead:
@@ -750,7 +747,7 @@ Example:
 deleteByID = mm.deleteOne().byID();
 
 // Delete all users by a specified name.
-deleteByName = mm.deleteSome().where(user.name.isEqualToInput());
+deleteByName = mm.deleteSome().whereSQL(user.name.isEqualToInput());
 
 // Delete all users.
 deleteAll = mm.unsafeDeleteAll();
