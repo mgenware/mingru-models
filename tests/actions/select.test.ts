@@ -448,3 +448,16 @@ it('Set action.__table via from()', () => {
   [table] = ta.t2.ensureInitialized();
   eq(table, post);
 });
+
+it('Subquery', () => {
+  class PostTA extends mm.TableActions {
+    t = mm.select(post.title).where`${post.user_id.isEqualTo`${mm
+      .select(mm.max(user.id).toColumn('maxID'))
+      .from(user)}`}`;
+  }
+  const ta = mm.tableActions(user, PostTA);
+  eq(
+    ta.t.whereSQLString,
+    'SQL(E(Column(user_id, Table(post)), type = 1), E( = , type = 0), E(SelectAction(null, Table(user)), type = 5))',
+  );
+});
