@@ -98,9 +98,14 @@ it('toInput(string)', () => {
 });
 
 it('isEqualTo', () => {
-  const sql = user.name.isEqualTo(mm.sql`"haha"`);
+  const sql = user.name.isEqualToSQL(mm.sql`"haha"`);
   eq(
     sql.toString(),
+    'SQL(E(Column(name, Table(user)), type = 1), E( = , type = 0), E("haha", type = 0))',
+  );
+  const sql2 = user.name.isEqualTo`"haha"`;
+  eq(
+    sql2.toString(),
     'SQL(E(Column(name, Table(user)), type = 1), E( = , type = 0), E("haha", type = 0))',
   );
 });
@@ -122,9 +127,15 @@ it('isEqualToInput(string)', () => {
 });
 
 it('isNotEqualTo', () => {
-  const sql = user.name.isNotEqualTo(mm.sql`"haha"`);
+  const sql = user.name.isNotEqualToSQL(mm.sql`"haha"`);
   eq(
     sql.toString(),
+    'SQL(E(Column(name, Table(user)), type = 1), E( <> , type = 0), E("haha", type = 0))',
+  );
+
+  const sql2 = user.name.isNotEqualTo`"haha"`;
+  eq(
+    sql2.toString(),
     'SQL(E(Column(name, Table(user)), type = 1), E( <> , type = 0), E("haha", type = 0))',
   );
 });

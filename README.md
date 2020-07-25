@@ -406,7 +406,7 @@ selectUserProfile = dd.select(user.id, user.name, user.sig).where`${
 ```ts
 selectUserProfile = dd
   .select(user.id, user.name, user.sig)
-  .whereSQL(user.name.isEqualTo(mm.sql`"Admin"`));
+  .whereSQL(user.name.isEqualTo`"Admin"`);
 ```
 
 Is equivalent to:
@@ -451,7 +451,7 @@ mm.select(user.id, user.name, user.sig).where`${
 } = ${user.id.toInput()}`;
 // 2
 mm.select(user.id, user.name, user.sig).whereSQL(
-  user.id.isEqualTo(user.id.toInput()),
+  user.id.isEqualToSQL(user.id.toInput()),
 );
 // 3
 mm.select(user.id, user.name, user.sig).whereSQL(user.id.isEqualToInput());
