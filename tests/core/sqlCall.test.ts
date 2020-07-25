@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import * as mm from '../..';
 import post from '../models/post';
+import { RawColumn } from '../..';
 
 const eq = assert.equal;
 
@@ -129,4 +130,18 @@ it('setReturnType', () => {
     .IF(mm.exists(mm.select(post.title).byID()), '1', '2')
     .setReturnType(type);
   eq(call.returnType, type);
+});
+
+it('SQLCall.toColumn', () => {
+  const c1 = new RawColumn(mm.sql`${mm.utcDateNow()}`, 'd');
+  eq(
+    c1.toString(),
+    'RawColumn(d, core = SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3)))',
+  );
+
+  const c2 = mm.utcDateNow().toColumn('d');
+  eq(
+    c2.toString(),
+    'RawColumn(d, core = SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3)))',
+  );
 });
