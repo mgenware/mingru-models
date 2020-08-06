@@ -46,6 +46,36 @@ it('JoinedColumn', () => {
   );
 });
 
+it('Explicit join', () => {
+  const jc = post.user_id.join(user, user.id).name;
+  testJCCols(
+    jc,
+    'user',
+    user,
+    user.id,
+    user.name,
+    post.user_id,
+    '[[post.user_id].[user.id]]',
+    post,
+    'userName',
+  );
+});
+
+it('Explicit join without FK', () => {
+  const jc = post.title.join(user, user.name).follower_count;
+  testJCCols(
+    jc,
+    'title',
+    user,
+    user.name,
+    user.follower_count,
+    post.title,
+    '[[post.title].[user.name]]',
+    post,
+    'titleFollowerCount',
+  );
+});
+
 it('Nested JoinedColumn', () => {
   const jc1 = postCmt.post_id.join(post).user_id;
   const jc2 = jc1.join(user).name;
