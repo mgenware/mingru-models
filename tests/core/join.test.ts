@@ -76,6 +76,28 @@ it('Explicit join without FK', () => {
   );
 });
 
+it('Join with multiple keys', () => {
+  const jc = post.title.join(user, user.name, [
+    [post.user_id, user.id],
+    [post.snake_case_user_id, user.id],
+  ]).follower_count;
+  testJCCols(
+    jc,
+    'title',
+    user,
+    user.name,
+    user.follower_count,
+    post.title,
+    '[[post.title].[user.name]]',
+    post,
+    'titleFollowerCount',
+  );
+  assert.deepEqual((jc.__table as mm.JoinedTable).extraColumns, [
+    [post.user_id, user.id],
+    [post.snake_case_user_id, user.id],
+  ]);
+});
+
 it('Nested JoinedColumn', () => {
   const jc1 = postCmt.post_id.join(post).user_id;
   const jc2 = jc1.join(user).name;

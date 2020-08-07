@@ -264,36 +264,116 @@ export class Column extends CoreProperty {
     return `Column(${name}, ${tableStr})`;
   }
 
-  join<T extends Table>(destTable: T, destCol?: Column): T {
-    return this.joinCore(JoinType.inner, destTable, destCol, false);
+  join<T extends Table>(
+    destTable: T,
+    destCol?: Column,
+    extraColumns?: [Column, Column][],
+  ): T {
+    return this.joinCore(
+      JoinType.inner,
+      destTable,
+      destCol,
+      false,
+      extraColumns || [],
+    );
   }
 
-  leftJoin<T extends Table>(destTable: T, destCol?: Column): T {
-    return this.joinCore(JoinType.left, destTable, destCol, false);
+  leftJoin<T extends Table>(
+    destTable: T,
+    destCol?: Column,
+    extraColumns?: [Column, Column][],
+  ): T {
+    return this.joinCore(
+      JoinType.left,
+      destTable,
+      destCol,
+      false,
+      extraColumns || [],
+    );
   }
 
-  rightJoin<T extends Table>(destTable: T, destCol?: Column): T {
-    return this.joinCore(JoinType.right, destTable, destCol, false);
+  rightJoin<T extends Table>(
+    destTable: T,
+    destCol?: Column,
+    extraColumns?: [Column, Column][],
+  ): T {
+    return this.joinCore(
+      JoinType.right,
+      destTable,
+      destCol,
+      false,
+      extraColumns || [],
+    );
   }
 
-  fullJoin<T extends Table>(destTable: T, destCol?: Column): T {
-    return this.joinCore(JoinType.full, destTable, destCol, false);
+  fullJoin<T extends Table>(
+    destTable: T,
+    destCol?: Column,
+    extraColumns?: [Column, Column][],
+  ): T {
+    return this.joinCore(
+      JoinType.full,
+      destTable,
+      destCol,
+      false,
+      extraColumns || [],
+    );
   }
 
-  associativeJoin<T extends Table>(destTable: T, destCol?: Column): T {
-    return this.joinCore(JoinType.inner, destTable, destCol, true);
+  associativeJoin<T extends Table>(
+    destTable: T,
+    destCol?: Column,
+    extraColumns?: [Column, Column][],
+  ): T {
+    return this.joinCore(
+      JoinType.inner,
+      destTable,
+      destCol,
+      true,
+      extraColumns || [],
+    );
   }
 
-  leftAssociativeJoin<T extends Table>(destTable: T, destCol?: Column): T {
-    return this.joinCore(JoinType.left, destTable, destCol, true);
+  leftAssociativeJoin<T extends Table>(
+    destTable: T,
+    destCol?: Column,
+    extraColumns?: [Column, Column][],
+  ): T {
+    return this.joinCore(
+      JoinType.left,
+      destTable,
+      destCol,
+      true,
+      extraColumns || [],
+    );
   }
 
-  rightAssociativeJoin<T extends Table>(destTable: T, destCol?: Column): T {
-    return this.joinCore(JoinType.right, destTable, destCol, true);
+  rightAssociativeJoin<T extends Table>(
+    destTable: T,
+    destCol?: Column,
+    extraColumns?: [Column, Column][],
+  ): T {
+    return this.joinCore(
+      JoinType.right,
+      destTable,
+      destCol,
+      true,
+      extraColumns || [],
+    );
   }
 
-  fullAssociativeJoin<T extends Table>(destTable: T, destCol?: Column): T {
-    return this.joinCore(JoinType.full, destTable, destCol, true);
+  fullAssociativeJoin<T extends Table>(
+    destTable: T,
+    destCol?: Column,
+    extraColumns?: [Column, Column][],
+  ): T {
+    return this.joinCore(
+      JoinType.full,
+      destTable,
+      destCol,
+      true,
+      extraColumns || [],
+    );
   }
 
   private joinCore<T extends Table>(
@@ -301,6 +381,7 @@ export class Column extends CoreProperty {
     destTable: T,
     destCol: Column | undefined,
     associative: boolean,
+    extraColumns: [Column, Column][],
   ): T {
     throwIfFalsy(destTable, 'destTable');
     // source column + dest table + dest column = joined table
@@ -326,6 +407,7 @@ export class Column extends CoreProperty {
       destCol,
       type,
       associative,
+      extraColumns,
     );
     return new Proxy<T>(destTable, {
       get(target, propKey, receiver) {
@@ -391,8 +473,8 @@ export class Table {
  destColumn: user.id (Column)
 */
 export class JoinedTable {
-  // keyPath is useful to detect duplicate joins, if multiple JoinedTable instances are
-  // created with same columns and tables, they'd have same `keyPath`s.
+  // `keyPath` is useful to detect duplicate joins, if multiple `JoinedTable` instances are
+  // created with same columns and tables, they'd have the same `keyPath`.
   keyPath: string;
 
   constructor(
@@ -400,12 +482,13 @@ export class JoinedTable {
     public destTable: Table,
     public destColumn: Column,
     public type: JoinType,
-    public associative: boolean, // If srcColumn is associative
+    public associative: boolean, // If `srcColumn` is associative.
+    public extraColumns: [Column, Column][], // Join tables with composite PKs.
   ) {
     let localPath: string;
     const [srcTable] = srcColumn.ensureInitialized();
     if (srcTable instanceof JoinedTable) {
-      // source column is a joined column
+      // Source column is a joined column.
       const srcTableKeyPath = srcTable.keyPath;
       localPath = `[${srcTableKeyPath}.${srcColumn.__name}]`;
     } else {
@@ -425,12 +508,12 @@ export class JoinedTable {
       if (srcTable.associative) {
         return curName;
       }
-      // If srcColumn is a joined column, e.g.
-      // `cmt.post_id.join(post).user_id.join(user)`, returns 'postUser' in this case.
+      // If `srcColumn` is a joined column, e.g.
+      // `cmt.post_id.join(post).user_id.join(user)`, returns `postUser in this case.
       return srcTable.tableInputName() + utils.capitalizeFirstLetter(curName);
     }
-    // If srcColumn is not a joined column, omit the table name,
-    // e.g. post.user_id.join(user), returns "user".
+    // If `srcColumn` is not a joined column, omit the table name,
+    // e.g. `post.user_id.join(user)`, returns `user.
     return curName;
   }
 
