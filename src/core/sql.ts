@@ -3,13 +3,17 @@ import toTypeString from 'to-type-string';
 import { Column, ColumnType } from './core';
 
 export class SQLVariable {
+  isArray: boolean;
+
   constructor(
     // type string can also contains an import path: <Type name>[|<Import>]
     public type: string | Column | ColumnType,
     public name: string,
+    isArray?: boolean,
   ) {
     throwIfFalsy(type, 'type');
     throwIfFalsy(name, 'name');
+    this.isArray = isArray || false;
   }
 
   toString(): string {

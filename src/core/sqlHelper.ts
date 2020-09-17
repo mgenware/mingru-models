@@ -83,7 +83,10 @@ export function convertToSQL(element: SQLConvertible): SQL {
 export function input(
   type: string | Column | ColumnType,
   name?: string,
+  isArray?: boolean,
 ): SQLVariable {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isArray = isArray || false;
   let updatedName = name;
   if (type instanceof Column) {
     if (!updatedName) {
@@ -94,12 +97,12 @@ export function input(
         );
       }
     }
-    return new SQLVariable(type, updatedName);
+    return new SQLVariable(type, updatedName, isArray);
   }
   if (!updatedName) {
     throw new Error(`Unexpected empty input name for type "${type}"`);
   }
-  return new SQLVariable(type, updatedName);
+  return new SQLVariable(type, updatedName, isArray);
 }
 
 export function sqlCall(
