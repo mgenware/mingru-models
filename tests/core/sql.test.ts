@@ -9,7 +9,7 @@ const eq = assert.equal;
 
 it('SQL', () => {
   const sql = mm.sql`${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}`;
-  eq(
+  assert.strictEqual(
     sql.toString(),
     'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
   );
@@ -51,15 +51,15 @@ it('Input (joined key)', () => {
 });
 
 it('Raw type input', () => {
-  const input = mm.input('uint32', 'uid');
-  eq(input.type, 'uint32');
+  const input = mm.input({ name: 'uint32', defaultValue: 0 }, 'uid');
+  assert.deepStrictEqual(input.type, { name: 'uint32', defaultValue: 0 });
   eq(input.name, 'uid');
 });
 
 it('Empty name for raw type input', () => {
   itThrows(
-    () => mm.input('uint32'),
-    'Unexpected empty input name for type "uint32"',
+    () => mm.input({ name: 'uint32', defaultValue: 0 }),
+    'Unexpected empty input name for type `uint32`',
   );
 });
 
@@ -207,14 +207,14 @@ it('findFirstColumn', () => {
 it('Input.isEqualTo', () => {
   const a = user.id.toInput();
   const b = user.id.toInput();
-  const c = mm.input('a', 'id');
-  const d = mm.input('a', 'id');
-  const e = mm.input('b', 'id');
+  const c = mm.input({ name: 'a', defaultValue: null }, 'id');
+  const d = mm.input({ name: 'a', defaultValue: null }, 'id');
+  const e = mm.input({ name: 'b', defaultValue: null }, 'id');
   eq(a.name, c.name);
-  eq(a.isEqualTo(b), true);
-  eq(a.isEqualTo(c), false);
-  eq(c.isEqualTo(d), true);
-  eq(c.isEqualTo(e), false);
+  assert.deepStrictEqual(a, b);
+  assert.notDeepStrictEqual(a, c);
+  assert.deepStrictEqual(c, d);
+  assert.notDeepStrictEqual(c, e);
 });
 
 it('hasColumns', () => {

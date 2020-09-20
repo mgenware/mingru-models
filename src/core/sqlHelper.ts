@@ -1,6 +1,12 @@
 import toTypeString from 'to-type-string';
 import SQLConvertible from './sqlConvertible';
-import { SQL, SQLElement, SQLElementType, SQLVariable } from './sql';
+import {
+  SQL,
+  SQLElement,
+  SQLElementType,
+  SQLVariable,
+  SQLVariableType,
+} from './sql';
 import { RawColumn } from '../actions/rawColumn';
 import { Column, ColumnType } from './core';
 import { SQLCall, SQLCallType } from './sqlCall';
@@ -80,8 +86,15 @@ export function convertToSQL(element: SQLConvertible): SQL {
   return sql`${element}`;
 }
 
+function getInputTypeName(type: SQLVariableType | Column | ColumnType): string {
+  if (type instanceof ColumnType || type instanceof Column) {
+    return toTypeString(type);
+  }
+  return type.name;
+}
+
 export function input(
-  type: string | Column | ColumnType,
+  type: SQLVariableType | Column | ColumnType,
   name?: string,
   isArray?: boolean,
 ): SQLVariable {
@@ -93,14 +106,16 @@ export function input(
       updatedName = type.inputName();
       if (!updatedName) {
         throw new Error(
-          `Unexpected empty input name for column "${toTypeString(type)}"`,
+          `Unexpected empty input name for column \`${toTypeString(type)}\``,
         );
       }
     }
     return new SQLVariable(type, updatedName, isArray);
   }
   if (!updatedName) {
-    throw new Error(`Unexpected empty input name for type "${type}"`);
+    throw new Error(
+      `Unexpected empty input name for type \`${getInputTypeName(type)}\``,
+    );
   }
   return new SQLVariable(type, updatedName, isArray);
 }

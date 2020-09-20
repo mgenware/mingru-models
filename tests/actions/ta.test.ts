@@ -66,8 +66,8 @@ it('enumerateActions', () => {
 
 it('Argument stubs', () => {
   const stubs = [
-    new mm.SQLVariable('int', 'id'),
-    new mm.SQLVariable('int', 'id2'),
+    new mm.SQLVariable({ name: 'int', defaultValue: 0 }, 'id'),
+    new mm.SQLVariable({ name: 'int', defaultValue: 0 }, 'id2'),
   ];
   class UserTA extends mm.TableActions {
     t = mm.select(user.id).argStubs(...stubs);

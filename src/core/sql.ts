@@ -2,12 +2,18 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import toTypeString from 'to-type-string';
 import { Column, ColumnType } from './core';
 
+export interface SQLVariableType {
+  name: string;
+  defaultValue: unknown;
+  module?: string;
+  importPath?: string;
+}
+
 export class SQLVariable {
   isArray: boolean;
 
   constructor(
-    // type string can also contains an import path: <Type name>[|<Import>]
-    public type: string | Column | ColumnType,
+    public type: SQLVariableType | Column | ColumnType,
     public name: string,
     isArray?: boolean,
   ) {
@@ -26,22 +32,6 @@ export class SQLVariable {
       desc = type.toString();
     }
     return `SQLVar(${this.name}, desc = ${desc})`;
-  }
-
-  isEqualTo(oth: SQLVariable): boolean {
-    if (!oth) {
-      return false;
-    }
-    if (this.name !== oth.name) {
-      return false;
-    }
-    if (typeof this.type !== typeof oth.type) {
-      return false;
-    }
-    if (typeof this.type === 'string') {
-      return this.type === (oth.type as string);
-    }
-    return this.type === (oth.type as Column);
   }
 }
 
@@ -104,7 +94,7 @@ export class SQL {
     return col;
   }
 
-  sniffType(): ColumnType | string | null {
+  sniffType(): ColumnType | null {
     for (const element of this.elements) {
       const { type } = element;
       if (type === SQLElementType.column) {
