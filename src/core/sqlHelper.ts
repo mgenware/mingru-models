@@ -6,43 +6,47 @@ import { Column, ColumnType } from './core';
 import { SQLCall, SQLCallType } from './sqlCall';
 import { Action } from '../actions/tableActions';
 
-class SQLBuilder {
+export class SQLBuilder {
   elements: SQLElement[] = [];
   hasColumns = false;
   hasCalls = false;
 
-  constructor(literals: TemplateStringsArray, params: SQLConvertible[]) {
+  loadTemplateString(literals: TemplateStringsArray, params: SQLConvertible[]) {
     for (let i = 0; i < params.length; i++) {
       // Skip empty strings
       if (literals[i]) {
         this.pushElement(new SQLElement(SQLElementType.rawString, literals[i]));
       }
       const param = params[i];
-      if (typeof param === 'string') {
-        this.pushElement(new SQLElement(SQLElementType.rawString, param));
-      } else if (param instanceof Column) {
-        this.pushElement(new SQLElement(SQLElementType.column, param));
-      } else if (param instanceof SQLVariable) {
-        this.pushElement(new SQLElement(SQLElementType.input, param));
-      } else if (param instanceof SQL) {
-        for (const element of param.elements) {
-          this.pushElement(element);
-        }
-      } else if (param instanceof SQLCall) {
-        this.pushElement(new SQLElement(SQLElementType.call, param));
-      } else if (param instanceof RawColumn) {
-        this.pushElement(new SQLElement(SQLElementType.rawColumn, param));
-      } else if (param instanceof Action) {
-        this.pushElement(new SQLElement(SQLElementType.action, param));
-      } else {
-        throw new Error(`Unsupported SQL parameter type "${toTypeString(param)}"`);
-      }
+      this.push(param);
     }
 
     // push the last literal
     const lastLiteral = literals[literals.length - 1];
     if (lastLiteral) {
       this.pushElement(new SQLElement(SQLElementType.rawString, lastLiteral));
+    }
+  }
+
+  push(param: SQLConvertible) {
+    if (typeof param === 'string') {
+      this.pushElement(new SQLElement(SQLElementType.rawString, param));
+    } else if (param instanceof Column) {
+      this.pushElement(new SQLElement(SQLElementType.column, param));
+    } else if (param instanceof SQLVariable) {
+      this.pushElement(new SQLElement(SQLElementType.input, param));
+    } else if (param instanceof SQL) {
+      for (const element of param.elements) {
+        this.pushElement(element);
+      }
+    } else if (param instanceof SQLCall) {
+      this.pushElement(new SQLElement(SQLElementType.call, param));
+    } else if (param instanceof RawColumn) {
+      this.pushElement(new SQLElement(SQLElementType.rawColumn, param));
+    } else if (param instanceof Action) {
+      this.pushElement(new SQLElement(SQLElementType.action, param));
+    } else {
+      throw new Error(`Unsupported SQL parameter type "${toTypeString(param)}"`);
     }
   }
 
@@ -61,7 +65,8 @@ class SQLBuilder {
 }
 
 export function sql(literals: TemplateStringsArray, ...params: SQLConvertible[]): SQL {
-  const builder = new SQLBuilder(literals, params);
+  const builder = new SQLBuilder();
+  builder.loadTemplateString(literals, params);
   return builder.toSQL();
 }
 

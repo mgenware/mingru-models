@@ -249,3 +249,18 @@ it('sniffType', () => {
   eq(mm.sql`haha${user.id.as('abc')}`.sniffType(), 'ColType(SQL.BIGINT)');
   eq(mm.sql`haha${mm.sel(mm.sql`abc`, 'name', mm.int().__type)}`.sniffType(), 'ColType(SQL.INT)');
 });
+
+it('SQLBuilder', () => {
+  const builder = new mm.SQLBuilder();
+  builder.push(user.id);
+  builder.push(' = 1 OR ');
+  builder.push(user.name);
+  builder.push(' = ');
+  builder.push(mm.input(user.name));
+  const sql = builder.toSQL();
+  assert.strictEqual(
+    sql.toString(),
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
+  );
+  assert.ok(sql instanceof mm.SQL);
+});
