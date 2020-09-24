@@ -17,9 +17,7 @@ Column.prototype.as = function (name: string): RawColumn {
   return new RawColumn(this, name);
 };
 
-Column.prototype.attrs = function (values: {
-  [name: string]: unknown;
-}): RawColumn {
+Column.prototype.attrs = function (values: { [name: string]: unknown }): RawColumn {
   return new RawColumn(this).attrs(values);
 };
 

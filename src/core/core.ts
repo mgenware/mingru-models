@@ -71,9 +71,7 @@ export enum JoinType {
 
 export class Column extends CoreProperty {
   static fromTypes(types: string | string[]): Column {
-    return new Column(
-      new ColumnType(typeof types === 'string' ? [types] : types),
-    );
+    return new Column(new ColumnType(typeof types === 'string' ? [types] : types));
   }
 
   static newForeignColumn(
@@ -90,11 +88,7 @@ export class Column extends CoreProperty {
   }
 
   static newJoinedColumn(mirroredColumn: Column, table: JoinedTable): Column {
-    const copied = Column.copyFrom(
-      mirroredColumn,
-      table,
-      mirroredColumn.__name,
-    );
+    const copied = Column.copyFrom(mirroredColumn, table, mirroredColumn.__name);
     copied.__mirroredColumn = mirroredColumn;
     return copied;
   }
@@ -264,60 +258,20 @@ export class Column extends CoreProperty {
     return `Column(${name}, ${tableStr})`;
   }
 
-  join<T extends Table>(
-    destTable: T,
-    destCol?: Column,
-    extraColumns?: [Column, Column][],
-  ): T {
-    return this.joinCore(
-      JoinType.inner,
-      destTable,
-      destCol,
-      false,
-      extraColumns || [],
-    );
+  join<T extends Table>(destTable: T, destCol?: Column, extraColumns?: [Column, Column][]): T {
+    return this.joinCore(JoinType.inner, destTable, destCol, false, extraColumns || []);
   }
 
-  leftJoin<T extends Table>(
-    destTable: T,
-    destCol?: Column,
-    extraColumns?: [Column, Column][],
-  ): T {
-    return this.joinCore(
-      JoinType.left,
-      destTable,
-      destCol,
-      false,
-      extraColumns || [],
-    );
+  leftJoin<T extends Table>(destTable: T, destCol?: Column, extraColumns?: [Column, Column][]): T {
+    return this.joinCore(JoinType.left, destTable, destCol, false, extraColumns || []);
   }
 
-  rightJoin<T extends Table>(
-    destTable: T,
-    destCol?: Column,
-    extraColumns?: [Column, Column][],
-  ): T {
-    return this.joinCore(
-      JoinType.right,
-      destTable,
-      destCol,
-      false,
-      extraColumns || [],
-    );
+  rightJoin<T extends Table>(destTable: T, destCol?: Column, extraColumns?: [Column, Column][]): T {
+    return this.joinCore(JoinType.right, destTable, destCol, false, extraColumns || []);
   }
 
-  fullJoin<T extends Table>(
-    destTable: T,
-    destCol?: Column,
-    extraColumns?: [Column, Column][],
-  ): T {
-    return this.joinCore(
-      JoinType.full,
-      destTable,
-      destCol,
-      false,
-      extraColumns || [],
-    );
+  fullJoin<T extends Table>(destTable: T, destCol?: Column, extraColumns?: [Column, Column][]): T {
+    return this.joinCore(JoinType.full, destTable, destCol, false, extraColumns || []);
   }
 
   associativeJoin<T extends Table>(
@@ -325,13 +279,7 @@ export class Column extends CoreProperty {
     destCol?: Column,
     extraColumns?: [Column, Column][],
   ): T {
-    return this.joinCore(
-      JoinType.inner,
-      destTable,
-      destCol,
-      true,
-      extraColumns || [],
-    );
+    return this.joinCore(JoinType.inner, destTable, destCol, true, extraColumns || []);
   }
 
   leftAssociativeJoin<T extends Table>(
@@ -339,13 +287,7 @@ export class Column extends CoreProperty {
     destCol?: Column,
     extraColumns?: [Column, Column][],
   ): T {
-    return this.joinCore(
-      JoinType.left,
-      destTable,
-      destCol,
-      true,
-      extraColumns || [],
-    );
+    return this.joinCore(JoinType.left, destTable, destCol, true, extraColumns || []);
   }
 
   rightAssociativeJoin<T extends Table>(
@@ -353,13 +295,7 @@ export class Column extends CoreProperty {
     destCol?: Column,
     extraColumns?: [Column, Column][],
   ): T {
-    return this.joinCore(
-      JoinType.right,
-      destTable,
-      destCol,
-      true,
-      extraColumns || [],
-    );
+    return this.joinCore(JoinType.right, destTable, destCol, true, extraColumns || []);
   }
 
   fullAssociativeJoin<T extends Table>(
@@ -367,13 +303,7 @@ export class Column extends CoreProperty {
     destCol?: Column,
     extraColumns?: [Column, Column][],
   ): T {
-    return this.joinCore(
-      JoinType.full,
-      destTable,
-      destCol,
-      true,
-      extraColumns || [],
-    );
+    return this.joinCore(JoinType.full, destTable, destCol, true, extraColumns || []);
   }
 
   private joinCore<T extends Table>(
@@ -392,34 +322,21 @@ export class Column extends CoreProperty {
       destCol = destTable.__pks[0];
     }
     if (!destCol) {
-      throw new Error(
-        'Cannot infer target column, please explicitly pass the "destCol" parameter',
-      );
+      throw new Error('Cannot infer target column, please explicitly pass the "destCol" parameter');
     }
 
     // Join returns a proxy, each property access first retrieves the original column
     // from original joined table, then it constructs a new copied column with
     // `props.table` set to a newly created JoinedTable.
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    const joinedTable = new JoinedTable(
-      this,
-      destTable,
-      destCol,
-      type,
-      associative,
-      extraColumns,
-    );
+    const joinedTable = new JoinedTable(this, destTable, destCol, type, associative, extraColumns);
     return new Proxy<T>(destTable, {
       get(target, propKey, receiver) {
-        const selectedColumn = Reflect.get(target, propKey, receiver) as
-          | Column
-          | undefined;
+        const selectedColumn = Reflect.get(target, propKey, receiver) as Column | undefined;
 
         if (!selectedColumn) {
           throw new Error(
-            `The column "${propKey.toString()}" does not exist on table ${toTypeString(
-              target,
-            )}`,
+            `The column "${propKey.toString()}" does not exist on table ${toTypeString(target)}`,
           );
         }
         // returns a joined column

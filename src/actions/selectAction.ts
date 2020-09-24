@@ -34,22 +34,14 @@ export class SelectAction extends CoreSelectAction {
   offsetValue: SQLVariable | number | undefined;
   pagination = false;
 
-  constructor(
-    public columns: SelectActionColumns[],
-    public mode: SelectActionMode,
-  ) {
+  constructor(public columns: SelectActionColumns[], public mode: SelectActionMode) {
     super(ActionType.select);
     // Validate individual column
     columns.forEach((col, idx) => {
       if (!col) {
-        throw new Error(
-          `The column at index ${idx} is null, action name "${this.__name}"`,
-        );
+        throw new Error(`The column at index ${idx} is null, action name "${this.__name}"`);
       }
-      if (
-        col instanceof Column === false &&
-        col instanceof RawColumn === false
-      ) {
+      if (col instanceof Column === false && col instanceof RawColumn === false) {
         throw new Error(
           `The column at index ${idx} is not a valid column, got a "${toTypeString(
             col,
@@ -77,9 +69,7 @@ export class SelectAction extends CoreSelectAction {
         name = column.getDBName();
       } else if (column instanceof RawColumn) {
         if (!column.selectedName) {
-          throw new Error(
-            `Unexpected empty selected name in ${column.toString()}`,
-          );
+          throw new Error(`Unexpected empty selected name in ${column.toString()}`);
         }
         name = column.selectedName;
       } else {
@@ -135,12 +125,9 @@ export class SelectAction extends CoreSelectAction {
     super.validate(table, name);
 
     const { mode } = this;
-    const selectCollection =
-      mode === SelectActionMode.list || mode === SelectActionMode.page;
+    const selectCollection = mode === SelectActionMode.list || mode === SelectActionMode.page;
     if (selectCollection && !this.orderByColumns.length) {
-      throw new Error(
-        'An ORDER BY clause is required when selecting multiple rows',
-      );
+      throw new Error('An ORDER BY clause is required when selecting multiple rows');
     }
   }
 

@@ -218,21 +218,13 @@ it('Column.ensureInitialized', () => {
   const t = mm.table(User);
   const v = t.id;
   assert.deepEqual(v.ensureInitialized(), [t, 'id']);
-  itThrows(
-    () => mm.pk().ensureInitialized(),
-    'Column "Column(null|, <null>)" is not initialized',
-  );
+  itThrows(() => mm.pk().ensureInitialized(), 'Column "Column(null|, <null>)" is not initialized');
 });
 
 it('Column.attr/attrs n RawColumn.attr/attrs', () => {
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(
-        user.follower_count
-          .attr('a', true)
-          .attrs({ a: 3, b: 's' })
-          .attr('d', 3),
-      );
+      t = mm.select(user.follower_count.attr('a', true).attrs({ a: 3, b: 's' }).attr('d', 3));
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
@@ -245,12 +237,7 @@ it('Column.attr/attrs n RawColumn.attr/attrs', () => {
   }
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(
-        user.follower_count
-          .attrs({ a: true })
-          .attrs({ a: 3, b: 's' })
-          .attr('d', 3),
-      );
+      t = mm.select(user.follower_count.attrs({ a: true }).attrs({ a: 3, b: 's' }).attr('d', 3));
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
@@ -266,12 +253,7 @@ it('Column.attr/attrs n RawColumn.attr/attrs', () => {
 it('Column.privateAttr n RawColumn.privateAttr', () => {
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(
-        user.follower_count
-          .attr('a', true)
-          .attrs({ a: 3, b: 's' })
-          .privateAttr(),
-      );
+      t = mm.select(user.follower_count.attr('a', true).attrs({ a: 3, b: 's' }).privateAttr());
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
@@ -284,12 +266,7 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
   }
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(
-        user.follower_count
-          .attrs({ a: true })
-          .attrs({ a: 3, b: 's' })
-          .privateAttr(),
-      );
+      t = mm.select(user.follower_count.attrs({ a: true }).attrs({ a: 3, b: 's' }).privateAttr());
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;

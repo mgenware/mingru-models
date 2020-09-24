@@ -11,9 +11,5 @@ export function sel(
 ): RawColumn {
   // `RawColumn` constructor accepts `Column | SQL` as its `core` property.
   // We don't wrap columns to `SQL`s.
-  return new RawColumn(
-    value instanceof Column ? value : convertToSQL(value),
-    selectedName,
-    type,
-  );
+  return new RawColumn(value instanceof Column ? value : convertToSQL(value), selectedName, type);
 }

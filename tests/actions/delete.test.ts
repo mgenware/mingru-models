@@ -14,10 +14,7 @@ it('DeleteAction', () => {
   assert.ok(v instanceof mm.DeleteAction);
   assert.ok(v instanceof mm.CoreSelectAction);
   assert.ok(v instanceof mm.Action);
-  eq(
-    v.whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
-  );
+  eq(v.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
   eq(v.actionType, mm.ActionType.delete);
 });
 
@@ -80,12 +77,6 @@ it('where and whereSQL', () => {
     t2 = mm.deleteOne().where`${user.id} = 1`;
   }
   const ta = mm.tableActions(user, UserTA);
-  eq(
-    ta.t1.whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
-  );
-  eq(
-    ta.t2.whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
-  );
+  eq(ta.t1.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(ta.t2.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
 });

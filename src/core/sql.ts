@@ -109,9 +109,7 @@ export class SQL {
         // `returnType` is the index of the specified param that indicates the return type.
         const param = call.params[returnType];
         if (!param) {
-          throw new Error(
-            `Unexpected empty param from return type index ${returnType}`,
-          );
+          throw new Error(`Unexpected empty param from return type index ${returnType}`);
         }
         if (param instanceof Column) {
           return param.__type;

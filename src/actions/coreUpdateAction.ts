@@ -60,9 +60,7 @@ export class CoreUpdateAction extends Action {
   }
 
   settersToString(): string {
-    return [...this.setters.entries()]
-      .map(([k, v]) => `${k.__name}: ${v}`)
-      .join(', ');
+    return [...this.setters.entries()].map(([k, v]) => `${k.__name}: ${v}`).join(', ');
   }
 
   private checkColumnFree(col: Column) {
@@ -75,9 +73,7 @@ export class CoreUpdateAction extends Action {
   private checkHasDefault(col: Column) {
     const def = col.__defaultValue;
     if (def === undefined || def === null) {
-      throw new Error(
-        `The column "${col.__name}" does not have a default value`,
-      );
+      throw new Error(`The column "${col.__name}" does not have a default value`);
     }
   }
 }

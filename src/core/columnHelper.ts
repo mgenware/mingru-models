@@ -11,9 +11,7 @@ export function fk(column: Column): Column {
   throwIfFalsy(column, 'column');
   if (!Object.isFrozen(column)) {
     throw new Error(
-      `The column "${toTypeString(
-        column,
-      )}" doesn't seem to be a valid column because it is frozen`,
+      `The column "${toTypeString(column)}" doesn't seem to be a valid column because it is frozen`,
     );
   }
   return Column.newForeignColumn(column, null);
@@ -48,9 +46,7 @@ function _numeric(type: string, unsigned: boolean, length?: number): Column {
   col.__type.unsigned = unsigned;
   if (length !== undefined) {
     if (length === 0) {
-      throw new Error(
-        'You should omit length parameter instead of passing a zero',
-      );
+      throw new Error('You should omit length parameter instead of passing a zero');
     }
     col.__type.length = length;
   }
@@ -151,9 +147,7 @@ export function datetime(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
 export function date(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
   const col = Column.fromTypes(dt.date);
   if (defaultsToNow) {
-    col.__defaultValue = sql`${
-      defaultsToNow === 'utc' ? call.utcDateNow() : call.localDateNow()
-    }`;
+    col.__defaultValue = sql`${defaultsToNow === 'utc' ? call.utcDateNow() : call.localDateNow()}`;
   }
   return col;
 }
@@ -161,9 +155,7 @@ export function date(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
 export function time(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
   const col = Column.fromTypes(dt.time);
   if (defaultsToNow) {
-    col.__defaultValue = sql`${
-      defaultsToNow === 'utc' ? call.utcTimeNow() : call.localTimeNow()
-    }`;
+    col.__defaultValue = sql`${defaultsToNow === 'utc' ? call.utcTimeNow() : call.localTimeNow()}`;
   }
   return col;
 }

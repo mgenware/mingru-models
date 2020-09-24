@@ -5,13 +5,6 @@ import { RawColumn } from '../actions/rawColumn';
 import { Action } from '../actions/tableActions';
 
 // Allowed types in `mm.sql`.
-type SQLConvertible =
-  | string
-  | Column
-  | SQLVariable
-  | SQL
-  | SQLCall
-  | RawColumn
-  | Action;
+type SQLConvertible = string | Column | SQLVariable | SQL | SQLCall | RawColumn | Action;
 
 export default SQLConvertible;

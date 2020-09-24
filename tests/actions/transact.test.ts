@@ -13,10 +13,7 @@ it('Transact', () => {
   const userTA = mm.tableActions(user, UserTA);
 
   class PostTA extends mm.TableActions {
-    insert = mm
-      .insert()
-      .setInputs(post.title, post.snake_case_user_id)
-      .setInputs();
+    insert = mm.insert().setInputs(post.title, post.snake_case_user_id).setInputs();
 
     update = mm.updateOne().setInputs(post.e_user_id_n).byID();
     batch = mm.transact(this.insert, userTA.insert, this.update);
@@ -47,10 +44,7 @@ it('Temp member actions (wrap self)', async () => {
   class User2TA extends mm.TableActions {
     updatePostCount = mm
       .updateOne()
-      .set(
-        user2.postCount,
-        mm.sql`${user2.postCount} + ${mm.input(mm.int(), 'offset')}`,
-      )
+      .set(user2.postCount, mm.sql`${user2.postCount} + ${mm.input(mm.int(), 'offset')}`)
       .byID();
 
     t = mm.transact(this.updatePostCount.wrap({ offset: '1' }));
@@ -71,10 +65,7 @@ it('Temp member actions (wrap other)', async () => {
   class User2TA extends mm.TableActions {
     updatePostCount = mm
       .updateOne()
-      .set(
-        user2.postCount,
-        mm.sql`${user2.postCount} + ${mm.input(mm.int(), 'offset')}`,
-      )
+      .set(user2.postCount, mm.sql`${user2.postCount} + ${mm.input(mm.int(), 'offset')}`)
       .byID();
   }
   const user2TA = mm.tableActions(user2, User2TA);
@@ -101,10 +92,7 @@ it('Setting __table or temp members', () => {
   const userTA = mm.tableActions(user, UserTA);
 
   class PostTA extends mm.TableActions {
-    insert = mm
-      .insert()
-      .setInputs(post.title, post.snake_case_user_id)
-      .setInputs();
+    insert = mm.insert().setInputs(post.title, post.snake_case_user_id).setInputs();
 
     t = mm.transact(
       mm.insert().setDefaults(),

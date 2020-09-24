@@ -11,10 +11,7 @@ declare module './core' {
     isEqualToSQL(valueSQL: SQL): SQL;
     isEqualToInput(name?: string): SQL;
     isIncludedInput(name?: string): SQL;
-    isNotEqualTo(
-      literals: TemplateStringsArray,
-      ...params: SQLConvertible[]
-    ): SQL;
+    isNotEqualTo(literals: TemplateStringsArray, ...params: SQLConvertible[]): SQL;
     isNotEqualToSQL(valueSQL: SQL): SQL;
     isNotEqualToInput(name?: string): SQL;
     isNull(): SQL;

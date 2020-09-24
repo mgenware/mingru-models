@@ -3,16 +3,10 @@ import { Action, ActionType, initializeAction } from './tableActions';
 import { Table } from '../core/core';
 
 export class ActionWithReturnValues {
-  constructor(
-    public action: Action,
-    public returnValues: { [name: string]: string },
-  ) {}
+  constructor(public action: Action, public returnValues: { [name: string]: string }) {}
 }
 
-export type TransactionMemberTypes =
-  | TransactionMember
-  | Action
-  | ActionWithReturnValues;
+export type TransactionMemberTypes = TransactionMember | Action | ActionWithReturnValues;
 
 export class TransactionMember {
   // True if this member is created inside transaction function block.

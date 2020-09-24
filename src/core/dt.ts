@@ -24,24 +24,14 @@ export class DataTypes {
 
   decimal = 'DECIMAL';
 
-  private integerSet = new Set<string>([
-    this.int,
-    this.bigInt,
-    this.smallInt,
-    this.tinyInt,
-  ]);
+  private integerSet = new Set<string>([this.int, this.bigInt, this.smallInt, this.tinyInt]);
 
   private numberSet = new Set<string>([
     ...this.integerSet,
     ...[this.double, this.float, this.decimal],
   ]);
 
-  private timeRelatedSet = new Set<string>([
-    this.date,
-    this.datetime,
-    this.time,
-    this.timestamp,
-  ]);
+  private timeRelatedSet = new Set<string>([this.date, this.datetime, this.time, this.timestamp]);
 
   isInteger(s: string): boolean {
     return this.integerSet.has(s);

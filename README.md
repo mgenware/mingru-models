@@ -322,8 +322,7 @@ We haven't used any `WHERE` clause in the `SELECT` actions above, to add a `WHER
 You can pass a column object to template string, it will be converted to a column name in SQL, for example:
 
 ```ts
-selectUserProfile = dd.select(user.id, user.name, user.sig)
-  .where`${user.id} = 1`;
+selectUserProfile = dd.select(user.id, user.name, user.sig).where`${user.id} = 1`;
 ```
 
 [mingru](https://github.com/mgenware/mingru) translates this into:
@@ -350,9 +349,9 @@ SELECT `id`, `name`, `sig` FROM `user` WHERE `id` = 1 AND `sig` <> 'haha'
 Your actions often require user input parameters, e.g. to select a single profile from user table, we need a `id` parameter which can uniquely identify an user record. Use `mm.input` for this purpose:
 
 ```ts
-selectUserProfile = dd.select(user.id, user.name, user.sig).where`${
-  user.id
-} = ${mm.input(user.id)}`;
+selectUserProfile = dd.select(user.id, user.name, user.sig).where`${user.id} = ${mm.input(
+  user.id,
+)}`;
 ```
 
 [mingru](https://github.com/mgenware/mingru) translates this to the following Go code:
@@ -371,9 +370,10 @@ func (da *TableTypeUser) SelectUserProfile(queryable dbx.Queryable, id uint64) (
 The `mm.input(user.id)` instructs builder to include a parameter named `id` and pass it to SQL query function. If you don't like the auto inferred name, can use the second optional `name` argument of `mm.input`:
 
 ```ts
-selectUserProfile = dd.select(user.id, user.name, user.sig).where`${
-  user.id
-} = ${mm.input(user.id, 'uid')}`;
+selectUserProfile = dd.select(user.id, user.name, user.sig).where`${user.id} = ${mm.input(
+  user.id,
+  'uid',
+)}`;
 // Now input name is `uid` instead of `name`
 ```
 
@@ -404,32 +404,27 @@ selectUserProfile = dd.select(user.id, user.name, user.sig).where`${
 ##### `Column.isEqualTo(sql): SQL`
 
 ```ts
-selectUserProfile = dd
-  .select(user.id, user.name, user.sig)
-  .whereSQL(user.name.isEqualTo`"Admin"`);
+selectUserProfile = dd.select(user.id, user.name, user.sig).whereSQL(user.name.isEqualTo`"Admin"`);
 ```
 
 Is equivalent to:
 
 ```ts
-selectProfile = dd.select(user.id, user.name, user.sig)
-  .where`${user.name} = "Admin"`;
+selectProfile = dd.select(user.id, user.name, user.sig).where`${user.name} = "Admin"`;
 ```
 
 ##### `Column.isEqualToInput(optionalName): SQL`
 
 ```ts
-selectProfile = dd
-  .select(user.id, user.name, user.sig)
-  .whereSQL(user.name.isEqualToInput());
+selectProfile = dd.select(user.id, user.name, user.sig).whereSQL(user.name.isEqualToInput());
 ```
 
 Is equivalent to:
 
 ```ts
-selectProfile = dd.select(user.id, user.name, user.sig).where`${
-  user.name
-} = ${mm.input(user.name)}`;
+selectProfile = dd.select(user.id, user.name, user.sig).where`${user.name} = ${mm.input(
+  user.name,
+)}`;
 ```
 
 ##### `Column.isNotEqualTo` and `Column.isNotEqualToInput`
@@ -446,13 +441,9 @@ Is equivalent to 3 expressions listed below:
 
 ```ts
 // 1
-mm.select(user.id, user.name, user.sig).where`${
-  user.id
-} = ${user.id.toInput()}`;
+mm.select(user.id, user.name, user.sig).where`${user.id} = ${user.id.toInput()}`;
 // 2
-mm.select(user.id, user.name, user.sig).whereSQL(
-  user.id.isEqualToSQL(user.id.toInput()),
-);
+mm.select(user.id, user.name, user.sig).whereSQL(user.id.isEqualToSQL(user.id.toInput()));
 // 3
 mm.select(user.id, user.name, user.sig).whereSQL(user.id.isEqualToInput());
 ```
@@ -515,10 +506,7 @@ updateLastLogin = dd
   .set(user.lastLogin, mm.sql`${mm.localDatetimeNow()}`)
   .byID();
 
-updateLastLogin = dd
-  .updateOne()
-  .set(user.lastLogin, mm.localDatetimeNow())
-  .byID();
+updateLastLogin = dd.updateOne().set(user.lastLogin, mm.localDatetimeNow()).byID();
 ```
 
 ### More on `SELECT` Actions
@@ -526,11 +514,7 @@ updateLastLogin = dd
 #### `orderByAsc` and `orderByDesc`
 
 ```ts
-selectUser = dd
-  .select(user.name, user.age)
-  .byID()
-  .orderByAsc(user.name)
-  .orderByDesc(user.age);
+selectUser = dd.select(user.name, user.age).byID().orderByAsc(user.name).orderByDesc(user.age);
 ```
 
 #### Alias via `as`
@@ -638,10 +622,7 @@ updateManyColumns = dd
 To simplify this, `UpdateAction` also has a method called `setInputs`, you can pass an array of columns, all of them will be considered inputs. The above code could be rewritten as using `setInputs`:
 
 ```ts
-updateManyColumns = dd
-  .updateOne()
-  .setInputs(user.sig, user.name, user.age, user.gender)
-  .byID();
+updateManyColumns = dd.updateOne().setInputs(user.sig, user.name, user.age, user.gender).byID();
 ```
 
 You can also mix this with the `set` method mentioned above:

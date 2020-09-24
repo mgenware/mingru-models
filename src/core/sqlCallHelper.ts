@@ -113,10 +113,6 @@ export function ifNull(expr1: SQLConvertible, expr2: SQLConvertible): SQLCall {
 }
 
 // Use uppercase to not conflict with the if keyword.
-export function IF(
-  cond: SQLConvertible,
-  expr1: SQLConvertible,
-  expr2: SQLConvertible,
-): SQLCall {
+export function IF(cond: SQLConvertible, expr1: SQLConvertible, expr2: SQLConvertible): SQLCall {
   return sqlCall(SQLCallType.IF, 1, [cond, expr1, expr2]);
 }

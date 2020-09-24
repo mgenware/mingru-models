@@ -42,9 +42,7 @@ export class SQLCall {
     if (this.params.length) {
       paramsDesc = `, params = ${this.params.join(', ')})`;
     }
-    return `SQLCall(${
-      this.type
-    }, return = ${this.returnType.toString()}${paramsDesc}`;
+    return `SQLCall(${this.type}, return = ${this.returnType.toString()}${paramsDesc}`;
   }
 
   setReturnType(type: ColumnType): this {

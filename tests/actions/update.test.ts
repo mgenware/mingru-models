@@ -20,10 +20,7 @@ it('Update', () => {
   assert.ok(v instanceof mm.UpdateAction);
   assert.ok(v instanceof mm.CoreUpdateAction);
   assert.ok(v instanceof mm.Action);
-  eq(
-    v.whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
-  );
+  eq(v.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
   eq(v.setters.size, 2);
 
   // extra props
@@ -37,10 +34,7 @@ it('Update', () => {
 
 it('Order of setInputs and set', () => {
   class UserTA extends mm.TableActions {
-    t = mm
-      .unsafeUpdateAll()
-      .setInputs(user.snake_case_name)
-      .set(user.name, user.name.toInput('b'));
+    t = mm.unsafeUpdateAll().setInputs(user.snake_case_name).set(user.name, user.name.toInput('b'));
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -53,10 +47,7 @@ it('Order of setInputs and set', () => {
 
 it('setInputs and setDefaults', () => {
   class UserTA extends mm.TableActions {
-    t = mm
-      .unsafeUpdateAll()
-      .setDefaults(user.def_value)
-      .setInputs(user.snake_case_name);
+    t = mm.unsafeUpdateAll().setDefaults(user.def_value).setInputs(user.snake_case_name);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -113,10 +104,7 @@ it('setInputs and setDefaults twice', () => {
     const ta = mm.tableActions(user, UserTA);
     const v = ta.t;
 
-    assert.deepEqual(
-      [...v.autoSetters],
-      [mm.AutoSetterType.input, mm.AutoSetterType.default],
-    );
+    assert.deepEqual([...v.autoSetters], [mm.AutoSetterType.input, mm.AutoSetterType.default]);
   }
   {
     class UserTA extends mm.TableActions {
@@ -127,10 +115,7 @@ it('setInputs and setDefaults twice', () => {
     const ta = mm.tableActions(user, UserTA);
     const v = ta.t;
 
-    assert.deepEqual(
-      [...v.autoSetters],
-      [mm.AutoSetterType.default, mm.AutoSetterType.input],
-    );
+    assert.deepEqual([...v.autoSetters], [mm.AutoSetterType.default, mm.AutoSetterType.input]);
   }
 });
 
@@ -215,10 +200,7 @@ it('SQLConvertible value', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  eq(
-    v.setters.get(user.name),
-    'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
-  );
+  eq(v.setters.get(user.name), 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
 });
 
 it('No setters', () => {
@@ -256,11 +238,7 @@ it('by', () => {
 
 it('andBy', () => {
   class UserTA extends mm.TableActions {
-    t1 = mm
-      .updateOne()
-      .setInputs(user.name)
-      .by(user.snake_case_name)
-      .andBy(user.follower_count);
+    t1 = mm.updateOne().setInputs(user.name).by(user.snake_case_name).andBy(user.follower_count);
 
     t2 = mm.updateOne().setInputs(user.name).andBy(user.follower_count);
     t3 = mm.updateOne().setInputs(user.name).byID().andBy(user.follower_count);
@@ -287,16 +265,9 @@ it('where and whereSQL', () => {
       .set(user.name, user.name.toInput())
       .whereSQL(mm.sql`${user.id} = 1`);
 
-    t2 = mm.updateOne().set(user.name, user.name.toInput())
-      .where`${user.id} = 1`;
+    t2 = mm.updateOne().set(user.name, user.name.toInput()).where`${user.id} = 1`;
   }
   const ta = mm.tableActions(user, UserTA);
-  eq(
-    ta.t1.whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
-  );
-  eq(
-    ta.t2.whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
-  );
+  eq(ta.t1.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(ta.t2.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
 });

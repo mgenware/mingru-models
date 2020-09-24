@@ -3,11 +3,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { UpdateAction } from './updateAction';
 import { InsertAction } from './insertAction';
 import { DeleteAction } from './deleteAction';
-import {
-  SelectAction,
-  SelectActionColumns,
-  SelectActionMode,
-} from './selectAction';
+import { SelectAction, SelectActionColumns, SelectActionMode } from './selectAction';
 import {
   TransactAction,
   TransactionMemberTypes,

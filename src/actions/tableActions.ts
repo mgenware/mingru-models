@@ -79,16 +79,11 @@ function enumerateActions<T extends TableActions>(
     const name = pair[0] as string;
     const value = pair[1];
     // Ignore internal props and functions
-    if (
-      name.startsWith(defs.InternalPropPrefix) ||
-      typeof value === 'function'
-    ) {
+    if (name.startsWith(defs.InternalPropPrefix) || typeof value === 'function') {
       continue;
     }
     if (value instanceof Action === false) {
-      throw new Error(
-        `The property "${name}" is not an Action, got "${toTypeString(value)}"`,
-      );
+      throw new Error(`The property "${name}" is not an Action, got "${toTypeString(value)}"`);
     }
     cb(value, name);
   }

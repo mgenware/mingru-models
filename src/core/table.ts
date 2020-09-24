@@ -6,10 +6,7 @@ import * as defs from './defs';
 import Utils from '../lib/utils';
 import { SQL } from './sql';
 
-function enumerateColumns(
-  tableObject: Table,
-  cb: (column: Column, prop: string) => void,
-): void {
+function enumerateColumns(tableObject: Table, cb: (column: Column, prop: string) => void): void {
   throwIfFalsy(tableObject, 'tableObject');
 
   const entries = Object.entries(tableObject);
@@ -17,16 +14,11 @@ function enumerateColumns(
     const name = pair[0] as string;
     const value = pair[1];
     // Ignore internal props and functions
-    if (
-      name.startsWith(defs.InternalPropPrefix) ||
-      typeof value === 'function'
-    ) {
+    if (name.startsWith(defs.InternalPropPrefix) || typeof value === 'function') {
       continue;
     }
     if (value instanceof Column === false) {
-      throw new Error(
-        `The property "${name}" is not a Column, got "${toTypeString(value)}"`,
-      );
+      throw new Error(`The property "${name}" is not a Column, got "${toTypeString(value)}"`);
     }
     cb(value, name);
   }
@@ -107,10 +99,7 @@ export function tableCore(
   return tableObj;
 }
 
-export function table<T extends Table>(
-  CLASS: new (name?: string) => T,
-  dbName?: string,
-): T {
+export function table<T extends Table>(CLASS: new (name?: string) => T, dbName?: string): T {
   throwIfFalsy(CLASS, 'CLASS');
   const tableObj = new CLASS();
   const tableName = tableObj.constructor.name;

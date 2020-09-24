@@ -19,10 +19,7 @@ it('select', () => {
   eq(v.columns.length, 2);
   eq(v.columns[0], user.id);
   eq(v.columns[1], user.name);
-  eq(
-    v.whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
-  );
+  eq(v.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
   eq(v.mode, mm.SelectActionMode.row);
   eq(v.actionType, mm.ActionType.select);
 });
@@ -33,14 +30,8 @@ it('where and whereSQL', () => {
     t2 = mm.select(user.id, user.name).where`${user.id} = 1`;
   }
   const ta = mm.tableActions(user, UserTA);
-  eq(
-    ta.t1.whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
-  );
-  eq(
-    ta.t2.whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))',
-  );
+  eq(ta.t1.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(ta.t2.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
 });
 
 it('Select *', () => {
@@ -121,12 +112,7 @@ it('RawColumn (types)', () => {
 
 it('RawColumn (count)', () => {
   class UserTA extends mm.TableActions {
-    t = mm.select(
-      mm.sel(
-        mm.sql`${mm.count(mm.sql`${post.user_id.join(user).name}`)}`,
-        'count',
-      ),
-    );
+    t = mm.select(mm.sel(mm.sql`${mm.count(mm.sql`${post.user_id.join(user).name}`)}`, 'count'));
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -217,10 +203,7 @@ it('by', () => {
 
 it('andBy', () => {
   class UserTA extends mm.TableActions {
-    t1 = mm
-      .select(user.name)
-      .by(user.snake_case_name)
-      .andBy(user.follower_count);
+    t1 = mm.select(user.name).by(user.snake_case_name).andBy(user.follower_count);
 
     t2 = mm.select(user.name).andBy(user.follower_count);
     t3 = mm.select(user.name).byID().andBy(user.follower_count);
@@ -291,11 +274,7 @@ it('Validate columns', () => {
   const t = user;
   itThrows(() => {
     class UserTA extends mm.TableActions {
-      t = mm.selectRows(
-        t.name,
-        (null as unknown) as mm.Column,
-        t.follower_count,
-      );
+      t = mm.selectRows(t.name, (null as unknown) as mm.Column, t.follower_count);
     }
     mm.tableActions(user, UserTA);
   }, 'The column at index 1 is null, action name "null"');
@@ -376,10 +355,7 @@ it('LIMIT and OFFSET', () => {
       .offset(12);
   }
   const ta = mm.tableActions(user, UserTA);
-  eq(
-    ta.t.limitValue?.toString(),
-    'SQLVar(limit, desc = Column(null|, <null>))',
-  );
+  eq(ta.t.limitValue?.toString(), 'SQLVar(limit, desc = Column(null|, <null>))');
   eq(ta.t.offsetValue, 12);
 });
 

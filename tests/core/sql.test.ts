@@ -17,9 +17,7 @@ it('SQL', () => {
 });
 
 it('SQL with input', () => {
-  const sql = mm.sql`START${user.id} = 1 OR ${user.name} = ${mm.input(
-    user.name,
-  )}END`;
+  const sql = mm.sql`START${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}END`;
   eq(
     sql.toString(),
     'SQL(E(START, type = 0), E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2), E(END, type = 0))',
@@ -158,28 +156,19 @@ it('isNotEqualToInput(string)', () => {
 
 it('isNull', () => {
   const sql = user.name.isNull();
-  eq(
-    sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( IS NULL, type = 0))',
-  );
+  eq(sql.toString(), 'SQL(E(Column(name, Table(user)), type = 1), E( IS NULL, type = 0))');
 });
 
 it('isNotNull', () => {
   const sql = user.name.isNotNull();
-  eq(
-    sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( IS NOT NULL, type = 0))',
-  );
+  eq(sql.toString(), 'SQL(E(Column(name, Table(user)), type = 1), E( IS NOT NULL, type = 0))');
 });
 
 it('makeSQL', () => {
   const s = mm.sql`haha`;
   eq(mm.convertToSQL(s), s);
   eq(mm.convertToSQL('haha').toString(), 'SQL(E(haha, type = 0))');
-  eq(
-    mm.convertToSQL(post.user_id).toString(),
-    'SQL(E(Column(user_id, Table(post)), type = 1))',
-  );
+  eq(mm.convertToSQL(post.user_id).toString(), 'SQL(E(Column(user_id, Table(post)), type = 1))');
   eq(
     mm.convertToSQL(mm.count(post.user_id)).toString(),
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(user_id, Table(post)), type = 1))), type = 3))',
@@ -255,14 +244,8 @@ it('sniffType', () => {
   // Call
   eq(mm.sql`${mm.max(mm.sql``)}`.sniffType(), 'ColType(SQL.INT)');
   // Call with a index-based return type from one of its params.
-  eq(
-    mm.sql`${mm.ifNull(post.title, post.id)}`.sniffType(),
-    'ColType(SQL.VARCHAR)',
-  );
+  eq(mm.sql`${mm.ifNull(post.title, post.id)}`.sniffType(), 'ColType(SQL.VARCHAR)');
   // RawColumn
   eq(mm.sql`haha${user.id.as('abc')}`.sniffType(), 'ColType(SQL.BIGINT)');
-  eq(
-    mm.sql`haha${mm.sel(mm.sql`abc`, 'name', mm.int().__type)}`.sniffType(),
-    'ColType(SQL.INT)',
-  );
+  eq(mm.sql`haha${mm.sel(mm.sql`abc`, 'name', mm.int().__type)}`.sniffType(), 'ColType(SQL.INT)');
 });

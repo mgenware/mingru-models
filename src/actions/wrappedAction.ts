@@ -35,10 +35,7 @@ export function valueRef(name: string): ValueRef {
 export class WrappedAction extends Action {
   isTemp = false;
 
-  constructor(
-    public action: Action,
-    public args: { [name: string]: WrapActionArgValue },
-  ) {
+  constructor(public action: Action, public args: { [name: string]: WrapActionArgValue }) {
     super(ActionType.wrap);
     throwIfFalsy(action, 'action');
     throwIfFalsy(args, 'args');

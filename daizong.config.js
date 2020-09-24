@@ -7,8 +7,7 @@ module.exports = {
 
   // Runs tests (you need to build the project first).
   t: {
-    run:
-      'mocha --parallel --require source-map-support/register dist_tests/**/*.test.js',
+    run: 'mocha --parallel --require source-map-support/register dist_tests/**/*.test.js',
   },
 
   // Cleans, lints, compiles sources and runs tests.

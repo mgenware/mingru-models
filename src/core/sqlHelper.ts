@@ -1,12 +1,6 @@
 import toTypeString from 'to-type-string';
 import SQLConvertible from './sqlConvertible';
-import {
-  SQL,
-  SQLElement,
-  SQLElementType,
-  SQLVariable,
-  SQLVariableType,
-} from './sql';
+import { SQL, SQLElement, SQLElementType, SQLVariable, SQLVariableType } from './sql';
 import { RawColumn } from '../actions/rawColumn';
 import { Column, ColumnType } from './core';
 import { SQLCall, SQLCallType } from './sqlCall';
@@ -41,9 +35,7 @@ class SQLBuilder {
       } else if (param instanceof Action) {
         this.pushElement(new SQLElement(SQLElementType.action, param));
       } else {
-        throw new Error(
-          `Unsupported SQL parameter type "${toTypeString(param)}"`,
-        );
+        throw new Error(`Unsupported SQL parameter type "${toTypeString(param)}"`);
       }
     }
 
@@ -59,10 +51,7 @@ class SQLBuilder {
   }
 
   private pushElement(element: SQLElement) {
-    if (
-      element.type === SQLElementType.column ||
-      element.type === SQLElementType.input
-    ) {
+    if (element.type === SQLElementType.column || element.type === SQLElementType.input) {
       this.hasColumns = true;
     } else if (element.type === SQLElementType.call) {
       this.hasCalls = true;
@@ -71,10 +60,7 @@ class SQLBuilder {
   }
 }
 
-export function sql(
-  literals: TemplateStringsArray,
-  ...params: SQLConvertible[]
-): SQL {
+export function sql(literals: TemplateStringsArray, ...params: SQLConvertible[]): SQL {
   const builder = new SQLBuilder(literals, params);
   return builder.toSQL();
 }
@@ -105,17 +91,13 @@ export function input(
     if (!updatedName) {
       updatedName = type.inputName();
       if (!updatedName) {
-        throw new Error(
-          `Unexpected empty input name for column \`${toTypeString(type)}\``,
-        );
+        throw new Error(`Unexpected empty input name for column \`${toTypeString(type)}\``);
       }
     }
     return new SQLVariable(type, updatedName, isArray);
   }
   if (!updatedName) {
-    throw new Error(
-      `Unexpected empty input name for type \`${getInputTypeName(type)}\``,
-    );
+    throw new Error(`Unexpected empty input name for type \`${getInputTypeName(type)}\``);
   }
   return new SQLVariable(type, updatedName, isArray);
 }

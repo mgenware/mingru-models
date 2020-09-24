@@ -36,18 +36,13 @@ function byIDUnsafe(action: ActionWithWhere, inputName: string | undefined) {
     );
   }
   if (table.__pks.length === 0) {
-    throw new Error(
-      `\`byID\` cannot handle tables with no PKs, table name: "${table.__name}"`,
-    );
+    throw new Error(`\`byID\` cannot handle tables with no PKs, table name: "${table.__name}"`);
   }
   const pk = table.__pks[0];
   where(action, pk.isEqualToInput(inputName));
 }
 
-export function byID(
-  action: CoreProperty & ActionWithWhere,
-  inputName?: string,
-) {
+export function byID(action: CoreProperty & ActionWithWhere, inputName?: string) {
   CoreProperty.registerHandler(action, () => {
     byIDUnsafe(action, inputName);
   });

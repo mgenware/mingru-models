@@ -116,19 +116,14 @@ it('Embeded in SQL', () => {
     mm.sql`haha ${mm.sqlCall(
       mm.SQLCallType.localDatetimeNow,
       new mm.ColumnType('c1'),
-    )} ${mm.sqlCall(
-      mm.SQLCallType.localDateNow,
-      new mm.ColumnType('c2'),
-    )}`.toString(),
+    )} ${mm.sqlCall(mm.SQLCallType.localDateNow, new mm.ColumnType('c2'))}`.toString(),
     'SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(c1), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(c2), type = 3))',
   );
 });
 
 it('setReturnType', () => {
   const type = mm.int().__type;
-  const call = mm
-    .IF(mm.exists(mm.select(post.title).byID()), '1', '2')
-    .setReturnType(type);
+  const call = mm.IF(mm.exists(mm.select(post.title).byID()), '1', '2').setReturnType(type);
   eq(call.returnType, type);
 });
 

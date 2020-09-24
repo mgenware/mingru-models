@@ -42,9 +42,7 @@ export class RawColumn {
     if (core instanceof SQL) {
       const inferred = core.sniffType();
       if (!inferred) {
-        throw new Error(
-          'Cannot convert a `RawColumn(SQL)` to an `SQLVariable`',
-        );
+        throw new Error('Cannot convert a `RawColumn(SQL)` to an `SQLVariable`');
       }
       if (!selectedName) {
         const firstColumn = core.findFirstColumn();

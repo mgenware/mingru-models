@@ -24,10 +24,7 @@ it('Insert', () => {
 
 it('Insert one', () => {
   class PostTA extends mm.TableActions {
-    t = mm
-      .insertOne()
-      .setInputs(post.title, post.snake_case_user_id)
-      .setInputs();
+    t = mm.insertOne().setInputs(post.title, post.snake_case_user_id).setInputs();
   }
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
@@ -64,10 +61,7 @@ it('SQLConvertible value', () => {
     v.setters,
     new Map<mm.Column, unknown>([[post.title, mm.sql`${mm.localDateNow()}`]]),
   );
-  eq(
-    v.setters.get(post.title),
-    'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
-  );
+  eq(v.setters.get(post.title), 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
 });
 
 it('No setters', () => {

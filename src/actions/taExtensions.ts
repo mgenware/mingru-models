@@ -13,9 +13,7 @@ declare module './tableActions' {
   }
 }
 
-Action.prototype.wrap = function (args: {
-  [name: string]: WrapActionArgValue;
-}): WrappedAction {
+Action.prototype.wrap = function (args: { [name: string]: WrapActionArgValue }): WrappedAction {
   // For a tmp wrapped action, e.g. mm.select(...).wrap
   // If tmp action is also a wrapped action, we can modify it in place
   if (!this.__name && this instanceof WrappedAction) {
@@ -48,22 +46,15 @@ Action.prototype.declareReturnValues = function (values: {
   return new TransactionMember(this, undefined, values);
 };
 
-Action.prototype.declareReturnValue = function (
-  name: string,
-  value: string,
-): TransactionMember {
+Action.prototype.declareReturnValue = function (name: string, value: string): TransactionMember {
   return this.declareReturnValues({ [name]: value });
 };
 
-Action.prototype.declareInsertedID = function (
-  value: string,
-): TransactionMember {
+Action.prototype.declareInsertedID = function (value: string): TransactionMember {
   return this.declareReturnValues({ [ReturnValues.insertedID]: value });
 };
 
-Action.prototype.wrapAsRefs = function (args: {
-  [name: string]: string;
-}): WrappedAction {
+Action.prototype.wrapAsRefs = function (args: { [name: string]: string }): WrappedAction {
   const converted: { [name: string]: ValueRef } = {};
   for (const [k, v] of Object.entries(args)) {
     converted[k] = new ValueRef(v);
