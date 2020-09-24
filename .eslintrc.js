@@ -18,6 +18,7 @@ module.exports = {
     ],
     // We'll let prettier handle operator linebreaks.
     'operator-linebreak': 'off',
+    'max-len': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/switch-exhaustiveness-check': 'error',
