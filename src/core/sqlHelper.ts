@@ -50,6 +50,13 @@ export class SQLBuilder {
     }
   }
 
+  pushWithSpace(param: SQLConvertible) {
+    if (this.elements.length) {
+      this.push(' ');
+    }
+    this.push(param);
+  }
+
   toSQL(): SQL {
     return new SQL(this.elements, this.hasColumns, this.hasCalls);
   }
@@ -89,7 +96,7 @@ export function input(
   name?: string,
   isArray?: boolean,
 ): SQLVariable {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line no-param-reassign
   isArray = isArray || false;
   let updatedName = name;
   if (type instanceof Column) {
