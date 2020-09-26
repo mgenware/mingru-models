@@ -27,9 +27,10 @@ export class SQLVariable {
     let desc = '';
     if (typeof type === 'string') {
       desc = `String(${type})`;
-    } else {
-      // type is Column
+    } else if (type instanceof Column || type instanceof ColumnType) {
       desc = type.toString();
+    } else {
+      desc = JSON.stringify(type);
     }
     return `SQLVar(${this.name}, desc = ${desc})`;
   }

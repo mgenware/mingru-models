@@ -51,7 +51,7 @@ it('Input (joined key)', () => {
 it('Raw type input', () => {
   const input = mm.input({ name: 'uint32', defaultValue: 0 }, 'uid');
   assert.deepStrictEqual(input.type, { name: 'uint32', defaultValue: 0 });
-  eq(input.name, 'uid');
+  eq(input.toString(), 'SQLVar(uid, desc = {"name":"uint32","defaultValue":0})');
 });
 
 it('Empty name for raw type input', () => {
