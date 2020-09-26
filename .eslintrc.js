@@ -10,12 +10,7 @@ module.exports = {
     'no-console': ['error', { allow: ['warn', 'error'] }],
     'no-plusplus': 'off',
     // Allow `for-of` loops.
-    'no-restricted-syntax': [
-      'error',
-      'ForInStatement',
-      'LabeledStatement',
-      'WithStatement',
-    ],
+    'no-restricted-syntax': ['error', 'ForInStatement', 'LabeledStatement', 'WithStatement'],
     // We'll let prettier handle operator linebreaks.
     'operator-linebreak': 'off',
     'max-len': 'off',
@@ -33,10 +28,8 @@ module.exports = {
     'max-classes-per-file': 'off',
     'import/prefer-default-export': 'off',
     'no-continue': 'off',
-    'object-curly-newline': [
-      'error',
-      { ImportDeclaration: 'never', ExportDeclaration: 'never' },
-    ],
+    'object-curly-newline': ['error', { ImportDeclaration: 'never', ExportDeclaration: 'never' }],
     'func-names': 'off',
+    'max-len': 'off',
   },
 };
