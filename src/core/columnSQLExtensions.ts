@@ -6,11 +6,11 @@ import SQLConvertible from './sqlConvertible';
 declare module './core' {
   interface Column {
     toInput(name?: string): SQLVariable;
-    toInputArray(name?: string): SQLVariable;
+    toArrayInput(name?: string): SQLVariable;
     isEqualTo(literals: TemplateStringsArray, ...params: SQLConvertible[]): SQL;
     isEqualToSQL(valueSQL: SQL): SQL;
     isEqualToInput(name?: string): SQL;
-    isIncludedInput(name?: string): SQL;
+    isInArrayInput(name?: string): SQL;
     isNotEqualTo(literals: TemplateStringsArray, ...params: SQLConvertible[]): SQL;
     isNotEqualToSQL(valueSQL: SQL): SQL;
     isNotEqualToInput(name?: string): SQL;
@@ -23,7 +23,7 @@ Column.prototype.toInput = function (name?: string) {
   return input(this, name);
 };
 
-Column.prototype.toInputArray = function (name?: string) {
+Column.prototype.toArrayInput = function (name?: string) {
   return input(this, name, true);
 };
 
@@ -63,4 +63,8 @@ Column.prototype.isNull = function () {
 
 Column.prototype.isNotNull = function () {
   return sql`${this} IS NOT NULL`;
+};
+
+Column.prototype.isInArrayInput = function (name?: string) {
+  return sql`${this} IN (${this.toArrayInput(name)})`;
 };
