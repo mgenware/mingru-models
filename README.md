@@ -51,7 +51,7 @@ You may wonder why a two-step process, why not export the table type directly? w
 
 #### Table Name
 
-By default, class name is used as table name, and mingru-models automatially converts it to snake_case in SQL, for example, `class MyTable` would be `my_table`. Use the second parameter of `mm.table` to customize the name used in SQL.
+By default, class name is used as table name, and mingru-models automatically converts it to snake_case in SQL, for example, `class MyTable` would be `my_table`. Use the second parameter of `mm.table` to customize the name used in SQL.
 
 ```ts
 class MyTable extends mm.Table {}
