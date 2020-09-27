@@ -5,9 +5,12 @@ import { ColumnAttributes } from '../attrs';
 
 export class RawColumn {
   core: Column | SQL;
+  selectedName: string | null;
+  type: ColumnType | null;
+
   __attrs: { [name: string]: unknown } = {};
 
-  get __type(): ColumnType | undefined {
+  get __type(): ColumnType | null {
     return this.type;
   }
 
@@ -16,10 +19,12 @@ export class RawColumn {
     // `selectedName` can be undefined if `core` is a column.
     // In that case, when you call `toInput`, a name will be generated from all its joined columns,
     // so that you don't need to specify names when using joins.
-    public selectedName?: string,
-    public type?: ColumnType,
+    selectedName?: string,
+    type?: ColumnType,
   ) {
     throwIfFalsy(core, 'core');
+    this.selectedName = selectedName || null;
+    this.type = type || null;
     if (core instanceof Column) {
       this.core = core;
     } else {
