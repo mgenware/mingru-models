@@ -66,8 +66,7 @@ export class SQL {
     return `SQL(${this.elements.map((e) => e.toString()).join(', ')})`;
   }
 
-  // This method may be called recursively, in order to make `shouldStop` work,
-  // we have to return the `shouldStop` flag to stop all pending function along the call stack.
+  // If the callback returns true, it stops.
   enumerateColumns(cb: (col: Column) => boolean): boolean {
     for (const element of this.elements) {
       if (element.type === SQLElementType.column) {
@@ -80,6 +79,15 @@ export class SQL {
           if (argExpr.enumerateColumns(cb)) {
             return true;
           }
+        }
+      } else if (element.type === SQLElementType.rawColumn) {
+        const rawCol = element.toRawColumn();
+        if (rawCol.core instanceof SQL) {
+          if (rawCol.core.enumerateColumns(cb)) {
+            return true;
+          }
+        } else if (cb(rawCol.core)) {
+          return true;
         }
       }
     }

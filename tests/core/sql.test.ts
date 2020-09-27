@@ -16,6 +16,15 @@ it('SQL', () => {
   assert.ok(sql instanceof mm.SQL);
 });
 
+it('Flatten another SQL', () => {
+  const sql = mm.sql`${mm.sql`${mm.sql`${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}`}`}`;
+  assert.strictEqual(
+    sql.toString(),
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
+  );
+  assert.ok(sql instanceof mm.SQL);
+});
+
 it('SQL with input', () => {
   const sql = mm.sql`START${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}END`;
   eq(
@@ -177,11 +186,16 @@ it('makeSQL', () => {
 
 it('enumerateColumns', () => {
   let s = mm.sql`haha`;
-  assert.deepEqual(cm.listColumnsFromSQL(s), []);
+  assert.deepStrictEqual(cm.listColumnsFromSQL(s), []);
   s = mm.sql`kaokdjdf ${user.name} ${post.id.isEqualToInput()}`;
-  assert.deepEqual(cm.listColumnsFromSQL(s), [user.name, post.id]);
-  s = mm.sql`${mm.coalesce('haha', user.name, post.id)}`;
-  assert.deepEqual(cm.listColumnsFromSQL(s), [user.name, post.id]);
+  assert.deepStrictEqual(cm.listColumnsFromSQL(s), [user.name, post.id]);
+  s = mm.sql`${mm.coalesce(
+    'haha',
+    user.name,
+    post.id,
+    mm.sql`${mm.max(mm.sel(user.follower_count, 'alias'))}`,
+  )}`;
+  assert.deepStrictEqual(cm.listColumnsFromSQL(s), [user.name, post.id, user.follower_count]);
 });
 
 it('findFirstColumn', () => {
