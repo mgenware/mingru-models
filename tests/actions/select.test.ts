@@ -256,18 +256,28 @@ it('Order by', () => {
       .byID()
       .orderByAsc(user.name)
       .orderByAsc(cc)
-      .orderByDesc(user.follower_count);
+      .orderByDesc(user.follower_count)
+      .orderByInput(user.name, user.id);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  eq(v.orderByColumns.length, 3);
-  eq(v.orderByColumns[0].column, user.name);
-  eq(v.orderByColumns[0].desc, false);
-  eq(v.orderByColumns[1].column, cc);
-  eq(v.orderByColumns[1].desc, false);
-  eq(v.orderByColumns[2].column, user.follower_count);
-  eq(v.orderByColumns[2].desc, true);
+  eq(v.orderByColumns.length, 4);
+
+  const order0 = v.orderByColumns[0] as mm.OrderByColumn;
+  eq(order0.column, user.name);
+  eq(order0.desc, false);
+
+  const order1 = v.orderByColumns[1] as mm.OrderByColumn;
+  eq(order1.column, cc);
+  eq(order1.desc, false);
+
+  const order2 = v.orderByColumns[2] as mm.OrderByColumn;
+  eq(order2.column, user.follower_count);
+  eq(order2.desc, true);
+
+  const order3 = v.orderByColumns[3] as mm.OrderByColumnInput;
+  assert.deepStrictEqual(order3.columns, [user.name, user.id]);
 });
 
 it('Validate columns', () => {

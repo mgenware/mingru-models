@@ -17,6 +17,14 @@ export class OrderByColumn {
   }
 }
 
+export class OrderByColumnInput {
+  constructor(public columns: Column[]) {
+    throwIfFalsy(columns, 'columns');
+  }
+}
+
+export type OrderByColumnType = OrderByColumn | OrderByColumnInput;
+
 export enum SelectActionMode {
   row,
   field,
@@ -28,7 +36,7 @@ export enum SelectActionMode {
 export class SelectAction extends CoreSelectAction {
   havingSQLValue: SQL | null = null;
   havingValidator: ((value: SQL) => void) | null = null;
-  orderByColumns: OrderByColumn[] = [];
+  orderByColumns: OrderByColumnType[] = [];
   groupByColumns: string[] = [];
   limitValue: SQLVariable | number | undefined;
   offsetValue: SQLVariable | number | undefined;
@@ -53,12 +61,19 @@ export class SelectAction extends CoreSelectAction {
 
   orderByAsc(column: SelectActionColumnNames): this {
     throwIfFalsy(column, 'column');
-    return this.orderByCore(column, false);
+    this.orderByColumns.push(new OrderByColumn(column, false));
+    return this;
   }
 
   orderByDesc(column: SelectActionColumnNames): this {
     throwIfFalsy(column, 'column');
-    return this.orderByCore(column, true);
+    this.orderByColumns.push(new OrderByColumn(column, true));
+    return this;
+  }
+
+  orderByInput(...columns: Column[]): this {
+    this.orderByColumns.push(new OrderByColumnInput(columns));
+    return this;
   }
 
   groupBy(...columns: SelectActionColumnNames[]): this {
@@ -129,11 +144,6 @@ export class SelectAction extends CoreSelectAction {
     if (selectCollection && !this.orderByColumns.length) {
       throw new Error('An ORDER BY clause is required when selecting multiple rows');
     }
-  }
-
-  private orderByCore(column: SelectActionColumnNames, desc: boolean): this {
-    this.orderByColumns.push(new OrderByColumn(column, desc));
-    return this;
   }
 
   private setLimitValue(limit: SQLVariable | number) {
