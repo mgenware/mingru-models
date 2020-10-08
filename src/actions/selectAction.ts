@@ -18,7 +18,7 @@ export class OrderByColumn {
 }
 
 export class OrderByColumnInput {
-  constructor(public columns: Column[]) {
+  constructor(public columns: SelectActionColumnNames[]) {
     throwIfFalsy(columns, 'columns');
   }
 }
@@ -71,7 +71,7 @@ export class SelectAction extends CoreSelectAction {
     return this;
   }
 
-  orderByInput(...columns: Column[]): this {
+  orderByInput(...columns: SelectActionColumnNames[]): this {
     this.orderByColumns.push(new OrderByColumnInput(columns));
     return this;
   }
