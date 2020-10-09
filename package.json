@@ -4,12 +4,11 @@
   "description": "Strongly typed database models in TypeScript",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
-  "author": "Mgen (https://www.mgenware.com)",
+  "author": "Mgenware (https://github.com/mgenware)",
   "homepage": "https://github.com/mgenware/mingru-models",
   "bugs": "https://github.com/mgenware/mingru-models/issues",
   "keywords": [
     "database",
-    "orm",
     "sql generator"
   ],
   "repository": {
