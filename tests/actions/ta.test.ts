@@ -85,6 +85,8 @@ it('action.ensureInitialized', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   assert.deepEqual(v.ensureInitialized(), [user, 't']);
+  assert.strictEqual(v.mustGetTable(), user);
+  assert.strictEqual(v.mustGetName(), 't');
   itThrows(
     () => mm.select(user.id).ensureInitialized(),
     'Action "SelectAction" is not initialized',

@@ -53,6 +53,16 @@ export class Action extends CoreProperty {
     return [this.__table, this.__name];
   }
 
+  mustGetTable(): Table {
+    const [table] = this.ensureInitialized();
+    return table;
+  }
+
+  mustGetName(): string {
+    const [, name] = this.ensureInitialized();
+    return name;
+  }
+
   attrs(values: { [name: string]: unknown }): this {
     this.__attrs = { ...this.__attrs, ...values };
     return this;

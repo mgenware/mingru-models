@@ -212,6 +212,16 @@ export class Column extends CoreProperty {
     return [this.__table, this.__name];
   }
 
+  mustGetTable(): Table | JoinedTable {
+    const [table] = this.ensureInitialized();
+    return table;
+  }
+
+  mustGetName(): string {
+    const [, name] = this.ensureInitialized();
+    return name;
+  }
+
   inputName(): string {
     const [table, name] = this.ensureInitialized();
     if (this.__inputName) {
