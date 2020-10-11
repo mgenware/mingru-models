@@ -88,7 +88,7 @@ function enumerateActions<T extends TableActions>(
   for (const pair of entries) {
     const name = pair[0] as string;
     const value = pair[1];
-    // Ignore internal props and functions
+    // Ignore internal props and functions.
     if (name.startsWith(defs.InternalPropPrefix) || typeof value === 'function') {
       continue;
     }
@@ -107,19 +107,16 @@ function enumerateActions<T extends TableActions>(
 
 export function initializeAction(action: Action, table: Table, name: string) {
   throwIfFalsy(action, 'action');
-  // eslint-disable-next-line no-param-reassign
   action.__name = name;
-  // action.__table can be set before initialization by from()
+  // `action.__table` can be set before initialization by `from()`.
   if (action.__table) {
-    // eslint-disable-next-line no-param-reassign
     table = action.__table;
   } else {
-    // eslint-disable-next-line no-param-reassign
     action.__table = table;
   }
-  // After all properties are set, run property handlers
+  // After all properties are set, run property handlers.
   CoreProperty.runHandlers(action);
-  // Run validate callback
+  // Run validate callback.
   action.validate(table, name);
 }
 
