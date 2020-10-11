@@ -35,7 +35,7 @@ it('deleteOne', () => {
       t = mm.deleteOne();
     }
     mm.tableActions(user, TA);
-  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"]');
+  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"] [table "Table(user)"]');
 });
 
 it('deleteSome', () => {
@@ -55,7 +55,7 @@ it('deleteSome', () => {
       t = mm.deleteSome();
     }
     mm.tableActions(user, TA);
-  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"]');
+  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"] [table "Table(user)"]');
 });
 
 it('unsafeDeleteAll', () => {

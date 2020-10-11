@@ -70,7 +70,7 @@ it('No setters', () => {
       t = mm.insert();
     }
     mm.tableActions(post, PostTA);
-  }, 'No setters [action "t"]');
+  }, 'No setters [action "t"] [table "Table(post)"]');
 });
 
 it('Column number check', () => {
@@ -79,7 +79,7 @@ it('Column number check', () => {
       t = mm.insert().setInputs(post.e_user_id);
     }
     mm.tableActions(post, PostTA);
-  }, 'You only set 1 of all 5 columns (not including AUTO_INCREMENT columns), you should set all columns or use `unsafeInsert` to bypass this check [action "t"]');
+  }, 'You only set 1 of all 5 columns (not including AUTO_INCREMENT columns), you should set all columns or use `unsafeInsert` to bypass this check [action "t"] [table "Table(post)"]');
   assert.doesNotThrow(() => {
     class PostTA extends mm.TableActions {
       t = mm.insert().setInputs();

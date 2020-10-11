@@ -127,7 +127,10 @@ it('Set same column twice', () => {
       .setInputs(user.snake_case_name, user.name)
       .set(user.name, user.name.toInput('b'));
   }
-  itThrows(() => mm.tableActions(user, UserTA), 'Column "name" is already set');
+  itThrows(
+    () => mm.tableActions(user, UserTA),
+    'Column "name" is already set [table "Table(user)"]',
+  );
 });
 
 it('updateOne', () => {
@@ -146,7 +149,7 @@ it('updateOne', () => {
       t = mm.updateOne().setInputs(user.snake_case_name);
     }
     mm.tableActions(user, TA);
-  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"]');
+  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"] [table "Table(user)"]');
 });
 
 it('updateSome', () => {
@@ -165,7 +168,7 @@ it('updateSome', () => {
       t = mm.updateSome().setInputs(user.snake_case_name);
     }
     mm.tableActions(user, TA);
-  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"]');
+  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"] [table "Table(user)"]');
 });
 
 it('unsafeUpdateAll', () => {
@@ -209,7 +212,7 @@ it('No setters', () => {
       t = mm.unsafeUpdateAll();
     }
     mm.tableActions(user, UserTA);
-  }, 'No setters [action "t"]');
+  }, 'No setters [action "t"] [table "Table(user)"]');
   assert.doesNotThrow(() => {
     class UserTA extends mm.TableActions {
       t = mm.unsafeUpdateAll().setInputs();

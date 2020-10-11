@@ -287,14 +287,14 @@ it('Validate columns', () => {
       t = mm.selectRows(t.name, (null as unknown) as mm.Column, t.follower_count);
     }
     mm.tableActions(user, UserTA);
-  }, 'The column at index 1 is null, action name "null"');
+  }, 'The column at index 1 is null, action name "null" [table "Table(user)"]');
 
   itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm.selectRows(t.name, (32 as unknown) as mm.Column, t.follower_count);
     }
     mm.tableActions(user, UserTA);
-  }, 'The column at index 1 is not a valid column, got a "number", action name "null"');
+  }, 'The column at index 1 is not a valid column, got a "number", action name "null" [table "Table(user)"]');
 });
 
 it('GROUP BY names', () => {
@@ -377,7 +377,7 @@ it('Throw when paginate is called on non-list mode', () => {
       t = mm.selectField(t.name).paginate();
     }
     mm.tableActions(user, UserTA);
-  }, "'paginate' can only be used when mode = 'SelectActionMode.list', current mode is 1");
+  }, "'paginate' can only be used when mode = 'SelectActionMode.list', current mode is 1 [table \"Table(user)\"]");
 });
 
 it('Throw on selecting collection without ORDER BY', () => {
@@ -411,13 +411,13 @@ it('Throw on selecting collection without ORDER BY', () => {
       t = mm.selectRows(t.name);
     }
     mm.tableActions(user, UserTA);
-  }, 'An ORDER BY clause is required when selecting multiple rows [action "t"]');
+  }, 'An ORDER BY clause is required when selecting multiple rows [action "t"] [table "Table(user)"]');
   itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm.selectPage(t.name);
     }
     mm.tableActions(user, UserTA);
-  }, 'An ORDER BY clause is required when selecting multiple rows [action "t"]');
+  }, 'An ORDER BY clause is required when selecting multiple rows [action "t"] [table "Table(user)"]');
 });
 
 it('Set action.__table via from()', () => {

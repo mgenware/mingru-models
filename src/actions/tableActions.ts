@@ -146,11 +146,16 @@ export function tableActions<T extends Table, A extends TableActions>(
   TACls: new () => A,
 ): A {
   throwIfFalsy(table, 'table');
-  const taObj = new TACls();
 
-  const actions: Record<string, Action> = {};
-  enumerateActions(taObj, (action, name) => {
-    actions[name] = action;
-  });
-  return tableActionsCore(table, taObj, actions) as A;
+  try {
+    const taObj = new TACls();
+    const actions: Record<string, Action> = {};
+    enumerateActions(taObj, (action, name) => {
+      actions[name] = action;
+    });
+    return tableActionsCore(table, taObj, actions) as A;
+  } catch (err) {
+    err.message += ` [table "${table}"]`;
+    throw err;
+  }
 }
