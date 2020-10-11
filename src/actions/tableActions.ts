@@ -93,7 +93,13 @@ function enumerateActions<T extends TableActions>(
       continue;
     }
     if (value instanceof Action === false) {
-      throw new Error(`The property "${name}" is not an Action, got "${toTypeString(value)}"`);
+      let valueDesc = '';
+      try {
+        valueDesc = toTypeString(value);
+      } catch (err) {
+        valueDesc = `Error getting object description: ${err.message}`;
+      }
+      throw new Error(`The property "${name}" is not an Action, got "${valueDesc}"`);
     }
     cb(value, name);
   }
