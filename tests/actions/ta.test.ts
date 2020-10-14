@@ -207,3 +207,16 @@ it('__actions and props (taCore)', () => {
     eq((ta as any)[name], action);
   }
 });
+
+it('Ghost table', () => {
+  class Ghost extends mm.GhostTable {}
+  const ghost = mm.table(Ghost);
+  class GhostTA extends mm.TableActions {
+    t = new MyInsertAction().from(post).setInputs();
+  }
+  const ta = mm.tableActions(ghost, GhostTA);
+  const v = ta.t;
+  assert.ok(ghost instanceof mm.GhostTable);
+  eq(v.vTable, post);
+  eq(v.vName, 't');
+});

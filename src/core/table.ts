@@ -116,3 +116,11 @@ export function table<T extends Table>(CLASS: new (name?: string) => T, dbName?:
   });
   return tableCore(tableName, dbName || null, tableObj, columns) as T;
 }
+
+// A ghost table is a table that is used to create a TA for grouping a set of
+// table actions from other tables.
+// The table itself does not contain any columns.
+// Unlike an empty `Table` subclass, `GhostTable` should be recognized by
+// converters, for example, mingru will not generate CREATE TABLE SQL for a
+// ghost table.
+export class GhostTable extends Table {}
