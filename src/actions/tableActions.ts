@@ -8,6 +8,13 @@ import { SQLVariable } from '../core/sql';
 export class TableActions {
   __table: Table | null = null;
   __actions: Record<string, Action> = {};
+
+  ensureInitialized(): Table {
+    if (!this.__table) {
+      throw new Error(`Action actions "${toTypeString(this)}" not initialized`);
+    }
+    return this.__table;
+  }
 }
 
 export enum ActionType {
