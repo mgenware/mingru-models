@@ -20,7 +20,7 @@ export enum ActionType {
 }
 
 export class Action extends CoreProperty {
-  // Will be set after calling mm.ta. Can be overwritten by from().
+  // Will be set after calling `mm.ta`. Can be overwritten by `from()`.
   __table: Table | null = null;
 
   __argStubs: SQLVariable[] = [];
