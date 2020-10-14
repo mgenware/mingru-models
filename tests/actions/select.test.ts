@@ -427,7 +427,9 @@ it('Set action.__table via from()', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   eq(ta.t.__table, user);
+  eq(ta.t.__rootTable, user);
   eq(ta.t2.__table, post);
+  eq(ta.t2.__rootTable, user);
 
   let [table] = ta.t.ensureInitialized();
   eq(table, user);

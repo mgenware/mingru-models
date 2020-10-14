@@ -27,8 +27,10 @@ export enum ActionType {
 }
 
 export class Action extends CoreProperty {
-  // Will be set after calling `mm.ta`. Can be overwritten by `from()`.
+  // `__table` and `__rootTable` are set after calling `mm.ta`.
+  // `__table` can be changed by `from()`.
   __table: Table | null = null;
+  __rootTable: Table | null = null;
 
   __argStubs: SQLVariable[] = [];
   __attrs: { [name: string]: unknown } = {};
@@ -115,6 +117,7 @@ function enumerateActions<T extends TableActions>(
 export function initializeAction(action: Action, table: Table, name: string) {
   throwIfFalsy(action, 'action');
   action.__name = name;
+  action.__rootTable = table;
   // `action.__table` can be set before initialization by `from()`.
   if (action.__table) {
     table = action.__table;
