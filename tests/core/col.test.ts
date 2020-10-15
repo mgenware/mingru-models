@@ -218,7 +218,10 @@ it('Column.ensureInitialized', () => {
   const t = mm.table(User);
   const v = t.id;
   assert.deepEqual(v.ensureInitialized(), [t, 'id']);
-  itThrows(() => mm.pk().ensureInitialized(), 'Column "Column(null|, <null>)" is not initialized');
+  itThrows(
+    () => mm.pk().ensureInitialized(),
+    'Column "Column(null|, <null>)" not initialized, empty name',
+  );
 });
 
 it('Column.attr/attrs n RawColumn.attr/attrs', () => {

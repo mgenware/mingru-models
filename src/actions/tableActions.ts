@@ -57,7 +57,11 @@ export class Action extends CoreProperty {
 
   ensureInitialized(): [Table, string] {
     if (!this.__name || !this.__table) {
-      throw new Error(`Action "${toTypeString(this)}" is not initialized`);
+      throw new Error(
+        `Action "${toTypeString(this)}" not initialized, ${
+          !this.__name ? 'empty name' : 'empty table'
+        }`,
+      );
     }
     return [this.__table, this.__name];
   }

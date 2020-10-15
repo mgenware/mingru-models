@@ -89,7 +89,7 @@ it('action.ensureInitialized', () => {
   assert.strictEqual(v.mustGetName(), 't');
   itThrows(
     () => mm.select(user.id).ensureInitialized(),
-    'Action "SelectAction" is not initialized',
+    'Action "SelectAction" not initialized, empty name',
   );
 });
 

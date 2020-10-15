@@ -207,7 +207,9 @@ export class Column extends CoreProperty {
 
   ensureInitialized(): [Table | JoinedTable, string] {
     if (!this.__name || !this.__table) {
-      throw new Error(`Column "${this}" is not initialized`);
+      throw new Error(
+        `Column "${this}" not initialized, ${!this.__name ? 'empty name' : 'empty table'}`,
+      );
     }
     return [this.__table, this.__name];
   }
