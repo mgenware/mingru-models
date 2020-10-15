@@ -78,19 +78,15 @@ it('Argument stubs', () => {
   assert.deepEqual(v.__argStubs, stubs);
 });
 
-it('action.ensureInitialized', () => {
+it('action.mustGet', () => {
   class UserTA extends mm.TableActions {
     t = mm.select(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  assert.deepEqual(v.ensureInitialized(), [user, 't']);
   assert.strictEqual(v.mustGetTable(), user);
   assert.strictEqual(v.mustGetName(), 't');
-  itThrows(
-    () => mm.select(user.id).ensureInitialized(),
-    'Action "SelectAction" not initialized, empty name',
-  );
+  itThrows(() => mm.select(user.id).mustGetName(), 'Action "SelectAction" doesn\'t have a name');
 });
 
 class MyInsertAction extends mm.InsertAction {
@@ -209,14 +205,12 @@ it('__actions and props (taCore)', () => {
 });
 
 it('Ghost table', () => {
-  class Ghost extends mm.GhostTable {}
-  const ghost = mm.table(Ghost);
   class GhostTA extends mm.TableActions {
     t = new MyInsertAction().from(post).setInputs();
   }
-  const ta = mm.tableActions(ghost, GhostTA);
+  const ta = mm.tableActions(mm.ghostTable, GhostTA);
   const v = ta.t;
-  assert.ok(ghost instanceof mm.GhostTable);
+  assert.ok(mm.ghostTable instanceof mm.GhostTable);
   eq(v.vTable, post);
   eq(v.vName, 't');
 });

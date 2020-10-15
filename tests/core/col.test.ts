@@ -211,17 +211,15 @@ it('getSourceTable', () => {
   eq(post.title.getSourceTable(), post);
 });
 
-it('Column.ensureInitialized', () => {
+it('Column.mustGet', () => {
   class User extends mm.Table {
     id = mm.pk().setDBName('db_id');
   }
   const t = mm.table(User);
   const v = t.id;
-  assert.deepEqual(v.ensureInitialized(), [t, 'id']);
-  itThrows(
-    () => mm.pk().ensureInitialized(),
-    'Column "Column(null|, <null>)" not initialized, empty name',
-  );
+  eq(v.mustGetTable(), t);
+  eq(v.mustGetName(), 'id');
+  itThrows(() => mm.pk().mustGetName(), 'Column "Column" doesn\'t have a name');
 });
 
 it('Column.attr/attrs n RawColumn.attr/attrs', () => {

@@ -431,9 +431,9 @@ it('Set action.__table via from()', () => {
   eq(ta.t2.__table, post);
   eq(ta.t2.__rootTable, user);
 
-  let [table] = ta.t.ensureInitialized();
+  let table = ta.t.mustGetTable();
   eq(table, user);
-  [table] = ta.t2.ensureInitialized();
+  table = ta.t2.mustGetTable();
   eq(table, post);
 });
 
@@ -470,8 +470,27 @@ it('UNION', () => {
   const { t1 } = ta;
   eq(t1.unionAllFlag, false);
   eq(t1.nextSelectAction, t2);
+  eq(t1.__name, 't1');
+  eq(t1.__table, user);
   eq(t2.unionAllFlag, true);
   eq(t2.nextSelectAction, t3);
+  eq(t2.__name, null);
+  eq(t2.__table, null);
   eq(t3.unionAllFlag, false);
   eq(t3.nextSelectAction, null);
+  eq(t3.__name, null);
+  eq(t3.__table, null);
+});
+
+it('UNION on a ghost table', () => {
+  const t2 = mm.select();
+  class UserTA extends mm.TableActions {
+    t1 = mm.select().union(t2);
+  }
+  const ta = mm.tableActions(mm.ghostTable, UserTA);
+  const { t1 } = ta;
+  eq(t1.unionAllFlag, false);
+  eq(t1.nextSelectAction, t2);
+  eq(t1.__name, 't1');
+  eq(t1.__table, mm.ghostTable);
 });

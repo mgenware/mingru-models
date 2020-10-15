@@ -61,7 +61,7 @@ export class RawColumn {
       }
       return new SQLVariable(inferred, selectedName);
     }
-    const [, colName] = core.ensureInitialized();
+    const colName = core.mustGetName();
     return new SQLVariable(core, selectedName || colName);
   }
 

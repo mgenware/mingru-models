@@ -9,9 +9,9 @@ export class TableActions {
   __table: Table | null = null;
   __actions: Record<string, Action> = {};
 
-  ensureInitialized(): Table {
+  mustGetTable(): Table {
     if (!this.__table) {
-      throw new Error(`Action actions "${toTypeString(this)}" not initialized`);
+      throw new Error(`TableActions "${toTypeString(this)}" doesn't have a table`);
     }
     return this.__table;
   }
@@ -55,25 +55,18 @@ export class Action extends CoreProperty {
     return this;
   }
 
-  ensureInitialized(): [Table, string] {
-    if (!this.__name || !this.__table) {
-      throw new Error(
-        `Action "${toTypeString(this)}" not initialized, ${
-          !this.__name ? 'empty name' : 'empty table'
-        }`,
-      );
-    }
-    return [this.__table, this.__name];
-  }
-
   mustGetTable(): Table {
-    const [table] = this.ensureInitialized();
-    return table;
+    if (!this.__table) {
+      throw new Error(`Action "${toTypeString(this)}" doesn't have a table`);
+    }
+    return this.__table;
   }
 
   mustGetName(): string {
-    const [, name] = this.ensureInitialized();
-    return name;
+    if (!this.__name) {
+      throw new Error(`Action "${toTypeString(this)}" doesn't have a name`);
+    }
+    return this.__name;
   }
 
   attrs(values: { [name: string]: unknown }): this {

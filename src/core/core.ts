@@ -205,27 +205,23 @@ export class Column extends CoreProperty {
     return this.__dbName || this.__name || '';
   }
 
-  ensureInitialized(): [Table | JoinedTable, string] {
-    if (!this.__name || !this.__table) {
-      throw new Error(
-        `Column "${this}" not initialized, ${!this.__name ? 'empty name' : 'empty table'}`,
-      );
-    }
-    return [this.__table, this.__name];
-  }
-
   mustGetTable(): Table | JoinedTable {
-    const [table] = this.ensureInitialized();
-    return table;
+    if (!this.__table) {
+      throw new Error(`Column "${toTypeString(this)}" doesn't have a table`);
+    }
+    return this.__table;
   }
 
   mustGetName(): string {
-    const [, name] = this.ensureInitialized();
-    return name;
+    if (!this.__name) {
+      throw new Error(`Column "${toTypeString(this)}" doesn't have a name`);
+    }
+    return this.__name;
   }
 
   inputName(): string {
-    const [table, name] = this.ensureInitialized();
+    const table = this.mustGetTable();
+    const name = this.mustGetName();
     if (this.__inputName) {
       return this.__inputName;
     }
@@ -415,7 +411,7 @@ export class JoinedTable {
     public extraColumns: [Column, Column][], // Join tables with composite PKs.
   ) {
     let localPath: string;
-    const [srcTable] = srcColumn.ensureInitialized();
+    const srcTable = srcColumn.mustGetTable();
     if (srcTable instanceof JoinedTable) {
       // Source column is a joined column.
       const srcTableKeyPath = srcTable.keyPath;
@@ -430,7 +426,8 @@ export class JoinedTable {
 
   tableInputName(): string {
     const { srcColumn } = this;
-    const [srcTable, srcName] = srcColumn.ensureInitialized();
+    const srcTable = srcColumn.mustGetTable();
+    const srcName = srcColumn.mustGetName();
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const curName = makeMiddleName(srcName);
     if (srcTable instanceof JoinedTable) {

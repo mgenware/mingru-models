@@ -124,3 +124,5 @@ export function table<T extends Table>(CLASS: new (name?: string) => T, dbName?:
 // converters, for example, mingru will not generate CREATE TABLE SQL for a
 // ghost table.
 export class GhostTable extends Table {}
+
+export const ghostTable = table(GhostTable);
