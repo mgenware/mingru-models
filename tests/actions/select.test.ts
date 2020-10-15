@@ -449,3 +449,13 @@ it('Subquery', () => {
     'SQL(E(Column(user_id, Table(post)), type = 1), E( = , type = 0), E(SelectAction(null, Table(user)), type = 5))',
   );
 });
+
+it('Select DISTINCT', () => {
+  class UserTA extends mm.TableActions {
+    t1 = mm.select();
+    t2 = mm.select().distinct();
+  }
+  const ta = mm.tableActions(user, UserTA);
+  eq(ta.t1.distinctFlag, false);
+  eq(ta.t2.distinctFlag, true);
+});

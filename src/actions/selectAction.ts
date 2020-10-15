@@ -41,6 +41,8 @@ export class SelectAction extends CoreSelectAction {
   limitValue: SQLVariable | number | undefined;
   offsetValue: SQLVariable | number | undefined;
   pagination = false;
+  distinctFlag = false;
+  unionAllFlag = false;
 
   constructor(public columns: SelectActionColumns[], public mode: SelectActionMode) {
     super(ActionType.select);
@@ -133,6 +135,11 @@ export class SelectAction extends CoreSelectAction {
 
   having(literals: TemplateStringsArray, ...params: SQLConvertible[]): this {
     this.havingSQL(sql(literals, ...params));
+    return this;
+  }
+
+  distinct(): this {
+    this.distinctFlag = true;
     return this;
   }
 
