@@ -459,3 +459,19 @@ it('Select DISTINCT', () => {
   eq(ta.t1.distinctFlag, false);
   eq(ta.t2.distinctFlag, true);
 });
+
+it('UNION', () => {
+  const t2 = mm.select();
+  const t3 = mm.select();
+  class UserTA extends mm.TableActions {
+    t1 = mm.select().union(t2.unionAll(t3));
+  }
+  const ta = mm.tableActions(user, UserTA);
+  const { t1 } = ta;
+  eq(t1.unionAllFlag, false);
+  eq(t1.nextSelectAction, t2);
+  eq(t2.unionAllFlag, true);
+  eq(t2.nextSelectAction, t3);
+  eq(t3.unionAllFlag, false);
+  eq(t3.nextSelectAction, null);
+});

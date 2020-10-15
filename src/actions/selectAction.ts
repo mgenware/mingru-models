@@ -42,7 +42,10 @@ export class SelectAction extends CoreSelectAction {
   offsetValue: SQLVariable | number | undefined;
   pagination = false;
   distinctFlag = false;
+  // Set by `unionAll`.
   unionAllFlag = false;
+  // Set by `union` or `unionAll`.
+  nextSelectAction: SelectAction | null = null;
 
   constructor(public columns: SelectActionColumns[], public mode: SelectActionMode) {
     super(ActionType.select);
@@ -151,6 +154,21 @@ export class SelectAction extends CoreSelectAction {
     if (selectCollection && !this.orderByColumns.length) {
       throw new Error('An ORDER BY clause is required when selecting multiple rows');
     }
+  }
+
+  union(next: SelectAction): this {
+    return this.unionCore(next, false);
+  }
+
+  unionAll(next: SelectAction): this {
+    return this.unionCore(next, true);
+  }
+
+  private unionCore(next: SelectAction, all: boolean): this {
+    throwIfFalsy(next, 'next');
+    this.nextSelectAction = next;
+    this.unionAllFlag = all;
+    return this;
   }
 
   private setLimitValue(limit: SQLVariable | number) {
