@@ -56,15 +56,14 @@ export function tableCore(
         // A frozen column indicates an implicit foreign key.
         // Note: `mm.fk` can set up an explicit foreign key.
         if (Object.isFrozen(col)) {
-          // Copy the frozen column
+          // Copy the frozen column.
           columnToAdd = Column.newForeignColumn(col, tableObj);
         } else {
           columnToAdd = col;
         }
 
-        // Populate column props
+        // Populate column props.
         if (!columnToAdd.__name) {
-          // column name can be set by setName
           columnToAdd.__name = Utils.toSnakeCase(propName);
         }
         columnToAdd.__table = tableObj;
@@ -75,7 +74,7 @@ export function tableCore(
           }
         }
 
-        // Column default value cannot be a complex SQL
+        // Column default value cannot be a complex SQL.
         if (
           columnToAdd.__defaultValue &&
           columnToAdd.__defaultValue instanceof SQL &&
@@ -87,7 +86,7 @@ export function tableCore(
         convertedColumns[propName] = columnToAdd;
         // eslint-disable-next-line
         (tableObj as any)[propName] = columnToAdd;
-        // After all properties are set, run property handlers
+        // After all properties are set, run property handlers.
         CoreProperty.runHandlers(columnToAdd);
 
         columnToAdd.freeze();

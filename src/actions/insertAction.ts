@@ -7,17 +7,16 @@ export class InsertAction extends CoreUpdateAction {
     super(ActionType.insert);
   }
 
-  validate(table: Table, name: string) {
-    super.validate(table, name);
+  onLoad(table: Table, rootTable: Table, name: string | null) {
+    super.onLoad(table, rootTable, name);
 
     const setterCount = this.setters.size;
-    // Number of columns = total count - number of auto_increment PKs
+    // Number of columns = total count - number of auto_increment PKs.
     const colCount = Object.entries(table.__columns).length - table.__pkAIs.length;
     if (
       !this.allowUnsetColumns &&
-      // if no wild flags are set
+      // If no wild flags are set.
       !this.autoSetters.size &&
-      // setterCount can > colCount as you may set all columns but colCount = all - AI columns
       setterCount < colCount
     ) {
       throw new Error(

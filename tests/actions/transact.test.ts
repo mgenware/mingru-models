@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
-import { WrappedAction } from '../..';
+import { WrapAction } from '../..';
 
 const eq = assert.equal;
 
@@ -35,7 +35,7 @@ it('Transact', () => {
   );
 });
 
-it('Temp member actions (wrap self)', async () => {
+it('Inline member actions (wrap self)', async () => {
   class User2 extends mm.Table {
     id = mm.pk();
     postCount = mm.int();
@@ -51,12 +51,12 @@ it('Temp member actions (wrap self)', async () => {
   }
   const user2TA = mm.tableActions(user2, User2TA);
   const v = user2TA.t;
-  const wrapped = v.members[0].action as WrappedAction;
+  const wrapped = v.members[0].action as WrapAction;
   eq(wrapped.action, user2TA.updatePostCount);
   assert.deepEqual(wrapped.args, { offset: '1' });
 });
 
-it('Temp member actions (wrap other)', async () => {
+it('Inline member actions (wrap other)', async () => {
   class User2 extends mm.Table {
     id = mm.pk();
     postCount = mm.int();
@@ -80,12 +80,12 @@ it('Temp member actions (wrap other)', async () => {
   }
   const postTA = mm.tableActions(post2, Post2TA);
   const v = postTA.insert;
-  const wrapped = v.members[0].action as WrappedAction;
+  const wrapped = v.members[0].action as WrapAction;
   eq(wrapped.action, user2TA.updatePostCount);
   assert.deepEqual(wrapped.args, { offset: 1 });
 });
 
-it('Setting __table or temp members', () => {
+it('Setting __table or inline members', () => {
   class UserTA extends mm.TableActions {
     insert = mm.insert().setInputs(user.follower_count).setInputs();
   }
@@ -105,19 +105,19 @@ it('Setting __table or temp members', () => {
   const { members } = postTA.t;
   eq(members[0].action.__table, post);
   eq(members[0].action.__name, 'tChild1');
-  eq(members[0].isTemp, true);
+  eq(members[0].isInline, true);
   eq(members[1].action.__table, post);
   eq(members[1].action.__name, 'insert');
-  eq(members[1].isTemp, false);
+  eq(members[1].isInline, false);
   eq(members[2].action.__table, user);
   eq(members[2].action.__name, 'insert');
-  eq(members[2].isTemp, false);
+  eq(members[2].isInline, false);
   eq(members[3].action.__table, post);
   eq(members[3].action.__name, 'tChild4');
-  eq(members[3].isTemp, true);
+  eq(members[3].isInline, true);
 });
 
-it('Declare returns', () => {
+it('Declare return values', () => {
   class UserTA extends mm.TableActions {
     insert1 = mm.insert().setInputs();
     insert2 = mm.insert().setInputs();

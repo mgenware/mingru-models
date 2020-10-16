@@ -1,5 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Action, ActionType, initializeAction } from './tableActions';
+import { Action, ActionType } from './tableActions';
 import { Table } from '../core/core';
 
 export class ActionWithReturnValues {
@@ -10,7 +10,7 @@ export type TransactionMemberTypes = TransactionMember | Action | ActionWithRetu
 
 export class TransactionMember {
   // True if this member is created inside transaction function block.
-  isTemp = false;
+  isInline = false;
 
   constructor(
     public action: Action,
@@ -29,16 +29,16 @@ export class TransactAction extends Action {
     throwIfFalsy(members, 'members');
   }
 
-  validate(table: Table, name: string) {
-    super.validate(table, name);
+  onLoad(table: Table, rootTable: Table, name: string) {
+    super.onLoad(table, rootTable, name);
 
     // Initialize member actions.
     let idx = 1;
     for (const mem of this.members) {
       const mAction = mem.action;
-      if (!mAction.__name) {
-        initializeAction(mAction, table, mem.name || `${name}Child${idx}`);
-        mem.isTemp = true;
+      if (!mAction.__loaded) {
+        mAction.__init(table, mem.name || `${name}Child${idx}`);
+        mem.isInline = true;
       }
       idx++;
     }

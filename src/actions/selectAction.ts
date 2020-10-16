@@ -49,7 +49,8 @@ export class SelectAction extends CoreSelectAction {
 
   constructor(public columns: SelectActionColumns[], public mode: SelectActionMode) {
     super(ActionType.select);
-    // Validate individual column
+
+    // Validate individual columns.
     columns.forEach((col, idx) => {
       if (!col) {
         throw new Error(`The column at index ${idx} is null, action name "${this.__name}"`);
@@ -146,8 +147,8 @@ export class SelectAction extends CoreSelectAction {
     return this;
   }
 
-  validate(table: Table, name: string) {
-    super.validate(table, name);
+  onLoad(table: Table, rootTable: Table, name: string | null) {
+    super.onLoad(table, rootTable, name);
 
     const { mode } = this;
     const selectCollection = mode === SelectActionMode.list || mode === SelectActionMode.page;

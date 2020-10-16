@@ -32,7 +32,7 @@ export class CoreProperty {
     if (property.__handlers) {
       property.__handlers.push(handler);
     } else {
-      // Call handler immediately if property is already initialized
+      // Call handler immediately if property is already initialized.
       handler();
     }
   }
@@ -347,7 +347,7 @@ export class Column extends CoreProperty {
             `The column "${propKey.toString()}" does not exist on table ${toTypeString(target)}`,
           );
         }
-        // returns a joined column
+        // returns a joined column.
         return Column.newJoinedColumn(selectedColumn, joinedTable);
       },
     });

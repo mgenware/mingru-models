@@ -11,7 +11,7 @@ export class UpdateAction extends CoreUpdateAction {
   whereSQLValue: SQL | null = null;
   whereValidator: ((value: SQL) => void) | null = null;
 
-  constructor(public allowNoWhere: boolean, public ensureOneRowAffected: boolean) {
+  constructor(public allowEmptyWhere: boolean, public ensureOneRowAffected: boolean) {
     super(ActionType.update);
   }
 
@@ -41,10 +41,10 @@ export class UpdateAction extends CoreUpdateAction {
     return this;
   }
 
-  validate(table: Table, name: string) {
-    super.validate(table, name);
+  onLoad(table: Table, rootTable: Table, name: string | null) {
+    super.onLoad(table, rootTable, name);
 
-    if (!this.allowNoWhere && !this.whereSQLValue) {
+    if (!this.allowEmptyWhere && !this.whereSQLValue) {
       throw new Error(
         '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll`',
       );

@@ -22,7 +22,7 @@ export * from './actions/coreUpdateAction';
 export * from './actions/updateAction';
 export * from './actions/insertAction';
 export * from './actions/deleteAction';
-export * from './actions/wrappedAction';
+export * from './actions/wrapAction';
 export * from './actions/transactAction';
 export * from './actions/rawColumn';
 export * from './actions/rawColumnBuilder';

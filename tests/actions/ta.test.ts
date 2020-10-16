@@ -86,41 +86,48 @@ it('action.mustGet', () => {
   const v = ta.t;
   assert.strictEqual(v.mustGetTable(), user);
   assert.strictEqual(v.mustGetName(), 't');
-  itThrows(() => mm.select(user.id).mustGetName(), 'Action "SelectAction" doesn\'t have a name');
+  itThrows(
+    () => mm.select(user.id).mustGetName(),
+    'Table action not initialized, type "SelectAction", name "null", table "null"',
+  );
 });
 
 class MyInsertAction extends mm.InsertAction {
   vTable: mm.Table | null = null;
   vName: string | null = null;
+  vRootTable: mm.Table | null = null;
 
   constructor() {
     super(true);
   }
 
-  validate(table: mm.Table, name: string) {
-    super.validate(table, name);
+  onLoad(table: mm.Table, rootTable: mm.Table, name: string | null) {
+    super.onLoad(table, rootTable, name);
     this.vTable = table;
     this.vName = name;
+    this.vRootTable = rootTable;
   }
 }
 
-it('Action.validate', () => {
+it('Action.onInit', () => {
   class UserTA extends mm.TableActions {
     t = new MyInsertAction().setInputs();
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   eq(v.vTable, user);
+  eq(v.vRootTable, user);
   eq(v.vName, 't');
 });
 
-it('Action.validate (from)', () => {
+it('Action.onInit (from)', () => {
   class UserTA extends mm.TableActions {
     t = new MyInsertAction().from(post).setInputs();
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   eq(v.vTable, post);
+  eq(v.vRootTable, user);
   eq(v.vName, 't');
 });
 

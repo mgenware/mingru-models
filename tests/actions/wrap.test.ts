@@ -20,22 +20,28 @@ it('Wrap', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   let v = ta.t;
-  assert.ok(v instanceof mm.WrappedAction);
+  assert.ok(v instanceof mm.WrapAction);
   assert.ok(v instanceof mm.Action);
   eq(v.actionType, mm.ActionType.wrap);
   eq(v.action, ta.s);
+  eq(ta.s.__table, user);
+  eq(v.__table, user);
+  eq(v.__rootTable, user);
+  eq(v.isInline, false);
   assert.deepEqual(v.args, {
     id: '1',
   });
-  eq(ta.s.__table, user);
-  eq(v.__table, user);
-  eq(v.isTemp, false);
 
   v = ta.t2;
   eq(v.action, postTA.t);
   eq(postTA.t.__table, post);
+  eq(postTA.t.__rootTable, post);
   eq(v.__table, user);
-  eq(v.isTemp, false);
+  eq(v.__rootTable, user);
+  eq(v.isInline, false);
+  assert.deepEqual(v.args, {
+    id: '32',
+  });
 });
 
 it('Wrap (chains)', () => {
@@ -50,7 +56,7 @@ it('Wrap (chains)', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   let v = ta.t;
-  assert.ok(v instanceof mm.WrappedAction);
+  assert.ok(v instanceof mm.WrapAction);
   assert.ok(v instanceof mm.Action);
   eq(v.actionType, mm.ActionType.wrap);
   eq(v.action, ta.s);
@@ -60,35 +66,67 @@ it('Wrap (chains)', () => {
   });
   eq(ta.s.__table, user);
   eq(v.__table, user);
-  eq(v.isTemp, false);
+  eq((v as mm.WrapAction).action.__loaded, true);
+  eq((v as mm.WrapAction).action.__table, user);
+  eq((v as mm.WrapAction).action.__name, 's');
+  eq(v.isInline, false);
 
   v = ta.t2;
   eq(v.action, postTA.t);
   eq(postTA.t.__table, post);
   eq(v.__table, user);
-  eq(v.isTemp, false);
+  eq((v as mm.WrapAction).action.__loaded, true);
+  eq((v as mm.WrapAction).action.__table, post);
+  eq((v as mm.WrapAction).action.__name, 't');
+  eq(v.isInline, false);
 });
 
-it('Uninitialized wrapped action __table n __name', () => {
+it('Inline WRAP actions', () => {
   class UserTA extends mm.TableActions {
     t = mm.deleteOne().byID().wrap({ id: '23' });
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   eq(v.__table, user);
+  eq((v as mm.WrapAction).action.__loaded, true);
+  eq((v as mm.WrapAction).action.__table, user);
+  eq((v as mm.WrapAction).action.__name, 't');
+  eq(v.__rootTable, user);
   eq(v.__name, 't');
-  eq(v.isTemp, true);
+  eq(v.isInline, true);
+  assert.deepStrictEqual(v.args, { id: '23' });
 });
 
-it('Uninitialized wrapped action __table n __name (with from)', () => {
+it('Inline WRAP actions (chaining)', () => {
+  class UserTA extends mm.TableActions {
+    t = mm.deleteOne().byID().wrap({ id: '23' }).wrap({ s: 'name' });
+  }
+  const ta = mm.tableActions(user, UserTA);
+  const v = ta.t;
+  eq(v.__table, user);
+  eq((v as mm.WrapAction).action.__loaded, true);
+  eq((v as mm.WrapAction).action.__table, user);
+  eq((v as mm.WrapAction).action.__name, 't');
+  eq(v.__rootTable, user);
+  eq(v.__name, 't');
+  eq(v.isInline, true);
+  assert.deepStrictEqual(v.args, { id: '23', s: 'name' });
+});
+
+it('Inline WRAP actions (with from)', () => {
   class UserTA extends mm.TableActions {
     t = mm.deleteOne().from(post).byID().wrap({ id: '23' });
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  eq(v.__table, post);
+  eq(v.__table, user);
+  eq((v as mm.WrapAction).action.__loaded, true);
+  eq((v as mm.WrapAction).action.__table, post);
+  eq((v as mm.WrapAction).action.__name, 't');
+  eq(v.__rootTable, user);
   eq(v.__name, 't');
-  eq(v.isTemp, true);
+  eq(v.isInline, true);
+  assert.deepStrictEqual(v.args, { id: '23' });
 });
 
 it('ValueRef', () => {

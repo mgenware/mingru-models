@@ -25,7 +25,7 @@ it('Update', () => {
 
   // extra props
   eq(v.ensureOneRowAffected, false);
-  eq(v.allowNoWhere, false);
+  eq(v.allowEmptyWhere, false);
   eq(
     v.settersToString(),
     'name: SQL(E(SQLVar(name, desc = Column(name, Table(user))), type = 2)), follower_count: SQL(E(Column(follower_count, Table(user)), type = 1), E( + 1, type = 0))',
@@ -142,7 +142,7 @@ it('updateOne', () => {
 
   // extra props
   eq(v.ensureOneRowAffected, true);
-  eq(v.allowNoWhere, false);
+  eq(v.allowEmptyWhere, false);
 
   itThrows(() => {
     class TA extends mm.TableActions {
@@ -161,7 +161,7 @@ it('updateSome', () => {
 
   // extra props
   eq(v.ensureOneRowAffected, false);
-  eq(v.allowNoWhere, false);
+  eq(v.allowEmptyWhere, false);
 
   itThrows(() => {
     class TA extends mm.TableActions {
@@ -180,7 +180,7 @@ it('unsafeUpdateAll', () => {
 
   // extra props
   eq(v.ensureOneRowAffected, false);
-  eq(v.allowNoWhere, true);
+  eq(v.allowEmptyWhere, true);
 });
 
 it('ByID', () => {

@@ -35,6 +35,9 @@ export class Action extends CoreProperty {
   __argStubs: SQLVariable[] = [];
   __attrs: { [name: string]: unknown } = {};
 
+  // Whether `__init` has been called.
+  __loaded = false;
+
   constructor(public actionType: ActionType) {
     super();
   }
@@ -44,18 +47,13 @@ export class Action extends CoreProperty {
     return this;
   }
 
-  // After action is fully initialized, `mm.ta` will call `Action.validate`
-  // eslint-disable-next-line class-methods-use-this
-  validate(_table: Table, _name: string) {
-    // Implemented by sub-classes
-  }
-
   argStubs(...args: SQLVariable[]): this {
     this.__argStubs = args;
     return this;
   }
 
   mustGetTable(): Table {
+    this.ensureInitialized();
     if (!this.__table) {
       throw new Error(`Action "${toTypeString(this)}" doesn't have a table`);
     }
@@ -63,10 +61,21 @@ export class Action extends CoreProperty {
   }
 
   mustGetName(): string {
+    this.ensureInitialized();
     if (!this.__name) {
       throw new Error(`Action "${toTypeString(this)}" doesn't have a name`);
     }
     return this.__name;
+  }
+
+  ensureInitialized() {
+    if (!this.__loaded) {
+      throw new Error(
+        `Table action not initialized, type "${toTypeString(this)}", name "${toTypeString(
+          this.__name,
+        )}", table "${toTypeString(this.__table)}"`,
+      );
+    }
   }
 
   attrs(values: { [name: string]: unknown }): this {
@@ -81,6 +90,47 @@ export class Action extends CoreProperty {
 
   toString(): string {
     return `${toTypeString(this)}(${this.__name}, ${this.__table})`;
+  }
+
+  // Automatically called by `mm.ta` for all the columns it walks through.
+  // Once an action is inited, its `__table` is set.
+  // IMPORTANT: Action `__init` must be called to have the `onInit` run, the
+  // `onInit` contains required code for many actions. It also calls handlers
+  // registered by `CoreProperty.registerHandler`.
+  /**
+   * Root table, table and name:
+   * class RootTable {
+   *   name = mm.select().from(table);
+   * }
+   */
+  __init(table: Table, name: string | null) {
+    if (this.__loaded) {
+      return;
+    }
+
+    this.__loaded = true;
+    // Do not overwrite existing values.
+    if (!this.__table) {
+      // `__table` can also be set by `from` method.
+      this.__table = table;
+    }
+    if (!this.__name) {
+      this.__name = name;
+    }
+    if (!this.__rootTable) {
+      this.__rootTable = table;
+    }
+    // After all properties are set, run property handlers.
+    CoreProperty.runHandlers(this);
+
+    // Run `onLoad` callback.
+    this.onLoad(this.__table, this.__rootTable, name);
+  }
+
+  // Called by `__init`.
+  // eslint-disable-next-line class-methods-use-this
+  protected onLoad(_table: Table, _rootTable: Table, _name: string | null) {
+    // Implemented by subclass.
   }
 }
 
@@ -111,22 +161,6 @@ function enumerateActions<T extends TableActions>(
   }
 }
 
-export function initializeAction(action: Action, table: Table, name: string) {
-  throwIfFalsy(action, 'action');
-  action.__name = name;
-  action.__rootTable = table;
-  // `action.__table` can be set before initialization by `from()`.
-  if (action.__table) {
-    table = action.__table;
-  } else {
-    action.__table = table;
-  }
-  // After all properties are set, run property handlers.
-  CoreProperty.runHandlers(action);
-  // Run validate callback.
-  action.validate(table, name);
-}
-
 export function tableActionsCore(
   table: Table,
   taObj: TableActions | null,
@@ -138,7 +172,7 @@ export function tableActionsCore(
   taObj.__table = table;
   for (const [name, action] of Object.entries(actions)) {
     try {
-      initializeAction(action, table, name);
+      action.__init(table, name);
     } catch (err) {
       err.message += ` [action "${name}"]`;
       throw err;

@@ -2204,10 +2204,10 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
-to-type-string@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/to-type-string/-/to-type-string-1.0.2.tgz#8c92c66ee48d3ca9985e2de22cd7e2a6e12a77c3"
-  integrity sha512-DW4Ry4HTiblTuA+x+On84yX1M9QnKTxaMZeQFR2rzTBZYLCZARBtIzuaYe9sAXnGk2ybWQuRiD1y3Udwbi8iDw==
+to-type-string@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/to-type-string/-/to-type-string-1.1.0.tgz#457f58f470175a84ecf8fe3eaf736bc73e71ccf5"
+  integrity sha512-Gm6eoCy7F/LCKgX6w+KIp1bbd6HuDGq/bl5P2lfvpxsWxdknDPERHNWVYmu3wTZFL31yErB5nhK+yVtHB/Qv8g==
 
 trim-newlines@^3.0.0:
   version "3.0.0"

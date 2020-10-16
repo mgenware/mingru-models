@@ -40,8 +40,8 @@ export class CoreUpdateAction extends Action {
   setDefaults(...columns: Column[]): this {
     if (!columns.length) {
       this.autoSetters.add(AutoSetterType.default);
-      // We don't know if all other columns have a default value as `this.__table` is null here.
-      // We check it later in validate().
+      // We don't know if all other columns have a default value as `this.__table` could be null at the point.
+      // We'll check it later in `onInit()`.
       return this;
     }
     for (const col of columns) {
@@ -52,8 +52,8 @@ export class CoreUpdateAction extends Action {
     return this;
   }
 
-  validate(table: Table, name: string) {
-    super.validate(table, name);
+  onLoad(table: Table, rootTable: Table, name: string | null) {
+    super.onLoad(table, rootTable, name);
     if (!this.setters.size && !this.autoSetters.size) {
       throw new Error('No setters');
     }

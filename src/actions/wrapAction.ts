@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import camelCase from 'lodash.camelcase';
-import { Action, ActionType, initializeAction } from './tableActions';
+import { Action, ActionType } from './tableActions';
 import { Table } from '../core/core';
 
 export type WrapActionArgValue = string | ValueRef;
@@ -32,8 +32,8 @@ export function valueRef(name: string): ValueRef {
   return new ValueRef(name);
 }
 
-export class WrappedAction extends Action {
-  isTemp = false;
+export class WrapAction extends Action {
+  isInline = false;
 
   constructor(public action: Action, public args: { [name: string]: WrapActionArgValue }) {
     super(ActionType.wrap);
@@ -45,14 +45,15 @@ export class WrappedAction extends Action {
     }
   }
 
-  validate(table: Table, name: string) {
-    super.validate(table, name);
+  onLoad(table: Table, rootTable: Table, name: string | null) {
+    super.onLoad(table, rootTable, name);
 
     const { action } = this;
-    // Initialize wrapped action if needed
-    if (!action.__name) {
-      initializeAction(action, table, name);
-      this.isTemp = true;
+    // Initialize wrapped action if needed.
+    if (!action.__loaded) {
+      // Inner action is initialized with current name as a fallback value.
+      action.__init(table, name);
+      this.isInline = true;
     }
   }
 }
