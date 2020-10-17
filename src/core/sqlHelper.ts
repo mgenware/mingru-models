@@ -84,34 +84,12 @@ export function convertToSQL(element: SQLConvertible): SQL {
   return sql`${element}`;
 }
 
-function getInputTypeName(type: SQLVariableType | Column | ColumnType): string {
-  if (type instanceof ColumnType || type instanceof Column) {
-    return toTypeString(type);
-  }
-  return type.name;
-}
-
 export function input(
   type: SQLVariableType | Column | ColumnType,
   name?: string,
   isArray?: boolean,
 ): SQLVariable {
-  // eslint-disable-next-line no-param-reassign
-  isArray = isArray || false;
-  let updatedName = name;
-  if (type instanceof Column) {
-    if (!updatedName) {
-      updatedName = type.inputName();
-      if (!updatedName) {
-        throw new Error(`Unexpected empty input name for column \`${toTypeString(type)}\``);
-      }
-    }
-    return new SQLVariable(type, updatedName, isArray);
-  }
-  if (!updatedName) {
-    throw new Error(`Unexpected empty input name for type \`${getInputTypeName(type)}\``);
-  }
-  return new SQLVariable(type, updatedName, isArray);
+  return new SQLVariable(type, name, isArray || false);
 }
 
 export function sqlCall(

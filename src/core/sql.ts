@@ -14,11 +14,10 @@ export class SQLVariable {
 
   constructor(
     public type: SQLVariableType | Column | ColumnType,
-    public name: string,
+    public name?: string,
     isArray?: boolean,
   ) {
     throwIfFalsy(type, 'type');
-    throwIfFalsy(name, 'name');
     this.isArray = isArray || false;
   }
 
