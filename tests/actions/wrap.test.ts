@@ -66,7 +66,6 @@ it('Wrap (chains)', () => {
   });
   eq(ta.s.__table, user);
   eq(v.__table, user);
-  eq((v as mm.WrapAction).action.__loaded, true);
   eq((v as mm.WrapAction).action.__table, user);
   eq((v as mm.WrapAction).action.__name, 's');
   eq(v.isInline, false);
@@ -75,7 +74,6 @@ it('Wrap (chains)', () => {
   eq(v.action, postTA.t);
   eq(postTA.t.__table, post);
   eq(v.__table, user);
-  eq((v as mm.WrapAction).action.__loaded, true);
   eq((v as mm.WrapAction).action.__table, post);
   eq((v as mm.WrapAction).action.__name, 't');
   eq(v.isInline, false);
@@ -88,7 +86,6 @@ it('Inline WRAP actions', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   eq(v.__table, user);
-  eq((v as mm.WrapAction).action.__loaded, true);
   eq((v as mm.WrapAction).action.__table, user);
   eq((v as mm.WrapAction).action.__name, 't');
   eq(v.__rootTable, user);
@@ -104,7 +101,6 @@ it('Inline WRAP actions (chaining)', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   eq(v.__table, user);
-  eq((v as mm.WrapAction).action.__loaded, true);
   eq((v as mm.WrapAction).action.__table, user);
   eq((v as mm.WrapAction).action.__name, 't');
   eq(v.__rootTable, user);
@@ -120,7 +116,6 @@ it('Inline WRAP actions (with from)', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   eq(v.__table, user);
-  eq((v as mm.WrapAction).action.__loaded, true);
   eq((v as mm.WrapAction).action.__table, post);
   eq((v as mm.WrapAction).action.__name, 't');
   eq(v.__rootTable, user);

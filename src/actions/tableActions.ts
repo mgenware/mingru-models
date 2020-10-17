@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import toTypeString from 'to-type-string';
-import { Table, CoreProperty } from '../core/core';
+import { Table } from '../core/core';
 import * as defs from '../core/defs';
 import { SQLVariable } from '../core/sql';
 
@@ -26,34 +26,48 @@ export enum ActionType {
   wrap,
 }
 
-export class Action extends CoreProperty {
-  // `__table` and `__rootTable` are set after calling `mm.ta`.
-  // `__table` can be changed by `from()`.
-  __table: Table | null = null;
-  __rootTable: Table | null = null;
-
-  __argStubs: SQLVariable[] = [];
-  __attrs: { [name: string]: unknown } = {};
-
-  // Whether `__init` has been called.
-  __loaded = false;
-
-  constructor(public actionType: ActionType) {
-    super();
+export class Action {
+  // Will be set after calling `mm.tableActions`.
+  #name: string | null = null;
+  get __name(): string | null {
+    return this.#name;
   }
 
+  // `__table` and `__rootTable` will be set after calling `mm.tableActions`.
+  // `__table` can be changed by `from()`.
+  #table: Table | null = null;
+  get __table(): Table | null {
+    return this.#table;
+  }
+
+  #rootTable: Table | null = null;
+  get __rootTable(): Table | null {
+    return this.#rootTable;
+  }
+
+  #argStubs: SQLVariable[] = [];
+  get __argStubs(): ReadonlyArray<SQLVariable> {
+    return this.#argStubs;
+  }
+
+  #attrs: { [name: string]: unknown } = {};
+  get __attrs(): Readonly<Record<string, unknown>> {
+    return this.#attrs;
+  }
+
+  constructor(public actionType: ActionType) {}
+
   from(table: Table): this {
-    this.__table = table;
+    this.#table = table;
     return this;
   }
 
   argStubs(...args: SQLVariable[]): this {
-    this.__argStubs = args;
+    this.#argStubs = args;
     return this;
   }
 
   mustGetTable(): Table {
-    this.ensureInitialized();
     if (!this.__table) {
       throw new Error(`Action "${toTypeString(this)}" doesn't have a table`);
     }
@@ -61,25 +75,14 @@ export class Action extends CoreProperty {
   }
 
   mustGetName(): string {
-    this.ensureInitialized();
     if (!this.__name) {
       throw new Error(`Action "${toTypeString(this)}" doesn't have a name`);
     }
     return this.__name;
   }
 
-  ensureInitialized() {
-    if (!this.__loaded) {
-      throw new Error(
-        `Table action not initialized, type "${toTypeString(this)}", name "${toTypeString(
-          this.__name,
-        )}", table "${toTypeString(this.__table)}"`,
-      );
-    }
-  }
-
   attrs(values: { [name: string]: unknown }): this {
-    this.__attrs = { ...this.__attrs, ...values };
+    this.#attrs = { ...this.__attrs, ...values };
     return this;
   }
 
@@ -92,45 +95,31 @@ export class Action extends CoreProperty {
     return `${toTypeString(this)}(${this.__name}, ${this.__table})`;
   }
 
-  // Automatically called by `mm.ta` for all the columns it walks through.
-  // Once an action is inited, its `__table` is set.
-  // IMPORTANT: Action `__init` must be called to have the `onInit` run, the
-  // `onInit` contains required code for many actions. It also calls handlers
-  // registered by `CoreProperty.registerHandler`.
-  /**
-   * Root table, table and name:
-   * class RootTable {
-   *   name = mm.select().from(table);
-   * }
-   */
-  __init(table: Table, name: string | null) {
-    if (this.__loaded) {
-      return;
-    }
-
-    this.__loaded = true;
-    // Do not overwrite existing values.
-    if (!this.__table) {
-      // `__table` can also be set by `from` method.
-      this.__table = table;
-    }
-    if (!this.__name) {
-      this.__name = name;
-    }
-    if (!this.__rootTable) {
-      this.__rootTable = table;
-    }
-    // After all properties are set, run property handlers.
-    CoreProperty.runHandlers(this);
-
-    // Run `onLoad` callback.
-    this.onLoad(this.__table, this.__rootTable, name);
+  // Automatically called by `mm.tableActions` for all the columns it walks through.
+  // Actions are immutable. Actions touched by `mm.tableActions` will have `__table`
+  // `__rootTable` and `__name` set, and have `validate` called automatically.
+  // Other actions, such ones embedded in SQL exprs cannot be handled by `ta.tableActions`,
+  // thus have to be manually taken care of.
+  // @param `table` the bound table of this action.
+  // eslint-disable-next-line class-methods-use-this
+  validate(_table: Table) {
+    // Implemented by subclass.
   }
 
-  // Called by `__init`.
-  // eslint-disable-next-line class-methods-use-this
-  protected onLoad(_table: Table, _rootTable: Table, _name: string | null) {
-    // Implemented by subclass.
+  // Called by `ta.tableActions`.
+  __configure(table: Table, name: string) {
+    if (!this.__name) {
+      this.#name = name;
+    }
+    if (!this.__rootTable) {
+      this.#rootTable = table;
+    }
+    if (!this.__table) {
+      this.#table = table;
+    }
+    // `this.__table` which might have be set by `.from`, takes precedence
+    // over the param `table`.
+    this.validate(this.__table || table);
   }
 }
 
@@ -172,7 +161,7 @@ export function tableActionsCore(
   taObj.__table = table;
   for (const [name, action] of Object.entries(actions)) {
     try {
-      action.__init(table, name);
+      action.__configure(table, name);
     } catch (err) {
       err.message += ` [action "${name}"]`;
       throw err;

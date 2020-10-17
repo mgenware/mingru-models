@@ -52,8 +52,8 @@ export class CoreUpdateAction extends Action {
     return this;
   }
 
-  onLoad(table: Table, rootTable: Table, name: string | null) {
-    super.onLoad(table, rootTable, name);
+  validate(table: Table) {
+    super.validate(table);
     if (!this.setters.size && !this.autoSetters.size) {
       throw new Error('No setters');
     }

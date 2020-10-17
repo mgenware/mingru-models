@@ -41,8 +41,8 @@ export class UpdateAction extends CoreUpdateAction {
     return this;
   }
 
-  onLoad(table: Table, rootTable: Table, name: string | null) {
-    super.onLoad(table, rootTable, name);
+  validate(table: Table) {
+    super.validate(table);
 
     if (!this.allowEmptyWhere && !this.whereSQLValue) {
       throw new Error(

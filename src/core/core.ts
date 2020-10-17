@@ -23,45 +23,6 @@ export class ColumnType {
   }
 }
 
-export type CorePropertyHandler = () => void;
-
-export class CoreProperty {
-  static registerHandler(property: CoreProperty, handler: CorePropertyHandler) {
-    throwIfFalsy(property, 'property');
-    throwIfFalsy(handler, 'handler');
-    if (property.__handlers) {
-      property.__handlers.push(handler);
-    } else {
-      // Call handler immediately if property is already initialized.
-      handler();
-    }
-  }
-
-  static wait(property: CoreProperty): Promise<void> {
-    return new Promise((resolve) => {
-      CoreProperty.registerHandler(property, () => resolve());
-    });
-  }
-
-  static runHandlers(property: CoreProperty) {
-    throwIfFalsy(property, 'property');
-    if (property.__handlers) {
-      for (const handler of property.__handlers) {
-        handler();
-      }
-      // Set handlers to null cuz handlers are meant to be run only once
-      // eslint-disable-next-line no-param-reassign
-      property.__handlers = null;
-    }
-  }
-
-  __handlers: CorePropertyHandler[] | null = [];
-
-  // If null, this property is not initialized.
-  __name: string | null = null;
-  __payload!: unknown;
-}
-
 export enum JoinType {
   inner,
   left,
@@ -69,9 +30,11 @@ export enum JoinType {
   full,
 }
 
-export class Column extends CoreProperty {
-  static fromTypes(types: string | string[]): Column {
-    return new Column(new ColumnType(typeof types === 'string' ? [types] : types));
+export class Column {
+  static fromTypes(types: string | string[], defaultValue?: unknown): Column {
+    const col = new Column(new ColumnType(typeof types === 'string' ? [types] : types));
+    col.#defaultValue = defaultValue;
+    return col;
   }
 
   static newForeignColumn(
@@ -81,15 +44,15 @@ export class Column extends CoreProperty {
     throwIfFalsy(srcColumn, 'srcColumn');
 
     const copied = Column.copyFrom(srcColumn, table, null);
-    copied.__foreignColumn = srcColumn;
+    copied.#foreignColumn = srcColumn;
     // For foreign column, `__name` is reset to null
-    copied.__name = null;
+    copied.#name = null;
     return copied;
   }
 
   static newJoinedColumn(mirroredColumn: Column, table: JoinedTable): Column {
     const copied = Column.copyFrom(mirroredColumn, table, mirroredColumn.__name);
-    copied.__mirroredColumn = mirroredColumn;
+    copied.#mirroredColumn = mirroredColumn;
     return copied;
   }
 
@@ -100,50 +63,81 @@ export class Column extends CoreProperty {
   ): Column {
     const res = new Column(column.__type);
     // Copy values
-    res.__defaultValue = column.__defaultValue;
+    res.#defaultValue = column.__defaultValue;
     if (newTable) {
-      res.__table = newTable;
+      res.#table = newTable;
     }
     if (newName) {
-      res.__name = newName;
+      res.#name = newName;
     }
-    res.__foreignColumn = column.__foreignColumn;
-    res.__mirroredColumn = column.__mirroredColumn;
+    res.#foreignColumn = column.__foreignColumn;
+    res.#mirroredColumn = column.__mirroredColumn;
     // Reset value
     res.__type.pk = false;
     res.__type.autoIncrement = false;
     return res;
   }
 
-  __type: ColumnType;
-  __defaultValue: unknown;
-  __isNoDefaultOnCSQL = false;
+  #name: string | null = null;
+  get __name(): string | null {
+    return this.#name;
+  }
 
-  __dbName: string | null = null;
-  __table: Table | JoinedTable | null = null;
-  __inputName: string | null = null;
+  #type: ColumnType;
+  get __type(): ColumnType {
+    return this.#type;
+  }
+
+  #defaultValue: unknown;
+  get __defaultValue(): unknown {
+    return this.#defaultValue;
+  }
+
+  #noDefaultOnCSQL = false;
+  get __noDefaultOnCSQLe(): boolean {
+    return this.#noDefaultOnCSQL;
+  }
+
+  #dbName: string | null = null;
+  get __dbName(): string | null {
+    return this.#dbName;
+  }
+
+  #table: Table | JoinedTable | null = null;
+  get __table(): Table | JoinedTable | null {
+    return this.#table;
+  }
+
+  #inputName: string | null = null;
+  get __inputName(): string | null {
+    return this.#inputName;
+  }
 
   // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any
   // table, the foreignColumn property only indicates a column property is declared as FK and
   // doesn't have any effect on join(), the real dest table and column are determined by join().
-  __foreignColumn: Column | null = null;
+  #foreignColumn: Column | null = null;
+  get __foreignColumn(): Column | null {
+    return this.#foreignColumn;
+  }
 
   // See `Column.join` for details
-  __mirroredColumn: Column | null = null;
+  #mirroredColumn: Column | null = null;
+  get __mirroredColumn(): Column | null {
+    return this.#mirroredColumn;
+  }
 
   constructor(type: ColumnType) {
-    super();
-
     throwIfFalsy(type, 'type');
-    // Copy if frozen
+    // Copy if frozen.
     if (Object.isFrozen(type)) {
       const t = new ColumnType(type.types);
       Object.assign(t, type);
       // Deep copy types
       t.types = [...type.types];
-      this.__type = t;
+      this.#type = t;
     } else {
-      this.__type = type;
+      this.#type = type;
     }
   }
 
@@ -173,7 +167,7 @@ export class Column extends CoreProperty {
 
   get noDefaultOnCSQL(): Column {
     this.checkMutability();
-    this.__isNoDefaultOnCSQL = true;
+    this.#noDefaultOnCSQL = true;
     return this;
   }
 
@@ -184,20 +178,20 @@ export class Column extends CoreProperty {
 
   default(value: unknown): this {
     this.checkMutability();
-    this.__defaultValue = value;
+    this.#defaultValue = value;
     return this;
   }
 
   setDBName(name: string): this {
     throwIfFalsy(name, 'name');
     this.checkMutability();
-    this.__dbName = name;
+    this.#dbName = name;
     return this;
   }
 
   setInputName(name: string): this {
     throwIfFalsy(name, 'name');
-    this.__inputName = name;
+    this.#inputName = name;
     return this;
   }
 
@@ -314,6 +308,16 @@ export class Column extends CoreProperty {
     return this.joinCore(JoinType.full, destTable, destCol, true, extraColumns || []);
   }
 
+  // Called by `mm.table`.
+  __configure(name: string, table: Table) {
+    if (!this.__name) {
+      this.#name = name;
+    }
+    if (!this.__table) {
+      this.#table = table;
+    }
+  }
+
   private joinCore<T extends Table>(
     type: JoinType,
     destTable: T,
@@ -365,13 +369,32 @@ export class Column extends CoreProperty {
 }
 
 export class Table {
-  __columns: Record<string, Column> = {};
-  __name!: string;
-  __dbName: string | null = null;
-  // Primary key columns
-  __pks: Column[] = [];
-  // Primary key with auto_increment columns
-  __pkAIs: Column[] = [];
+  #columns: Record<string, Column> = {};
+  get __columns(): Readonly<Record<string, Column>> {
+    return this.#columns;
+  }
+
+  #name!: string;
+  get __name(): string {
+    return this.#name;
+  }
+
+  #dbName: string | null = null;
+  get __dbName(): string | null {
+    return this.#dbName;
+  }
+
+  // Primary key columns.
+  #pks: Column[] = [];
+  get __pks(): ReadonlyArray<Column> {
+    return this.#pks;
+  }
+
+  // Primary key with auto_increment columns.
+  #aiPKs: Column[] = [];
+  get __aiPKs(): ReadonlyArray<Column> {
+    return this.#aiPKs;
+  }
 
   getDBName(): string {
     return this.__dbName || this.__name;
@@ -388,6 +411,21 @@ export class Table {
     }
     return `Table(${name})`;
   }
+
+  // Called by `mm.table`.
+  __configure(
+    name: string,
+    dbName: string | null,
+    columns: Record<string, Column>,
+    pks: Column[],
+    aiPKs: Column[],
+  ) {
+    this.#name = name;
+    this.#dbName = dbName;
+    this.#columns = columns;
+    this.#pks = pks;
+    this.#aiPKs = aiPKs;
+  }
 }
 
 /*
@@ -400,15 +438,15 @@ export class Table {
 export class JoinedTable {
   // `keyPath` is useful to detect duplicate joins, if multiple `JoinedTable` instances are
   // created with same columns and tables, they'd have the same `keyPath`.
-  keyPath: string;
+  readonly keyPath: string;
 
   constructor(
-    public srcColumn: Column,
-    public destTable: Table,
-    public destColumn: Column,
-    public type: JoinType,
-    public associative: boolean, // If `srcColumn` is associative.
-    public extraColumns: [Column, Column][], // Join tables with composite PKs.
+    public readonly srcColumn: Column,
+    public readonly destTable: Table,
+    public readonly destColumn: Column,
+    public readonly type: JoinType,
+    public readonly associative: boolean, // If `srcColumn` is associative.
+    public readonly extraColumns: [Column, Column][], // Join tables with composite PKs.
   ) {
     let localPath: string;
     const srcTable = srcColumn.mustGetTable();

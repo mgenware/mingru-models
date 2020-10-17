@@ -166,32 +166,6 @@ it('JoinedColumn in table def', () => {
   );
 });
 
-it('Register property callback', () => {
-  let counter = 0;
-  const cb = () => counter++;
-  const col = new mm.Column(new mm.ColumnType('abc'));
-  // Register the callback twice
-  mm.CoreProperty.registerHandler(col, cb);
-  mm.CoreProperty.registerHandler(col, cb);
-  class User extends mm.Table {
-    t = col;
-  }
-
-  assert.deepEqual(col.__handlers, [cb, cb]);
-  eq(counter, 0);
-  mm.table(User);
-  eq(col.__handlers, null);
-  eq(counter, 2);
-});
-
-it('Register property callback on a initialized property', () => {
-  let counter = 0;
-  const cb = () => counter++;
-  mm.CoreProperty.registerHandler(user.name, cb);
-  eq(user.name.__handlers, null);
-  eq(counter, 1);
-});
-
 it('Throw on default value of complex SQL', () => {
   assert.doesNotThrow(() => {
     class T extends mm.Table {

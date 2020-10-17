@@ -29,18 +29,12 @@ export class TransactAction extends Action {
     throwIfFalsy(members, 'members');
   }
 
-  onLoad(table: Table, rootTable: Table, name: string) {
-    super.onLoad(table, rootTable, name);
+  validate(table: Table) {
+    super.validate(table);
 
-    // Initialize member actions.
-    let idx = 1;
     for (const mem of this.members) {
       const mAction = mem.action;
-      if (!mAction.__loaded) {
-        mAction.__init(table, mem.name || `${name}Child${idx}`);
-        mem.isInline = true;
-      }
-      idx++;
+      mAction.validate(table);
     }
   }
 

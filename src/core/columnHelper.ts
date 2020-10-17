@@ -125,45 +125,40 @@ export function pk(column?: Column): Column {
 }
 
 export function text(): Column {
-  const col = Column.fromTypes(dt.text);
-  return col;
+  return Column.fromTypes(dt.text);
 }
 
 export function bool(): Column {
-  const col = Column.fromTypes(dt.bool);
-  return col;
+  return Column.fromTypes(dt.bool);
 }
 
 export function datetime(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
-  const col = Column.fromTypes(dt.datetime);
-  if (defaultsToNow) {
-    col.__defaultValue = sql`${
-      defaultsToNow === 'utc' ? call.utcDatetimeNow() : call.localDatetimeNow()
-    }`;
-  }
-  return col;
+  return Column.fromTypes(
+    dt.datetime,
+    defaultsToNow
+      ? sql`${defaultsToNow === 'utc' ? call.utcDatetimeNow() : call.localDatetimeNow()}`
+      : undefined,
+  );
 }
 
 export function date(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
-  const col = Column.fromTypes(dt.date);
-  if (defaultsToNow) {
-    col.__defaultValue = sql`${defaultsToNow === 'utc' ? call.utcDateNow() : call.localDateNow()}`;
-  }
-  return col;
+  return Column.fromTypes(
+    dt.date,
+    defaultsToNow
+      ? sql`${defaultsToNow === 'utc' ? call.utcDateNow() : call.localDateNow()}`
+      : undefined,
+  );
 }
 
 export function time(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
-  const col = Column.fromTypes(dt.time);
-  if (defaultsToNow) {
-    col.__defaultValue = sql`${defaultsToNow === 'utc' ? call.utcTimeNow() : call.localTimeNow()}`;
-  }
-  return col;
+  return Column.fromTypes(
+    dt.time,
+    defaultsToNow
+      ? sql`${defaultsToNow === 'utc' ? call.utcTimeNow() : call.localTimeNow()}`
+      : undefined,
+  );
 }
 
 export function timestamp(defaultsToNow = false): Column {
-  const col = Column.fromTypes(dt.timestamp);
-  if (defaultsToNow) {
-    col.__defaultValue = sql`${call.timestampNow()}`;
-  }
-  return col;
+  return Column.fromTypes(dt.timestamp, defaultsToNow ? sql`${call.timestampNow()}` : undefined);
 }

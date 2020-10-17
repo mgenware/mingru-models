@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import toTypeString from 'to-type-string';
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Table, Column, CoreProperty, JoinedTable } from './core';
+import { Table, Column, JoinedTable } from './core';
 import * as defs from './defs';
 import Utils from '../lib/utils';
 import { SQL } from './sql';
@@ -34,8 +34,10 @@ export function tableCore(
 
   try {
     tableObj = tableObj || new Table();
-    tableObj.__name = Utils.toSnakeCase(tableName);
-    tableObj.__dbName = dbName || null;
+    tableName = Utils.toSnakeCase(tableName);
+    dbName = dbName || null;
+    const pks: Column[] = [];
+    const aiPKs: Column[] = [];
 
     const convertedColumns: Record<string, Column> = {};
     for (const [propName, col] of Object.entries(columns)) {
@@ -62,15 +64,11 @@ export function tableCore(
           columnToAdd = col;
         }
 
-        // Populate column props.
-        if (!columnToAdd.__name) {
-          columnToAdd.__name = Utils.toSnakeCase(propName);
-        }
-        columnToAdd.__table = tableObj;
+        columnToAdd.__configure(Utils.toSnakeCase(propName), tableObj);
         if (columnToAdd.__type.pk) {
-          tableObj.__pks.push(col);
+          pks.push(col);
           if (columnToAdd.__type.autoIncrement) {
-            tableObj.__pkAIs.push(col);
+            aiPKs.push(col);
           }
         }
 
@@ -86,8 +84,6 @@ export function tableCore(
         convertedColumns[propName] = columnToAdd;
         // eslint-disable-next-line
         (tableObj as any)[propName] = columnToAdd;
-        // After all properties are set, run property handlers.
-        CoreProperty.runHandlers(columnToAdd);
 
         columnToAdd.freeze();
       } catch (err) {
@@ -96,7 +92,7 @@ export function tableCore(
       }
     }
 
-    tableObj.__columns = convertedColumns;
+    tableObj.__configure(tableName, dbName, convertedColumns, pks, aiPKs);
     return tableObj;
   } catch (topErr) {
     topErr.message += ` [table "${tableName}"]`;

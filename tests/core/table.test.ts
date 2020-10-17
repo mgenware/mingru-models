@@ -36,9 +36,9 @@ it('enumerateColumns', () => {
 
 it('__pks', () => {
   assert.deepEqual(user.__pks, [user.id]);
-  assert.deepEqual(user.__pkAIs, [user.id]);
+  assert.deepEqual(user.__aiPKs, [user.id]);
   assert.deepEqual(employee.__pks, [employee.id]);
-  assert.deepEqual(employee.__pkAIs, []);
+  assert.deepEqual(employee.__aiPKs, []);
 
   class Employee2 extends mm.Table {
     id = mm.pk(mm.int()).setDBName('emp_no').autoIncrement;
@@ -46,12 +46,12 @@ it('__pks', () => {
   }
   const emp2 = mm.table(Employee2, 'employees');
   assert.deepEqual(emp2.__pks, [emp2.id]);
-  assert.deepEqual(emp2.__pkAIs, [emp2.id]);
+  assert.deepEqual(emp2.__aiPKs, [emp2.id]);
 });
 
 it('Composite PKs', () => {
   assert.deepEqual(like.__pks, [like.user_id, like.type]);
-  assert.deepEqual(like.__pkAIs, []);
+  assert.deepEqual(like.__aiPKs, []);
 });
 
 it('__actions and props', () => {
@@ -76,7 +76,7 @@ it('__actions and props (tableCore)', () => {
   eq(table.__dbName, 'a_a');
   eq(table instanceof mm.Table, true);
   assert.deepEqual(table.__pks, [id]);
-  assert.deepEqual(table.__pkAIs, [id]);
+  assert.deepEqual(table.__aiPKs, [id]);
   assert.deepEqual(table.__columns, { id, name });
   for (const [prop, column] of Object.entries(table.__columns)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

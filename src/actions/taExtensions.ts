@@ -14,11 +14,10 @@ declare module './tableActions' {
 }
 
 Action.prototype.wrap = function (args: { [name: string]: WrapActionArgValue }): WrapAction {
-  // If this is a inline action, i.e. `mm.select(...).wrap`.
-  // `this.__loaded` is false.
-  if (!this.__loaded) {
-    // If this is also a wrapped action, we can merge those two actions together.
-    // e.g. `mm.select().wrap().wrap().wrap()`.
+  // If this is an inline action, i.e. `mm.select(...).wrap`.
+  // And if this is also a WRAP action, we can merge those two actions together.
+  // e.g. `mm.select().wrap().wrap().wrap()`.
+  if (!this.__name) {
     if (this instanceof WrapAction) {
       this.args = {
         ...this.args,

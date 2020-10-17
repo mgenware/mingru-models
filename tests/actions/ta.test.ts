@@ -30,24 +30,6 @@ it('ta', () => {
   assert.ok(v2 instanceof mm.SelectAction);
 });
 
-it('Register property callback', () => {
-  let counter = 0;
-  const cb = () => counter++;
-  const action = new mm.Action(mm.ActionType.select);
-  // Register the callback twice
-  mm.CoreProperty.registerHandler(action, cb);
-  mm.CoreProperty.registerHandler(action, cb);
-  class UserTA extends mm.TableActions {
-    t = action;
-  }
-
-  assert.deepEqual(action.__handlers, [cb, cb]);
-  eq(counter, 0);
-  mm.tableActions(user, UserTA);
-  eq(action.__handlers, null);
-  eq(counter, 2);
-});
-
 it('enumerateActions', () => {
   class UserTA extends mm.TableActions {
     upd = mm
@@ -94,18 +76,13 @@ it('action.mustGet', () => {
 
 class MyInsertAction extends mm.InsertAction {
   vTable: mm.Table | null = null;
-  vName: string | null = null;
-  vRootTable: mm.Table | null = null;
-
   constructor() {
     super(true);
   }
 
-  onLoad(table: mm.Table, rootTable: mm.Table, name: string | null) {
-    super.onLoad(table, rootTable, name);
+  validate(table: mm.Table) {
+    super.validate(table);
     this.vTable = table;
-    this.vName = name;
-    this.vRootTable = rootTable;
   }
 }
 
@@ -116,8 +93,6 @@ it('Action.onInit', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   eq(v.vTable, user);
-  eq(v.vRootTable, user);
-  eq(v.vName, 't');
 });
 
 it('Action.onInit (from)', () => {
@@ -127,8 +102,6 @@ it('Action.onInit (from)', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   eq(v.vTable, post);
-  eq(v.vRootTable, user);
-  eq(v.vName, 't');
 });
 
 it('Action.attr/attrs', () => {
@@ -219,5 +192,4 @@ it('Ghost table', () => {
   const v = ta.t;
   assert.ok(mm.ghostTable instanceof mm.GhostTable);
   eq(v.vTable, post);
-  eq(v.vName, 't');
 });

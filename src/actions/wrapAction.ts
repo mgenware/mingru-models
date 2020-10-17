@@ -45,15 +45,10 @@ export class WrapAction extends Action {
     }
   }
 
-  onLoad(table: Table, rootTable: Table, name: string | null) {
-    super.onLoad(table, rootTable, name);
+  validate(table: Table) {
+    super.validate(table);
 
     const { action } = this;
-    // Initialize wrapped action if needed.
-    if (!action.__loaded) {
-      // Inner action is initialized with current name as a fallback value.
-      action.__init(table, name);
-      this.isInline = true;
-    }
+    action.validate(table);
   }
 }
