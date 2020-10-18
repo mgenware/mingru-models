@@ -36,8 +36,8 @@ export class UpdateAction extends CoreUpdateAction {
     return this;
   }
 
-  validate(boundTable: Table) {
-    super.validate(boundTable);
+  validate(groupTable: Table) {
+    super.validate(groupTable);
 
     if (!this.allowEmptyWhere && !this.whereSQLValue) {
       throw new Error(

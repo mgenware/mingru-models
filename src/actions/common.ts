@@ -1,11 +1,10 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { SQL } from '../core/sql';
-import { Table, Column } from '../core/core';
+import { Column } from '../core/core';
 import { and } from '../sqlLangHelper';
 import { sql } from '../core/sqlHelper';
 
 export interface ActionWithWhere {
-  __table: Table | null;
   whereSQLValue: SQL | null;
   whereValidator: ((value: SQL) => void) | null;
 }

@@ -33,16 +33,16 @@ export class Action {
     return this.#name;
   }
 
-  // `__table` and `__rootTable` will be set after calling `mm.tableActions`.
-  // `__table` can be changed by `from()`.
-  #table: Table | null = null;
-  get __table(): Table | null {
-    return this.#table;
+  // Set by `from()`.
+  #sqlTable: Table | null = null;
+  get __sqlTable(): Table | null {
+    return this.#sqlTable;
   }
 
-  #rootTable: Table | null = null;
-  get __rootTable(): Table | null {
-    return this.#rootTable;
+  // Will be set after calling `mm.tableActions`.
+  #groupTable: Table | null = null;
+  get __groupTable(): Table | null {
+    return this.#groupTable;
   }
 
   #argStubs: SQLVariable[] = [];
@@ -58,7 +58,7 @@ export class Action {
   constructor(public actionType: ActionType) {}
 
   from(table: Table): this {
-    this.#table = table;
+    this.#sqlTable = table;
     return this;
   }
 
@@ -67,11 +67,28 @@ export class Action {
     return this;
   }
 
-  mustGetTable(): Table {
-    if (!this.__table) {
-      throw new Error(`Action "${toTypeString(this)}" doesn't have a table`);
+  // `groupTable` the one from `validate`.
+  // Returns the table this action applies to.
+  // `__sqlTable` has the highest precedence, and can be set by `from`.
+  // If `from` is not called, which is the usual case, it tries to grab one
+  // from `__groupTable`, which is the containing table when an action is
+  // initialized from `mm.tableActions`.
+  // Finally, for inline actions (if `from` is not called), it can use the
+  // `groupTable` from `validate` method.
+  mustGetAvailableSQLTable(groupTable: Table | undefined | null): Table {
+    const table = this.__sqlTable || this.__groupTable || groupTable;
+    if (!table) {
+      throw new Error(`Action "${toTypeString(this)}" doesn't have any tables`);
     }
-    return this.__table;
+    return table;
+  }
+
+  mustGetGroupTable(): Table {
+    const table = this.__groupTable;
+    if (!table) {
+      throw new Error(`Action "${toTypeString(this)}" doesn't have a group able`);
+    }
+    return table;
   }
 
   mustGetName(): string {
@@ -92,35 +109,36 @@ export class Action {
   }
 
   toString(): string {
-    return `${toTypeString(this)}(${this.__name}, ${this.__table})`;
+    let str = `${toTypeString(this)}(${this.__name}, ${this.__groupTable})`;
+    if (this.__sqlTable && this.__sqlTable !== this.__groupTable) {
+      str += `(${this.__sqlTable})`;
+    }
+    return str;
   }
 
   // Automatically called by `mm.tableActions` for all the columns it walks through.
-  // Actions are immutable. Actions touched by `mm.tableActions` will have `__table`
-  // `__rootTable` and `__name` set, and have `validate` called automatically.
-  // Other actions, such ones embedded in SQL exprs cannot be handled by `ta.tableActions`,
-  // thus have to be manually taken care of.
-  // `boundTable` every action should be validated, but not all actions have `__table`
-  // set, like mentioned above. In `validate`, use `boundTable` as a fallback table value
-  // to `__table`. Example: INSERT action uses `this.__table || boundTable` to check
-  // whether setter columns belong to the parent column, and it works for SQL subqueries.
+  // Actions are immutable. Actions touched by `mm.tableActions` will have `__groupTable`
+  // and `__name` set.
+  // Other actions, such as ones embedded in SQL exprs are ignored by `ta.tableActions`,
+  // thus have to be manually taken care of. You should always use
+  // `this.mustGetAvailableSQLTable(groupTable)` in `validate`, and use the result value for
+  // action SQL validation.
+  // If we need to call `validate` on child components (e.g. a TRANSACT action), pass down the
+  // `groupTable` param of `validate`.
   // eslint-disable-next-line class-methods-use-this
-  validate(_boundTable: Table) {
+  validate(_groupTable: Table) {
     // Implemented by subclass.
   }
 
   // Called by `ta.tableActions`.
-  __configure(table: Table, name: string) {
+  __configure(groupTable: Table, name: string) {
     if (!this.__name) {
       this.#name = name;
     }
-    if (!this.__rootTable) {
-      this.#rootTable = table;
+    if (!this.__groupTable) {
+      this.#groupTable = groupTable;
     }
-    if (!this.__table) {
-      this.#table = table;
-    }
-    this.validate(this.__table || table);
+    this.validate(this.__groupTable || groupTable);
   }
 }
 

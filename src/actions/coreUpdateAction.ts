@@ -52,8 +52,8 @@ export class CoreUpdateAction extends Action {
     return this;
   }
 
-  validate(boundTable: Table) {
-    super.validate(boundTable);
+  validate(groupTable: Table) {
+    super.validate(groupTable);
     if (!this.setters.size && !this.autoSetters.size) {
       throw new Error('No setters');
     }

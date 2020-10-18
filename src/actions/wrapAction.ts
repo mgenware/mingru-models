@@ -43,10 +43,10 @@ export class WrapAction extends Action {
     }
   }
 
-  validate(boundTable: Table) {
-    super.validate(boundTable);
+  validate(groupTable: Table) {
+    super.validate(groupTable);
 
     const { action } = this;
-    action.validate(this.__table || boundTable);
+    action.validate(groupTable);
   }
 }

@@ -26,12 +26,12 @@ export class TransactAction extends Action {
     throwIfFalsy(members, 'members');
   }
 
-  validate(boundTable: Table) {
-    super.validate(boundTable);
+  validate(groupTable: Table) {
+    super.validate(groupTable);
 
     for (const mem of this.members) {
       const mAction = mem.action;
-      mAction.validate(this.__table || boundTable);
+      mAction.validate(groupTable);
     }
   }
 

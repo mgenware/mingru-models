@@ -405,14 +405,14 @@ it('Set action.__table via from()', () => {
     t2 = mm.select(post.id).from(post);
   }
   const ta = mm.tableActions(user, UserTA);
-  eq(ta.t.__table, user);
-  eq(ta.t.__rootTable, user);
-  eq(ta.t2.__table, post);
-  eq(ta.t2.__rootTable, user);
+  eq(ta.t.__sqlTable, null);
+  eq(ta.t.__groupTable, user);
+  eq(ta.t2.__sqlTable, post);
+  eq(ta.t2.__groupTable, user);
 
-  let table = ta.t.mustGetTable();
+  let table = ta.t.mustGetAvailableSQLTable(null);
   eq(table, user);
-  table = ta.t2.mustGetTable();
+  table = ta.t2.mustGetAvailableSQLTable(null);
   eq(table, post);
 });
 
@@ -425,7 +425,7 @@ it('Subquery', () => {
   const ta = mm.tableActions(post, PostTA);
   eq(
     ta.t.whereSQLString,
-    'SQL(E(Column(user_id, Table(post)), type = 1), E( = , type = 0), E(SelectAction(null, Table(user)), type = 5))',
+    'SQL(E(Column(user_id, Table(post)), type = 1), E( = , type = 0), E(SelectAction(null, null)(Table(user)), type = 5))',
   );
 });
 
@@ -450,15 +450,15 @@ it('UNION', () => {
   eq(t1.unionAllFlag, false);
   eq(t1.nextSelectAction, t2);
   eq(t1.__name, 't1');
-  eq(t1.__table, user);
+  eq(t1.__groupTable, user);
   eq(t2.unionAllFlag, true);
   eq(t2.nextSelectAction, t3);
   eq(t2.__name, null);
-  eq(t2.__table, null);
+  eq(t2.__groupTable, null);
   eq(t3.unionAllFlag, false);
   eq(t3.nextSelectAction, null);
   eq(t3.__name, null);
-  eq(t3.__table, null);
+  eq(t3.__groupTable, null);
 });
 
 it('UNION on a ghost table', () => {
@@ -471,5 +471,6 @@ it('UNION on a ghost table', () => {
   eq(t1.unionAllFlag, false);
   eq(t1.nextSelectAction, t2);
   eq(t1.__name, 't1');
-  eq(t1.__table, mm.ghostTable);
+  eq(t1.__groupTable, mm.ghostTable);
+  eq(t1.__sqlTable, null);
 });

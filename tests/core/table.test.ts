@@ -54,7 +54,7 @@ it('Composite PKs', () => {
   assert.deepEqual(like.__aiPKs, []);
 });
 
-it('__actions and props', () => {
+it('__columns', () => {
   assert.deepEqual(user.__columns, {
     id: user.id,
     name: user.name,
@@ -68,7 +68,7 @@ it('__actions and props', () => {
   }
 });
 
-it('__actions and props (tableCore)', () => {
+it('tableCore', () => {
   const id = mm.pk();
   const name = mm.varChar(250);
   const table = mm.tableCore('A', 'a_a', null, { id, name });

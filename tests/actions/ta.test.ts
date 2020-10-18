@@ -1,33 +1,31 @@
 import * as assert from 'assert';
-import { itThrows } from 'it-throws';
 import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
 
 const eq = assert.equal;
 
-it('ta', () => {
+it('Core props', () => {
   class UserTA extends mm.TableActions {
-    sel = mm.select(user.id);
-    upd = mm
-      .unsafeUpdateAll()
-      .set(user.name, mm.sql`${mm.input(user.name)}`)
-      .set(user.follower_count, mm.sql`${user.follower_count} + 1`);
+    t = mm.select(user.id);
+    t2 = mm.select(post.id).from(post);
   }
   const ta = mm.tableActions(user, UserTA);
+  let v = ta.t;
+  assert.strictEqual(v.__name, 't');
+  assert.strictEqual(v.__groupTable, user);
+  assert.strictEqual(v.__sqlTable, null);
+  assert.strictEqual(v.mustGetGroupTable(), user);
+  assert.strictEqual(v.mustGetAvailableSQLTable(user), user);
+  assert.strictEqual(v.mustGetName(), 't');
 
-  assert.ok(ta instanceof mm.TableActions);
-  eq(ta.__table, user);
-
-  const v1 = ta.upd;
-  eq(v1.__name, 'upd');
-  eq(v1.__table, user);
-  assert.ok(v1 instanceof mm.UpdateAction);
-
-  const v2 = ta.sel;
-  eq(v2.__name, 'sel');
-  eq(v2.__table, user);
-  assert.ok(v2 instanceof mm.SelectAction);
+  v = ta.t2;
+  assert.strictEqual(v.__name, 't2');
+  assert.strictEqual(v.__groupTable, user);
+  assert.strictEqual(v.__sqlTable, post);
+  assert.strictEqual(v.mustGetGroupTable(), user);
+  assert.strictEqual(v.mustGetAvailableSQLTable(user), post);
+  assert.strictEqual(v.mustGetName(), 't2');
 });
 
 it('enumerateActions', () => {
@@ -60,26 +58,15 @@ it('Argument stubs', () => {
   assert.deepEqual(v.__argStubs, stubs);
 });
 
-it('action.mustGet', () => {
-  class UserTA extends mm.TableActions {
-    t = mm.select(user.id);
-  }
-  const ta = mm.tableActions(user, UserTA);
-  const v = ta.t;
-  assert.strictEqual(v.mustGetTable(), user);
-  assert.strictEqual(v.mustGetName(), 't');
-  itThrows(() => mm.select(user.id).mustGetName(), 'Action "SelectAction" doesn\'t have a name');
-});
-
 class MyInsertAction extends mm.InsertAction {
-  boundTable: mm.Table | null = null;
+  groupTable: mm.Table | null = null;
   constructor() {
     super(true);
   }
 
-  validate(boundTable: mm.Table) {
-    super.validate(boundTable);
-    this.boundTable = boundTable;
+  validate(groupTable: mm.Table) {
+    super.validate(groupTable);
+    this.groupTable = groupTable;
   }
 }
 
@@ -89,7 +76,7 @@ it('Action.onInit', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  eq(v.boundTable, user);
+  eq(v.groupTable, user);
 });
 
 it('Action.onInit (from)', () => {
@@ -98,7 +85,7 @@ it('Action.onInit (from)', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  eq(v.boundTable, post);
+  eq(v.groupTable, user);
 });
 
 it('Action.attr/attrs', () => {
@@ -188,5 +175,5 @@ it('Ghost table', () => {
   const ta = mm.tableActions(mm.ghostTable, GhostTA);
   const v = ta.t;
   assert.ok(mm.ghostTable instanceof mm.GhostTable);
-  eq(v.boundTable, post);
+  eq(v.groupTable, mm.ghostTable);
 });
