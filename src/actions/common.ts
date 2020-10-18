@@ -22,17 +22,17 @@ export function where(action: ActionWithWhere, value: SQL) {
   action.whereSQLValue = value;
 }
 
-export function by(action: ActionWithWhere, column: Column, name?: string) {
+export function by(action: ActionWithWhere, column: Column, name: string | undefined) {
   throwIfFalsy(column, 'column');
   where(action, sql`${column.isEqualToInput(name)}`);
 }
 
-export function andBy(action: ActionWithWhere, column: Column) {
+export function andBy(action: ActionWithWhere, column: Column, name: string | undefined) {
   throwIfFalsy(column, 'column');
   // Append the expr to the end of the existing WHERE expression.
   let s: SQL;
   if (action.whereSQLValue) {
-    s = and(action.whereSQLValue, sql`${column.toInput()}`);
+    s = and(action.whereSQLValue, sql`${column.toInput(name)}`);
     // Set `whereSQLValue` to null cuz `where` doesn't allow `whereSQLValue` to be set twice.
     // eslint-disable-next-line no-param-reassign
     action.whereSQLValue = null;

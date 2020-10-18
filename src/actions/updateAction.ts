@@ -26,13 +26,13 @@ export class UpdateAction extends CoreUpdateAction {
     return this;
   }
 
-  by(column: Column): this {
-    by(this, column);
+  by(column: Column, name?: string): this {
+    by(this, column, name);
     return this;
   }
 
-  andBy(column: Column): this {
-    andBy(this, column);
+  andBy(column: Column, name?: string): this {
+    andBy(this, column, name);
     return this;
   }
 

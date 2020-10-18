@@ -24,8 +24,8 @@ export class CoreSelectAction extends Action {
     return this;
   }
 
-  andBy(column: Column): this {
-    andBy(this, column);
+  andBy(column: Column, name?: string): this {
+    andBy(this, column, name);
     return this;
   }
 
