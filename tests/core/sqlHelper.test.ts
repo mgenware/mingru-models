@@ -7,14 +7,14 @@ const eq = assert.equal;
 it('and', () => {
   eq(
     mm.and(mm.sql`1`, user.id.isEqualToInput()).toString(),
-    'SQL(E(1, type = 0), E( AND , type = 0), E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2))',
+    'SQL(E(1, type = 0), E( AND , type = 0), E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2))',
   );
 });
 
 it('or', () => {
   eq(
     mm.or(mm.sql`1`, user.id.isEqualToInput()).toString(),
-    'SQL(E(1, type = 0), E( OR , type = 0), E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2))',
+    'SQL(E(1, type = 0), E( OR , type = 0), E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2))',
   );
 });
 
@@ -22,7 +22,7 @@ it('toInput', () => {
   const input = user.name.toInput();
   eq(input.isArray, false);
   eq(input.type, user.name);
-  eq(input.name, 'name');
+  eq(input.name, undefined);
 });
 
 it('toInput(string)', () => {
@@ -55,7 +55,7 @@ it('isEqualToInput', () => {
   const sql = user.name.isEqualToInput();
   eq(
     sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
+    'SQL(E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
   );
 });
 
@@ -85,7 +85,7 @@ it('isNotEqualToInput', () => {
   const sql = user.name.isNotEqualToInput();
   eq(
     sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( <> , type = 0), E(SQLVar(name, desc = Column(undefined, Table(user))), type = 2))',
+    'SQL(E(Column(name, Table(user)), type = 1), E( <> , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
   );
 });
 

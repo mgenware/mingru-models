@@ -28,7 +28,7 @@ it('Update', () => {
   eq(v.allowEmptyWhere, false);
   eq(
     v.settersToString(),
-    'name: SQL(E(SQLVar(name, desc = Column(name, Table(user))), type = 2)), follower_count: SQL(E(Column(follower_count, Table(user)), type = 1), E( + 1, type = 0))',
+    'name: SQL(E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2)), follower_count: SQL(E(Column(follower_count, Table(user)), type = 1), E( + 1, type = 0))',
   );
 });
 
@@ -41,7 +41,7 @@ it('Order of setInputs and set', () => {
 
   eq(
     v.settersToString(),
-    'snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2)), name: SQL(E(SQLVar(b, desc = Column(name, Table(user))), type = 2))',
+    'snake_case_name: SQL(E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2)), name: SQL(E(SQLVar(b, desc = Column(name, Table(user))), type = 2))',
   );
 });
 
@@ -54,7 +54,7 @@ it('setInputs and setDefaults', () => {
 
   eq(
     v.settersToString(),
-    'def_value: abc, snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
+    'def_value: abc, snake_case_name: SQL(E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
 });
 
@@ -71,7 +71,7 @@ it('setInputs with no args', () => {
 
   eq(
     v.settersToString(),
-    'def_value: abc, snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
+    'def_value: abc, snake_case_name: SQL(E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
   assert.deepEqual([...v.autoSetters], [mm.AutoSetterType.input]);
 });
@@ -89,7 +89,7 @@ it('setDefaults with no args', () => {
 
   eq(
     v.settersToString(),
-    'def_value: abc, snake_case_name: SQL(E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
+    'def_value: abc, snake_case_name: SQL(E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
   assert.deepEqual([...v.autoSetters], [mm.AutoSetterType.default]);
 });
@@ -192,7 +192,7 @@ it('ByID', () => {
 
   eq(
     v.whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2))',
+    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2))',
   );
 });
 
@@ -235,7 +235,7 @@ it('by', () => {
   const v = ta.t;
   eq(
     v.whereSQLString,
-    'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
+    'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
 });
 
@@ -249,15 +249,15 @@ it('andBy', () => {
   const ta = mm.tableActions(user, UserTA);
   eq(
     ta.t1.whereSQLString,
-    'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
+    'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2))',
   );
   eq(
     ta.t2.whereSQLString,
-    'SQL(E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
+    'SQL(E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2))',
   );
   eq(
     ta.t3.whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
+    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2))',
   );
 });
 

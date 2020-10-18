@@ -10,7 +10,7 @@ it('SQL', () => {
   const sql = mm.sql`${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}`;
   assert.strictEqual(
     sql.toString(),
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
   );
   assert.ok(sql instanceof mm.SQL);
 });
@@ -19,7 +19,7 @@ it('Flatten another SQL', () => {
   const sql = mm.sql`${mm.sql`${mm.sql`${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}`}`}`;
   assert.strictEqual(
     sql.toString(),
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(undefined, Table(user))), type = 2))',
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
   );
   assert.ok(sql instanceof mm.SQL);
 });
@@ -28,7 +28,7 @@ it('SQL with input', () => {
   const sql = mm.sql`START${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}END`;
   eq(
     sql.toString(),
-    'SQL(E(START, type = 0), E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2), E(END, type = 0))',
+    'SQL(E(START, type = 0), E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2), E(END, type = 0))',
   );
 });
 
@@ -36,35 +36,41 @@ it('Input', () => {
   const input = mm.input(user.name);
   eq(input.type, user.name);
   eq(input.name, undefined);
+  eq(input.column, user.name);
 });
 
 it('Named input', () => {
   const input = mm.input(user.name, 'haha');
   eq(input.type, user.name);
-  eq(input.name, undefined);
+  eq(input.name, 'haha');
+  eq(input.column, user.name);
 });
 
 it('Input (foreign key)', () => {
-  const input = mm.input(post.user_id);
+  const col = post.user_id;
+  const input = mm.input(col);
   eq((input.type as mm.Column).__foreignColumn, user.id);
-  eq(input.name, 'userID');
+  eq(input.name, undefined);
+  eq(input.column, col);
 });
 
 it('Input (joined key)', () => {
-  const input = mm.input(post.user_id.join(user).name);
+  const col = post.user_id.join(user).name;
+  const input = mm.input(col);
   eq((input.type as mm.Column).__mirroredColumn, user.name);
-  eq(input.name, 'userName');
+  eq(input.name, undefined);
+  eq(input.column, col);
 });
 
 it('Raw type input', () => {
-  const input = mm.input({ name: 'uint32', defaultValue: 0 }, 'uid');
-  assert.deepStrictEqual(input.type, { name: 'uint32', defaultValue: 0 });
-  eq(input.toString(), 'SQLVar(uid, desc = {"name":"uint32","defaultValue":0})');
+  const input = mm.input({ type: 'uint32', defaultValue: 0 }, 'uid');
+  assert.deepStrictEqual(input.type, { type: 'uint32', defaultValue: 0 });
+  eq(input.toString(), 'SQLVar(uid, desc = {"type":"uint32","defaultValue":0})');
 });
 
 it('Empty name for raw type input', () => {
   itThrows(
-    () => mm.input({ name: 'uint32', defaultValue: 0 }),
+    () => mm.input({ type: 'uint32', defaultValue: 0 }),
     'Unexpected empty input name for type `uint32`',
   );
 });
@@ -74,7 +80,7 @@ it('Embed another sql', () => {
   const sql = mm.sql`START${embedded} OR ${user.name} = ${mm.input(user.name)}`;
   eq(
     sql.toString(),
-    'SQL(E(START, type = 0), E(_, type = 0), E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2), E( OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
+    'SQL(E(START, type = 0), E(_, type = 0), E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2), E( OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
   );
 });
 
@@ -105,10 +111,11 @@ it('makeSQL', () => {
 it('Input.isEqualTo', () => {
   const a = user.id.toInput();
   const b = user.id.toInput();
-  const c = mm.input({ name: 'a', defaultValue: null }, 'id');
-  const d = mm.input({ name: 'a', defaultValue: null }, 'id');
-  const e = mm.input({ name: 'b', defaultValue: null }, 'id');
-  eq(a.name, c.name);
+  const c = mm.input({ type: 'a', defaultValue: null }, 'id');
+  const d = mm.input({ type: 'a', defaultValue: null }, 'id');
+  const e = mm.input({ type: 'b', defaultValue: null }, 'id');
+  eq(a.name, undefined);
+  eq(a.column, user.id);
   assert.deepStrictEqual(a, b);
   assert.notDeepStrictEqual(a, c);
   assert.deepStrictEqual(c, d);
@@ -134,7 +141,7 @@ it('SQLBuilder', () => {
   const sql = builder.toSQL();
   assert.strictEqual(
     sql.toString(),
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(undefined, Table(user))), type = 2))',
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
   );
   assert.ok(sql instanceof mm.SQL);
 });

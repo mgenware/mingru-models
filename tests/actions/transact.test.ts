@@ -103,14 +103,14 @@ it('Setting __table or inline members', () => {
   }
   const postTA = mm.tableActions(post, PostTA);
   const { members } = postTA.t;
-  eq(members[0].action.__table, post);
-  eq(members[0].action.__name, 'tChild1');
+  eq(members[0].action.__table, null);
+  eq(members[0].action.__name, null);
   eq(members[1].action.__table, post);
   eq(members[1].action.__name, 'insert');
   eq(members[2].action.__table, user);
   eq(members[2].action.__name, 'insert');
-  eq(members[3].action.__table, post);
-  eq(members[3].action.__name, 'tChild4');
+  eq(members[3].action.__table, null);
+  eq(members[3].action.__name, null);
 });
 
 it('Declare return values', () => {

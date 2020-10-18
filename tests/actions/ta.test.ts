@@ -48,8 +48,8 @@ it('enumerateActions', () => {
 
 it('Argument stubs', () => {
   const stubs = [
-    new mm.SQLVariable({ name: 'int', defaultValue: 0 }, 'id'),
-    new mm.SQLVariable({ name: 'int', defaultValue: 0 }, 'id2'),
+    new mm.SQLVariable({ type: 'int', defaultValue: 0 }, 'id'),
+    new mm.SQLVariable({ type: 'int', defaultValue: 0 }, 'id2'),
   ];
   class UserTA extends mm.TableActions {
     t = mm.select(user.id).argStubs(...stubs);
@@ -68,10 +68,7 @@ it('action.mustGet', () => {
   const v = ta.t;
   assert.strictEqual(v.mustGetTable(), user);
   assert.strictEqual(v.mustGetName(), 't');
-  itThrows(
-    () => mm.select(user.id).mustGetName(),
-    'Table action not initialized, type "SelectAction", name "null", table "null"',
-  );
+  itThrows(() => mm.select(user.id).mustGetName(), 'Action "SelectAction" doesn\'t have a name');
 });
 
 class MyInsertAction extends mm.InsertAction {

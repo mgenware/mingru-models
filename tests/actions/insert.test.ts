@@ -18,7 +18,7 @@ it('Insert', () => {
   assert.ok(v instanceof mm.CoreUpdateAction);
   eq(
     v.settersToString(),
-    'title: SQL(E(SQLVar(title, desc = Column(title, Table(post))), type = 2)), snake_case_user_id: SQL(E(SQLVar(snakeCaseUserID, desc = Column(snake_case_user_id, Table(post))), type = 2))',
+    'title: SQL(E(SQLVar(undefined, desc = Column(title, Table(post))), type = 2)), snake_case_user_id: SQL(E(SQLVar(undefined, desc = Column(snake_case_user_id, Table(post))), type = 2))',
   );
 });
 

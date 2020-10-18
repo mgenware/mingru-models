@@ -77,6 +77,13 @@ export function convertToSQL(element: SQLConvertible): SQL {
   return sql`${element}`;
 }
 
+function getInputTypeName(type: SQLVariableType | Column | ColumnType): string {
+  if (type instanceof ColumnType || type instanceof Column) {
+    return toTypeString(type);
+  }
+  return type.type;
+}
+
 export function input(
   type: SQLVariableType | Column | ColumnType,
   name?: string,
@@ -86,6 +93,10 @@ export function input(
   let tableColumn = column;
   if (!tableColumn && type instanceof Column) {
     tableColumn = type;
+  }
+  if (!tableColumn && !name) {
+    // Throws neither column nor name is present.
+    throw new Error(`Unexpected empty input name for type \`${getInputTypeName(type)}\``);
   }
   return new SQLVariable(type, name, isArray || false, tableColumn);
 }

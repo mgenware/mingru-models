@@ -2,7 +2,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Column, ColumnType } from './core';
 
 export interface SQLVariableType {
-  name: string;
+  type: string;
   defaultValue: unknown;
   module?: string;
   importPath?: string;

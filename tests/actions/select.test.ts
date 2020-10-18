@@ -153,7 +153,7 @@ it('byID', () => {
   const v = ta.t;
   eq(
     v.whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2))',
+    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2))',
   );
 });
 
@@ -177,29 +177,28 @@ it('by', () => {
   const v = ta.t;
   eq(
     v.whereSQLString,
-    'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2))',
+    'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
 });
 
 it('andBy', () => {
   class UserTA extends mm.TableActions {
     t1 = mm.select(user.name).by(user.snake_case_name).andBy(user.follower_count);
-
     t2 = mm.select(user.name).andBy(user.follower_count);
     t3 = mm.select(user.name).by(user.id).andBy(user.follower_count);
   }
   const ta = mm.tableActions(user, UserTA);
   eq(
     ta.t1.whereSQLString,
-    'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(snakeCaseName, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
+    'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2))',
   );
   eq(
     ta.t2.whereSQLString,
-    'SQL(E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
+    'SQL(E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2))',
   );
   eq(
     ta.t3.whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(id, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(followerCount, desc = Column(follower_count, Table(user))), type = 2))',
+    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2))',
   );
 });
 
