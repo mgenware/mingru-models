@@ -11,7 +11,7 @@ it('Wrap', () => {
   }
   const postTA = mm.tableActions(post, PostTA);
   class UserTA extends mm.TableActions {
-    s = mm.deleteOne().byID();
+    s = mm.deleteOne().by(user.id);
     t2 = postTA.t.wrap({ id: '32' });
 
     t = this.s.wrap({
@@ -27,7 +27,6 @@ it('Wrap', () => {
   eq(ta.s.__table, user);
   eq(v.__table, user);
   eq(v.__rootTable, user);
-  eq(v.isInline, false);
   assert.deepEqual(v.args, {
     id: '1',
   });
@@ -38,7 +37,6 @@ it('Wrap', () => {
   eq(postTA.t.__rootTable, post);
   eq(v.__table, user);
   eq(v.__rootTable, user);
-  eq(v.isInline, false);
   assert.deepEqual(v.args, {
     id: '32',
   });
@@ -50,7 +48,7 @@ it('Wrap (chains)', () => {
   }
   const postTA = mm.tableActions(post, PostTA);
   class UserTA extends mm.TableActions {
-    s = mm.deleteOne().byID();
+    s = mm.deleteOne().by(user.id);
     t = this.s.wrap({ id: '32' }).wrap({ id: '33' }).wrap({ id2: '34' });
     t2 = postTA.t.wrap({ id: '32' }).wrap({ id: '33' }).wrap({ id2: '34' });
   }
@@ -68,7 +66,6 @@ it('Wrap (chains)', () => {
   eq(v.__table, user);
   eq((v as mm.WrapAction).action.__table, user);
   eq((v as mm.WrapAction).action.__name, 's');
-  eq(v.isInline, false);
 
   v = ta.t2;
   eq(v.action, postTA.t);
@@ -76,12 +73,11 @@ it('Wrap (chains)', () => {
   eq(v.__table, user);
   eq((v as mm.WrapAction).action.__table, post);
   eq((v as mm.WrapAction).action.__name, 't');
-  eq(v.isInline, false);
 });
 
 it('Inline WRAP actions', () => {
   class UserTA extends mm.TableActions {
-    t = mm.deleteOne().byID().wrap({ id: '23' });
+    t = mm.deleteOne().by(user.id).wrap({ id: '23' });
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -90,13 +86,12 @@ it('Inline WRAP actions', () => {
   eq((v as mm.WrapAction).action.__name, 't');
   eq(v.__rootTable, user);
   eq(v.__name, 't');
-  eq(v.isInline, true);
   assert.deepStrictEqual(v.args, { id: '23' });
 });
 
 it('Inline WRAP actions (chaining)', () => {
   class UserTA extends mm.TableActions {
-    t = mm.deleteOne().byID().wrap({ id: '23' }).wrap({ s: 'name' });
+    t = mm.deleteOne().by(user.id).wrap({ id: '23' }).wrap({ s: 'name' });
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -105,13 +100,12 @@ it('Inline WRAP actions (chaining)', () => {
   eq((v as mm.WrapAction).action.__name, 't');
   eq(v.__rootTable, user);
   eq(v.__name, 't');
-  eq(v.isInline, true);
   assert.deepStrictEqual(v.args, { id: '23', s: 'name' });
 });
 
 it('Inline WRAP actions (with from)', () => {
   class UserTA extends mm.TableActions {
-    t = mm.deleteOne().from(post).byID().wrap({ id: '23' });
+    t = mm.deleteOne().from(post).by(user.id).wrap({ id: '23' });
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -120,7 +114,6 @@ it('Inline WRAP actions (with from)', () => {
   eq((v as mm.WrapAction).action.__name, 't');
   eq(v.__rootTable, user);
   eq(v.__name, 't');
-  eq(v.isInline, true);
   assert.deepStrictEqual(v.args, { id: '23' });
 });
 
@@ -136,7 +129,7 @@ it('mm.valueRef', () => {
 
 it('wrapAsRefs', () => {
   class UserTA extends mm.TableActions {
-    t = mm.deleteOne().from(post).byID().wrapAsRefs({ id: '23', id2: 'abc' });
+    t = mm.deleteOne().from(post).by(user.id).wrapAsRefs({ id: '23', id2: 'abc' });
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;

@@ -135,7 +135,7 @@ it('Set same column twice', () => {
 
 it('updateOne', () => {
   class UserTA extends mm.TableActions {
-    t = mm.updateOne().setInputs(user.snake_case_name).byID();
+    t = mm.updateOne().setInputs(user.snake_case_name).by(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -154,7 +154,7 @@ it('updateOne', () => {
 
 it('updateSome', () => {
   class UserTA extends mm.TableActions {
-    t = mm.updateSome().setInputs(user.snake_case_name).byID();
+    t = mm.updateSome().setInputs(user.snake_case_name).by(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -185,7 +185,7 @@ it('unsafeUpdateAll', () => {
 
 it('ByID', () => {
   class UserTA extends mm.TableActions {
-    t = mm.updateOne().setInputs(user.snake_case_name).byID();
+    t = mm.updateOne().setInputs(user.snake_case_name).by(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -198,7 +198,7 @@ it('ByID', () => {
 
 it('SQLConvertible value', () => {
   class UserTA extends mm.TableActions {
-    t = mm.updateOne().set(user.name, mm.localDateNow()).byID();
+    t = mm.updateOne().set(user.name, mm.localDateNow()).by(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -244,7 +244,7 @@ it('andBy', () => {
     t1 = mm.updateOne().setInputs(user.name).by(user.snake_case_name).andBy(user.follower_count);
 
     t2 = mm.updateOne().setInputs(user.name).andBy(user.follower_count);
-    t3 = mm.updateOne().setInputs(user.name).byID().andBy(user.follower_count);
+    t3 = mm.updateOne().setInputs(user.name).by(user.id).andBy(user.follower_count);
   }
   const ta = mm.tableActions(user, UserTA);
   eq(

@@ -20,11 +20,11 @@ declare module './core' {
 }
 
 Column.prototype.toInput = function (name?: string) {
-  return input(this, name);
+  return input(this, name, undefined, this);
 };
 
 Column.prototype.toArrayInput = function (name?: string) {
-  return input(this, name, true);
+  return input(this, name, true, this);
 };
 
 Column.prototype.isEqualToSQL = function (valueSQL: SQL) {

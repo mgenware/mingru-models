@@ -15,7 +15,7 @@ it('Transact', () => {
   class PostTA extends mm.TableActions {
     insert = mm.insert().setInputs(post.title, post.snake_case_user_id).setInputs();
 
-    update = mm.updateOne().setInputs(post.e_user_id_n).byID();
+    update = mm.updateOne().setInputs(post.e_user_id_n).by(post.id);
     batch = mm.transact(this.insert, userTA.insert, this.update);
     batch2 = mm.transact(this.insert, userTA.insert, this.batch);
   }
@@ -45,7 +45,7 @@ it('Inline member actions (wrap self)', async () => {
     updatePostCount = mm
       .updateOne()
       .set(user2.postCount, mm.sql`${user2.postCount} + ${mm.input(mm.int(), 'offset')}`)
-      .byID();
+      .by(user2.id);
 
     t = mm.transact(this.updatePostCount.wrap({ offset: '1' }));
   }
@@ -66,7 +66,7 @@ it('Inline member actions (wrap other)', async () => {
     updatePostCount = mm
       .updateOne()
       .set(user2.postCount, mm.sql`${user2.postCount} + ${mm.input(mm.int(), 'offset')}`)
-      .byID();
+      .by(user2.id);
   }
   const user2TA = mm.tableActions(user2, User2TA);
   class Post2 extends mm.Table {
@@ -105,16 +105,12 @@ it('Setting __table or inline members', () => {
   const { members } = postTA.t;
   eq(members[0].action.__table, post);
   eq(members[0].action.__name, 'tChild1');
-  eq(members[0].isInline, true);
   eq(members[1].action.__table, post);
   eq(members[1].action.__name, 'insert');
-  eq(members[1].isInline, false);
   eq(members[2].action.__table, user);
   eq(members[2].action.__name, 'insert');
-  eq(members[2].isInline, false);
   eq(members[3].action.__table, post);
   eq(members[3].action.__name, 'tChild4');
-  eq(members[3].isInline, true);
 });
 
 it('Declare return values', () => {

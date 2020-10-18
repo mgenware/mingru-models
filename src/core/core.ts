@@ -94,7 +94,7 @@ export class Column {
   }
 
   #noDefaultOnCSQL = false;
-  get __noDefaultOnCSQLe(): boolean {
+  get __noDefaultOnCSQL(): boolean {
     return this.#noDefaultOnCSQL;
   }
 

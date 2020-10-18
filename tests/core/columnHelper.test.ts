@@ -137,8 +137,8 @@ it('autoIncrement', () => {
 });
 
 it('isNoDefaultOnCSQL', () => {
-  eq(mm.pk(mm.int(20)).__noDefaultOnCSQLe, false);
-  eq(mm.pk(mm.int(20)).noDefaultOnCSQL.__noDefaultOnCSQLe, true);
+  eq(mm.pk(mm.int(20)).__noDefaultOnCSQL, false);
+  eq(mm.pk(mm.int(20)).noDefaultOnCSQL.__noDefaultOnCSQL, true);
 });
 
 it('text', () => {

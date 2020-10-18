@@ -4,7 +4,6 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table, Column, JoinedTable } from './core';
 import * as defs from './defs';
 import Utils from '../lib/utils';
-import { SQL } from './sql';
 
 function enumerateColumns(tableObject: Table, cb: (column: Column, prop: string) => void): void {
   throwIfFalsy(tableObject, 'tableObject');
@@ -70,15 +69,6 @@ export function tableCore(
           if (columnToAdd.__type.autoIncrement) {
             aiPKs.push(col);
           }
-        }
-
-        // Column default value cannot be a complex SQL.
-        if (
-          columnToAdd.__defaultValue &&
-          columnToAdd.__defaultValue instanceof SQL &&
-          columnToAdd.__defaultValue.hasColumns
-        ) {
-          throw new Error('Default value cannot be a complex SQL expression');
         }
 
         convertedColumns[propName] = columnToAdd;

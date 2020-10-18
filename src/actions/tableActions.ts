@@ -100,9 +100,12 @@ export class Action {
   // `__rootTable` and `__name` set, and have `validate` called automatically.
   // Other actions, such ones embedded in SQL exprs cannot be handled by `ta.tableActions`,
   // thus have to be manually taken care of.
-  // @param `table` the bound table of this action.
+  // `boundTable` every action should be validated, but not all actions have `__table`
+  // set, like mentioned above. In `validate`, use `boundTable` as a fallback table value
+  // to `__table`. Example: INSERT action uses `this.__table || boundTable` to check
+  // whether setter columns belong to the parent column, and it works for SQL subqueries.
   // eslint-disable-next-line class-methods-use-this
-  validate(_table: Table) {
+  validate(_boundTable: Table) {
     // Implemented by subclass.
   }
 
@@ -117,8 +120,6 @@ export class Action {
     if (!this.__table) {
       this.#table = table;
     }
-    // `this.__table` which might have be set by `.from`, takes precedence
-    // over the param `table`.
     this.validate(this.__table || table);
   }
 }

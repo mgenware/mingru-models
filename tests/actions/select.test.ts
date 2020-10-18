@@ -138,26 +138,6 @@ it('RawColumn (SQLConvertible)', () => {
   );
 });
 
-it('RawColumn.toInput', () => {
-  // .core is column
-  let cc = mm.sel(user.name, 'name');
-  eq(cc.toInput().toString(), 'SQLVar(name, desc = Column(name, Table(user)))');
-  // .core is SQL
-  cc = mm.sel(mm.sql`haha${user.id}`, 'id');
-  eq(cc.toInput().toString(), 'SQLVar(id, desc = ColType(SQL.BIGINT))');
-
-  cc = mm.sel(mm.sql`${mm.max(mm.sql``)}`, 'haha');
-  eq(cc.toInput().toString(), 'SQLVar(haha, desc = ColType(SQL.INT))');
-
-  let c = mm.sel(user.name, 'name');
-  let v = c.toInput();
-  eq(v.toString(), 'SQLVar(name, desc = Column(name, Table(user)))');
-
-  c = mm.sel(user.name, 'haha', mm.int().__type);
-  v = c.toInput();
-  eq(v.toString(), 'SQLVar(haha, desc = Column(name, Table(user)))');
-});
-
 it('mm.select (types)', () => {
   const a = mm.sel(mm.sql`123`, 'x', new mm.ColumnType(['t1', 't2']));
   eq(a.selectedName, 'x');
@@ -167,7 +147,7 @@ it('mm.select (types)', () => {
 
 it('byID', () => {
   class UserTA extends mm.TableActions {
-    t = mm.select(user.name).byID();
+    t = mm.select(user.name).by(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -179,7 +159,7 @@ it('byID', () => {
 
 it('byID with inputName', () => {
   class UserTA extends mm.TableActions {
-    t = mm.select(user.name).byID('haha');
+    t = mm.select(user.name).by(user.id, 'haha');
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -206,7 +186,7 @@ it('andBy', () => {
     t1 = mm.select(user.name).by(user.snake_case_name).andBy(user.follower_count);
 
     t2 = mm.select(user.name).andBy(user.follower_count);
-    t3 = mm.select(user.name).byID().andBy(user.follower_count);
+    t3 = mm.select(user.name).by(user.id).andBy(user.follower_count);
   }
   const ta = mm.tableActions(user, UserTA);
   eq(
@@ -226,7 +206,7 @@ it('andBy', () => {
 it('selectField', () => {
   const sc = mm.sel(mm.sql`mm.count('*')`, 'c');
   class UserTA extends mm.TableActions {
-    t = mm.selectField(user.name).byID();
+    t = mm.selectField(user.name).by(user.id);
     t2 = mm.selectField(sc);
   }
   const ta = mm.tableActions(user, UserTA);
@@ -241,7 +221,7 @@ it('selectField', () => {
 
 it('selectExists', () => {
   class UserTA extends mm.TableActions {
-    t = mm.selectExists().byID();
+    t = mm.selectExists().by(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -253,7 +233,7 @@ it('Order by', () => {
   class UserTA extends mm.TableActions {
     t = mm
       .select(user.name, user.follower_count, cc)
-      .byID()
+      .by(user.id)
       .orderByAsc(user.name)
       .orderByAsc(cc)
       .orderByDesc(user.follower_count)

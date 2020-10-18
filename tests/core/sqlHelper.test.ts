@@ -85,7 +85,7 @@ it('isNotEqualToInput', () => {
   const sql = user.name.isNotEqualToInput();
   eq(
     sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( <> , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
+    'SQL(E(Column(name, Table(user)), type = 1), E( <> , type = 0), E(SQLVar(name, desc = Column(undefined, Table(user))), type = 2))',
   );
 });
 

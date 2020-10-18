@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Action, ActionType } from './tableActions';
 import { Table } from '../core/core';
+import { Action, ActionType } from './tableActions';
 
 export class ActionWithReturnValues {
   constructor(public action: Action, public returnValues: { [name: string]: string }) {}
@@ -9,9 +9,6 @@ export class ActionWithReturnValues {
 export type TransactionMemberTypes = TransactionMember | Action | ActionWithReturnValues;
 
 export class TransactionMember {
-  // True if this member is created inside transaction function block.
-  isInline = false;
-
   constructor(
     public action: Action,
     public name?: string,
@@ -29,12 +26,12 @@ export class TransactAction extends Action {
     throwIfFalsy(members, 'members');
   }
 
-  validate(table: Table) {
-    super.validate(table);
+  validate(boundTable: Table) {
+    super.validate(boundTable);
 
     for (const mem of this.members) {
       const mAction = mem.action;
-      mAction.validate(table);
+      mAction.validate(this.__table || boundTable);
     }
   }
 

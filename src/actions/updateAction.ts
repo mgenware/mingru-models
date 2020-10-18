@@ -2,8 +2,8 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { ActionType } from './tableActions';
 import { SQL } from '../core/sql';
 import { CoreUpdateAction } from './coreUpdateAction';
-import { where, byID, by, andBy } from './common';
-import { Table, Column } from '../core/core';
+import { where, by, andBy } from './common';
+import { Column, Table } from '../core/core';
 import { sql } from '../core/sqlHelper';
 import SQLConvertible from '../core/sqlConvertible';
 
@@ -26,11 +26,6 @@ export class UpdateAction extends CoreUpdateAction {
     return this;
   }
 
-  byID(inputName?: string): this {
-    byID(this, inputName);
-    return this;
-  }
-
   by(column: Column): this {
     by(this, column);
     return this;
@@ -41,8 +36,8 @@ export class UpdateAction extends CoreUpdateAction {
     return this;
   }
 
-  validate(table: Table) {
-    super.validate(table);
+  validate(boundTable: Table) {
+    super.validate(boundTable);
 
     if (!this.allowEmptyWhere && !this.whereSQLValue) {
       throw new Error(

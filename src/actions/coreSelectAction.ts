@@ -1,6 +1,6 @@
 import { Action } from './tableActions';
 import { SQL } from '../core/sql';
-import { where, byID, by, andBy } from './common';
+import { where, by, andBy } from './common';
 import { Column } from '../core/core';
 import SQLConvertible from '../core/sqlConvertible';
 import { sql } from '../core/sqlHelper';
@@ -19,13 +19,8 @@ export class CoreSelectAction extends Action {
     return this;
   }
 
-  byID(inputName?: string): this {
-    byID(this, inputName);
-    return this;
-  }
-
-  by(column: Column): this {
-    by(this, column);
+  by(column: Column, name?: string): this {
+    by(this, column, name);
     return this;
   }
 

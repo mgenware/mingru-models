@@ -7,10 +7,11 @@ export class InsertAction extends CoreUpdateAction {
     super(ActionType.insert);
   }
 
-  validate(table: Table) {
-    super.validate(table);
+  validate(boundTable: Table) {
+    super.validate(boundTable);
 
     const setterCount = this.setters.size;
+    const table = this.__table || boundTable;
     // Number of columns = total count - number of auto_increment PKs.
     const colCount = Object.entries(table.__columns).length - table.__aiPKs.length;
     if (

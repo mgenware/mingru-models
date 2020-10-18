@@ -3,7 +3,6 @@ import { itThrows } from 'it-throws';
 import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
-import * as cm from '../actions/common';
 
 const eq = assert.equal;
 
@@ -20,7 +19,7 @@ it('Flatten another SQL', () => {
   const sql = mm.sql`${mm.sql`${mm.sql`${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}`}`}`;
   assert.strictEqual(
     sql.toString(),
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(undefined, Table(user))), type = 2))',
   );
   assert.ok(sql instanceof mm.SQL);
 });
@@ -36,13 +35,13 @@ it('SQL with input', () => {
 it('Input', () => {
   const input = mm.input(user.name);
   eq(input.type, user.name);
-  eq(input.name, 'name');
+  eq(input.name, undefined);
 });
 
 it('Named input', () => {
   const input = mm.input(user.name, 'haha');
   eq(input.type, user.name);
-  eq(input.name, 'haha');
+  eq(input.name, undefined);
 });
 
 it('Input (foreign key)', () => {
@@ -103,29 +102,6 @@ it('makeSQL', () => {
   );
 });
 
-it('enumerateColumns', () => {
-  let s = mm.sql`haha`;
-  assert.deepStrictEqual(cm.listColumnsFromSQL(s), []);
-  s = mm.sql`kaokdjdf ${user.name} ${post.id.isEqualToInput()}`;
-  assert.deepStrictEqual(cm.listColumnsFromSQL(s), [user.name, post.id]);
-  s = mm.sql`${mm.coalesce(
-    'haha',
-    user.name,
-    post.id,
-    mm.sql`${mm.max(mm.sel(user.follower_count, 'alias'))}`,
-  )}`;
-  assert.deepStrictEqual(cm.listColumnsFromSQL(s), [user.name, post.id, user.follower_count]);
-});
-
-it('findFirstColumn', () => {
-  let s = mm.sql`haha`;
-  eq(s.findFirstColumn(), null);
-  s = mm.sql`kaokdjdf ${user.name}`;
-  eq(s.findFirstColumn(), user.name);
-  s = mm.sql`${mm.coalesce('haha', user.name)}`;
-  eq(s.findFirstColumn(), user.name);
-});
-
 it('Input.isEqualTo', () => {
   const a = user.id.toInput();
   const b = user.id.toInput();
@@ -139,28 +115,6 @@ it('Input.isEqualTo', () => {
   assert.notDeepStrictEqual(c, e);
 });
 
-it('hasColumns', () => {
-  const a = mm.sql`sdf sd ${mm.localDatetimeNow()}`;
-  const b = mm.sql`sisjsdf`;
-  const c = mm.sql`jis df${user.id}`;
-  const d = mm.sql`isjdf${user.name.toInput()}`;
-  eq(a.hasColumns, false);
-  eq(b.hasColumns, false);
-  eq(c.hasColumns, true);
-  eq(d.hasColumns, true);
-});
-
-it('hasCalls', () => {
-  const a = mm.sql`sdf sd ${mm.localDatetimeNow()}`;
-  const b = mm.sql`sisjsdf`;
-  const c = mm.sql`jis df${user.id}`;
-  const d = mm.sql`isjdf${user.name.toInput()}`;
-  eq(a.hasCalls, true);
-  eq(b.hasCalls, false);
-  eq(c.hasCalls, false);
-  eq(d.hasCalls, false);
-});
-
 it('RawColumn', () => {
   const rawCol = mm.sel(user.id, 'haha');
   const sql = mm.sql`${user.id} = ${rawCol}`;
@@ -168,19 +122,6 @@ it('RawColumn', () => {
     sql.toString(),
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(RawColumn(haha, core = Column(id, Table(user))), type = 4))',
   );
-});
-
-it('sniffType', () => {
-  // Column
-  eq(mm.sql`${user.id}`.sniffType(), 'ColType(SQL.BIGINT)');
-  eq(mm.sql`haha${user.id}`.sniffType(), 'ColType(SQL.BIGINT)');
-  // Call
-  eq(mm.sql`${mm.max(mm.sql``)}`.sniffType(), 'ColType(SQL.INT)');
-  // Call with a index-based return type from one of its params.
-  eq(mm.sql`${mm.ifNull(post.title, post.id)}`.sniffType(), 'ColType(SQL.VARCHAR)');
-  // RawColumn
-  eq(mm.sql`haha${user.id.as('abc')}`.sniffType(), 'ColType(SQL.BIGINT)');
-  eq(mm.sql`haha${mm.sel(mm.sql`abc`, 'name', mm.int().__type)}`.sniffType(), 'ColType(SQL.INT)');
 });
 
 it('SQLBuilder', () => {
@@ -193,7 +134,7 @@ it('SQLBuilder', () => {
   const sql = builder.toSQL();
   assert.strictEqual(
     sql.toString(),
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(name, Table(user))), type = 2))',
+    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(name, desc = Column(undefined, Table(user))), type = 2))',
   );
   assert.ok(sql instanceof mm.SQL);
 });

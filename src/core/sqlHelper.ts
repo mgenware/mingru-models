@@ -8,8 +8,6 @@ import { Action } from '../actions/tableActions';
 
 export class SQLBuilder {
   elements: SQLElement[] = [];
-  hasColumns = false;
-  hasCalls = false;
 
   loadTemplateString(literals: TemplateStringsArray, params: SQLConvertible[]) {
     for (let i = 0; i < params.length; i++) {
@@ -58,15 +56,10 @@ export class SQLBuilder {
   }
 
   toSQL(): SQL {
-    return new SQL(this.elements, this.hasColumns, this.hasCalls);
+    return new SQL(this.elements);
   }
 
   private pushElement(element: SQLElement) {
-    if (element.type === SQLElementType.column || element.type === SQLElementType.input) {
-      this.hasColumns = true;
-    } else if (element.type === SQLElementType.call) {
-      this.hasCalls = true;
-    }
     this.elements.push(element);
   }
 }
@@ -88,8 +81,13 @@ export function input(
   type: SQLVariableType | Column | ColumnType,
   name?: string,
   isArray?: boolean,
+  column?: Column | undefined,
 ): SQLVariable {
-  return new SQLVariable(type, name, isArray || false);
+  let tableColumn = column;
+  if (!tableColumn && type instanceof Column) {
+    tableColumn = type;
+  }
+  return new SQLVariable(type, name, isArray || false, tableColumn);
 }
 
 export function sqlCall(

@@ -11,8 +11,8 @@ export class DeleteAction extends CoreSelectAction {
     super(ActionType.delete);
   }
 
-  validate(table: Table) {
-    super.validate(table);
+  validate(boundTable: Table) {
+    super.validate(boundTable);
     if (!this.allowNoWhere && !this.whereSQLValue) {
       throw new Error(
         '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll`',

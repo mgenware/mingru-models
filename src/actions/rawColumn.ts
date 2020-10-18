@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Column, ColumnType } from '../core/core';
-import { SQL, SQLVariable } from '../core/sql';
+import { SQL } from '../core/sql';
 import { ColumnAttributes } from '../attrs';
 
 export class RawColumn {
@@ -30,39 +30,11 @@ export class RawColumn {
     } else {
       this.core = core;
       if (!selectedName) {
-        // Try to extract a column name from SQL expression.
-        const col = core.findFirstColumn();
-        if (!col) {
-          throw new Error(
-            'The argument `selectedName` is required for an SQL expression with no columns',
-          );
-        }
+        throw new Error(
+          'The argument `selectedName` is required for a `RawColumn` with SQL expression',
+        );
       }
     }
-  }
-
-  toInput(): SQLVariable {
-    const { core } = this;
-    let { selectedName } = this;
-    if (core instanceof SQL) {
-      const inferred = core.sniffType();
-      if (!inferred) {
-        throw new Error('Cannot convert a `RawColumn(SQL)` to an `SQLVariable`');
-      }
-      if (!selectedName) {
-        const firstColumn = core.findFirstColumn();
-        if (firstColumn && firstColumn.__name) {
-          selectedName = firstColumn.__name;
-        } else {
-          throw new Error(
-            'The argument `selectedName` is required for an SQL expression with no columns',
-          );
-        }
-      }
-      return new SQLVariable(inferred, selectedName);
-    }
-    const colName = core.mustGetName();
-    return new SQLVariable(core, selectedName || colName);
   }
 
   attrs(values: { [name: string]: unknown }): this {

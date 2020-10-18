@@ -75,14 +75,14 @@ it('action.mustGet', () => {
 });
 
 class MyInsertAction extends mm.InsertAction {
-  vTable: mm.Table | null = null;
+  boundTable: mm.Table | null = null;
   constructor() {
     super(true);
   }
 
-  validate(table: mm.Table) {
-    super.validate(table);
-    this.vTable = table;
+  validate(boundTable: mm.Table) {
+    super.validate(boundTable);
+    this.boundTable = boundTable;
   }
 }
 
@@ -92,7 +92,7 @@ it('Action.onInit', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  eq(v.vTable, user);
+  eq(v.boundTable, user);
 });
 
 it('Action.onInit (from)', () => {
@@ -101,7 +101,7 @@ it('Action.onInit (from)', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  eq(v.vTable, post);
+  eq(v.boundTable, post);
 });
 
 it('Action.attr/attrs', () => {
@@ -168,7 +168,7 @@ it('__actions and props', () => {
 
 it('__actions and props (taCore)', () => {
   const sel = mm.select();
-  const del = mm.deleteOne().byID();
+  const del = mm.deleteOne().by(user.id);
   const actions: Record<string, mm.Action> = {
     del,
     sel,
@@ -191,5 +191,5 @@ it('Ghost table', () => {
   const ta = mm.tableActions(mm.ghostTable, GhostTA);
   const v = ta.t;
   assert.ok(mm.ghostTable instanceof mm.GhostTable);
-  eq(v.vTable, post);
+  eq(v.boundTable, post);
 });

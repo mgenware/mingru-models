@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { SQL } from '../core/sql';
-import { Table, Column, ColumnType } from '../core/core';
+import { Table, Column } from '../core/core';
 import { and } from '../sqlLangHelper';
 import { sql } from '../core/sqlHelper';
 
@@ -9,9 +9,6 @@ export interface ActionWithWhere {
   whereSQLValue: SQL | null;
   whereValidator: ((value: SQL) => void) | null;
 }
-
-// A placeholder column representing the ID column of a table.
-export const idColumn = new Column(new ColumnType('__id__'));
 
 export function where(action: ActionWithWhere, value: SQL) {
   throwIfFalsy(value, 'value');
@@ -26,13 +23,9 @@ export function where(action: ActionWithWhere, value: SQL) {
   action.whereSQLValue = value;
 }
 
-export function byID(action: ActionWithWhere, inputName?: string) {
-  where(action, idColumn.isEqualToInput(inputName));
-}
-
-export function by(action: ActionWithWhere, column: Column) {
+export function by(action: ActionWithWhere, column: Column, name?: string) {
   throwIfFalsy(column, 'column');
-  where(action, sql`${column.isEqualToInput()}`);
+  where(action, sql`${column.isEqualToInput(name)}`);
 }
 
 export function andBy(action: ActionWithWhere, column: Column) {

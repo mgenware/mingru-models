@@ -147,8 +147,8 @@ export class SelectAction extends CoreSelectAction {
     return this;
   }
 
-  validate(table: Table) {
-    super.validate(table);
+  validate(boundTable: Table) {
+    super.validate(boundTable);
 
     const { mode } = this;
     const selectCollection = mode === SelectActionMode.list || mode === SelectActionMode.page;

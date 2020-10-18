@@ -33,8 +33,6 @@ export function valueRef(name: string): ValueRef {
 }
 
 export class WrapAction extends Action {
-  isInline = false;
-
   constructor(public action: Action, public args: { [name: string]: WrapActionArgValue }) {
     super(ActionType.wrap);
     throwIfFalsy(action, 'action');
@@ -45,10 +43,10 @@ export class WrapAction extends Action {
     }
   }
 
-  validate(table: Table) {
-    super.validate(table);
+  validate(boundTable: Table) {
+    super.validate(boundTable);
 
     const { action } = this;
-    action.validate(table);
+    action.validate(this.__table || boundTable);
   }
 }
