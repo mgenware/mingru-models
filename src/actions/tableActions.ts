@@ -6,14 +6,19 @@ import * as defs from '../core/defs';
 import { SQLVariable } from '../core/sql';
 
 export class TableActions {
-  __table: Table | null = null;
-  __actions: Record<string, Action> = {};
+  #table!: Table;
+  get __table(): Table {
+    return this.#table;
+  }
 
-  mustGetTable(): Table {
-    if (!this.__table) {
-      throw new Error(`TableActions "${toTypeString(this)}" doesn't have a table`);
-    }
-    return this.__table;
+  #actions!: Readonly<Record<string, Action>>;
+  get __actions(): Readonly<Record<string, Action>> {
+    return this.#actions;
+  }
+
+  __configure(table: Table, actions: Readonly<Record<string, Action>>) {
+    this.#table = table;
+    this.#actions = actions;
   }
 }
 
@@ -177,7 +182,6 @@ export function tableActionsCore(
   throwIfFalsy(table, 'table');
 
   taObj = taObj || new TableActions();
-  taObj.__table = table;
   for (const [name, action] of Object.entries(actions)) {
     try {
       action.__configure(table, name);
@@ -185,11 +189,8 @@ export function tableActionsCore(
       err.message += ` [action "${name}"]`;
       throw err;
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (taObj as any)[name] = action;
   }
-  taObj.__actions = actions;
-
+  taObj.__configure(table, actions);
   return taObj;
 }
 

@@ -3,25 +3,31 @@ import { Table } from '../core/core';
 import { Action, ActionType } from './tableActions';
 
 export class ActionWithReturnValues {
-  constructor(public action: Action, public returnValues: { [name: string]: string }) {}
+  constructor(
+    public readonly action: Action,
+    public readonly returnValues: Readonly<Record<string, string>>,
+  ) {}
 }
 
 export type TransactionMemberTypes = TransactionMember | Action | ActionWithReturnValues;
 
 export class TransactionMember {
   constructor(
-    public action: Action,
-    public name?: string,
-    public returnValues?: { [name: string]: string },
+    public readonly action: Action,
+    public readonly name?: string,
+    public readonly returnValues?: Readonly<Record<string, string>>,
   ) {
     throwIfFalsy(action, 'action');
   }
 }
 
 export class TransactAction extends Action {
-  __returnValues?: string[];
+  #returnValues?: string[];
+  get returnValues(): ReadonlyArray<string> | undefined {
+    return this.#returnValues;
+  }
 
-  constructor(public members: TransactionMember[]) {
+  constructor(public readonly members: ReadonlyArray<TransactionMember>) {
     super(ActionType.transact);
     throwIfFalsy(members, 'members');
   }
@@ -38,7 +44,7 @@ export class TransactAction extends Action {
   setReturnValues(...values: string[]): this {
     throwIfFalsy(values, 'values');
 
-    this.__returnValues = values;
+    this.#returnValues = values;
     return this;
   }
 }

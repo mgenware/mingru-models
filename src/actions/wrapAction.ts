@@ -8,10 +8,10 @@ export type WrapActionArgValue = string | ValueRef;
 // Use this to reference an external from outer context.
 export class ValueRef {
   // Returns the first variable name if path contains property access.
-  firstName: string;
-  hasPropertyAccess: boolean;
+  readonly firstName: string;
+  readonly hasPropertyAccess: boolean;
 
-  constructor(public path: string) {
+  constructor(public readonly path: string) {
     const nameComponents = path.split('.');
     this.firstName = nameComponents[nameComponents.length - 1];
     if (nameComponents.length > 1) {
@@ -33,7 +33,10 @@ export function valueRef(name: string): ValueRef {
 }
 
 export class WrapAction extends Action {
-  constructor(public action: Action, public args: { [name: string]: WrapActionArgValue }) {
+  constructor(
+    public readonly action: Action,
+    public readonly args: Readonly<Record<string, WrapActionArgValue>>,
+  ) {
     super(ActionType.wrap);
     throwIfFalsy(action, 'action');
     throwIfFalsy(args, 'args');

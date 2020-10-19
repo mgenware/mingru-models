@@ -12,13 +12,13 @@ export type SelectActionColumns = Column | RawColumn;
 export type SelectActionColumnNames = SelectActionColumns | string;
 
 export class OrderByColumn {
-  constructor(public column: SelectActionColumnNames, public desc = false) {
+  constructor(public readonly column: SelectActionColumnNames, public readonly desc = false) {
     throwIfFalsy(column, 'column');
   }
 }
 
 export class OrderByColumnInput {
-  constructor(public columns: SelectActionColumnNames[]) {
+  constructor(public readonly columns: ReadonlyArray<SelectActionColumnNames>) {
     throwIfFalsy(columns, 'columns');
   }
 }
@@ -34,10 +34,26 @@ export enum SelectActionMode {
 }
 
 export class SelectAction extends CoreSelectAction {
-  havingSQLValue: SQL | null = null;
-  havingValidator: ((value: SQL) => void) | null = null;
-  orderByColumns: OrderByColumnType[] = [];
-  groupByColumns: string[] = [];
+  #havingSQLValue: SQL | null = null;
+  get havingSQLValue(): SQL | null {
+    return this.#havingSQLValue;
+  }
+
+  #havingValidator: ((value: SQL) => void) | null = null;
+  get havingValidator(): ((value: SQL) => void) | null {
+    return this.#havingValidator;
+  }
+
+  #orderByColumns: OrderByColumnType[] = [];
+  get orderByColumns(): ReadonlyArray<OrderByColumnType> {
+    return this.#orderByColumns;
+  }
+
+  #groupByColumns: string[] = [];
+  get groupByColumns(): ReadonlyArray<string> {
+    return this.#groupByColumns;
+  }
+
   limitValue: SQLVariable | number | undefined;
   offsetValue: SQLVariable | number | undefined;
   pagination = false;
@@ -47,7 +63,10 @@ export class SelectAction extends CoreSelectAction {
   // Set by `union` or `unionAll`.
   nextSelectAction: SelectAction | null = null;
 
-  constructor(public columns: SelectActionColumns[], public mode: SelectActionMode) {
+  constructor(
+    public readonly columns: SelectActionColumns[],
+    public readonly mode: SelectActionMode,
+  ) {
     super(ActionType.select);
 
     // Validate individual columns.
