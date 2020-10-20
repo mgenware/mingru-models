@@ -176,12 +176,12 @@ function enumerateActions<T extends TableActions>(
 
 export function tableActionsCore(
   table: Table,
-  tableActions: TableActions | null,
+  tableActionsObj: TableActions | null,
   actions: Record<string, Action>,
 ): TableActions {
   throwIfFalsy(table, 'table');
 
-  tableActions = tableActions || new TableActions();
+  tableActionsObj = tableActionsObj || new TableActions();
   for (const [name, action] of Object.entries(actions)) {
     try {
       action.__configure(table, name);
@@ -190,8 +190,8 @@ export function tableActionsCore(
       throw err;
     }
   }
-  tableActions.__configure(table, actions);
-  return tableActions;
+  tableActionsObj.__configure(table, actions);
+  return tableActionsObj;
 }
 
 export function tableActions<T extends Table, A extends TableActions>(
