@@ -54,14 +54,37 @@ export class SelectAction extends CoreSelectAction {
     return this.#groupByColumns;
   }
 
-  limitValue: SQLVariable | number | undefined;
-  offsetValue: SQLVariable | number | undefined;
-  pagination = false;
-  distinctFlag = false;
+  #limitValue: SQLVariable | number | undefined;
+  get limitValue(): SQLVariable | number | undefined {
+    return this.#limitValue;
+  }
+
+  #offsetValue: SQLVariable | number | undefined;
+  get offsetValue(): SQLVariable | number | undefined {
+    return this.#offsetValue;
+  }
+
+  #pagination = false;
+  get pagination(): boolean {
+    return this.#pagination;
+  }
+
+  #distinctFlag = false;
+  get distinctFlag(): boolean {
+    return this.#distinctFlag;
+  }
+
   // Set by `unionAll`.
-  unionAllFlag = false;
+  #unionAllFlag = false;
+  get unionAllFlag(): boolean {
+    return this.#unionAllFlag;
+  }
+
   // Set by `union` or `unionAll`.
-  nextSelectAction: SelectAction | null = null;
+  #nextSelectAction: SelectAction | null = null;
+  get nextSelectAction(): SelectAction | null {
+    return this.#nextSelectAction;
+  }
 
   constructor(
     public readonly columns: SelectActionColumns[],

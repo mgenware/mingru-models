@@ -4,9 +4,9 @@ import { SQL } from '../core/sql';
 import { ColumnAttributes } from '../attrs';
 
 export class RawColumn {
-  core: Column | SQL;
-  selectedName: string | null;
-  type: ColumnType | null;
+  readonly core: Column | SQL;
+  readonly selectedName: string | null;
+  readonly type: ColumnType | null;
 
   __attrs: { [name: string]: unknown } = {};
 

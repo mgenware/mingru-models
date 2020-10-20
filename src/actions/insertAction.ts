@@ -3,7 +3,10 @@ import { CoreUpdateAction } from './coreUpdateAction';
 import { Table } from '../core/core';
 
 export class InsertAction extends CoreUpdateAction {
-  constructor(public ensureOneRowAffected: boolean, public allowUnsetColumns = false) {
+  constructor(
+    public readonly ensureOneRowAffected: boolean,
+    public readonly allowUnsetColumns = false,
+  ) {
     super(ActionType.insert);
   }
 

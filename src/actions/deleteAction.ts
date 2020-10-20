@@ -4,9 +4,9 @@ import { Table } from '../core/core';
 
 export class DeleteAction extends CoreSelectAction {
   constructor(
-    public allowNoWhere: boolean,
-    // Make sure only one row is affected, used by `updateOne`.
-    public ensureOneRowAffected: boolean,
+    public readonly allowNoWhere: boolean,
+    // Make sure only one row is affected, used by `deleteOne`.
+    public readonly ensureOneRowAffected: boolean,
   ) {
     super(ActionType.delete);
   }
