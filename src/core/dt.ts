@@ -2,27 +2,27 @@
 const Prefix = 'SQL.';
 
 export class DataTypes {
-  char = Prefix + 'CHAR';
-  varChar = Prefix + 'VARCHAR';
-  binary = Prefix + 'BINARY';
-  varBinary = Prefix + 'VARBINARY';
+  readonly char = Prefix + 'CHAR';
+  readonly varChar = Prefix + 'VARCHAR';
+  readonly binary = Prefix + 'BINARY';
+  readonly varBinary = Prefix + 'VARBINARY';
 
-  int = Prefix + 'INT';
-  bigInt = Prefix + 'BIGINT';
-  smallInt = Prefix + 'SMALLINT';
-  tinyInt = Prefix + 'TINYINT';
-  bool = Prefix + 'BOOL';
+  readonly int = Prefix + 'INT';
+  readonly bigInt = Prefix + 'BIGINT';
+  readonly smallInt = Prefix + 'SMALLINT';
+  readonly tinyInt = Prefix + 'TINYINT';
+  readonly bool = Prefix + 'BOOL';
 
-  text = Prefix + 'TEXT';
-  float = Prefix + 'FLOAT';
-  double = Prefix + 'DOUBLE';
+  readonly text = Prefix + 'TEXT';
+  readonly float = Prefix + 'FLOAT';
+  readonly double = Prefix + 'DOUBLE';
 
-  datetime = Prefix + 'DATETIME';
-  date = Prefix + 'DATE';
-  time = Prefix + 'TIME';
-  timestamp = Prefix + 'TIMESTAMP';
+  readonly datetime = Prefix + 'DATETIME';
+  readonly date = Prefix + 'DATE';
+  readonly time = Prefix + 'TIME';
+  readonly timestamp = Prefix + 'TIMESTAMP';
 
-  decimal = 'DECIMAL';
+  readonly decimal = 'DECIMAL';
 
   private integerSet = new Set<string>([this.int, this.bigInt, this.smallInt, this.tinyInt]);
 

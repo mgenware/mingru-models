@@ -162,9 +162,10 @@ it('__actions and props (taCore)', () => {
   eq(ta.__table, user);
   eq(ta instanceof mm.TableActions, true);
   assert.deepEqual(ta.__actions, actions);
-  for (const [name, action] of Object.entries(ta.__actions)) {
+  // `tableActionsCore` never add property into table actions.
+  for (const [name] of Object.entries(ta.__actions)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    eq((ta as any)[name], action);
+    eq((ta as any)[name], undefined);
   }
 });
 

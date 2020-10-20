@@ -8,15 +8,10 @@ import { sql } from '../core/sqlHelper';
 import SQLConvertible from '../core/sqlConvertible';
 
 export class UpdateAction extends CoreUpdateAction {
-  #whereSQLValue: SQL | null = null;
-  get whereSQLValue(): SQL | null {
-    return this.#whereSQLValue;
-  }
-
-  #whereValidator: ((value: SQL) => void) | null = null;
-  get whereValidator(): ((value: SQL) => void) | null {
-    return this.#whereValidator;
-  }
+  // These two properties are members of `ActionWithWhere`,
+  // thus have to be publicly writable.
+  whereSQLValue: SQL | null = null;
+  whereValidator: ((value: SQL) => void) | null = null;
 
   constructor(
     public readonly allowEmptyWhere: boolean,

@@ -143,5 +143,5 @@ it('Declare return values', () => {
   assert.deepEqual(v.members[3].returnValues, {
     [mm.ReturnValues.insertedID]: 'i',
   });
-  assert.deepEqual(v.__returnValues, ['_b', '_a']);
+  assert.deepEqual(v.returnValues, ['_b', '_a']);
 });

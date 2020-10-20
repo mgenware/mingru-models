@@ -19,10 +19,10 @@ Action.prototype.wrap = function (args: { [name: string]: WrapActionArgValue }):
   // e.g. `mm.select().wrap().wrap().wrap()`.
   if (!this.__name) {
     if (this instanceof WrapAction) {
-      this.args = {
+      this.__setArgs({
         ...this.args,
         ...args,
-      };
+      });
       return this;
     }
   }

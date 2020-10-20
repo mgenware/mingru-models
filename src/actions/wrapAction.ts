@@ -33,10 +33,17 @@ export function valueRef(name: string): ValueRef {
 }
 
 export class WrapAction extends Action {
-  constructor(
-    public readonly action: Action,
-    public readonly args: Readonly<Record<string, WrapActionArgValue>>,
-  ) {
+  #args: Readonly<Record<string, WrapActionArgValue>>;
+  get args(): Readonly<Record<string, WrapActionArgValue>> {
+    return this.#args;
+  }
+
+  // Called by table action extentions.
+  __setArgs(args: Readonly<Record<string, WrapActionArgValue>>) {
+    this.#args = args;
+  }
+
+  constructor(public readonly action: Action, args: Readonly<Record<string, WrapActionArgValue>>) {
     super(ActionType.wrap);
     throwIfFalsy(action, 'action');
     throwIfFalsy(args, 'args');
@@ -44,6 +51,7 @@ export class WrapAction extends Action {
     if (Object.entries(args).length === 0) {
       throw new Error('"args" cannot be empty');
     }
+    this.#args = args;
   }
 
   validate(groupTable: Table) {

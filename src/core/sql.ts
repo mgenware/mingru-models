@@ -9,13 +9,13 @@ export interface SQLVariableType {
 }
 
 export class SQLVariable {
-  isArray: boolean;
+  readonly isArray: boolean;
 
   constructor(
-    public type: SQLVariableType | Column | ColumnType,
-    public name?: string,
+    public readonly type: SQLVariableType | Column | ColumnType,
+    public readonly name?: string,
     isArray?: boolean,
-    public column?: Column | undefined,
+    public readonly column?: Column | undefined,
   ) {
     throwIfFalsy(type, 'type');
     this.isArray = isArray || false;
@@ -45,7 +45,7 @@ export enum SQLElementType {
 }
 
 export class SQLElement {
-  constructor(public type: SQLElementType, public value: unknown) {}
+  constructor(public readonly type: SQLElementType, public readonly value: unknown) {}
 
   toString(): string {
     return `E(${this.value}, type = ${this.type})`;
@@ -53,7 +53,7 @@ export class SQLElement {
 }
 
 export class SQL {
-  constructor(public elements: SQLElement[]) {}
+  constructor(public elements: ReadonlyArray<SQLElement>) {}
 
   toString(): string {
     return `SQL(${this.elements.map((e) => e.toString()).join(', ')})`;

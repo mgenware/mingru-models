@@ -30,12 +30,19 @@ export enum SQLCallType {
 }
 
 export class SQLCall {
+  #returnType: ColumnType | number;
+  get returnType(): ColumnType | number {
+    return this.#returnType;
+  }
+
   constructor(
-    public type: SQLCallType,
+    public readonly type: SQLCallType,
     // A number value indicates the return value is inferred from the index of a params.
-    public returnType: ColumnType | number,
-    public params: SQL[],
-  ) {}
+    returnType: ColumnType | number,
+    public readonly params: ReadonlyArray<SQL>,
+  ) {
+    this.#returnType = returnType;
+  }
 
   toString(): string {
     let paramsDesc = '';
@@ -46,7 +53,7 @@ export class SQLCall {
   }
 
   setReturnType(type: ColumnType): this {
-    this.returnType = type;
+    this.#returnType = type;
     return this;
   }
 }

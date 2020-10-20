@@ -109,18 +109,18 @@ export class SelectAction extends CoreSelectAction {
 
   orderByAsc(column: SelectActionColumnNames): this {
     throwIfFalsy(column, 'column');
-    this.orderByColumns.push(new OrderByColumn(column, false));
+    this.#orderByColumns.push(new OrderByColumn(column, false));
     return this;
   }
 
   orderByDesc(column: SelectActionColumnNames): this {
     throwIfFalsy(column, 'column');
-    this.orderByColumns.push(new OrderByColumn(column, true));
+    this.#orderByColumns.push(new OrderByColumn(column, true));
     return this;
   }
 
   orderByInput(...columns: SelectActionColumnNames[]): this {
-    this.orderByColumns.push(new OrderByColumnInput(columns));
+    this.#orderByColumns.push(new OrderByColumnInput(columns));
     return this;
   }
 
@@ -138,7 +138,7 @@ export class SelectAction extends CoreSelectAction {
       } else {
         name = column;
       }
-      this.groupByColumns.push(name);
+      this.#groupByColumns.push(name);
     }
     return this;
   }
@@ -149,7 +149,7 @@ export class SelectAction extends CoreSelectAction {
         `'paginate' can only be used when mode = 'SelectActionMode.list', current mode is ${this.mode}`,
       );
     }
-    this.pagination = true;
+    this.#pagination = true;
     return this;
   }
 
@@ -175,7 +175,7 @@ export class SelectAction extends CoreSelectAction {
     if (this.havingSQLValue) {
       throw new Error('`having` is called twice');
     }
-    this.havingSQLValue = value;
+    this.#havingSQLValue = value;
     return this;
   }
 
@@ -185,7 +185,7 @@ export class SelectAction extends CoreSelectAction {
   }
 
   distinct(): this {
-    this.distinctFlag = true;
+    this.#distinctFlag = true;
     return this;
   }
 
@@ -209,8 +209,8 @@ export class SelectAction extends CoreSelectAction {
 
   private unionCore(next: SelectAction, all: boolean): this {
     throwIfFalsy(next, 'next');
-    this.nextSelectAction = next;
-    this.unionAllFlag = all;
+    this.#nextSelectAction = next;
+    this.#unionAllFlag = all;
     return this;
   }
 
@@ -218,7 +218,7 @@ export class SelectAction extends CoreSelectAction {
     if (this.limitValue !== undefined) {
       throw new Error(`LIMIT has been set to ${this.limitValue}`);
     }
-    this.limitValue = limit;
+    this.#limitValue = limit;
   }
 
   private setOffsetValue(offset: SQLVariable | number) {
@@ -228,6 +228,6 @@ export class SelectAction extends CoreSelectAction {
     if (this.offsetValue !== undefined) {
       throw new Error(`OFFSET has been set to ${this.offsetValue}`);
     }
-    this.offsetValue = offset;
+    this.#offsetValue = offset;
   }
 }
