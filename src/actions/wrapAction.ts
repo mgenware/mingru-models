@@ -38,7 +38,7 @@ export class WrapAction extends Action {
     return this.#args;
   }
 
-  // Called by table action extentions.
+  // Called by table action extensions.
   __setArgs(args: Readonly<Record<string, WrapActionArgValue>>) {
     this.#args = args;
   }
