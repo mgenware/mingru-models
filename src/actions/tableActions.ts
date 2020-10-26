@@ -5,6 +5,10 @@ import { Table } from '../core/core';
 import * as defs from '../core/defs';
 import { SQLVariable } from '../core/sql';
 
+export interface TableActionOptions {
+  unsafeTableInput?: boolean;
+}
+
 export class TableActions {
   #table!: Table;
   get __table(): Table {
@@ -16,9 +20,19 @@ export class TableActions {
     return this.#actions;
   }
 
-  __configure(table: Table, actions: Readonly<Record<string, Action>>) {
+  #options: TableActionOptions = {};
+  get __options(): TableActionOptions | undefined {
+    return this.#options;
+  }
+
+  __configure(
+    table: Table,
+    actions: Readonly<Record<string, Action>>,
+    options: TableActionOptions | undefined,
+  ) {
     this.#table = table;
     this.#actions = actions;
+    this.#options = options ?? {};
   }
 }
 
@@ -178,6 +192,7 @@ export function tableActionsCore(
   table: Table,
   tableActionsObj: TableActions | null,
   actions: Record<string, Action>,
+  options: TableActionOptions | undefined,
 ): TableActions {
   throwIfFalsy(table, 'table');
 
@@ -190,13 +205,14 @@ export function tableActionsCore(
       throw err;
     }
   }
-  tableActionsObj.__configure(table, actions);
+  tableActionsObj.__configure(table, actions, options);
   return tableActionsObj;
 }
 
 export function tableActions<T extends Table, A extends TableActions>(
   table: T,
   TACls: new () => A,
+  options?: TableActionOptions,
 ): A {
   throwIfFalsy(table, 'table');
 
@@ -206,7 +222,7 @@ export function tableActions<T extends Table, A extends TableActions>(
     enumerateActions(taObj, (action, name) => {
       actions[name] = action;
     });
-    return tableActionsCore(table, taObj, actions) as A;
+    return tableActionsCore(table, taObj, actions, options) as A;
   } catch (err) {
     err.message += ` [table "${table}"]`;
     throw err;

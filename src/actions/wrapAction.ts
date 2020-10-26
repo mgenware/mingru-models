@@ -3,7 +3,7 @@ import camelCase from 'lodash.camelcase';
 import { Action, ActionType } from './tableActions';
 import { Table } from '../core/core';
 
-export type WrapActionArgValue = string | ValueRef;
+export type WrapActionArgValue = string | ValueRef | Table;
 
 // Use this to reference an external from outer context.
 export class ValueRef {

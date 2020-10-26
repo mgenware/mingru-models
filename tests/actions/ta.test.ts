@@ -157,7 +157,7 @@ it('__actions and props (taCore)', () => {
     del,
     sel,
   };
-  const ta = mm.tableActionsCore(user, null, actions);
+  const ta = mm.tableActionsCore(user, null, actions, undefined);
 
   eq(ta.__table, user);
   eq(ta instanceof mm.TableActions, true);
