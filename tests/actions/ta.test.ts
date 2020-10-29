@@ -37,6 +37,7 @@ it('enumerateActions', () => {
 
     sel = mm.select(user.id);
     nonAction = 10;
+    emptyAction = mm.emptyAction;
   }
   const ta = mm.tableActions(user, UserTA);
   assert.deepEqual(ta.__actions, {

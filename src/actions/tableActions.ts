@@ -161,6 +161,9 @@ export class Action {
   }
 }
 
+// An empty action is ignored in `enumerateActions`.
+export const emptyAction = new Action(ActionType.select);
+
 function enumerateActions<T extends TableActions>(
   ta: T,
   cb: (action: Action, prop: string) => void,
@@ -174,7 +177,8 @@ function enumerateActions<T extends TableActions>(
     if (name.startsWith(defs.InternalPropPrefix)) {
       continue;
     }
-    if (value instanceof Action) {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    if (value instanceof Action && value !== emptyAction) {
       cb(value, name);
     }
   }
