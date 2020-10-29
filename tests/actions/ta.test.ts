@@ -36,6 +36,7 @@ it('enumerateActions', () => {
       .set(user.follower_count, mm.sql`${user.follower_count} + 1`);
 
     sel = mm.select(user.id);
+    nonAction = 10;
   }
   const ta = mm.tableActions(user, UserTA);
   assert.deepEqual(ta.__actions, {

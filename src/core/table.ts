@@ -8,18 +8,16 @@ import Utils from '../lib/utils';
 function enumerateColumns(tableObject: Table, cb: (column: Column, prop: string) => void): void {
   throwIfFalsy(tableObject, 'tableObject');
 
-  const entries = Object.entries(tableObject);
-  for (const pair of entries) {
-    const name = pair[0] as string;
-    const value = pair[1];
-    // Ignore internal props and functions
-    if (name.startsWith(defs.InternalPropPrefix) || typeof value === 'function') {
+  for (const pair of Object.entries(tableObject)) {
+    const name = pair[0];
+    const value = pair[1] as unknown;
+    // Ignore internal props and functions.
+    if (name.startsWith(defs.InternalPropPrefix)) {
       continue;
     }
-    if (value instanceof Column === false) {
-      throw new Error(`The property "${name}" is not a Column, got "${toTypeString(value)}"`);
+    if (value instanceof Column) {
+      cb(value, name);
     }
-    cb(value, name);
   }
 }
 

@@ -167,24 +167,16 @@ function enumerateActions<T extends TableActions>(
 ) {
   throwIfFalsy(ta, 'ta');
 
-  const entries = Object.entries(ta);
-  for (const pair of entries) {
-    const name = pair[0] as string;
-    const value = pair[1];
+  for (const pair of Object.entries(ta)) {
+    const name = pair[0];
+    const value = pair[1] as unknown;
     // Ignore internal props and functions.
-    if (name.startsWith(defs.InternalPropPrefix) || typeof value === 'function') {
+    if (name.startsWith(defs.InternalPropPrefix)) {
       continue;
     }
-    if (value instanceof Action === false) {
-      let valueDesc = '';
-      try {
-        valueDesc = toTypeString(value);
-      } catch (err) {
-        valueDesc = `Error getting object description: ${err.message}`;
-      }
-      throw new Error(`The property "${name}" is not an Action, got "${valueDesc}"`);
+    if (value instanceof Action) {
+      cb(value, name);
     }
-    cb(value, name);
   }
 }
 
