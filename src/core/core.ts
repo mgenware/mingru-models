@@ -103,6 +103,11 @@ export class Column {
     return this.#dbName;
   }
 
+  #modelName: string | null = null;
+  get __modelName(): string | null {
+    return this.#modelName;
+  }
+
   #table: Table | JoinedTable | null = null;
   get __table(): Table | JoinedTable | null {
     return this.#table;
@@ -186,6 +191,13 @@ export class Column {
     throwIfFalsy(name, 'name');
     this.checkMutability();
     this.#dbName = name;
+    return this;
+  }
+
+  setModelName(name: string): this {
+    throwIfFalsy(name, 'name');
+    this.checkMutability();
+    this.#modelName = name;
     return this;
   }
 

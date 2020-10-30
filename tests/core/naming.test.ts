@@ -10,7 +10,7 @@ class ABCTable extends mm.Table {
   statusID = mm.int().setDBName('customName');
   uid1 = user.id;
   uid2 = user.id;
-  uid3 = mm.fk(user.id).setDBName('UID3');
+  uid3 = mm.fk(user.id).setDBName('UID3').setModelName('ModelNAME');
 }
 
 class DEFTable extends mm.Table {
@@ -43,5 +43,6 @@ it('Rename a FK', () => {
   eq(abcTable.uid3.__name, 'uid_3');
   eq(abcTable.uid3.__dbName, 'UID3');
   eq(abcTable.uid3.getDBName(), 'UID3');
+  eq(abcTable.uid3.__modelName, 'ModelNAME');
   eq(abcTable.uid3.toString(), 'Column(uid_3|UID3, Table(abc_table))');
 });
