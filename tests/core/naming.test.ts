@@ -34,15 +34,15 @@ it('Table name and getDBName', () => {
 });
 
 it('Rename a FK', () => {
-  eq(abcTable.uid1.__name, 'uid_1');
+  eq(abcTable.uid1.__name, 'uid1');
   eq(abcTable.uid1.__dbName, null);
-  eq(abcTable.uid1.getDBName(), 'uid_1');
-  eq(abcTable.uid2.__name, 'uid_2');
+  eq(abcTable.uid1.getDBName(), 'uid1');
+  eq(abcTable.uid2.__name, 'uid2');
   eq(abcTable.uid2.__dbName, null);
-  eq(abcTable.uid2.getDBName(), 'uid_2');
-  eq(abcTable.uid3.__name, 'uid_3');
+  eq(abcTable.uid2.getDBName(), 'uid2');
+  eq(abcTable.uid3.__name, 'uid3');
   eq(abcTable.uid3.__dbName, 'UID3');
   eq(abcTable.uid3.getDBName(), 'UID3');
   eq(abcTable.uid3.__modelName, 'ModelNAME');
-  eq(abcTable.uid3.toString(), 'Column(uid_3|UID3, Table(abc_table))');
+  eq(abcTable.uid3.toString(), 'Column(uid3|UID3, Table(abc_table))');
 });

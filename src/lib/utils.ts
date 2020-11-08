@@ -1,5 +1,5 @@
-import snakeCase from 'lodash.snakecase';
-import camelCase from 'lodash.camelcase';
+import snakeCase from 'decamelize';
+import camelCase from 'camelcase';
 
 export default class Utils {
   static capitalizeFirstLetter(s: string): string {
@@ -40,11 +40,13 @@ export default class Utils {
   }
 
   static toCamelCase(s: string): string {
-    return Utils.makeTrailingIDAllCaps(camelCase(s));
+    return Utils.makeTrailingIDAllCaps(camelCase(s, { preserveConsecutiveUppercase: true }));
   }
 
   static toPascalCase(s: string): string {
-    const res = Utils.capitalizeFirstLetter(Utils.toCamelCase(s));
+    const res = Utils.makeTrailingIDAllCaps(
+      camelCase(s, { preserveConsecutiveUppercase: true, pascalCase: true }),
+    );
     if (res === 'Id') {
       return 'ID';
     }

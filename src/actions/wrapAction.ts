@@ -1,7 +1,7 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import camelCase from 'lodash.camelcase';
 import { Action, ActionType } from './tableActions';
 import { Table } from '../core/core';
+import Utils from '../lib/utils';
 
 export type WrapActionArgValue = string | ValueRef | Table;
 
@@ -16,7 +16,7 @@ export class ValueRef {
     this.firstName = nameComponents[nameComponents.length - 1];
     if (nameComponents.length > 1) {
       // Use lowercase name for property access input.
-      this.firstName = camelCase(nameComponents[0]);
+      this.firstName = Utils.toCamelCase(nameComponents[0]);
       this.hasPropertyAccess = true;
     } else {
       this.hasPropertyAccess = false;
