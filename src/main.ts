@@ -26,7 +26,7 @@ export * from './actions/wrapAction';
 export * from './actions/transactAction';
 export * from './actions/rawColumn';
 export * from './actions/rawColumnBuilder';
-export { default as utils } from './lib/utils';
+export * as utils from './lib/utils';
 
 // Extensions
 import './core/columnSQLExtensions';

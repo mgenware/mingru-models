@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import toTypeString from 'to-type-string';
-import utils from '../lib/utils';
+import * as utils from '../lib/utils';
 
 export class ColumnType {
   types: string[];

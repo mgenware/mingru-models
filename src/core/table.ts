@@ -3,7 +3,7 @@ import toTypeString from 'to-type-string';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table, Column, JoinedTable } from './core';
 import * as defs from './defs';
-import Utils from '../lib/utils';
+import { toSnakeCase } from '../lib/utils';
 
 function enumerateColumns(tableObject: Table, cb: (column: Column, prop: string) => void): void {
   throwIfFalsy(tableObject, 'tableObject');
@@ -31,7 +31,7 @@ export function tableCore(
 
   try {
     tableObj = tableObj || new Table();
-    tableName = Utils.toSnakeCase(tableName);
+    tableName = toSnakeCase(tableName);
     dbName = dbName || null;
     const pks: Column[] = [];
     const aiPKs: Column[] = [];
@@ -61,7 +61,7 @@ export function tableCore(
           columnToAdd = col;
         }
 
-        columnToAdd.__configure(Utils.toSnakeCase(propName), tableObj);
+        columnToAdd.__configure(toSnakeCase(propName), tableObj);
         if (columnToAdd.__type.pk) {
           pks.push(col);
           if (columnToAdd.__type.autoIncrement) {
