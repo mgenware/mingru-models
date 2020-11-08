@@ -39,19 +39,19 @@ export class Column {
 
   static newForeignColumn(
     srcColumn: Column,
-    table: Table | null, // can be null, used by mm.fk which doesn't have a table param
+    table: Table | null, // can be null, used by `mm.fk` which doesn't have a table param.
   ): Column {
     throwIfFalsy(srcColumn, 'srcColumn');
 
-    const copied = Column.copyFrom(srcColumn, table, null);
+    const copied = Column.copyFrom(srcColumn, table, false);
     copied.#foreignColumn = srcColumn;
-    // For foreign column, `__name` is reset to null
+    // For foreign columns, `__name` is reset to null.
     copied.#name = null;
     return copied;
   }
 
   static newJoinedColumn(mirroredColumn: Column, table: JoinedTable): Column {
-    const copied = Column.copyFrom(mirroredColumn, table, mirroredColumn.__name);
+    const copied = Column.copyFrom(mirroredColumn, table, true);
     copied.#mirroredColumn = mirroredColumn;
     return copied;
   }
@@ -59,7 +59,7 @@ export class Column {
   private static copyFrom(
     column: Column,
     newTable: Table | JoinedTable | null,
-    newName: string | null,
+    copyNames: boolean,
   ): Column {
     const res = new Column(column.__type);
     // Copy values
@@ -67,12 +67,14 @@ export class Column {
     if (newTable) {
       res.#table = newTable;
     }
-    if (newName) {
-      res.#name = newName;
+    if (copyNames) {
+      res.#name = column.#name;
+      res.#modelName = column.#modelName;
+      res.#dbName = column.#dbName;
     }
     res.#foreignColumn = column.__foreignColumn;
     res.#mirroredColumn = column.__mirroredColumn;
-    // Reset value
+    // Reset values.
     res.__type.pk = false;
     res.__type.autoIncrement = false;
     return res;
