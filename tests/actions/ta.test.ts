@@ -93,17 +93,14 @@ it('Action.onInit (from)', () => {
 it('Action.attr/attrs', () => {
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(
-        mm
-          .sel(mm.sql`1`, 'col')
-          .attrs({ a: true })
-          .attr('c', 4)
-          .attrs({ b: 's' }),
-      );
+      t = mm
+        .select(mm.sel(mm.sql`1`, 'col'))
+        .attrs({ a: true })
+        .attr('c', 4)
+        .attrs({ b: 's' });
     }
     const table = mm.tableActions(user, UserTA);
-    const t = table.t as mm.SelectAction;
-    assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
+    assert.deepStrictEqual(table.t.__attrs, {
       a: true,
       b: 's',
       c: 4,
@@ -111,22 +108,37 @@ it('Action.attr/attrs', () => {
   }
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(
-        mm
-          .sel(mm.sql`1`, 'col')
-          .attr('a', true)
-          .attrs({ c: 4 })
-          .attrs({ b: 's', c: 5 }),
-      );
+      t = mm
+        .select(mm.sel(mm.sql`1`, 'col'))
+        .attr('a', true)
+        .attrs({ c: 4 })
+        .attrs({ b: 's', c: 5 });
     }
     const table = mm.tableActions(user, UserTA);
-    const t = table.t as mm.SelectAction;
-    assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
+    assert.deepStrictEqual(table.t.__attrs, {
       a: true,
       b: 's',
       c: 5,
     });
   }
+});
+
+it('Action.privateAttr', () => {
+  class UserTA extends mm.TableActions {
+    t = mm
+      .select(mm.sel(mm.sql`1`, 'col'))
+      .attrs({ a: true })
+      .attr('c', 4)
+      .attrs({ b: 's' })
+      .privateAttr();
+  }
+  const table = mm.tableActions(user, UserTA);
+  assert.deepStrictEqual(table.t.__attrs, {
+    a: true,
+    b: 's',
+    c: 4,
+    _is_private: true,
+  });
 });
 
 it('__actions and props', () => {

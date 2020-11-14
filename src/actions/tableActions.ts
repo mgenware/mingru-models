@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import toTypeString from 'to-type-string';
+import { ColumnAttributes } from '../attrs';
 import { Table } from '../core/core';
 import * as defs from '../core/defs';
 import { SQLVariable } from '../core/sql';
@@ -125,6 +126,10 @@ export class Action {
   attr(name: string, value: unknown): this {
     this.attrs({ [name]: value });
     return this;
+  }
+
+  privateAttr(): this {
+    return this.attr(ColumnAttributes.isPrivate, true);
   }
 
   toString(): string {
