@@ -11,6 +11,11 @@ import { sql } from '../core/sqlHelper';
 export type SelectActionColumns = Column | RawColumn;
 export type SelectActionColumnNames = SelectActionColumns | string;
 
+export interface UnionTuple {
+  action: SelectAction;
+  unionAll: boolean;
+}
+
 export class OrderByColumn {
   constructor(public readonly column: SelectActionColumnNames, public readonly desc = false) {
     throwIfFalsy(column, 'column');
@@ -74,16 +79,10 @@ export class SelectAction extends CoreSelectAction {
     return this.#distinctFlag;
   }
 
-  // Set by `unionAll`.
-  #unionAllFlag = false;
-  get unionAllFlag(): boolean {
-    return this.#unionAllFlag;
-  }
-
   // Set by `union` or `unionAll`.
-  #nextSelectAction: SelectAction | null = null;
-  get nextSelectAction(): SelectAction | null {
-    return this.#nextSelectAction;
+  #unions: UnionTuple[] = [];
+  get unions(): ReadonlyArray<UnionTuple> {
+    return this.#unions;
   }
 
   constructor(
@@ -207,10 +206,9 @@ export class SelectAction extends CoreSelectAction {
     return this.unionCore(next, true);
   }
 
-  private unionCore(next: SelectAction, all: boolean): this {
-    throwIfFalsy(next, 'next');
-    this.#nextSelectAction = next;
-    this.#unionAllFlag = all;
+  private unionCore(action: SelectAction, unionAll: boolean): this {
+    throwIfFalsy(action, 'action');
+    this.#unions.push({ action, unionAll });
     return this;
   }
 

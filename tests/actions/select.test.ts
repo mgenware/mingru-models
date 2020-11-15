@@ -443,22 +443,14 @@ it('UNION', () => {
   const t2 = mm.select();
   const t3 = mm.select();
   class UserTA extends mm.TableActions {
-    t1 = mm.select().union(t2.unionAll(t3));
+    t1 = mm.select().union(t2).unionAll(t3);
   }
   const ta = mm.tableActions(user, UserTA);
   const { t1 } = ta;
-  eq(t1.unionAllFlag, false);
-  eq(t1.nextSelectAction, t2);
-  eq(t1.__name, 't1');
-  eq(t1.__groupTable, user);
-  eq(t2.unionAllFlag, true);
-  eq(t2.nextSelectAction, t3);
-  eq(t2.__name, null);
-  eq(t2.__groupTable, null);
-  eq(t3.unionAllFlag, false);
-  eq(t3.nextSelectAction, null);
-  eq(t3.__name, null);
-  eq(t3.__groupTable, null);
+  assert.deepStrictEqual(t1.unions, [
+    { action: t2, unionAll: false },
+    { action: t3, unionAll: true },
+  ]);
 });
 
 it('UNION on a ghost table', () => {
@@ -468,8 +460,7 @@ it('UNION on a ghost table', () => {
   }
   const ta = mm.tableActions(mm.ghostTable, UserTA);
   const { t1 } = ta;
-  eq(t1.unionAllFlag, false);
-  eq(t1.nextSelectAction, t2);
+  assert.deepStrictEqual(t1.unions, [{ action: t2, unionAll: false }]);
   eq(t1.__name, 't1');
   eq(t1.__groupTable, mm.ghostTable);
   eq(t1.__sqlTable, null);
