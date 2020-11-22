@@ -414,7 +414,7 @@ export class Table {
     return this.__dbName || this.__name;
   }
 
-  inputName(): string {
+  getInputName(): string {
     return utils.toCamelCase(this.__name);
   }
 
