@@ -275,7 +275,7 @@ export class Column {
     if (table instanceof Table) {
       return `${table.getDBName()}.${dbName}`;
     }
-    return table.keyPath;
+    return `${table.keyPath}.${dbName}`;
   }
 
   toString(): string {

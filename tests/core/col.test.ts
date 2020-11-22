@@ -252,7 +252,7 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
 it('Column.getPath', () => {
   eq(user.id.getPath(), 'user.id');
   eq(employee.id.getPath(), 'employees.emp_no');
-  eq(post.user_id.join(user).name.getPath(), '(J|0|post|user)[user_id|id]');
+  eq(post.user_id.join(user).name.getPath(), '(J|0|post|user)[user_id|id].name');
   eq(
     post.title
       .join(user, user.name, [
@@ -260,6 +260,6 @@ it('Column.getPath', () => {
         [post.snake_case_user_id, user.id],
       ])
       .follower_count.getPath(),
-    '(J|0|post|user)[title|name][user_id|id][snake_case_user_id|id]',
+    '(J|0|post|user)[title|name][user_id|id][snake_case_user_id|id].follower_count',
   );
 });

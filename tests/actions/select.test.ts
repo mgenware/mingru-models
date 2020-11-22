@@ -327,6 +327,15 @@ it('Pagination', () => {
   eq(ta.t.pagination, true);
 });
 
+it('selectPage', () => {
+  class UserTA extends mm.TableActions {
+    t = mm.selectPage(user.name).orderByAsc(user.name);
+  }
+  const ta = mm.tableActions(user, UserTA);
+  eq(ta.t.mode, mm.SelectActionMode.page);
+  eq(ta.t.pagination, false);
+});
+
 it('LIMIT', () => {
   class UserTA extends mm.TableActions {
     t = mm.selectRows(user.name).orderByAsc(user.name).limit(20);
