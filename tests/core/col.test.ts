@@ -4,6 +4,7 @@ import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
 import cmt from '../models/postCmt';
+import employee from '../models/employee';
 
 const eq = assert.equal;
 
@@ -246,4 +247,19 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
       [mm.ColumnAttributes.isPrivate]: true,
     });
   }
+});
+
+it('Column.getPath', () => {
+  eq(user.id.getPath(), 'user.id');
+  eq(employee.id.getPath(), 'employees.emp_no');
+  eq(post.user_id.join(user).name.getPath(), '(J|0|post|user)[user_id|id]');
+  eq(
+    post.title
+      .join(user, user.name, [
+        [post.user_id, user.id],
+        [post.snake_case_user_id, user.id],
+      ])
+      .follower_count.getPath(),
+    '(J|0|post|user)[title|name][user_id|id][snake_case_user_id|id]',
+  );
 });
