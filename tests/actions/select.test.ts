@@ -121,7 +121,7 @@ it('RawColumn (count)', () => {
   eq(cc.selectedName, 'count');
   eq(
     cc.core.toString(),
-    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, JoinedTable([[post.user_id].[user.id]])), type = 1))), type = 3))',
+    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, (J|0|post|user)[user_id|id]), type = 1))), type = 3))',
   );
 });
 

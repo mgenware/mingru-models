@@ -136,21 +136,21 @@ it('setDefault', () => {
 });
 
 it('Column.inputName', () => {
-  eq(user.id.inputName(), 'id');
-  eq(user.snake_case_name.inputName(), 'snakeCaseName');
-  eq(cmt.snake_case_post_id.inputName(), 'snakeCasePostID');
+  eq(user.id.getInputName(), 'id');
+  eq(user.snake_case_name.getInputName(), 'snakeCaseName');
+  eq(cmt.snake_case_post_id.getInputName(), 'snakeCasePostID');
 });
 
 it('ForeignColumn.inputName', () => {
-  eq(post.snake_case_user_id.inputName(), 'snakeCaseUserID');
+  eq(post.snake_case_user_id.getInputName(), 'snakeCaseUserID');
 });
 
 it('JoinedColumn.inputName', () => {
-  eq(post.snake_case_user_id.join(user).id.inputName(), 'snakeCaseUserID');
-  eq(post.snake_case_user_id.join(user).name.inputName(), 'snakeCaseUserName');
-  eq(cmt.post_id.join(post).user_id.join(user).id.inputName(), 'postUserID');
+  eq(post.snake_case_user_id.join(user).id.getInputName(), 'snakeCaseUserID');
+  eq(post.snake_case_user_id.join(user).name.getInputName(), 'snakeCaseUserName');
+  eq(cmt.post_id.join(post).user_id.join(user).id.getInputName(), 'postUserID');
   eq(
-    cmt.post_id.join(post).snake_case_user_id.join(user).name.inputName(),
+    cmt.post_id.join(post).snake_case_user_id.join(user).name.getInputName(),
     'postSnakeCaseUserName',
   );
 });

@@ -227,7 +227,7 @@ export class Column {
     return this.__name;
   }
 
-  inputName(): string {
+  getInputName(): string {
     const table = this.mustGetTable();
     const name = this.mustGetName();
     if (this.__inputName) {
@@ -263,6 +263,19 @@ export class Column {
         `Source table assertion failed, expected "${table}", got "${this.getSourceTable()}".`,
       );
     }
+  }
+
+  getPath(): string {
+    const table = this.__table;
+    if (!table) {
+      throw new Error(`This column doesn't have a table set, column ${this}`);
+    }
+    const dbName = this.getDBName();
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    if (table instanceof Table) {
+      return `${table.getDBName()}.${dbName}`;
+    }
+    return table.keyPath;
   }
 
   toString(): string {
@@ -462,18 +475,27 @@ export class JoinedTable {
     public readonly associative: boolean, // If `srcColumn` is associative.
     public readonly extraColumns: [Column, Column][], // Join tables with composite PKs.
   ) {
-    let localPath: string;
     const srcTable = srcColumn.mustGetTable();
+    let localTableString: string;
     if (srcTable instanceof JoinedTable) {
       // Source column is a joined column.
-      const srcTableKeyPath = srcTable.keyPath;
-      localPath = `[${srcTableKeyPath}.${srcColumn.__name}]`;
+      localTableString = srcTable.keyPath;
     } else {
-      localPath = `[${srcTable.__name}.${srcColumn.__name}]`;
+      localTableString = srcTable.getDBName();
     }
+    const remoteTableString = destTable.getDBName();
+    let keyPath = `(J|${this.type}|${localTableString}|${remoteTableString})`;
+    // Append columns.
+    // We are not using `column.getPath()` as we assume src and dest columns are
+    // always from src and dest tables.
+    // Primary columns.
+    keyPath += `[${srcColumn.getDBName()}|${destColumn.getDBName()}]`;
 
-    const remotePath = `[${destTable.__name}.${destColumn.__name}]`;
-    this.keyPath = `[${localPath}.${remotePath}]`;
+    // Extra columns.
+    for (const [col1, col2] of extraColumns) {
+      keyPath += `[${col1.getDBName()}|${col2.getDBName()}]`;
+    }
+    this.keyPath = keyPath;
   }
 
   tableInputName(): string {
@@ -496,7 +518,7 @@ export class JoinedTable {
   }
 
   toString(): string {
-    return `JoinedTable(${this.keyPath})`;
+    return this.keyPath;
   }
 }
 

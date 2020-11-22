@@ -28,7 +28,7 @@ function testJCCols(
   eq(jt.srcColumn, srcColumn);
   eq(jt.keyPath, path);
   eq(jc.getSourceTable(), sourceTable);
-  eq(jc.inputName(), inputName);
+  eq(jc.getInputName(), inputName);
 }
 
 it('JoinedColumn', () => {
@@ -40,7 +40,7 @@ it('JoinedColumn', () => {
     user.id,
     user.name,
     post.user_id,
-    '[[post.user_id].[user.id]]',
+    '(J|0|post|user)[user_id|id]',
     post,
     'userName',
   );
@@ -55,7 +55,7 @@ it('Explicit join', () => {
     user.id,
     user.name,
     post.user_id,
-    '[[post.user_id].[user.id]]',
+    '(J|0|post|user)[user_id|id]',
     post,
     'userName',
   );
@@ -70,7 +70,7 @@ it('Explicit join without FK', () => {
     user.name,
     user.follower_count,
     post.title,
-    '[[post.title].[user.name]]',
+    '(J|0|post|user)[title|name]',
     post,
     'titleFollowerCount',
   );
@@ -88,7 +88,7 @@ it('Join with multiple keys', () => {
     user.name,
     user.follower_count,
     post.title,
-    '[[post.title].[user.name]]',
+    '(J|0|post|user)[title|name][user_id|id][snake_case_user_id|id]',
     post,
     'titleFollowerCount',
   );
@@ -109,7 +109,7 @@ it('Nested JoinedColumn', () => {
     post.id,
     post.user_id,
     postCmt.post_id,
-    '[[post_cmt.post_id].[post.id]]',
+    '(J|0|post_cmt|post)[post_id|id]',
     postCmt,
     'postUserID',
   );
@@ -121,7 +121,7 @@ it('Nested JoinedColumn', () => {
     user.id,
     user.name,
     jc1,
-    '[[[[post_cmt.post_id].[post.id]].user_id].[user.id]]',
+    '(J|0|(J|0|post_cmt|post)[post_id|id]|user)[user_id|id]',
     postCmt,
     'postUserName',
   );
@@ -136,7 +136,7 @@ it('Nested JoinedColumn', () => {
     user.id,
     user.id,
     jc3,
-    '[[[[post_cmt.post_id].[post.id]].user_id].[user.id]]',
+    '(J|0|(J|0|post_cmt|post)[post_id|id]|user)[user_id|id]',
     postCmt,
     'postUserID',
   );
@@ -152,7 +152,7 @@ it('Join arbitrary table and column', () => {
     postCmt.id,
     postCmt.post_id,
     post.user_id,
-    '[[post.user_id].[post_cmt.id]]',
+    '(J|0|post|post_cmt)[user_id|id]',
     post,
     'userPostID',
   );
@@ -166,7 +166,7 @@ it('Join arbitrary table and column', () => {
     postCmt.post_id,
     postCmt.snake_case_post_id,
     post.user_id,
-    '[[post.user_id].[post_cmt.post_id]]',
+    '(J|0|post|post_cmt)[user_id|post_id]',
     post,
     'userSnakeCasePostID',
   );
@@ -182,7 +182,7 @@ it('Associative join', () => {
     cmt.id,
     cmt.user_id,
     postCmtAss.cmt_id,
-    '[[post_cmt_ass.cmt_id].[post_cmt.id]]',
+    '(J|0|post_cmt_ass|post_cmt)[cmt_id|id]',
     postCmtAss,
     'userID',
   );
@@ -195,7 +195,7 @@ it('Associative join', () => {
     user.id,
     user.name,
     jc,
-    '[[[[post_cmt_ass.cmt_id].[post_cmt.id]].user_id].[user.id]]',
+    '(J|0|(J|0|post_cmt_ass|post_cmt)[cmt_id|id]|user)[user_id|id]',
     postCmtAss,
     'userName',
   );
