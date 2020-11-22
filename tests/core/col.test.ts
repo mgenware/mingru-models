@@ -47,7 +47,7 @@ it('Explicit FK (untouched)', () => {
 
 it('freeze', () => {
   const col = mm.int(234);
-  col.freeze();
+  col.__freeze();
   eq(Object.isFrozen(col), true);
   eq(Object.isFrozen(col.__type), true);
 });
@@ -100,7 +100,7 @@ it('Column.newJoinedColumn', () => {
 
 it('Mutate a frozen column', () => {
   const a = mm.int(234);
-  a.freeze();
+  a.__freeze();
   itThrows(
     () => a.nullable,
     'The current column "null" of type Column cannot be modified, it is frozen. It is mostly likely because you are modifying a column from another table',

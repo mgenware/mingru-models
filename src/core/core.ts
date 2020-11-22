@@ -178,7 +178,7 @@ export class Column {
     return this;
   }
 
-  freeze() {
+  __freeze() {
     Object.freeze(this.__type);
     Object.freeze(this);
   }

@@ -73,7 +73,7 @@ export function tableCore(
         // eslint-disable-next-line
         (tableObj as any)[propName] = columnToAdd;
 
-        columnToAdd.freeze();
+        columnToAdd.__freeze();
       } catch (err) {
         err.message += ` [column "${propName}"]`;
         throw err;
