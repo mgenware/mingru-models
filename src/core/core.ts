@@ -233,16 +233,15 @@ export class Column {
     if (this.__inputName) {
       return this.__inputName;
     }
-    const curName = utils.toCamelCase(name);
 
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     if (table instanceof JoinedTable) {
       if (table.associative) {
-        return curName;
+        return name;
       }
-      return table.tableInputName() + utils.capitalizeColumnName(curName);
+      return `${table.tableInputName()}_${name}`;
     }
-    return curName;
+    return name;
   }
 
   getSourceTable(): Table | null {
@@ -428,7 +427,7 @@ export class Table {
   }
 
   getInputName(): string {
-    return utils.toCamelCase(this.__name);
+    return this.__name;
   }
 
   toString(): string {
@@ -509,8 +508,8 @@ export class JoinedTable {
         return curName;
       }
       // If `srcColumn` is a joined column, e.g.
-      // `cmt.post_id.join(post).user_id.join(user)`, returns `postUser in this case.
-      return srcTable.tableInputName() + utils.capitalizeFirstLetter(curName);
+      // `cmt.post_id.join(post).user_id.join(user)`, returns `post_user` in this case.
+      return `${srcTable.tableInputName()}_${curName}`;
     }
     // If `srcColumn` is not a joined column, omit the table name,
     // e.g. `post.user_id.join(user)`, returns `user.
@@ -529,5 +528,5 @@ function makeMiddleName(s: string): string {
   if (!s) {
     throw new Error('Unexpected empty value in "makeMiddleName"');
   }
-  return utils.toCamelCase(utils.stripTrailingSnakeID(s));
+  return utils.stripTrailingSnakeID(s);
 }

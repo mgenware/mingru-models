@@ -20,7 +20,7 @@ it('Table name, DB name and input name', () => {
   eq(myTable.__name, 'my_table');
   eq(myTable.__dbName, 'my_table');
   eq(myTable.getDBName(), 'my_table');
-  eq(myTable.getInputName(), 'myTable');
+  eq(myTable.getInputName(), 'my_table');
   eq(myTable.toString(), 'Table(my_table)');
 });
 

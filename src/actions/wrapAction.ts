@@ -1,7 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action, ActionType } from './tableActions';
 import { Table } from '../core/core';
-import { toCamelCase } from '../lib/utils';
 
 export type WrapActionArgValue = string | ValueRef | Table;
 
@@ -15,8 +14,6 @@ export class ValueRef {
     const nameComponents = path.split('.');
     this.firstName = nameComponents[nameComponents.length - 1];
     if (nameComponents.length > 1) {
-      // Use lowercase name for property access input.
-      this.firstName = toCamelCase(nameComponents[0]);
       this.hasPropertyAccess = true;
     } else {
       this.hasPropertyAccess = false;

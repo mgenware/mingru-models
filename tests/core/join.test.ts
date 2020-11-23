@@ -42,7 +42,7 @@ it('JoinedColumn', () => {
     post.user_id,
     '(J|0|post|user)[user_id|id]',
     post,
-    'userName',
+    'user_name',
   );
 });
 
@@ -57,7 +57,7 @@ it('Explicit join', () => {
     post.user_id,
     '(J|0|post|user)[user_id|id]',
     post,
-    'userName',
+    'user_name',
   );
 });
 
@@ -72,7 +72,7 @@ it('Explicit join without FK', () => {
     post.title,
     '(J|0|post|user)[title|name]',
     post,
-    'titleFollowerCount',
+    'title_follower_count',
   );
 });
 
@@ -90,7 +90,7 @@ it('Join with multiple keys', () => {
     post.title,
     '(J|0|post|user)[title|name][user_id|id][snake_case_user_id|id]',
     post,
-    'titleFollowerCount',
+    'title_follower_count',
   );
   assert.deepEqual((jc.__table as mm.JoinedTable).extraColumns, [
     [post.user_id, user.id],
@@ -111,19 +111,19 @@ it('Nested JoinedColumn', () => {
     postCmt.post_id,
     '(J|0|post_cmt|post)[post_id|id]',
     postCmt,
-    'postUserID',
+    'post_user_id',
   );
 
   testJCCols(
     jc2,
-    'postUser',
+    'post_user',
     user,
     user.id,
     user.name,
     jc1,
     '(J|0|(J|0|post_cmt|post)[post_id|id]|user)[user_id|id]',
     postCmt,
-    'postUserName',
+    'post_user_name',
   );
 
   // like jc2, but select user.id instead of user.name
@@ -131,14 +131,14 @@ it('Nested JoinedColumn', () => {
   const jc4 = jc3.join(user).id;
   testJCCols(
     jc4,
-    'postUser',
+    'post_user',
     user,
     user.id,
     user.id,
     jc3,
     '(J|0|(J|0|post_cmt|post)[post_id|id]|user)[user_id|id]',
     postCmt,
-    'postUserID',
+    'post_user_id',
   );
 });
 
@@ -154,7 +154,7 @@ it('Join arbitrary table and column', () => {
     post.user_id,
     '(J|0|post|post_cmt)[user_id|id]',
     post,
-    'userPostID',
+    'user_post_id',
   );
 
   // Join explicit column of postCmt
@@ -168,7 +168,7 @@ it('Join arbitrary table and column', () => {
     post.user_id,
     '(J|0|post|post_cmt)[user_id|post_id]',
     post,
-    'userSnakeCasePostID',
+    'user_snake_case_post_id',
   );
 });
 
@@ -184,7 +184,7 @@ it('Associative join', () => {
     postCmtAss.cmt_id,
     '(J|0|post_cmt_ass|post_cmt)[cmt_id|id]',
     postCmtAss,
-    'userID',
+    'user_id',
   );
 
   const jc2 = jc.join(user).name;
@@ -197,6 +197,6 @@ it('Associative join', () => {
     jc,
     '(J|0|(J|0|post_cmt_ass|post_cmt)[cmt_id|id]|user)[user_id|id]',
     postCmtAss,
-    'userName',
+    'user_name',
   );
 });

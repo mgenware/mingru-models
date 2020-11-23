@@ -43,7 +43,6 @@
     "typescript": "^4.0.5"
   },
   "dependencies": {
-    "camelcase": "^6.2.0",
     "decamelize": "^4.0.0",
     "throw-if-arg-empty": "^2.2.1",
     "to-type-string": "^1.1.0"
