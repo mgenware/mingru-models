@@ -36,6 +36,24 @@ export enum SelectActionMode {
   list,
   page,
   exists,
+  /**
+   * UNION
+   *
+   * `a.union(b)` returns a new action(mode=union, unionMembers=[a, b]).
+   * This way a and b are untouched, and the union itself can also have
+   * properties set such as ORDER BY and LIMIT OFFSET.
+   *
+   * Nesting:
+   * `a.union(b).union(c)` returns:
+   * action(mode=union, unionMembers=[
+   *   action(mode=union, unionMembers=[a, b]),
+   *   c,
+   * ])
+   *
+   * In practice, union members are flattened, we will simply ignore intermediate
+   * union member and use the outermost one.
+   */
+  union,
 }
 
 export class SelectAction extends CoreSelectAction {
@@ -80,9 +98,14 @@ export class SelectAction extends CoreSelectAction {
   }
 
   // Set by `union` or `unionAll`.
-  #unions: UnionTuple[] = [];
-  get unions(): ReadonlyArray<UnionTuple> {
-    return this.#unions;
+  #unionAllFlag = false;
+  get unionAllFlag(): boolean {
+    return this.#unionAllFlag;
+  }
+
+  #unionMembers: [SelectAction, SelectAction] | null = null;
+  get unionMembers(): Readonly<[SelectAction, SelectAction]> | null {
+    return this.#unionMembers;
   }
 
   constructor(
@@ -198,18 +221,20 @@ export class SelectAction extends CoreSelectAction {
     }
   }
 
-  union(next: SelectAction): this {
+  union(next: SelectAction): SelectAction {
     return this.unionCore(next, false);
   }
 
-  unionAll(next: SelectAction): this {
+  unionAll(next: SelectAction): SelectAction {
     return this.unionCore(next, true);
   }
 
-  private unionCore(action: SelectAction, unionAll: boolean): this {
+  private unionCore(action: SelectAction, unionAll: boolean): SelectAction {
     throwIfFalsy(action, 'action');
-    this.#unions.push({ action, unionAll });
-    return this;
+    const newAction = new SelectAction([], SelectActionMode.union);
+    newAction.#unionAllFlag = unionAll;
+    newAction.#unionMembers = [this, action];
+    return newAction;
   }
 
   private setLimitValue(limit: SQLVariable | number) {

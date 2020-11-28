@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as assert from 'assert';
 import { itThrows } from 'it-throws';
 import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
 
-const eq = assert.equal;
+export const eq: <T>(actual: T, expected: T) => asserts actual is T = assert.strictEqual;
 
 it('select', () => {
   class UserTA extends mm.TableActions {
@@ -82,7 +83,7 @@ it('RawColumn', () => {
 
   // new RawColumn
   c = new mm.RawColumn(user.id);
-  eq(c.selectedName, undefined);
+  eq(c.selectedName, null);
   eq(c.core, user.id);
 
   // mm.sel
@@ -289,7 +290,7 @@ it('GROUP BY names', () => {
   const v = ta.t;
   eq(v.groupByColumns[0], user.name.getDBName());
   eq(
-    v.havingSQLValue,
+    v.havingSQLValue!.toString(),
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
   );
 });
@@ -310,11 +311,11 @@ it('HAVING', () => {
   const v = ta.t;
   eq(v.groupByColumns[0], user.name.getDBName());
   eq(
-    v.havingSQLValue,
+    v.havingSQLValue!.toString(),
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
   );
   eq(
-    ta.t2.havingSQLValue,
+    ta.t2.havingSQLValue!.toString(),
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
   );
 });
@@ -449,28 +450,36 @@ it('Select DISTINCT', () => {
 });
 
 it('UNION', () => {
+  const t1 = mm.select();
   const t2 = mm.select();
   const t3 = mm.select();
+  const t1t2 = t1.union(t2);
   class UserTA extends mm.TableActions {
-    t1 = mm.select().union(t2).unionAll(t3);
+    t = t1t2.unionAll(t3);
   }
   const ta = mm.tableActions(user, UserTA);
-  const { t1 } = ta;
-  assert.deepStrictEqual(t1.unions, [
-    { action: t2, unionAll: false },
-    { action: t3, unionAll: true },
-  ]);
+  const { t } = ta;
+  assert.ok(t1t2 instanceof mm.SelectAction);
+  assert.ok(t1t2.mode === mm.SelectActionMode.union);
+  eq(t1t2.unionMembers![0], t1);
+  eq(t1t2.unionMembers![1], t2);
+  eq(t1t2.unionAllFlag, false);
+  eq(t.unionMembers![0], t1t2);
+  eq(t.unionMembers![1], t3);
+  eq(t.unionAllFlag, true);
 });
 
 it('UNION on a ghost table', () => {
+  const t1 = mm.select();
   const t2 = mm.select();
   class UserTA extends mm.TableActions {
-    t1 = mm.select().union(t2);
+    t = t1.union(t2);
   }
   const ta = mm.tableActions(mm.ghostTable, UserTA);
-  const { t1 } = ta;
-  assert.deepStrictEqual(t1.unions, [{ action: t2, unionAll: false }]);
-  eq(t1.__name, 't1');
-  eq(t1.__groupTable, mm.ghostTable);
-  eq(t1.__sqlTable, null);
+  const { t } = ta;
+  eq(t.unionMembers![0], t1);
+  eq(t.unionMembers![1], t2);
+  eq(t.__name, 't');
+  eq(t.__groupTable, mm.ghostTable);
+  eq(t.__sqlTable, null);
 });
