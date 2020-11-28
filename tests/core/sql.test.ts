@@ -3,25 +3,24 @@ import { itThrows } from 'it-throws';
 import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
-
-const eq = assert.equal;
+import { eq, ok, deepEq } from '../assert-aliases';
 
 it('SQL', () => {
   const sql = mm.sql`${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}`;
-  assert.strictEqual(
+  eq(
     sql.toString(),
     'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
   );
-  assert.ok(sql instanceof mm.SQL);
+  ok(sql instanceof mm.SQL);
 });
 
 it('Flatten another SQL', () => {
   const sql = mm.sql`${mm.sql`${mm.sql`${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}`}`}`;
-  assert.strictEqual(
+  eq(
     sql.toString(),
     'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
   );
-  assert.ok(sql instanceof mm.SQL);
+  ok(sql instanceof mm.SQL);
 });
 
 it('SQL with input', () => {
@@ -64,7 +63,7 @@ it('Input (joined key)', () => {
 
 it('Raw type input', () => {
   const input = mm.input({ type: 'uint32', defaultValue: 0 }, 'uid');
-  assert.deepStrictEqual(input.type, { type: 'uint32', defaultValue: 0 });
+  deepEq(input.type, { type: 'uint32', defaultValue: 0 });
   eq(input.toString(), 'SQLVar(uid, desc = {"type":"uint32","defaultValue":0})');
 });
 
@@ -116,9 +115,9 @@ it('Input.isEqualTo', () => {
   const e = mm.input({ type: 'b', defaultValue: null }, 'id');
   eq(a.name, undefined);
   eq(a.column, user.id);
-  assert.deepStrictEqual(a, b);
+  deepEq(a, b);
   assert.notDeepStrictEqual(a, c);
-  assert.deepStrictEqual(c, d);
+  deepEq(c, d);
   assert.notDeepStrictEqual(c, e);
 });
 
@@ -139,9 +138,9 @@ it('SQLBuilder', () => {
   builder.push(' = ');
   builder.push(mm.input(user.name));
   const sql = builder.toSQL();
-  assert.strictEqual(
+  eq(
     sql.toString(),
     'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
   );
-  assert.ok(sql instanceof mm.SQL);
+  ok(sql instanceof mm.SQL);
 });

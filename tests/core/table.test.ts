@@ -1,10 +1,8 @@
-import * as assert from 'assert';
 import * as mm from '../..';
 import user from '../models/user';
 import employee from '../models/employee';
 import like from '../models/like';
-
-const eq = assert.equal;
+import { eq, deepEq } from '../assert-aliases';
 
 it('Table name, DB name and input name', () => {
   eq(user.__name, 'user');
@@ -25,7 +23,7 @@ it('Table name, DB name and input name', () => {
 });
 
 it('enumerateColumns', () => {
-  assert.deepEqual(user.__columns, {
+  deepEq(user.__columns, {
     id: user.id,
     name: user.name,
     snake_case_name: user.snake_case_name,
@@ -35,27 +33,27 @@ it('enumerateColumns', () => {
 });
 
 it('__pks', () => {
-  assert.deepEqual(user.__pks, [user.id]);
-  assert.deepEqual(user.__aiPKs, [user.id]);
-  assert.deepEqual(employee.__pks, [employee.id]);
-  assert.deepEqual(employee.__aiPKs, []);
+  deepEq(user.__pks, [user.id]);
+  deepEq(user.__aiPKs, [user.id]);
+  deepEq(employee.__pks, [employee.id]);
+  deepEq(employee.__aiPKs, []);
 
   class Employee2 extends mm.Table {
     id = mm.pk(mm.int()).setDBName('emp_no').autoIncrement;
     firstName = mm.varChar(50);
   }
   const emp2 = mm.table(Employee2, 'employees');
-  assert.deepEqual(emp2.__pks, [emp2.id]);
-  assert.deepEqual(emp2.__aiPKs, [emp2.id]);
+  deepEq(emp2.__pks, [emp2.id]);
+  deepEq(emp2.__aiPKs, [emp2.id]);
 });
 
 it('Composite PKs', () => {
-  assert.deepEqual(like.__pks, [like.user_id, like.type]);
-  assert.deepEqual(like.__aiPKs, []);
+  deepEq(like.__pks, [like.user_id, like.type]);
+  deepEq(like.__aiPKs, []);
 });
 
 it('__columns', () => {
-  assert.deepEqual(user.__columns, {
+  deepEq(user.__columns, {
     id: user.id,
     name: user.name,
     snake_case_name: user.snake_case_name,
@@ -75,9 +73,9 @@ it('tableCore', () => {
   eq(table.__name, 'a');
   eq(table.__dbName, 'a_a');
   eq(table instanceof mm.Table, true);
-  assert.deepEqual(table.__pks, [id]);
-  assert.deepEqual(table.__aiPKs, [id]);
-  assert.deepEqual(table.__columns, { id, name });
+  deepEq(table.__pks, [id]);
+  deepEq(table.__aiPKs, [id]);
+  deepEq(table.__columns, { id, name });
   for (const [prop, column] of Object.entries(table.__columns)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     eq((table as any)[prop], column);

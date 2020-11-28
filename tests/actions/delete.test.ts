@@ -1,9 +1,7 @@
-import * as assert from 'assert';
 import { itThrows } from 'it-throws';
 import * as mm from '../..';
 import user from '../models/user';
-
-const eq = assert.equal;
+import { eq, ok } from '../assert-aliases';
 
 it('DeleteAction', () => {
   class UserTA extends mm.TableActions {
@@ -11,9 +9,9 @@ it('DeleteAction', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  assert.ok(v instanceof mm.DeleteAction);
-  assert.ok(v instanceof mm.CoreSelectAction);
-  assert.ok(v instanceof mm.Action);
+  ok(v instanceof mm.DeleteAction);
+  ok(v instanceof mm.CoreSelectAction);
+  ok(v instanceof mm.Action);
   eq(v.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
   eq(v.actionType, mm.ActionType.delete);
 });

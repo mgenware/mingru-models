@@ -1,12 +1,10 @@
-import * as assert from 'assert';
 import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
 import postCmt from '../models/postCmt';
 import postCmtAss from '../models/postCmtAss';
 import cmt from '../models/cmt';
-
-const eq = assert.equal;
+import { eq, deepEq } from '../assert-aliases';
 
 function testJCCols(
   jc: mm.Column,
@@ -92,7 +90,7 @@ it('Join with multiple keys', () => {
     post,
     'title_follower_count',
   );
-  assert.deepEqual((jc.__table as mm.JoinedTable).extraColumns, [
+  deepEq((jc.__table as mm.JoinedTable).extraColumns, [
     [post.user_id, user.id],
     [post.snake_case_user_id, user.id],
   ]);

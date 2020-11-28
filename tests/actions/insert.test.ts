@@ -2,8 +2,7 @@ import * as assert from 'assert';
 import { itThrows } from 'it-throws';
 import * as mm from '../..';
 import post from '../models/post';
-
-const eq = assert.equal;
+import { deepEq, eq, ok } from '../assert-aliases';
 
 it('Insert', () => {
   class PostTA extends mm.TableActions {
@@ -14,8 +13,8 @@ it('Insert', () => {
 
   eq(v.actionType, mm.ActionType.insert);
   eq(v.ensureOneRowAffected, false);
-  assert.ok(v instanceof mm.InsertAction);
-  assert.ok(v instanceof mm.CoreUpdateAction);
+  ok(v instanceof mm.InsertAction);
+  ok(v instanceof mm.CoreUpdateAction);
   eq(
     v.settersToString(),
     'title: SQL(E(SQLVar(undefined, desc = Column(title, Table(post))), type = 2)), snake_case_user_id: SQL(E(SQLVar(undefined, desc = Column(snake_case_user_id, Table(post))), type = 2))',
@@ -57,11 +56,11 @@ it('SQLConvertible value', () => {
   }
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
-  assert.deepStrictEqual(
+  deepEq(
     v.setters,
     new Map<mm.Column, unknown>([[post.title, mm.sql`${mm.localDateNow()}`]]),
   );
-  eq(v.setters.get(post.title), 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
+  eq(`${v.setters.get(post.title)}`, 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
 });
 
 it('No setters', () => {

@@ -2,8 +2,7 @@ import * as assert from 'assert';
 import { itThrows } from 'it-throws';
 import * as mm from '../..';
 import user from '../models/user';
-
-const eq = assert.equal;
+import { eq, ok, deepEq } from '../assert-aliases';
 
 it('Update', () => {
   class UserTA extends mm.TableActions {
@@ -17,9 +16,9 @@ it('Update', () => {
   const v = ta.t;
 
   eq(v.actionType, mm.ActionType.update);
-  assert.ok(v instanceof mm.UpdateAction);
-  assert.ok(v instanceof mm.CoreUpdateAction);
-  assert.ok(v instanceof mm.Action);
+  ok(v instanceof mm.UpdateAction);
+  ok(v instanceof mm.CoreUpdateAction);
+  ok(v instanceof mm.Action);
   eq(v.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
   eq(v.setters.size, 2);
 
@@ -73,7 +72,7 @@ it('setInputs with no args', () => {
     v.settersToString(),
     'def_value: abc, snake_case_name: SQL(E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
-  assert.deepEqual([...v.autoSetters], [mm.AutoSetterType.input]);
+  deepEq([...v.autoSetters], [mm.AutoSetterType.input]);
 });
 
 it('setDefaults with no args', () => {
@@ -91,7 +90,7 @@ it('setDefaults with no args', () => {
     v.settersToString(),
     'def_value: abc, snake_case_name: SQL(E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
-  assert.deepEqual([...v.autoSetters], [mm.AutoSetterType.default]);
+  deepEq([...v.autoSetters], [mm.AutoSetterType.default]);
 });
 
 it('setInputs and setDefaults twice', () => {
@@ -104,7 +103,7 @@ it('setInputs and setDefaults twice', () => {
     const ta = mm.tableActions(user, UserTA);
     const v = ta.t;
 
-    assert.deepEqual([...v.autoSetters], [mm.AutoSetterType.input, mm.AutoSetterType.default]);
+    deepEq([...v.autoSetters], [mm.AutoSetterType.input, mm.AutoSetterType.default]);
   }
   {
     class UserTA extends mm.TableActions {
@@ -115,7 +114,7 @@ it('setInputs and setDefaults twice', () => {
     const ta = mm.tableActions(user, UserTA);
     const v = ta.t;
 
-    assert.deepEqual([...v.autoSetters], [mm.AutoSetterType.default, mm.AutoSetterType.input]);
+    deepEq([...v.autoSetters], [mm.AutoSetterType.default, mm.AutoSetterType.input]);
   }
 });
 
@@ -203,7 +202,7 @@ it('SQLConvertible value', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  eq(v.setters.get(user.name), 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
+  eq(`${v.setters.get(user.name)}`, 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
 });
 
 it('No setters', () => {

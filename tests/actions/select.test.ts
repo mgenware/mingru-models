@@ -4,8 +4,7 @@ import { itThrows } from 'it-throws';
 import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
-
-export const eq: <T>(actual: T, expected: T) => asserts actual is T = assert.strictEqual;
+import { eq, deepEq, ok } from '../assert-aliases';
 
 it('select', () => {
   class UserTA extends mm.TableActions {
@@ -14,9 +13,9 @@ it('select', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  assert.ok(v instanceof mm.SelectAction);
-  assert.ok(v instanceof mm.CoreSelectAction);
-  assert.ok(v instanceof mm.Action);
+  ok(v instanceof mm.SelectAction);
+  ok(v instanceof mm.CoreSelectAction);
+  ok(v instanceof mm.Action);
   eq(v.columns.length, 2);
   eq(v.columns[0], user.id);
   eq(v.columns[1], user.name);
@@ -59,7 +58,7 @@ it('as', () => {
   const b = user.name.as('b');
   const c = user.id.as('c');
 
-  assert.ok(a instanceof mm.RawColumn);
+  ok(a instanceof mm.RawColumn);
   eq(a.selectedName, 'a');
   eq(b.selectedName, 'b');
   eq(c.selectedName, 'c');
@@ -108,7 +107,7 @@ it('RawColumn (types)', () => {
   const a = new mm.RawColumn(mm.sql`123`, 'x', new mm.ColumnType(['t1', 't2']));
   eq(a.selectedName, 'x');
   eq(a.core.toString(), 'SQL(E(123, type = 0))');
-  assert.deepEqual(a.type, new mm.ColumnType(['t1', 't2']));
+  deepEq(a.type, new mm.ColumnType(['t1', 't2']));
 });
 
 it('RawColumn (count)', () => {
@@ -143,7 +142,7 @@ it('mm.select (types)', () => {
   const a = mm.sel(mm.sql`123`, 'x', new mm.ColumnType(['t1', 't2']));
   eq(a.selectedName, 'x');
   eq(a.core.toString(), 'SQL(E(123, type = 0))');
-  assert.deepEqual(a.type, new mm.ColumnType(['t1', 't2']));
+  deepEq(a.type, new mm.ColumnType(['t1', 't2']));
 });
 
 it('byID', () => {
@@ -216,7 +215,7 @@ it('selectField', () => {
   eq(v.columns[0], user.name);
 
   const v2 = ta.t2;
-  assert.deepEqual(v2.columns[0], sc);
+  deepEq(v2.columns[0], sc);
 });
 
 it('selectExists', () => {
@@ -257,7 +256,7 @@ it('Order by', () => {
   eq(order2.desc, true);
 
   const order3 = v.orderByColumns[3] as mm.OrderByColumnInput;
-  assert.deepStrictEqual(order3.columns, [user.name, user.id]);
+  deepEq(order3.columns, [user.name, user.id]);
 });
 
 it('Validate columns', () => {
@@ -459,8 +458,8 @@ it('UNION', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const { t } = ta;
-  assert.ok(t1t2 instanceof mm.SelectAction);
-  assert.ok(t1t2.mode === mm.SelectActionMode.union);
+  ok(t1t2 instanceof mm.SelectAction);
+  ok(t1t2.mode === mm.SelectActionMode.union);
   eq(t1t2.unionMembers![0], t1);
   eq(t1t2.unionMembers![1], t2);
   eq(t1t2.unionAllFlag, false);

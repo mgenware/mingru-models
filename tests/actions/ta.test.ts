@@ -1,9 +1,7 @@
-import * as assert from 'assert';
 import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
-
-const eq = assert.equal;
+import { eq, ok, deepEq } from '../assert-aliases';
 
 it('Core props', () => {
   class UserTA extends mm.TableActions {
@@ -12,20 +10,20 @@ it('Core props', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   let v = ta.t;
-  assert.strictEqual(v.__name, 't');
-  assert.strictEqual(v.__groupTable, user);
-  assert.strictEqual(v.__sqlTable, null);
-  assert.strictEqual(v.mustGetGroupTable(), user);
-  assert.strictEqual(v.mustGetAvailableSQLTable(user), user);
-  assert.strictEqual(v.mustGetName(), 't');
+  eq(v.__name, 't');
+  eq(v.__groupTable, user);
+  eq(v.__sqlTable, null);
+  eq(v.mustGetGroupTable(), user);
+  eq(v.mustGetAvailableSQLTable(user), user);
+  eq(v.mustGetName(), 't');
 
   v = ta.t2;
-  assert.strictEqual(v.__name, 't2');
-  assert.strictEqual(v.__groupTable, user);
-  assert.strictEqual(v.__sqlTable, post);
-  assert.strictEqual(v.mustGetGroupTable(), user);
-  assert.strictEqual(v.mustGetAvailableSQLTable(user), post);
-  assert.strictEqual(v.mustGetName(), 't2');
+  eq(v.__name, 't2');
+  eq(v.__groupTable, user);
+  eq(v.__sqlTable, post);
+  eq(v.mustGetGroupTable(), user);
+  eq(v.mustGetAvailableSQLTable(user), post);
+  eq(v.mustGetName(), 't2');
 });
 
 it('enumerateActions', () => {
@@ -40,7 +38,7 @@ it('enumerateActions', () => {
     emptyAction = mm.emptyAction;
   }
   const ta = mm.tableActions(user, UserTA);
-  assert.deepEqual(ta.__actions, {
+  deepEq(ta.__actions, {
     upd: ta.upd,
     sel: ta.sel,
   });
@@ -57,7 +55,7 @@ it('Argument stubs', () => {
   const ta = mm.tableActions(user, UserTA);
 
   const v = ta.t;
-  assert.deepEqual(v.__argStubs, stubs);
+  deepEq(v.__argStubs, stubs);
 });
 
 class MyInsertAction extends mm.InsertAction {
@@ -100,7 +98,7 @@ it('Action.attr/attrs', () => {
         .attrs({ b: 's' });
     }
     const table = mm.tableActions(user, UserTA);
-    assert.deepStrictEqual(table.t.__attrs, {
+    deepEq(table.t.__attrs, {
       a: true,
       b: 's',
       c: 4,
@@ -115,7 +113,7 @@ it('Action.attr/attrs', () => {
         .attrs({ b: 's', c: 5 });
     }
     const table = mm.tableActions(user, UserTA);
-    assert.deepStrictEqual(table.t.__attrs, {
+    deepEq(table.t.__attrs, {
       a: true,
       b: 's',
       c: 5,
@@ -133,7 +131,7 @@ it('Action.privateAttr', () => {
       .privateAttr();
   }
   const table = mm.tableActions(user, UserTA);
-  assert.deepStrictEqual(table.t.__attrs, {
+  deepEq(table.t.__attrs, {
     a: true,
     b: 's',
     c: 4,
@@ -154,7 +152,7 @@ it('__actions and props', () => {
 
   eq(ta.__table, user);
   eq(ta instanceof mm.TableActions, true);
-  assert.deepEqual(ta.__actions, {
+  deepEq(ta.__actions, {
     upd: ta.upd,
     sel: ta.sel,
   });
@@ -175,7 +173,7 @@ it('__actions and props (taCore)', () => {
 
   eq(ta.__table, user);
   eq(ta instanceof mm.TableActions, true);
-  assert.deepEqual(ta.__actions, actions);
+  deepEq(ta.__actions, actions);
   // `tableActionsCore` never add property into table actions.
   for (const [name] of Object.entries(ta.__actions)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -189,6 +187,6 @@ it('Ghost table', () => {
   }
   const ta = mm.tableActions(mm.ghostTable, GhostTA);
   const v = ta.t;
-  assert.ok(mm.ghostTable instanceof mm.GhostTable);
+  ok(mm.ghostTable instanceof mm.GhostTable);
   eq(v.groupTable, mm.ghostTable);
 });

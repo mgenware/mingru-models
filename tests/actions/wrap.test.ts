@@ -1,9 +1,7 @@
-import * as assert from 'assert';
 import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
-
-const eq = assert.equal;
+import { eq, ok, deepEq } from '../assert-aliases';
 
 it('Wrap', () => {
   class PostTA extends mm.TableActions {
@@ -22,8 +20,8 @@ it('Wrap', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   let v = ta.t;
-  assert.ok(v instanceof mm.WrapAction);
-  assert.ok(v instanceof mm.Action);
+  ok(v instanceof mm.WrapAction);
+  ok(v instanceof mm.Action);
   eq(v.__name, 't');
   eq(v.actionType, mm.ActionType.wrap);
   eq(v.action, ta.s);
@@ -33,7 +31,7 @@ it('Wrap', () => {
   eq(v.action, ta.s);
   eq(v.__sqlTable, null);
   eq(v.__groupTable, user);
-  assert.deepEqual(v.args, {
+  deepEq(v.args, {
     id: '1',
   });
 
@@ -42,7 +40,7 @@ it('Wrap', () => {
   eq(v.action, postTA.t);
   eq(v.__sqlTable, null);
   eq(v.__groupTable, user);
-  assert.deepEqual(v.args, {
+  deepEq(v.args, {
     id: '32',
   });
 
@@ -53,7 +51,7 @@ it('Wrap', () => {
   eq(v.action.__sqlTable, post);
   eq(v.__sqlTable, null);
   eq(v.__groupTable, user);
-  assert.deepEqual(v.args, {
+  deepEq(v.args, {
     title: '"t3"',
   });
 });
@@ -70,11 +68,11 @@ it('Wrap (chains)', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   let v = ta.t;
-  assert.ok(v instanceof mm.WrapAction);
-  assert.ok(v instanceof mm.Action);
+  ok(v instanceof mm.WrapAction);
+  ok(v instanceof mm.Action);
   eq(v.actionType, mm.ActionType.wrap);
   eq(v.action, ta.s);
-  assert.deepEqual(v.args, {
+  deepEq(v.args, {
     id: '33',
     id2: '34',
   });
@@ -103,7 +101,7 @@ it('Inline WRAP actions', () => {
   eq((v as mm.WrapAction).action.__name, null);
   eq(v.__groupTable, user);
   eq(v.__name, 't');
-  assert.deepStrictEqual(v.args, { id: '23' });
+  deepEq(v.args, { id: '23' });
 });
 
 it('Inline WRAP actions (chaining)', () => {
@@ -118,7 +116,7 @@ it('Inline WRAP actions (chaining)', () => {
   eq((v as mm.WrapAction).action.__name, null);
   eq(v.__groupTable, user);
   eq(v.__name, 't');
-  assert.deepStrictEqual(v.args, { id: '23', s: 'name' });
+  deepEq(v.args, { id: '23', s: 'name' });
 });
 
 it('Inline WRAP actions (with from)', () => {
@@ -133,7 +131,7 @@ it('Inline WRAP actions (with from)', () => {
   eq((v as mm.WrapAction).action.__name, null);
   eq(v.__groupTable, user);
   eq(v.__name, 't');
-  assert.deepStrictEqual(v.args, { id: '23' });
+  deepEq(v.args, { id: '23' });
 });
 
 it('ValueRef', () => {
@@ -152,7 +150,7 @@ it('wrapAsRefs', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  assert.deepEqual(v.args, {
+  deepEq(v.args, {
     id: new mm.ValueRef('23'),
     id2: new mm.ValueRef('abc'),
   });

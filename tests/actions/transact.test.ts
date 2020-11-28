@@ -1,10 +1,8 @@
-import * as assert from 'assert';
 import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
 import { WrapAction } from '../..';
-
-const eq = assert.equal;
+import { eq, ok, deepEq } from '../assert-aliases';
 
 it('Transact', () => {
   class UserTA extends mm.TableActions {
@@ -23,11 +21,11 @@ it('Transact', () => {
 
   let v = postTA.batch;
   eq(v.actionType, mm.ActionType.transact);
-  assert.ok(v instanceof mm.TransactAction);
-  assert.ok(v instanceof mm.Action);
+  ok(v instanceof mm.TransactAction);
+  ok(v instanceof mm.Action);
 
   v = postTA.batch2;
-  assert.deepEqual(
+  deepEq(
     v.members,
     [postTA.insert, userTA.insert, postTA.batch].map(
       (m) => new mm.TransactionMember(m, undefined, undefined),
@@ -53,7 +51,7 @@ it('Inline member actions (wrap self)', async () => {
   const v = user2TA.t;
   const wrapped = v.members[0].action as WrapAction;
   eq(wrapped.action, user2TA.updatePostCount);
-  assert.deepEqual(wrapped.args, { offset: '1' });
+  deepEq(wrapped.args, { offset: '1' });
 });
 
 it('Inline member actions (wrap other)', async () => {
@@ -82,7 +80,7 @@ it('Inline member actions (wrap other)', async () => {
   const v = postTA.insert;
   const wrapped = v.members[0].action as WrapAction;
   eq(wrapped.action, user2TA.updatePostCount);
-  assert.deepEqual(wrapped.args, { offset: 1 });
+  deepEq(wrapped.args, { offset: '1' });
 });
 
 it('Setting __table or inline members', () => {
@@ -137,11 +135,11 @@ it('Declare return values', () => {
   const postTA = mm.tableActions(post, PostTA);
 
   const v = postTA.batch;
-  assert.ok(v.members[0].returnValues === undefined);
-  assert.deepEqual(v.members[1].returnValues, { a: '_a' });
-  assert.deepEqual(v.members[2].returnValues, { b: '_b' });
-  assert.deepEqual(v.members[3].returnValues, {
+  ok(v.members[0].returnValues === undefined);
+  deepEq(v.members[1].returnValues, { a: '_a' });
+  deepEq(v.members[2].returnValues, { b: '_b' });
+  deepEq(v.members[3].returnValues, {
     [mm.ReturnValues.insertedID]: 'i',
   });
-  assert.deepEqual(v.returnValues, ['_b', '_a']);
+  deepEq(v.returnValues, ['_b', '_a']);
 });

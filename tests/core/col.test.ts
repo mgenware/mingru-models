@@ -5,8 +5,7 @@ import user from '../models/user';
 import post from '../models/post';
 import cmt from '../models/postCmt';
 import employee from '../models/employee';
-
-const eq = assert.equal;
+import { eq, deepEq, notEq } from '../assert-aliases';
 
 it('Frozen after mm.table', () => {
   eq(Object.isFrozen(post.id), true);
@@ -25,7 +24,7 @@ it('Implicit FK', () => {
   eq(col.__table, post);
   eq(col.__name, 'user_id');
   eq(col.__foreignColumn, user.id);
-  assert.notEqual(col.__type, user.id.__type);
+  notEq(col.__type, user.id.__type);
 });
 
 it('Explicit FK', () => {
@@ -33,7 +32,7 @@ it('Explicit FK', () => {
   eq(col.__table, post);
   eq(col.__name, 'e_user_id_n');
   eq(col.__foreignColumn, user.id);
-  assert.notEqual(col, user.id.__type);
+  notEq(col, user.id.__type);
   eq(col.__type.nullable, true);
 });
 
@@ -42,7 +41,7 @@ it('Explicit FK (untouched)', () => {
   eq(col.__table, post);
   eq(col.__name, 'e_user_id');
   eq(col.__foreignColumn, user.id);
-  assert.notEqual(col.__type, user.id.__type);
+  notEq(col.__type, user.id.__type);
   eq(col.__type.nullable, false);
 });
 
@@ -65,13 +64,13 @@ it('Column.newForeignColumn', () => {
   eq(b.__type.autoIncrement, false);
   eq(b.__table, post);
   // props is copied
-  assert.notEqual(b.__type, a.__type);
+  notEq(b.__type, a.__type);
   // props.types is copied
-  assert.notEqual(b.__type.types, a.__type.types);
+  notEq(b.__type.types, a.__type.types);
 
   // Check equality
   eq(a.__defaultValue, b.__defaultValue);
-  assert.deepEqual(a.__type.types, b.__type.types);
+  deepEq(a.__type.types, b.__type.types);
   eq(a.__type.nullable, b.__type.nullable);
   eq(a.__type.unique, b.__type.unique);
 });
@@ -88,13 +87,13 @@ it('Column.newJoinedColumn', () => {
   eq(b.__name, a.__name);
   eq(b.__table, t);
   // props is copied
-  assert.notEqual(b.__type, a.__type);
+  notEq(b.__type, a.__type);
   // props.types is copied
-  assert.notEqual(b.__type.types, a.__type.types);
+  notEq(b.__type.types, a.__type.types);
 
   // Check equality
   eq(a.__defaultValue, b.__defaultValue);
-  assert.deepEqual(a.__type.types, b.__type.types);
+  deepEq(a.__type.types, b.__type.types);
   eq(a.__type.nullable, b.__type.nullable);
   eq(a.__type.unique, b.__type.unique);
 });
@@ -198,8 +197,8 @@ it('Column.attr/attrs n RawColumn.attr/attrs', () => {
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
-    assert.equal((t.columns[0] as mm.RawColumn).core, user.follower_count);
-    assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
+    eq((t.columns[0] as mm.RawColumn).core, user.follower_count);
+    deepEq((t.columns[0] as mm.RawColumn).__attrs, {
       a: 3,
       b: 's',
       d: 3,
@@ -211,8 +210,8 @@ it('Column.attr/attrs n RawColumn.attr/attrs', () => {
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
-    assert.equal((t.columns[0] as mm.RawColumn).core, user.follower_count);
-    assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
+    eq((t.columns[0] as mm.RawColumn).core, user.follower_count);
+    deepEq((t.columns[0] as mm.RawColumn).__attrs, {
       a: 3,
       b: 's',
       d: 3,
@@ -227,8 +226,8 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
-    assert.equal((t.columns[0] as mm.RawColumn).core, user.follower_count);
-    assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
+    eq((t.columns[0] as mm.RawColumn).core, user.follower_count);
+    deepEq((t.columns[0] as mm.RawColumn).__attrs, {
       a: 3,
       b: 's',
       [mm.ColumnAttributes.isPrivate]: true,
@@ -240,8 +239,8 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
-    assert.equal((t.columns[0] as mm.RawColumn).core, user.follower_count);
-    assert.deepEqual((t.columns[0] as mm.RawColumn).__attrs, {
+    eq((t.columns[0] as mm.RawColumn).core, user.follower_count);
+    deepEq((t.columns[0] as mm.RawColumn).__attrs, {
       a: 3,
       b: 's',
       [mm.ColumnAttributes.isPrivate]: true,

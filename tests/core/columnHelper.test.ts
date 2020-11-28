@@ -1,28 +1,26 @@
-import * as assert from 'assert';
 import * as mm from '../..';
 import post from '../models/post';
 import like from '../models/like';
 import user from '../models/user';
-
-const eq = assert.equal;
+import { eq, ok } from '../assert-aliases';
 
 it('bigInt', () => {
   const c = mm.bigInt(20);
-  assert.ok(c.__type.types.includes(mm.dt.bigInt));
+  ok(c.__type.types.includes(mm.dt.bigInt));
   eq(c.__type.length, 20);
   eq(c.__type.unsigned, false);
 });
 
 it('unsignedBigInt', () => {
   const c = mm.uBigInt(20);
-  assert.ok(c.__type.types.includes(mm.dt.bigInt));
+  ok(c.__type.types.includes(mm.dt.bigInt));
   eq(c.__type.length, 20);
   eq(c.__type.unsigned, true);
 });
 
 it('int', () => {
   const c = mm.int(20);
-  assert.ok(c.__type.types.includes(mm.dt.int));
+  ok(c.__type.types.includes(mm.dt.int));
   eq(c.__type.length, 20);
   eq(c.__type.unsigned, false);
 
@@ -32,70 +30,70 @@ it('int', () => {
 
 it('unsignedInt', () => {
   const c = mm.uInt(20);
-  assert.ok(c.__type.types.includes(mm.dt.int));
+  ok(c.__type.types.includes(mm.dt.int));
   eq(c.__type.length, 20);
   eq(c.__type.unsigned, true);
 });
 
 it('smallInt', () => {
   const c = mm.smallInt(20);
-  assert.ok(c.__type.types.includes(mm.dt.smallInt));
+  ok(c.__type.types.includes(mm.dt.smallInt));
   eq(c.__type.length, 20);
   eq(c.__type.unsigned, false);
 });
 
 it('unsignedSmallInt', () => {
   const c = mm.uSmallInt(20);
-  assert.ok(c.__type.types.includes(mm.dt.smallInt));
+  ok(c.__type.types.includes(mm.dt.smallInt));
   eq(c.__type.length, 20);
   eq(c.__type.unsigned, true);
 });
 
 it('tinyInt', () => {
   const c = mm.tinyInt(20);
-  assert.ok(c.__type.types.includes(mm.dt.tinyInt));
+  ok(c.__type.types.includes(mm.dt.tinyInt));
   eq(c.__type.length, 20);
   eq(c.__type.unsigned, false);
 });
 
 it('unsignedTinyInt', () => {
   const c = mm.uTinyInt(20);
-  assert.ok(c.__type.types.includes(mm.dt.tinyInt));
+  ok(c.__type.types.includes(mm.dt.tinyInt));
   eq(c.__type.length, 20);
   eq(c.__type.unsigned, true);
 });
 
 it('char', () => {
   const c = mm.char(20);
-  assert.ok(c.__type.types.includes(mm.dt.char));
+  ok(c.__type.types.includes(mm.dt.char));
   eq(c.__type.length, 20);
   eq(c.__type.unsigned, false);
 });
 
 it('varChar', () => {
   const c = mm.varChar(20);
-  assert.ok(c.__type.types.includes(mm.dt.varChar));
+  ok(c.__type.types.includes(mm.dt.varChar));
   eq(c.__type.length, 20);
   eq(c.__type.unsigned, false);
 });
 
 it('binary', () => {
   const c = mm.binary(20);
-  assert.ok(c.__type.types.includes(mm.dt.binary));
+  ok(c.__type.types.includes(mm.dt.binary));
   eq(c.__type.length, 20);
   eq(c.__type.unsigned, false);
 });
 
 it('varBinary', () => {
   const c = mm.varBinary(20);
-  assert.ok(c.__type.types.includes(mm.dt.varBinary));
+  ok(c.__type.types.includes(mm.dt.varBinary));
   eq(c.__type.length, 20);
   eq(c.__type.unsigned, false);
 });
 
 it('pk', () => {
   const c = mm.pk();
-  assert.ok(c.__type.types.includes(mm.dt.bigInt));
+  ok(c.__type.types.includes(mm.dt.bigInt));
   eq(c.__type.unique, false);
   eq(c.__type.nullable, false);
   eq(c.__type.unsigned, true);
@@ -143,14 +141,14 @@ it('isNoDefaultOnCSQL', () => {
 
 it('text', () => {
   const c = mm.text();
-  assert.ok(c.__type.types.includes(mm.dt.text));
+  ok(c.__type.types.includes(mm.dt.text));
   eq(c.__type.length, 0);
   eq(c.__type.unsigned, false);
 });
 
 it('double', () => {
   const c = mm.double(20);
-  assert.ok(c.__type.types.includes(mm.dt.double));
+  ok(c.__type.types.includes(mm.dt.double));
   eq(c.__type.length, 20);
   eq(c.__type.unsigned, false);
 
@@ -160,20 +158,20 @@ it('double', () => {
 
 it('float', () => {
   const c = mm.float(20);
-  assert.ok(c.__type.types.includes(mm.dt.float));
+  ok(c.__type.types.includes(mm.dt.float));
   eq(c.__type.length, 20);
   eq(c.__type.unsigned, false);
 });
 
 it('bool', () => {
   const c = mm.bool();
-  assert.ok(c.__type.types.includes(mm.dt.bool));
+  ok(c.__type.types.includes(mm.dt.bool));
   eq(c.__type.unsigned, false);
 });
 
 it('datetime', () => {
   let c = mm.datetime();
-  assert.ok(c.__type.types.includes(mm.dt.datetime));
+  ok(c.__type.types.includes(mm.dt.datetime));
 
   c = mm.datetime('local');
   eq(`${c.__defaultValue}`, 'SQL(E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3))');
@@ -184,7 +182,7 @@ it('datetime', () => {
 
 it('date', () => {
   let c = mm.date();
-  assert.ok(c.__type.types.includes(mm.dt.date));
+  ok(c.__type.types.includes(mm.dt.date));
 
   c = mm.date('local');
   eq(`${c.__defaultValue}`, 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
@@ -195,7 +193,7 @@ it('date', () => {
 
 it('time', () => {
   let c = mm.time();
-  assert.ok(c.__type.types.includes(mm.dt.time));
+  ok(c.__type.types.includes(mm.dt.time));
 
   c = mm.time('local');
   eq(`${c.__defaultValue}`, 'SQL(E(SQLCall(2, return = ColType(SQL.TIME), type = 3))');
@@ -206,7 +204,7 @@ it('time', () => {
 
 it('timestamp', () => {
   let c = mm.timestamp();
-  assert.ok(c.__type.types.includes(mm.dt.timestamp));
+  ok(c.__type.types.includes(mm.dt.timestamp));
 
   c = mm.timestamp(true);
   eq(`${c.__defaultValue}`, 'SQL(E(SQLCall(19, return = ColType(SQL.TIMESTAMP), type = 3))');
@@ -214,7 +212,7 @@ it('timestamp', () => {
 
 it('decimal', () => {
   const c = mm.decimal(5, 2);
-  assert.ok(c.__type.types.includes(mm.dt.decimal));
+  ok(c.__type.types.includes(mm.dt.decimal));
   eq(c.__type.length, 5);
   eq(c.__type.extraLength, 2);
   eq(c.__type.unsigned, false);
