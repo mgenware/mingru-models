@@ -449,32 +449,35 @@ it('Select DISTINCT', () => {
 });
 
 it('UNION', () => {
-  const t1 = mm.select();
+  const t1 = mm.select(user.id).from(user);
   const t2 = mm.select();
   const t3 = mm.select();
-  const t1t2 = t1.union(t2);
+  const t1t2 = t1.union(t2).orderByAsc(user.id);
   class UserTA extends mm.TableActions {
-    t = t1t2.unionAll(t3);
+    t = t1t2.unionAll(t3, true).orderByAsc(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
   const { t } = ta;
   ok(t1t2 instanceof mm.SelectAction);
-  ok(t1t2.mode === mm.SelectActionMode.union);
+  ok(t1t2.mode === mm.SelectActionMode.list);
   eq(t1t2.__sqlTable, t1.__sqlTable);
+  eq(t1t2.__sqlTable, user);
   eq(t1t2.unionMembers![0], t1);
   eq(t1t2.unionMembers![1], t2);
   eq(t1t2.unionAllFlag, false);
   eq(t.unionMembers![0], t1t2);
+  ok(t.mode === mm.SelectActionMode.page);
   eq(t.unionMembers![1], t3);
   eq(t.unionAllFlag, true);
   eq(t.__sqlTable, t1.__sqlTable);
+  eq(t.__sqlTable, user);
 });
 
 it('UNION on a ghost table', () => {
-  const t1 = mm.select();
+  const t1 = mm.select(user.id).from(user);
   const t2 = mm.select();
   class UserTA extends mm.TableActions {
-    t = t1.union(t2);
+    t = t1.union(t2).orderByAsc(user.id);
   }
   const ta = mm.tableActions(mm.ghostTable, UserTA);
   const { t } = ta;
@@ -482,5 +485,5 @@ it('UNION on a ghost table', () => {
   eq(t.unionMembers![1], t2);
   eq(t.__name, 't');
   eq(t.__groupTable, mm.ghostTable);
-  eq(t.__sqlTable, null);
+  eq(t.__sqlTable, user);
 });

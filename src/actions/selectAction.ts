@@ -36,26 +36,25 @@ export enum SelectActionMode {
   list,
   page,
   exists,
-  /**
-   * UNION
-   *
-   * `a.union(b)` returns a new action(mode=union, unionMembers=[a, b]).
-   * This way a and b are untouched, and the union itself can also have
-   * properties set such as ORDER BY and LIMIT OFFSET.
-   *
-   * Nesting:
-   * `a.union(b).union(c)` returns:
-   * action(mode=union, unionMembers=[
-   *   action(mode=union, unionMembers=[a, b]),
-   *   c,
-   * ])
-   *
-   * In practice, union members are flattened, we will simply ignore intermediate
-   * union member and use the outermost one.
-   */
-  union,
 }
 
+/**
+ * UNION
+ *
+ * `a.union(b)` returns a new action(mode=union, unionMembers=[a, b]).
+ * This way a and b are untouched, and the union itself can also have
+ * properties set such as ORDER BY and LIMIT OFFSET.
+ *
+ * Nesting:
+ * `a.union(b).union(c)` returns:
+ * action(mode=union, unionMembers=[
+ *   action(mode=union, unionMembers=[a, b]),
+ *   c,
+ * ])
+ *
+ * In practice, union members are flattened, we will simply ignore intermediate
+ * union member and use the outermost one.
+ */
 export class SelectAction extends CoreSelectAction {
   #havingSQLValue: SQL | null = null;
   get havingSQLValue(): SQL | null {
@@ -166,7 +165,7 @@ export class SelectAction extends CoreSelectAction {
   }
 
   paginate(): this {
-    if (this.mode !== SelectActionMode.list && this.mode !== SelectActionMode.union) {
+    if (this.mode !== SelectActionMode.list) {
       throw new Error(`Unsupported mode for \`paginate\`: ${this.mode}`);
     }
     this.#pagination = true;
@@ -219,17 +218,20 @@ export class SelectAction extends CoreSelectAction {
     }
   }
 
-  union(next: SelectAction): SelectAction {
-    return this.unionCore(next, false);
+  union(next: SelectAction, pageMode?: boolean): SelectAction {
+    return this.unionCore(next, false, pageMode ?? false);
   }
 
-  unionAll(next: SelectAction): SelectAction {
-    return this.unionCore(next, true);
+  unionAll(next: SelectAction, pageMode?: boolean): SelectAction {
+    return this.unionCore(next, true, pageMode ?? false);
   }
 
-  private unionCore(action: SelectAction, unionAll: boolean): SelectAction {
+  private unionCore(action: SelectAction, unionAll: boolean, pageMode: boolean): SelectAction {
     throwIfFalsy(action, 'action');
-    const newAction = new SelectAction([], SelectActionMode.union);
+    const newAction = new SelectAction(
+      [],
+      pageMode ? SelectActionMode.page : SelectActionMode.list,
+    );
     if (this.__sqlTable) {
       newAction.from(this.__sqlTable);
     }
