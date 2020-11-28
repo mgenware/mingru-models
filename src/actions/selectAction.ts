@@ -104,7 +104,7 @@ export class SelectAction extends CoreSelectAction {
   }
 
   #unionMembers: [SelectAction, SelectAction] | null = null;
-  get unionMembers(): Readonly<[SelectAction, SelectAction]> | null {
+  get unionMembers(): ReadonlyArray<SelectAction> | null {
     return this.#unionMembers;
   }
 
@@ -166,10 +166,8 @@ export class SelectAction extends CoreSelectAction {
   }
 
   paginate(): this {
-    if (this.mode !== SelectActionMode.list) {
-      throw new Error(
-        `'paginate' can only be used when mode = 'SelectActionMode.list', current mode is ${this.mode}`,
-      );
+    if (this.mode !== SelectActionMode.list && this.mode !== SelectActionMode.union) {
+      throw new Error(`Unsupported mode for \`paginate\`: ${this.mode}`);
     }
     this.#pagination = true;
     return this;
@@ -232,6 +230,9 @@ export class SelectAction extends CoreSelectAction {
   private unionCore(action: SelectAction, unionAll: boolean): SelectAction {
     throwIfFalsy(action, 'action');
     const newAction = new SelectAction([], SelectActionMode.union);
+    if (this.__sqlTable) {
+      newAction.from(this.__sqlTable);
+    }
     newAction.#unionAllFlag = unionAll;
     newAction.#unionMembers = [this, action];
     return newAction;

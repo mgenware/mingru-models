@@ -365,7 +365,7 @@ it('Throw when paginate is called on non-list mode', () => {
       t = mm.selectField(t.name).paginate();
     }
     mm.tableActions(user, UserTA);
-  }, "'paginate' can only be used when mode = 'SelectActionMode.list', current mode is 1 [table \"Table(user)\"]");
+  }, 'Unsupported mode for `paginate`: 1 [table "Table(user)"]');
 });
 
 it('Throw on selecting collection without ORDER BY', () => {
@@ -460,12 +460,14 @@ it('UNION', () => {
   const { t } = ta;
   ok(t1t2 instanceof mm.SelectAction);
   ok(t1t2.mode === mm.SelectActionMode.union);
+  eq(t1t2.__sqlTable, t1.__sqlTable);
   eq(t1t2.unionMembers![0], t1);
   eq(t1t2.unionMembers![1], t2);
   eq(t1t2.unionAllFlag, false);
   eq(t.unionMembers![0], t1t2);
   eq(t.unionMembers![1], t3);
   eq(t.unionAllFlag, true);
+  eq(t.__sqlTable, t1.__sqlTable);
 });
 
 it('UNION on a ghost table', () => {
