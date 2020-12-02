@@ -107,6 +107,12 @@ export class SelectAction extends CoreSelectAction {
     return this.#unionMembers;
   }
 
+  #noOrderByFlag = false;
+  get noOrderBy(): this {
+    this.#noOrderByFlag = true;
+    return this;
+  }
+
   constructor(
     public readonly columns: SelectActionColumns[],
     public readonly mode: SelectActionMode,
@@ -213,7 +219,7 @@ export class SelectAction extends CoreSelectAction {
 
     const { mode } = this;
     const selectCollection = mode === SelectActionMode.list || mode === SelectActionMode.page;
-    if (selectCollection && !this.orderByColumns.length) {
+    if (selectCollection && !this.orderByColumns.length && !this.#noOrderByFlag) {
       throw new Error('An ORDER BY clause is required when selecting multiple rows');
     }
   }

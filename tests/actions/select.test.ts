@@ -400,6 +400,12 @@ it('Throw on selecting collection without ORDER BY', () => {
     }
     mm.tableActions(user, UserTA);
   }, 'An ORDER BY clause is required when selecting multiple rows [action "t"] [table "Table(user)"]');
+  assert.doesNotThrow(() => {
+    class UserTA extends mm.TableActions {
+      t = mm.selectRows(t.name).noOrderBy;
+    }
+    mm.tableActions(user, UserTA);
+  }, 'An ORDER BY clause is required when selecting multiple rows [action "t"] [table "Table(user)"]');
   itThrows(() => {
     class UserTA extends mm.TableActions {
       t = mm.selectPage(t.name);
