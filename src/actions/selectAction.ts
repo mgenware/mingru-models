@@ -8,8 +8,8 @@ import { RawColumn } from './rawColumn';
 import SQLConvertible from '../core/sqlConvertible';
 import { sql } from '../core/sqlHelper';
 
-export type SelectActionColumns = Column | RawColumn;
-export type SelectActionColumnNames = SelectActionColumns | string;
+export type SelectedColumn = Column | RawColumn;
+export type SelectedColumnAndName = SelectedColumn | string;
 
 export interface UnionTuple {
   action: SelectAction;
@@ -17,13 +17,13 @@ export interface UnionTuple {
 }
 
 export class OrderByColumn {
-  constructor(public readonly column: SelectActionColumnNames, public readonly desc = false) {
+  constructor(public readonly column: SelectedColumnAndName, public readonly desc = false) {
     throwIfFalsy(column, 'column');
   }
 }
 
 export class OrderByColumnInput {
-  constructor(public readonly columns: ReadonlyArray<SelectActionColumnNames>) {
+  constructor(public readonly columns: ReadonlyArray<SelectedColumnAndName>) {
     throwIfFalsy(columns, 'columns');
   }
 }
@@ -113,10 +113,7 @@ export class SelectAction extends CoreSelectAction {
     return this;
   }
 
-  constructor(
-    public readonly columns: SelectActionColumns[],
-    public readonly mode: SelectActionMode,
-  ) {
+  constructor(public readonly columns: SelectedColumn[], public readonly mode: SelectActionMode) {
     super(ActionType.select);
 
     // Validate individual columns.
@@ -134,24 +131,24 @@ export class SelectAction extends CoreSelectAction {
     });
   }
 
-  orderByAsc(column: SelectActionColumnNames): this {
+  orderByAsc(column: SelectedColumnAndName): this {
     throwIfFalsy(column, 'column');
     this.#orderByColumns.push(new OrderByColumn(column, false));
     return this;
   }
 
-  orderByDesc(column: SelectActionColumnNames): this {
+  orderByDesc(column: SelectedColumnAndName): this {
     throwIfFalsy(column, 'column');
     this.#orderByColumns.push(new OrderByColumn(column, true));
     return this;
   }
 
-  orderByInput(...columns: SelectActionColumnNames[]): this {
+  orderByInput(...columns: SelectedColumnAndName[]): this {
     this.#orderByColumns.push(new OrderByColumnInput(columns));
     return this;
   }
 
-  groupBy(...columns: SelectActionColumnNames[]): this {
+  groupBy(...columns: SelectedColumnAndName[]): this {
     throwIfFalsy(columns, 'columns');
     for (const column of columns) {
       let name: string;

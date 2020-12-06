@@ -3,7 +3,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { UpdateAction } from './updateAction';
 import { InsertAction } from './insertAction';
 import { DeleteAction } from './deleteAction';
-import { SelectAction, SelectActionColumns, SelectActionMode } from './selectAction';
+import { SelectAction, SelectedColumn, SelectActionMode } from './selectAction';
 import {
   TransactAction,
   TransactionMemberTypes,
@@ -11,19 +11,19 @@ import {
   ActionWithReturnValues,
 } from './transactAction';
 
-export function select(...columns: SelectActionColumns[]): SelectAction {
+export function select(...columns: SelectedColumn[]): SelectAction {
   return new SelectAction(columns, SelectActionMode.row);
 }
 
-export function selectRows(...columns: SelectActionColumns[]): SelectAction {
+export function selectRows(...columns: SelectedColumn[]): SelectAction {
   return new SelectAction(columns, SelectActionMode.list);
 }
 
-export function selectField(column: SelectActionColumns): SelectAction {
+export function selectField(column: SelectedColumn): SelectAction {
   return new SelectAction([column], SelectActionMode.field);
 }
 
-export function selectPage(...columns: SelectActionColumns[]): SelectAction {
+export function selectPage(...columns: SelectedColumn[]): SelectAction {
   return new SelectAction(columns, SelectActionMode.page);
 }
 
