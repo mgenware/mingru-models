@@ -262,3 +262,15 @@ it('Column.getPath', () => {
     '(J|0|post|user)[title|name][user_id|id][snake_case_user_id|id].follower_count',
   );
 });
+
+it('Nullable FK', () => {
+  class Post extends mm.Table {
+    id = mm.pk();
+    user_id = mm.fk(user.id).nullable;
+  }
+  const myPost = mm.table(Post);
+
+  const t = myPost.user_id;
+  eq(t.__foreignColumn, user.id);
+  eq(t.__type.nullable, true);
+});
