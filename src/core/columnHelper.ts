@@ -10,9 +10,7 @@ export type DateTimeDefaultValue = 'none' | 'local' | 'utc';
 export function fk(column: Column): Column {
   throwIfFalsy(column, 'column');
   if (!Object.isFrozen(column)) {
-    throw new Error(
-      `The column "${toTypeString(column)}" doesn't seem to be a valid column because it is frozen`,
-    );
+    throw new Error(`The column "${toTypeString(column)}" is not sealed yet`);
   }
   return Column.newForeignColumn(column, null);
 }
