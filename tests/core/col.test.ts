@@ -190,61 +190,73 @@ it('Column.mustGet', () => {
   itThrows(() => mm.pk().mustGetName(), 'Column "Column" doesn\'t have a name');
 });
 
-it('Column.attr/attrs n RawColumn.attr/attrs', () => {
+it('Column.attr n RawColumn.attr', () => {
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(user.follower_count.attr('a', true).attrs({ a: 3, b: 's' }).attr('d', 3));
+      t = mm.select(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
     eq((t.columns[0] as mm.RawColumn).core, user.follower_count);
-    deepEq((t.columns[0] as mm.RawColumn).__attrs, {
-      a: 3,
-      b: 's',
-      d: 3,
-    });
+    deepEq(
+      (t.columns[0] as mm.RawColumn).__attrs,
+      new Map<number, unknown>([
+        [1, 3],
+        [2, 's'],
+        [4, 3],
+      ]),
+    );
   }
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(user.follower_count.attrs({ a: true }).attrs({ a: 3, b: 's' }).attr('d', 3));
+      t = mm.select(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
     eq((t.columns[0] as mm.RawColumn).core, user.follower_count);
-    deepEq((t.columns[0] as mm.RawColumn).__attrs, {
-      a: 3,
-      b: 's',
-      d: 3,
-    });
+    deepEq(
+      (t.columns[0] as mm.RawColumn).__attrs,
+      new Map<number, unknown>([
+        [1, 3],
+        [2, 's'],
+        [4, 3],
+      ]),
+    );
   }
 });
 
 it('Column.privateAttr n RawColumn.privateAttr', () => {
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(user.follower_count.attr('a', true).attrs({ a: 3, b: 's' }).privateAttr());
+      t = mm.select(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).privateAttr());
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
     eq((t.columns[0] as mm.RawColumn).core, user.follower_count);
-    deepEq((t.columns[0] as mm.RawColumn).__attrs, {
-      a: 3,
-      b: 's',
-      [mm.ColumnAttributes.isPrivate]: true,
-    });
+    deepEq(
+      (t.columns[0] as mm.RawColumn).__attrs,
+      new Map<number, unknown>([
+        [1, 3],
+        [2, 's'],
+        [mm.ColumnAttribute.isPrivate, true],
+      ]),
+    );
   }
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(user.follower_count.attrs({ a: true }).attrs({ a: 3, b: 's' }).privateAttr());
+      t = mm.select(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).privateAttr());
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
     eq((t.columns[0] as mm.RawColumn).core, user.follower_count);
-    deepEq((t.columns[0] as mm.RawColumn).__attrs, {
-      a: 3,
-      b: 's',
-      [mm.ColumnAttributes.isPrivate]: true,
-    });
+    deepEq(
+      (t.columns[0] as mm.RawColumn).__attrs,
+      new Map<number, unknown>([
+        [1, 3],
+        [2, 's'],
+        [mm.ColumnAttribute.isPrivate, true],
+      ]),
+    );
   }
 });
 

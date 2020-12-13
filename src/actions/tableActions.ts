@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import toTypeString from 'to-type-string';
-import { ColumnAttributes } from '../attrs';
+import { ActionAttribute } from '../attrs';
 import { Table } from '../core/core';
 import * as defs from '../core/defs';
 import { SQLVariable } from '../core/sql';
@@ -70,8 +70,8 @@ export class Action {
     return this.#argStubs;
   }
 
-  #attrs: { [name: string]: unknown } = {};
-  get __attrs(): Readonly<Record<string, unknown>> {
+  #attrs = new Map<ActionAttribute, unknown>();
+  get __attrs(): ReadonlyMap<ActionAttribute, unknown> {
     return this.#attrs;
   }
 
@@ -118,18 +118,13 @@ export class Action {
     return this.__name;
   }
 
-  attrs(values: { [name: string]: unknown }): this {
-    this.#attrs = { ...this.__attrs, ...values };
-    return this;
-  }
-
-  attr(name: string, value: unknown): this {
-    this.attrs({ [name]: value });
+  attr(name: ActionAttribute, value: unknown): this {
+    this.#attrs.set(name, value);
     return this;
   }
 
   privateAttr(): this {
-    return this.attr(ColumnAttributes.isPrivate, true);
+    return this.attr(ActionAttribute.isPrivate, true);
   }
 
   toString(): string {

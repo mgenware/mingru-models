@@ -93,31 +93,38 @@ it('Action.attr/attrs', () => {
     class UserTA extends mm.TableActions {
       t = mm
         .select(mm.sel(mm.sql`1`, 'col'))
-        .attrs({ a: true })
-        .attr('c', 4)
-        .attrs({ b: 's' });
+        .attr(1, true)
+        .attr(3, 4)
+        .attr(2, 's');
     }
     const table = mm.tableActions(user, UserTA);
-    deepEq(table.t.__attrs, {
-      a: true,
-      b: 's',
-      c: 4,
-    });
+    deepEq(
+      table.t.__attrs,
+      new Map<number, unknown>([
+        [1, true],
+        [2, 's'],
+        [3, 4],
+      ]),
+    );
   }
   {
     class UserTA extends mm.TableActions {
       t = mm
         .select(mm.sel(mm.sql`1`, 'col'))
-        .attr('a', true)
-        .attrs({ c: 4 })
-        .attrs({ b: 's', c: 5 });
+        .attr(1, true)
+        .attr(2, 4)
+        .attr(1, 's')
+        .attr(3, 5);
     }
     const table = mm.tableActions(user, UserTA);
-    deepEq(table.t.__attrs, {
-      a: true,
-      b: 's',
-      c: 5,
-    });
+    deepEq(
+      table.t.__attrs,
+      new Map<number, unknown>([
+        [1, 's'],
+        [2, 4],
+        [3, 5],
+      ]),
+    );
   }
 });
 
@@ -125,18 +132,21 @@ it('Action.privateAttr', () => {
   class UserTA extends mm.TableActions {
     t = mm
       .select(mm.sel(mm.sql`1`, 'col'))
-      .attrs({ a: true })
-      .attr('c', 4)
-      .attrs({ b: 's' })
+      .attr(1, true)
+      .attr(3, 4)
+      .attr(2, 's')
       .privateAttr();
   }
   const table = mm.tableActions(user, UserTA);
-  deepEq(table.t.__attrs, {
-    a: true,
-    b: 's',
-    c: 4,
-    _is_private: true,
-  });
+  deepEq(
+    table.t.__attrs,
+    new Map<number, unknown>([
+      [1, true],
+      [2, 's'],
+      [3, 4],
+      [mm.ActionAttribute.isPrivate, true],
+    ]),
+  );
 });
 
 it('__actions and props', () => {
