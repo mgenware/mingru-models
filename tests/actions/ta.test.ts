@@ -149,6 +149,29 @@ it('Action.privateAttr', () => {
   );
 });
 
+it('Action.resultTypeNameAttr', () => {
+  class UserTA extends mm.TableActions {
+    t = mm
+      .select(mm.sel(mm.sql`1`, 'col'))
+      .attr(1, true)
+      .attr(3, 4)
+      .attr(2, 's')
+      .privateAttr()
+      .resultTypeNameAttr('aaa');
+  }
+  const table = mm.tableActions(user, UserTA);
+  deepEq(
+    table.t.__attrs,
+    new Map<number, unknown>([
+      [1, true],
+      [2, 's'],
+      [3, 4],
+      [mm.ActionAttribute.isPrivate, true],
+      [mm.ActionAttribute.resultTypeName, 'aaa'],
+    ]),
+  );
+});
+
 it('__actions and props', () => {
   class UserTA extends mm.TableActions {
     upd = mm

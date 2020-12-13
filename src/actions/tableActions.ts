@@ -127,6 +127,10 @@ export class Action {
     return this.attr(ActionAttribute.isPrivate, true);
   }
 
+  resultTypeNameAttr(resultTypeName: string): this {
+    return this.attr(ActionAttribute.resultTypeName, resultTypeName);
+  }
+
   toString(): string {
     let str = `${toTypeString(this)}(${this.__name}, ${this.__groupTable})`;
     if (this.__sqlTable && this.__sqlTable !== this.__groupTable) {
