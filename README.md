@@ -13,7 +13,9 @@ Strongly typed database models in TypeScript.
 
 - [mingru](https://github.com/mgenware/mingru) converts mingru-models to Go code
 
-## We are working on a brand new documentation site, the documentation below is outdated. Stay tuned.
+---
+
+# NOTE: The documentation below is outdated!!! We are working on a brand new documentation site. Stay tuned.
 
 ---
 
