@@ -193,7 +193,7 @@ it('Column.mustGet', () => {
 it('Column.attr n RawColumn.attr', () => {
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
+      t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
@@ -209,7 +209,7 @@ it('Column.attr n RawColumn.attr', () => {
   }
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
+      t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
@@ -228,7 +228,7 @@ it('Column.attr n RawColumn.attr', () => {
 it('Column.privateAttr n RawColumn.privateAttr', () => {
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).privateAttr());
+      t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).privateAttr());
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
@@ -244,7 +244,7 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
   }
   {
     class UserTA extends mm.TableActions {
-      t = mm.select(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).privateAttr());
+      t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).privateAttr());
     }
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;

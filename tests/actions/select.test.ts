@@ -8,7 +8,7 @@ import { eq, deepEq, ok } from '../assert-aliases';
 
 it('select', () => {
   class UserTA extends mm.TableActions {
-    t = mm.select(user.id, user.name).whereSQL(mm.sql`${user.id} = 1`);
+    t = mm.selectRow(user.id, user.name).whereSQL(mm.sql`${user.id} = 1`);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -26,8 +26,8 @@ it('select', () => {
 
 it('where and whereSQL', () => {
   class UserTA extends mm.TableActions {
-    t1 = mm.select(user.id, user.name).whereSQL(mm.sql`${user.id} = 1`);
-    t2 = mm.select(user.id, user.name).where`${user.id} = 1`;
+    t1 = mm.selectRow(user.id, user.name).whereSQL(mm.sql`${user.id} = 1`);
+    t2 = mm.selectRow(user.id, user.name).where`${user.id} = 1`;
   }
   const ta = mm.tableActions(user, UserTA);
   eq(ta.t1.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
@@ -36,7 +36,7 @@ it('where and whereSQL', () => {
 
 it('Select *', () => {
   class UserTA extends mm.TableActions {
-    t = mm.select();
+    t = mm.selectRow();
   }
   assert.doesNotThrow(() => mm.tableActions(user, UserTA));
 });
@@ -112,7 +112,7 @@ it('RawColumn (types)', () => {
 
 it('RawColumn (count)', () => {
   class UserTA extends mm.TableActions {
-    t = mm.select(mm.sel(mm.sql`${mm.count(mm.sql`${post.user_id.join(user).name}`)}`, 'count'));
+    t = mm.selectRow(mm.sel(mm.sql`${mm.count(mm.sql`${post.user_id.join(user).name}`)}`, 'count'));
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -147,7 +147,7 @@ it('mm.select (types)', () => {
 
 it('byID', () => {
   class UserTA extends mm.TableActions {
-    t = mm.select(user.name).by(user.id);
+    t = mm.selectRow(user.name).by(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -159,7 +159,7 @@ it('byID', () => {
 
 it('byID with inputName', () => {
   class UserTA extends mm.TableActions {
-    t = mm.select(user.name).by(user.id, 'haha');
+    t = mm.selectRow(user.name).by(user.id, 'haha');
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -171,7 +171,7 @@ it('byID with inputName', () => {
 
 it('by', () => {
   class UserTA extends mm.TableActions {
-    t = mm.select(user.name).by(user.snake_case_name);
+    t = mm.selectRow(user.name).by(user.snake_case_name);
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
@@ -183,9 +183,9 @@ it('by', () => {
 
 it('andBy', () => {
   class UserTA extends mm.TableActions {
-    t1 = mm.select(user.name).by(user.snake_case_name).andBy(user.follower_count);
-    t2 = mm.select(user.name).andBy(user.follower_count);
-    t3 = mm.select(user.name).by(user.id).andBy(user.follower_count);
+    t1 = mm.selectRow(user.name).by(user.snake_case_name).andBy(user.follower_count);
+    t2 = mm.selectRow(user.name).andBy(user.follower_count);
+    t3 = mm.selectRow(user.name).by(user.id).andBy(user.follower_count);
   }
   const ta = mm.tableActions(user, UserTA);
   eq(
@@ -231,7 +231,7 @@ it('Order by', () => {
   const cc = mm.sel(mm.sql`haha`, 'name', new mm.ColumnType('int'));
   class UserTA extends mm.TableActions {
     t = mm
-      .select(user.name, user.follower_count, cc)
+      .selectRow(user.name, user.follower_count, cc)
       .by(user.id)
       .orderByAsc(user.name)
       .orderByAsc(cc)
@@ -378,7 +378,7 @@ it('Throw on selecting collection without ORDER BY', () => {
   });
   assert.doesNotThrow(() => {
     class UserTA extends mm.TableActions {
-      t = mm.select(t.name);
+      t = mm.selectRow(t.name);
     }
     mm.tableActions(user, UserTA);
   });
@@ -416,8 +416,8 @@ it('Throw on selecting collection without ORDER BY', () => {
 
 it('Set action.__table via from()', () => {
   class UserTA extends mm.TableActions {
-    t = mm.select(user.id, user.name);
-    t2 = mm.select(post.id).from(post);
+    t = mm.selectRow(user.id, user.name);
+    t2 = mm.selectRow(post.id).from(post);
   }
   const ta = mm.tableActions(user, UserTA);
   eq(ta.t.__sqlTable, null);
@@ -433,8 +433,8 @@ it('Set action.__table via from()', () => {
 
 it('Subquery', () => {
   class PostTA extends mm.TableActions {
-    t = mm.select(post.title).where`${post.user_id.isEqualTo`${mm
-      .select(mm.max(user.id).toColumn('maxID'))
+    t = mm.selectRow(post.title).where`${post.user_id.isEqualTo`${mm
+      .selectRow(mm.max(user.id).toColumn('maxID'))
       .from(user)}`}`;
   }
   const ta = mm.tableActions(post, PostTA);
@@ -446,8 +446,8 @@ it('Subquery', () => {
 
 it('Select DISTINCT', () => {
   class UserTA extends mm.TableActions {
-    t1 = mm.select();
-    t2 = mm.select().distinct();
+    t1 = mm.selectRow();
+    t2 = mm.selectRow().distinct();
   }
   const ta = mm.tableActions(user, UserTA);
   eq(ta.t1.distinctFlag, false);
@@ -455,9 +455,9 @@ it('Select DISTINCT', () => {
 });
 
 it('UNION', () => {
-  const t1 = mm.select(user.id).from(user);
-  const t2 = mm.select();
-  const t3 = mm.select();
+  const t1 = mm.selectRow(user.id).from(user);
+  const t2 = mm.selectRow();
+  const t3 = mm.selectRow();
   const t1t2 = t1.union(t2).orderByAsc(user.id);
   class UserTA extends mm.TableActions {
     t = t1t2.unionAll(t3, true).orderByAsc(user.id);
@@ -480,8 +480,8 @@ it('UNION', () => {
 });
 
 it('UNION on a ghost table', () => {
-  const t1 = mm.select(user.id).from(user);
-  const t2 = mm.select();
+  const t1 = mm.selectRow(user.id).from(user);
+  const t2 = mm.selectRow();
   class UserTA extends mm.TableActions {
     t = t1.union(t2).orderByAsc(user.id);
   }

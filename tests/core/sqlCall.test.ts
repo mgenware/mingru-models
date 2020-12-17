@@ -121,7 +121,7 @@ it('Embeded in SQL', () => {
 
 it('setReturnType', () => {
   const type = mm.int().__type;
-  const call = mm.IF(mm.exists(mm.select(post.title).by(post.id)), '1', '2').setReturnType(type);
+  const call = mm.IF(mm.exists(mm.selectRow(post.title).by(post.id)), '1', '2').setReturnType(type);
   eq(call.returnType, type);
 });
 

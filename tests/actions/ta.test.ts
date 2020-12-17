@@ -5,8 +5,8 @@ import { eq, ok, deepEq } from '../assert-aliases';
 
 it('Core props', () => {
   class UserTA extends mm.TableActions {
-    t = mm.select(user.id);
-    t2 = mm.select(post.id).from(post);
+    t = mm.selectRow(user.id);
+    t2 = mm.selectRow(post.id).from(post);
   }
   const ta = mm.tableActions(user, UserTA);
   let v = ta.t;
@@ -33,7 +33,7 @@ it('enumerateActions', () => {
       .set(user.name, mm.sql`${mm.input(user.name)}`)
       .set(user.follower_count, mm.sql`${user.follower_count} + 1`);
 
-    sel = mm.select(user.id);
+    sel = mm.selectRow(user.id);
     nonAction = 10;
     emptyAction = mm.emptyAction;
   }
@@ -50,7 +50,7 @@ it('Argument stubs', () => {
     new mm.SQLVariable({ type: 'int', defaultValue: 0 }, 'id2'),
   ];
   class UserTA extends mm.TableActions {
-    t = mm.select(user.id).argStubs(...stubs);
+    t = mm.selectRow(user.id).argStubs(...stubs);
   }
   const ta = mm.tableActions(user, UserTA);
 
@@ -92,7 +92,7 @@ it('Action.attr/attrs', () => {
   {
     class UserTA extends mm.TableActions {
       t = mm
-        .select(mm.sel(mm.sql`1`, 'col'))
+        .selectRow(mm.sel(mm.sql`1`, 'col'))
         .attr(1, true)
         .attr(3, 4)
         .attr(2, 's');
@@ -110,7 +110,7 @@ it('Action.attr/attrs', () => {
   {
     class UserTA extends mm.TableActions {
       t = mm
-        .select(mm.sel(mm.sql`1`, 'col'))
+        .selectRow(mm.sel(mm.sql`1`, 'col'))
         .attr(1, true)
         .attr(2, 4)
         .attr(1, 's')
@@ -131,7 +131,7 @@ it('Action.attr/attrs', () => {
 it('Action.privateAttr', () => {
   class UserTA extends mm.TableActions {
     t = mm
-      .select(mm.sel(mm.sql`1`, 'col'))
+      .selectRow(mm.sel(mm.sql`1`, 'col'))
       .attr(1, true)
       .attr(3, 4)
       .attr(2, 's')
@@ -152,7 +152,7 @@ it('Action.privateAttr', () => {
 it('Action.resultTypeNameAttr', () => {
   class UserTA extends mm.TableActions {
     t = mm
-      .select(mm.sel(mm.sql`1`, 'col'))
+      .selectRow(mm.sel(mm.sql`1`, 'col'))
       .attr(1, true)
       .attr(3, 4)
       .attr(2, 's')
@@ -179,7 +179,7 @@ it('__actions and props', () => {
       .set(user.name, mm.sql`${mm.input(user.name)}`)
       .set(user.follower_count, mm.sql`${user.follower_count} + 1`);
 
-    sel = mm.select(user.id);
+    sel = mm.selectRow(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
 
@@ -196,7 +196,7 @@ it('__actions and props', () => {
 });
 
 it('__actions and props (taCore)', () => {
-  const sel = mm.select();
+  const sel = mm.selectRow();
   const del = mm.deleteOne().by(user.id);
   const actions: Record<string, mm.Action> = {
     del,

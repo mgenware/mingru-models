@@ -11,7 +11,7 @@ import {
   ActionWithReturnValues,
 } from './transactAction';
 
-export function select(...columns: SelectedColumn[]): SelectAction {
+export function selectRow(...columns: SelectedColumn[]): SelectAction {
   return new SelectAction(columns, SelectActionMode.row);
 }
 

@@ -92,7 +92,7 @@ it('Embed string', () => {
 });
 
 it('Embed an action', () => {
-  const sql = mm.sql`${mm.select(user.id)}`;
+  const sql = mm.sql`${mm.selectRow(user.id)}`;
   eq(sql.toString(), 'SQL(E(SelectAction(null, null), type = 5))');
 });
 

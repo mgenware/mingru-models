@@ -246,7 +246,7 @@ export class UserTA extends mm.TableActions {
   // Selects all users
   selectAllUsers = mm.selectRows(user.id, user.name);
   // Selects a single user by ID
-  selectUser = mm.select(user.id, user.name).byID();
+  selectUser = mm.selectRow(user.id, user.name).byID();
   // Updates an user by ID
   updateUser = dd.updateOne().setInputs(user.name, user.sig).byID();
   // Delete an user by ID
@@ -296,7 +296,7 @@ import user from './user';
 
 export class UserTA extends mm.TableActions {
   // Select a user profile by ID.
-  selectProfile = mm.select(user.id, user.name, user.sig).byID();
+  selectProfile = mm.selectRow(user.id, user.name, user.sig).byID();
   // Select all user profiles.
   selectAllProfiles = mm.selectRows(user.id, user.name, user.sig);
   // Select the sig field by ID.
@@ -440,24 +440,24 @@ Similar to `isEqualTo` and `isEqualToInput`, uses `<>`(not equal to operator) in
 ##### `.byID()` and `by()`
 
 ```ts
-selectByID = mm.select(user.id, user.name, user.sig).byID();
+selectByID = mm.selectRow(user.id, user.name, user.sig).byID();
 ```
 
 Is equivalent to 3 expressions listed below:
 
 ```ts
 // 1
-mm.select(user.id, user.name, user.sig).where`${user.id} = ${user.id.toInput()}`;
+mm.selectRow(user.id, user.name, user.sig).where`${user.id} = ${user.id.toInput()}`;
 // 2
-mm.select(user.id, user.name, user.sig).whereSQL(user.id.isEqualToSQL(user.id.toInput()));
+mm.selectRow(user.id, user.name, user.sig).whereSQL(user.id.isEqualToSQL(user.id.toInput()));
 // 3
-mm.select(user.id, user.name, user.sig).whereSQL(user.id.isEqualToInput());
+mm.selectRow(user.id, user.name, user.sig).whereSQL(user.id.isEqualToInput());
 ```
 
 `byID` automatically sets table's primary key as input as `WHERE`, to specify another column, use `by` instead:
 
 ```ts
-selectByName = mm.select(user.id, user.name, user.sig).by(user.name);
+selectByName = mm.selectRow(user.id, user.name, user.sig).by(user.name);
 ```
 
 #### Predefined System Calls
@@ -528,7 +528,7 @@ selectUser = dd.select(user.name, user.age).byID().orderByAsc(user.name).orderBy
 Can use `Column.as` to add the SQL `AS` alias to a selected column:
 
 ```ts
-selectUser = mm.select(user.name, user.post_count.as('count'));
+selectUser = mm.selectRow(user.name, user.post_count.as('count'));
 ```
 
 Generates the following SQL:
