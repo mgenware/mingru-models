@@ -33,7 +33,8 @@ export type OrderByColumnType = OrderByColumn | OrderByColumnInput;
 export enum SelectActionMode {
   row,
   field,
-  list,
+  rowList,
+  fieldList,
   page,
   exists,
 }
@@ -168,7 +169,7 @@ export class SelectAction extends CoreSelectAction {
   }
 
   paginate(): this {
-    if (this.mode !== SelectActionMode.list) {
+    if (this.mode !== SelectActionMode.rowList) {
       throw new Error(`Unsupported mode for \`paginate\`: ${this.mode}`);
     }
     this.#pagination = true;
@@ -215,7 +216,7 @@ export class SelectAction extends CoreSelectAction {
     super.validate(groupTable);
 
     const { mode } = this;
-    const selectCollection = mode === SelectActionMode.list || mode === SelectActionMode.page;
+    const selectCollection = mode === SelectActionMode.rowList || mode === SelectActionMode.page;
     if (selectCollection && !this.orderByColumns.length && !this.#noOrderByFlag) {
       throw new Error('An ORDER BY clause is required when selecting multiple rows');
     }
@@ -233,7 +234,7 @@ export class SelectAction extends CoreSelectAction {
     throwIfFalsy(action, 'action');
     const newAction = new SelectAction(
       [],
-      pageMode ? SelectActionMode.page : SelectActionMode.list,
+      pageMode ? SelectActionMode.page : SelectActionMode.rowList,
     );
     if (this.__sqlTable) {
       newAction.from(this.__sqlTable);

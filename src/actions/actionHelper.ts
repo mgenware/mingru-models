@@ -16,11 +16,15 @@ export function selectRow(...columns: SelectedColumn[]): SelectAction {
 }
 
 export function selectRows(...columns: SelectedColumn[]): SelectAction {
-  return new SelectAction(columns, SelectActionMode.list);
+  return new SelectAction(columns, SelectActionMode.rowList);
 }
 
 export function selectField(column: SelectedColumn): SelectAction {
   return new SelectAction([column], SelectActionMode.field);
+}
+
+export function selectFieldRows(column: SelectedColumn): SelectAction {
+  return new SelectAction([column], SelectActionMode.fieldList);
 }
 
 export function selectPage(...columns: SelectedColumn[]): SelectAction {

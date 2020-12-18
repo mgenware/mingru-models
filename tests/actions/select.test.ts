@@ -50,7 +50,7 @@ it('selectRows', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  eq(v.mode, mm.SelectActionMode.list);
+  eq(v.mode, mm.SelectActionMode.rowList);
 });
 
 it('as', () => {
@@ -465,7 +465,7 @@ it('UNION', () => {
   const ta = mm.tableActions(user, UserTA);
   const { t } = ta;
   ok(t1t2 instanceof mm.SelectAction);
-  ok(t1t2.mode === mm.SelectActionMode.list);
+  ok(t1t2.mode === mm.SelectActionMode.rowList);
   eq(t1t2.__sqlTable, t1.__sqlTable);
   eq(t1t2.__sqlTable, user);
   eq(t1t2.unionMembers![0], t1);
