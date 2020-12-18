@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table } from '../core/core';
-import { Action, ActionType } from './tableActions';
+import { Action, ActionData, ActionType } from './tableActions';
 
 export class ActionWithReturnValues {
   constructor(
@@ -21,30 +21,37 @@ export class TransactionMember {
   }
 }
 
+export interface TransactActionData extends ActionData {
+  members?: TransactionMember[];
+  returnValues?: string[];
+}
+
 export class TransactAction extends Action {
-  #returnValues?: string[];
-  get returnValues(): ReadonlyArray<string> | undefined {
-    return this.#returnValues;
+  private get data(): TransactActionData {
+    return this.__data;
   }
 
-  constructor(public readonly members: ReadonlyArray<TransactionMember>) {
+  constructor(members: TransactionMember[]) {
     super(ActionType.transact);
     throwIfFalsy(members, 'members');
+
+    this.data.members = members;
   }
 
   validate(groupTable: Table) {
     super.validate(groupTable);
-
-    for (const mem of this.members) {
-      const mAction = mem.action;
-      mAction.validate(groupTable);
+    if (this.data.members) {
+      for (const mem of this.data.members) {
+        const mAction = mem.action;
+        mAction.validate(groupTable);
+      }
     }
   }
 
   setReturnValues(...values: string[]): this {
     throwIfFalsy(values, 'values');
 
-    this.#returnValues = values;
+    this.data.returnValues = values;
     return this;
   }
 }

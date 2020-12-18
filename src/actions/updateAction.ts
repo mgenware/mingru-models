@@ -1,28 +1,33 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { ActionType } from './tableActions';
 import { SQL } from '../core/sql';
-import { CoreUpdateAction } from './coreUpdateAction';
+import { CoreUpdateAction, CoreUpdateActionData } from './coreUpdateAction';
 import { where, by, andBy } from './common';
 import { Column, Table } from '../core/core';
 import { sql } from '../core/sqlHelper';
 import SQLConvertible from '../core/sqlConvertible';
+import { CoreSelectionActionData } from './coreSelectAction';
+
+export interface UpdateActionData extends CoreUpdateActionData, CoreSelectionActionData {
+  unsafeMode?: boolean;
+  ensureOneRowAffected?: boolean;
+}
 
 export class UpdateAction extends CoreUpdateAction {
-  // These two properties are members of `ActionWithWhere`,
-  // thus have to be publicly writable.
-  whereSQLValue: SQL | null = null;
-  whereValidator: ((value: SQL) => void) | null = null;
+  private get data(): UpdateActionData {
+    return this.__data;
+  }
 
-  constructor(
-    public readonly allowEmptyWhere: boolean,
-    public readonly ensureOneRowAffected: boolean,
-  ) {
+  constructor(unsafeMode: boolean, ensureOneRowAffected: boolean) {
     super(ActionType.update);
+
+    this.data.unsafeMode = unsafeMode;
+    this.data.ensureOneRowAffected = ensureOneRowAffected;
   }
 
   whereSQL(value: SQL): this {
     throwIfFalsy(value, 'value');
-    where(this, value);
+    where(this.data, value);
     return this;
   }
 
@@ -32,26 +37,26 @@ export class UpdateAction extends CoreUpdateAction {
   }
 
   by(column: Column, name?: string): this {
-    by(this, column, name);
+    by(this.data, column, name);
     return this;
   }
 
   andBy(column: Column, name?: string): this {
-    andBy(this, column, name);
+    andBy(this.data, column, name);
     return this;
   }
 
   validate(groupTable: Table) {
     super.validate(groupTable);
 
-    if (!this.allowEmptyWhere && !this.whereSQLValue) {
+    if (!this.data.unsafeMode && !this.data.whereSQLValue) {
       throw new Error(
-        '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll`',
+        '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll`',
       );
     }
   }
 
   get whereSQLString(): string {
-    return this.whereSQLValue ? this.whereSQLValue.toString() : '';
+    return this.data.whereSQLValue?.toString() ?? '';
   }
 }

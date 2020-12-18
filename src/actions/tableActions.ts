@@ -111,7 +111,7 @@ export class Action {
   }
 
   attr(name: ActionAttribute, value: unknown): this {
-    (this.__data.attrs ??= new Map<ActionAttribute, unknown>()).set(name, value);
+    this.mustGetAttrs().set(name, value);
     return this;
   }
 
@@ -154,6 +154,10 @@ export class Action {
       this.__data.groupTable = groupTable;
     }
     this.validate(this.__data.groupTable || groupTable);
+  }
+
+  private mustGetAttrs(): Map<ActionAttribute, unknown> {
+    return (this.__data.attrs ??= new Map<ActionAttribute, unknown>());
   }
 }
 

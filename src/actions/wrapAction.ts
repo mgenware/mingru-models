@@ -1,5 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Action, ActionType } from './tableActions';
+import { Action, ActionData, ActionType } from './tableActions';
 import { Table } from '../core/core';
 
 export type WrapActionArgValue = string | ValueRef | Table;
@@ -29,32 +29,31 @@ export function valueRef(name: string): ValueRef {
   return new ValueRef(name);
 }
 
+export interface WrapActionData extends ActionData {
+  args?: Record<string, WrapActionArgValue>;
+  innerAction?: Action;
+}
+
 export class WrapAction extends Action {
-  #args: Readonly<Record<string, WrapActionArgValue>>;
-  get args(): Readonly<Record<string, WrapActionArgValue>> {
-    return this.#args;
+  private get data(): WrapActionData {
+    return this.__data;
   }
 
-  // Called by table action extensions.
-  __setArgs(args: Readonly<Record<string, WrapActionArgValue>>) {
-    this.#args = args;
-  }
-
-  constructor(public readonly action: Action, args: Readonly<Record<string, WrapActionArgValue>>) {
+  constructor(innerAction: Action, args: Readonly<Record<string, WrapActionArgValue>>) {
     super(ActionType.wrap);
-    throwIfFalsy(action, 'action');
+    throwIfFalsy(innerAction, 'innerAction');
     throwIfFalsy(args, 'args');
 
     if (Object.entries(args).length === 0) {
       throw new Error('"args" cannot be empty');
     }
-    this.#args = args;
+    this.data.innerAction = innerAction;
+    this.data.args = args;
   }
 
   validate(groupTable: Table) {
     super.validate(groupTable);
 
-    const { action } = this;
-    action.validate(groupTable);
+    this.data.innerAction?.validate(groupTable);
   }
 }

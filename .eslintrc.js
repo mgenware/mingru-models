@@ -31,6 +31,7 @@ module.exports = {
     'object-curly-newline': ['error', { ImportDeclaration: 'never', ExportDeclaration: 'never' }],
     'func-names': 'off',
     'max-len': 'off',
-    'newline-per-chained-call': 'off'
+    'newline-per-chained-call': 'off',
+    'no-return-assign': 'off',
   },
 };

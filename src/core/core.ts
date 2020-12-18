@@ -30,10 +30,27 @@ export enum JoinType {
   full,
 }
 
+export interface ColumnData {
+  name?: string;
+  type?: ColumnType;
+  defaultValue?: unknown;
+  noDefaultValueOnCSQL?: boolean;
+  dbName?: string;
+  modelName?: string;
+  table?: Table | JoinedTable;
+  inputName?: string;
+  // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any
+  // table, the foreignColumn property only indicates a column property is declared as FK and
+  // doesn't have any effect on join(), the real dest table and column are determined by join().
+  foreignColumn?: Column;
+  // See `Column.join` for details
+  mirroredColumn?: Column;
+}
+
 export class Column {
   static fromTypes(types: string | string[], defaultValue?: unknown): Column {
     const col = new Column(new ColumnType(typeof types === 'string' ? [types] : types));
-    col.#defaultValue = defaultValue;
+    col.data.defaultValue = defaultValue;
     return col;
   }
 
@@ -44,94 +61,55 @@ export class Column {
     throwIfFalsy(srcColumn, 'srcColumn');
 
     const copied = Column.copyFrom(srcColumn, table, false);
-    copied.#foreignColumn = srcColumn;
+    copied.data.foreignColumn = srcColumn;
     // For foreign columns, `__name` is reset to null.
-    copied.#name = null;
+    copied.data.name = undefined;
     return copied;
   }
 
   static newJoinedColumn(mirroredColumn: Column, table: JoinedTable): Column {
     const copied = Column.copyFrom(mirroredColumn, table, true);
-    copied.#mirroredColumn = mirroredColumn;
+    copied.data.mirroredColumn = mirroredColumn;
     return copied;
   }
 
   private static copyFrom(
-    column: Column,
+    from: Column,
     newTable: Table | JoinedTable | null,
     copyNames: boolean,
   ): Column {
-    const res = new Column(column.__type);
+    const to = new Column(from.mustGetType());
+    const toData = to.data;
+    const fromData = from.data;
     // Copy values
-    res.#defaultValue = column.__defaultValue;
+    toData.defaultValue = fromData.defaultValue;
     if (newTable) {
-      res.#table = newTable;
+      toData.table = newTable;
     }
     if (copyNames) {
-      res.#name = column.#name;
-      res.#modelName = column.#modelName;
-      res.#dbName = column.#dbName;
+      toData.name = fromData.name;
+      toData.modelName = fromData.modelName;
+      toData.dbName = fromData.dbName;
     }
-    res.#foreignColumn = column.__foreignColumn;
-    res.#mirroredColumn = column.__mirroredColumn;
+    toData.foreignColumn = fromData.foreignColumn;
+    toData.mirroredColumn = fromData.mirroredColumn;
     // Reset values.
-    res.__type.pk = false;
-    res.__type.autoIncrement = false;
-    return res;
+    to.mustGetType().pk = false;
+    to.mustGetType().autoIncrement = false;
+    return to;
   }
 
-  #name: string | null = null;
-  get __name(): string | null {
-    return this.#name;
+  protected __data: ColumnData = {};
+
+  private get data(): ColumnData {
+    return this.__data;
   }
 
-  #type: ColumnType;
-  get __type(): ColumnType {
-    return this.#type;
-  }
-
-  #defaultValue: unknown;
-  get __defaultValue(): unknown {
-    return this.#defaultValue;
-  }
-
-  #noDefaultOnCSQL = false;
-  get __noDefaultOnCSQL(): boolean {
-    return this.#noDefaultOnCSQL;
-  }
-
-  #dbName: string | null = null;
-  get __dbName(): string | null {
-    return this.#dbName;
-  }
-
-  #modelName: string | null = null;
-  get __modelName(): string | null {
-    return this.#modelName;
-  }
-
-  #table: Table | JoinedTable | null = null;
-  get __table(): Table | JoinedTable | null {
-    return this.#table;
-  }
-
-  #inputName: string | null = null;
-  get __inputName(): string | null {
-    return this.#inputName;
-  }
-
-  // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any
-  // table, the foreignColumn property only indicates a column property is declared as FK and
-  // doesn't have any effect on join(), the real dest table and column are determined by join().
-  #foreignColumn: Column | null = null;
-  get __foreignColumn(): Column | null {
-    return this.#foreignColumn;
-  }
-
-  // See `Column.join` for details
-  #mirroredColumn: Column | null = null;
-  get __mirroredColumn(): Column | null {
-    return this.#mirroredColumn;
+  private mustGetType(): ColumnType {
+    if (!this.data.type) {
+      throw new Error('Unexpected empty type');
+    }
+    return this.data.type;
   }
 
   constructor(type: ColumnType) {
@@ -142,96 +120,96 @@ export class Column {
       Object.assign(t, type);
       // Deep copy types
       t.types = [...type.types];
-      this.#type = t;
+      this.data.type = t;
     } else {
-      this.#type = type;
+      this.data.type = type;
     }
   }
 
   get nullable(): Column {
     this.checkMutability();
-    this.__type.nullable = true;
+    this.mustGetType().nullable = true;
     return this;
   }
 
   get unique(): Column {
     this.checkMutability();
-    this.__type.unique = true;
+    this.mustGetType().unique = true;
     return this;
   }
 
   get autoIncrement(): Column {
     this.checkMutability();
-    this.__type.autoIncrement = true;
+    this.mustGetType().autoIncrement = true;
     return this;
   }
 
   get noAutoIncrement(): Column {
     this.checkMutability();
-    this.__type.autoIncrement = false;
+    this.mustGetType().autoIncrement = false;
     return this;
   }
 
-  get noDefaultOnCSQL(): Column {
+  get noDefaultValueOnCSQL(): Column {
     this.checkMutability();
-    this.#noDefaultOnCSQL = true;
+    this.data.noDefaultValueOnCSQL = true;
     return this;
   }
 
   __freeze() {
-    Object.freeze(this.__type);
+    Object.freeze(this.data);
     Object.freeze(this);
   }
 
   default(value: unknown): this {
     this.checkMutability();
-    this.#defaultValue = value;
+    this.data.defaultValue = value;
     return this;
   }
 
   setDBName(name: string): this {
     throwIfFalsy(name, 'name');
     this.checkMutability();
-    this.#dbName = name;
+    this.data.dbName = name;
     return this;
   }
 
   setModelName(name: string): this {
     throwIfFalsy(name, 'name');
     this.checkMutability();
-    this.#modelName = name;
+    this.data.modelName = name;
     return this;
   }
 
   setInputName(name: string): this {
     throwIfFalsy(name, 'name');
-    this.#inputName = name;
+    this.data.inputName = name;
     return this;
   }
 
-  getDBName(): string {
-    return this.__dbName || this.__name || '';
+  __getDBName(): string {
+    return this.data.dbName ?? this.data.name ?? '';
   }
 
-  mustGetTable(): Table | JoinedTable {
-    if (!this.__table) {
+  __mustGetTable(): Table | JoinedTable {
+    if (!this.data.table) {
       throw new Error(`Column "${toTypeString(this)}" doesn't have a table`);
     }
-    return this.__table;
+    return this.data.table;
   }
 
-  mustGetName(): string {
-    if (!this.__name) {
+  __mustGetName(): string {
+    if (!this.data.name) {
       throw new Error(`Column "${toTypeString(this)}" doesn't have a name`);
     }
-    return this.__name;
+    return this.data.name;
   }
 
-  getInputName(): string {
-    const table = this.mustGetTable();
-    const name = this.mustGetName();
-    if (this.__inputName) {
-      return this.__inputName;
+  __getInputName(): string {
+    const table = this.__mustGetTable();
+    const name = this.__mustGetName();
+    if (this.data.inputName) {
+      return this.data.inputName;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -244,32 +222,29 @@ export class Column {
     return name;
   }
 
-  getSourceTable(): Table | null {
-    const table = this.__table;
+  __getSourceTable(): Table | null {
+    const { table } = this.data;
     if (!table) {
       return null;
     }
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     if (table instanceof JoinedTable) {
-      return table.srcColumn.getSourceTable();
+      return table.srcColumn.__getSourceTable();
     }
     return table;
   }
 
-  checkSourceTable(table: Table) {
-    if (table !== this.getSourceTable()) {
+  __checkSourceTable(table: Table) {
+    if (table !== this.__getSourceTable()) {
       throw new Error(
-        `Source table assertion failed, expected "${table}", got "${this.getSourceTable()}".`,
+        `Source table assertion failed, expected "${table}", got "${this.__getSourceTable()}".`,
       );
     }
   }
 
-  getPath(): string {
-    const table = this.__table;
-    if (!table) {
-      throw new Error(`This column doesn't have a table set, column ${this}`);
-    }
-    const dbName = this.getDBName();
+  __getPath(): string {
+    const table = this.__mustGetTable();
+    const dbName = this.__getDBName();
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     if (table instanceof Table) {
       return `${table.getDBName()}.${dbName}`;
@@ -278,11 +253,11 @@ export class Column {
   }
 
   toString(): string {
-    let name = this.__name;
-    if (this.getDBName() !== name) {
-      name += `|${this.getDBName()}`;
+    let { name } = this.data;
+    if (this.__getDBName() !== name) {
+      name += `|${this.__getDBName()}`;
     }
-    const tableStr = this.__table ? this.__table.toString() : '<null>';
+    const tableStr = this.data.table?.toString() ?? '<null>';
     return `Column(${name}, ${tableStr})`;
   }
 
@@ -336,11 +311,11 @@ export class Column {
 
   // Called by `mm.table`.
   __configure(name: string, table: Table) {
-    if (!this.__name) {
-      this.#name = name;
+    if (!this.data.name) {
+      this.data.name = name;
     }
-    if (!this.__table) {
-      this.#table = table;
+    if (!this.data.table) {
+      this.data.table = table;
     }
   }
 
@@ -386,7 +361,7 @@ export class Column {
   private checkMutability() {
     if (Object.isFrozen(this)) {
       throw new Error(
-        `The current column "${this.__name}" of type ${toTypeString(
+        `The current column "${this.data.name}" of type ${toTypeString(
           this,
         )} cannot be modified, it is frozen. It is mostly likely because you are modifying a column from another table`,
       );
@@ -474,7 +449,7 @@ export class JoinedTable {
     public readonly associative: boolean, // If `srcColumn` is associative.
     public readonly extraColumns: [Column, Column][], // Join tables with composite PKs.
   ) {
-    const srcTable = srcColumn.mustGetTable();
+    const srcTable = srcColumn.__mustGetTable();
     let localTableString: string;
     if (srcTable instanceof JoinedTable) {
       // Source column is a joined column.
@@ -488,19 +463,19 @@ export class JoinedTable {
     // We are not using `column.getPath()` as we assume src and dest columns are
     // always from src and dest tables.
     // Primary columns.
-    keyPath += `[${srcColumn.getDBName()}|${destColumn.getDBName()}]`;
+    keyPath += `[${srcColumn.__getDBName()}|${destColumn.__getDBName()}]`;
 
     // Extra columns.
     for (const [col1, col2] of extraColumns) {
-      keyPath += `[${col1.getDBName()}|${col2.getDBName()}]`;
+      keyPath += `[${col1.__getDBName()}|${col2.__getDBName()}]`;
     }
     this.keyPath = keyPath;
   }
 
   tableInputName(): string {
     const { srcColumn } = this;
-    const srcTable = srcColumn.mustGetTable();
-    const srcName = srcColumn.mustGetName();
+    const srcTable = srcColumn.__mustGetTable();
+    const srcName = srcColumn.__mustGetName();
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const curName = makeMiddleName(srcName);
     if (srcTable instanceof JoinedTable) {

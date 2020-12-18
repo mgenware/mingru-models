@@ -21,30 +21,38 @@ export class CoreUpdateAction extends Action {
     return this.__data;
   }
 
+  private mustGetSetters(): Map<Column, unknown> {
+    return (this.data.setters ??= new Map<Column, unknown>());
+  }
+
+  private mustGetAutoSetters(): Set<AutoSetterType> {
+    return (this.data.autoSetters ??= new Set<AutoSetterType>());
+  }
+
   set(column: Column, value: SQLConvertible): this {
     throwIfFalsy(column, 'column');
     throwIfFalsy(value, 'value');
 
     this.checkColumnFree(column);
-    (this.data.setters ??= new Map<Column, unknown>()).set(column, convertToSQL(value));
+    this.mustGetSetters().set(column, convertToSQL(value));
     return this;
   }
 
   setInputs(...columns: Column[]): this {
     if (!columns.length) {
-      this.#autoSetters.add(AutoSetterType.input);
+      this.mustGetAutoSetters().add(AutoSetterType.input);
       return this;
     }
     for (const col of columns) {
       this.checkColumnFree(col);
-      this.#setters.set(col, sql`${col.toInput()}`);
+      this.mustGetSetters().set(col, sql`${col.toInput()}`);
     }
     return this;
   }
 
   setDefaults(...columns: Column[]): this {
     if (!columns.length) {
-      this.#autoSetters.add(AutoSetterType.default);
+      this.mustGetAutoSetters().add(AutoSetterType.default);
       // We don't know if all other columns have a default value as `this.__table` could be null at the point.
       // We'll check it later in `onInit()`.
       return this;
@@ -52,24 +60,24 @@ export class CoreUpdateAction extends Action {
     for (const col of columns) {
       this.checkColumnFree(col);
       this.checkHasDefault(col);
-      this.#setters.set(col, col.__defaultValue);
+      this.mustGetSetters().set(col, col.__defaultValue);
     }
     return this;
   }
 
   validate(groupTable: Table) {
     super.validate(groupTable);
-    if (!this.setters.size && !this.autoSetters.size) {
+    if (!this.data.setters) {
       throw new Error('No setters');
     }
   }
 
   settersToString(): string {
-    return [...this.setters.entries()].map(([k, v]) => `${k.__name}: ${v}`).join(', ');
+    return [...this.mustGetSetters().entries()].map(([k, v]) => `${k.__name}: ${v}`).join(', ');
   }
 
   private checkColumnFree(col: Column) {
-    if (this.setters.has(col)) {
+    if (this.data.setters?.has(col)) {
       throw new Error(`Column "${col.__name}" is already set`);
     }
   }
