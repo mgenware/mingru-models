@@ -3,7 +3,7 @@ import toTypeString from 'to-type-string';
 import { ActionType } from './tableActions';
 import { Column, Table } from '../core/core';
 import { SQL, SQLVariable } from '../core/sql';
-import { CoreSelectAction } from './coreSelectAction';
+import { CoreSelectAction, CoreSelectionActionData } from './coreSelectAction';
 import { RawColumn } from './rawColumn';
 import SQLConvertible from '../core/sqlConvertible';
 import { sql } from '../core/sqlHelper';
@@ -39,6 +39,21 @@ export enum SelectActionMode {
   exists,
 }
 
+export interface SelectActionData extends CoreSelectionActionData {
+  mode?: SelectActionMode;
+  columns?: SelectedColumn[];
+  havingSQLValue?: SQL;
+  orderByColumns: OrderByColumnType[];
+  groupByColumns: string[];
+  limitValue?: SQLVariable | number;
+  offsetValue?: SQLVariable | number;
+  paginateFlag?: boolean;
+  distinctFlag?: boolean;
+  unionAllFlag?: boolean;
+  unionMembers?: [SelectAction, SelectAction];
+  noOrderByFlag?: boolean;
+}
+
 /**
  * UNION
  *
@@ -57,76 +72,26 @@ export enum SelectActionMode {
  * union member and use the outermost one.
  */
 export class SelectAction extends CoreSelectAction {
-  #havingSQLValue: SQL | null = null;
-  get havingSQLValue(): SQL | null {
-    return this.#havingSQLValue;
+  private get data(): SelectActionData {
+    return this.__data as SelectActionData;
   }
 
-  #havingValidator: ((value: SQL) => void) | null = null;
-  get havingValidator(): ((value: SQL) => void) | null {
-    return this.#havingValidator;
-  }
-
-  #orderByColumns: OrderByColumnType[] = [];
-  get orderByColumns(): ReadonlyArray<OrderByColumnType> {
-    return this.#orderByColumns;
-  }
-
-  #groupByColumns: string[] = [];
-  get groupByColumns(): ReadonlyArray<string> {
-    return this.#groupByColumns;
-  }
-
-  #limitValue: SQLVariable | number | undefined;
-  get limitValue(): SQLVariable | number | undefined {
-    return this.#limitValue;
-  }
-
-  #offsetValue: SQLVariable | number | undefined;
-  get offsetValue(): SQLVariable | number | undefined {
-    return this.#offsetValue;
-  }
-
-  #pagination = false;
-  get pagination(): boolean {
-    return this.#pagination;
-  }
-
-  #distinctFlag = false;
-  get distinctFlag(): boolean {
-    return this.#distinctFlag;
-  }
-
-  // Set by `union` or `unionAll`.
-  #unionAllFlag = false;
-  get unionAllFlag(): boolean {
-    return this.#unionAllFlag;
-  }
-
-  #unionMembers: [SelectAction, SelectAction] | null = null;
-  get unionMembers(): ReadonlyArray<SelectAction> | null {
-    return this.#unionMembers;
-  }
-
-  #noOrderByFlag = false;
-  get noOrderBy(): this {
-    this.#noOrderByFlag = true;
-    return this;
-  }
-
-  constructor(public readonly columns: SelectedColumn[], public readonly mode: SelectActionMode) {
+  constructor(columns: SelectedColumn[], mode: SelectActionMode) {
     super(ActionType.select);
+
+    this.data.columns = columns;
+    this.data.mode = mode;
 
     // Validate individual columns.
     columns.forEach((col, idx) => {
       if (!col) {
-        throw new Error(`The column at index ${idx} is null, action name "${this.__name}"`);
+        throw new Error(`The column at index ${idx} is null, action name "${this.data.name}"`);
       }
       if (col instanceof Column === false && col instanceof RawColumn === false) {
         throw new Error(
           `The column at index ${idx} is not a valid column, got a "${toTypeString(
             col,
-          )}", action name "${this.__name}"`,
+          )}", action name "${this.data.name}"`,
         );
       }
     });
@@ -134,18 +99,18 @@ export class SelectAction extends CoreSelectAction {
 
   orderByAsc(column: SelectedColumnAndName): this {
     throwIfFalsy(column, 'column');
-    this.#orderByColumns.push(new OrderByColumn(column, false));
+    this.data.orderByColumns.push(new OrderByColumn(column, false));
     return this;
   }
 
   orderByDesc(column: SelectedColumnAndName): this {
     throwIfFalsy(column, 'column');
-    this.#orderByColumns.push(new OrderByColumn(column, true));
+    this.data.orderByColumns.push(new OrderByColumn(column, true));
     return this;
   }
 
   orderByInput(...columns: SelectedColumnAndName[]): this {
-    this.#orderByColumns.push(new OrderByColumnInput(columns));
+    this.data.orderByColumns.push(new OrderByColumnInput(columns));
     return this;
   }
 
@@ -163,42 +128,28 @@ export class SelectAction extends CoreSelectAction {
       } else {
         name = column;
       }
-      this.#groupByColumns.push(name);
+      this.data.groupByColumns.push(name);
     }
     return this;
   }
 
   paginate(): this {
-    if (this.mode !== SelectActionMode.rowList) {
-      throw new Error(`Unsupported mode for \`paginate\`: ${this.mode}`);
+    if (this.mode !== SelectActionMode.rowList && this.mode !== SelectActionMode.fieldList) {
+      throw new Error('`paginate` can only be called on `rowList` and `fieldList` modes');
     }
-    this.#pagination = true;
-    return this;
-  }
-
-  limit(limit: SQLVariable | number): this {
-    this.setLimitValue(limit);
-    return this;
-  }
-
-  offset(offset: SQLVariable | number): this {
-    this.setOffsetValue(offset);
+    this.data.paginateFlag = true;
     return this;
   }
 
   havingSQL(value: SQL): this {
     throwIfFalsy(value, 'value');
-    if (!this.groupByColumns) {
+    if (!this.data.groupByColumns) {
       throw new Error('You have to call `having` after `groupBy`');
     }
-    if (this.havingValidator) {
-      this.havingValidator(value);
-    }
-
-    if (this.havingSQLValue) {
+    if (this.data.havingSQLValue) {
       throw new Error('`having` is called twice');
     }
-    this.#havingSQLValue = value;
+    this.data.havingSQLValue = value;
     return this;
   }
 
@@ -208,7 +159,7 @@ export class SelectAction extends CoreSelectAction {
   }
 
   distinct(): this {
-    this.#distinctFlag = true;
+    this.data.distinctFlag = true;
     return this;
   }
 
@@ -217,7 +168,7 @@ export class SelectAction extends CoreSelectAction {
 
     const { mode } = this;
     const selectCollection = mode === SelectActionMode.rowList || mode === SelectActionMode.page;
-    if (selectCollection && !this.orderByColumns.length && !this.#noOrderByFlag) {
+    if (selectCollection && !this.data.orderByColumns.length && !this.data.noOrderByFlag) {
       throw new Error('An ORDER BY clause is required when selecting multiple rows');
     }
   }
@@ -236,28 +187,30 @@ export class SelectAction extends CoreSelectAction {
       [],
       pageMode ? SelectActionMode.page : SelectActionMode.rowList,
     );
-    if (this.__sqlTable) {
-      newAction.from(this.__sqlTable);
+    if (this.data.sqlTable) {
+      newAction.from(this.data.sqlTable);
     }
-    newAction.#unionAllFlag = unionAll;
-    newAction.#unionMembers = [this, action];
+    newAction.data.unionAllFlag = unionAll;
+    newAction.data.unionMembers = [this, action];
     return newAction;
   }
 
-  private setLimitValue(limit: SQLVariable | number) {
-    if (this.limitValue !== undefined) {
-      throw new Error(`LIMIT has been set to ${this.limitValue}`);
+  limit(limit: SQLVariable | number): this {
+    if (this.data.limitValue !== undefined) {
+      throw new Error(`LIMIT has been set to ${this.data.limitValue}`);
     }
-    this.#limitValue = limit;
+    this.data.limitValue = limit;
+    return this;
   }
 
-  private setOffsetValue(offset: SQLVariable | number) {
-    if (this.limitValue === undefined) {
+  offset(offset: SQLVariable | number): this {
+    if (this.data.limitValue === undefined) {
       throw new Error('OFFSET cannot be set before LIMIT');
     }
-    if (this.offsetValue !== undefined) {
-      throw new Error(`OFFSET has been set to ${this.offsetValue}`);
+    if (this.data.offsetValue !== undefined) {
+      throw new Error(`OFFSET has been set to ${this.data.offsetValue}`);
     }
-    this.#offsetValue = offset;
+    this.data.offsetValue = offset;
+    return this;
   }
 }

@@ -46,44 +46,36 @@ export enum ActionType {
   wrap,
 }
 
-export class Action {
+export interface ActionData {
+  actionType?: ActionType;
   // Will be set after calling `mm.tableActions`.
-  #name: string | null = null;
-  get __name(): string | null {
-    return this.#name;
-  }
-
+  name?: string;
   // Set by `from()`.
-  #sqlTable: Table | null = null;
-  get __sqlTable(): Table | null {
-    return this.#sqlTable;
-  }
-
+  sqlTable?: Table;
   // Will be set after calling `mm.tableActions`.
-  #groupTable: Table | null = null;
-  get __groupTable(): Table | null {
-    return this.#groupTable;
+  groupTable?: Table;
+  argStubs?: SQLVariable[];
+  attrs?: Map<ActionAttribute, unknown>;
+}
+
+export class Action {
+  protected __data: ActionData = {};
+
+  getActionData(): ActionData {
+    return this.__data;
   }
 
-  #argStubs: SQLVariable[] = [];
-  get __argStubs(): ReadonlyArray<SQLVariable> {
-    return this.#argStubs;
+  constructor(actionType: ActionType) {
+    this.__data.actionType = actionType;
   }
-
-  #attrs = new Map<ActionAttribute, unknown>();
-  get __attrs(): ReadonlyMap<ActionAttribute, unknown> {
-    return this.#attrs;
-  }
-
-  constructor(public actionType: ActionType) {}
 
   from(table: Table): this {
-    this.#sqlTable = table;
+    this.__data.sqlTable = table;
     return this;
   }
 
   argStubs(...args: SQLVariable[]): this {
-    this.#argStubs = args;
+    this.__data.argStubs = args;
     return this;
   }
 
@@ -96,7 +88,7 @@ export class Action {
   // Finally, for inline actions (if `from` is not called), it can use the
   // `groupTable` from `validate` method.
   mustGetAvailableSQLTable(groupTable: Table | undefined | null): Table {
-    const table = this.__sqlTable || this.__groupTable || groupTable;
+    const table = this.__data.sqlTable || this.__data.groupTable || groupTable;
     if (!table) {
       throw new Error(`Action "${toTypeString(this)}" doesn't have any tables`);
     }
@@ -104,7 +96,7 @@ export class Action {
   }
 
   mustGetGroupTable(): Table {
-    const table = this.__groupTable;
+    const table = this.__data.groupTable;
     if (!table) {
       throw new Error(`Action "${toTypeString(this)}" doesn't have a group able`);
     }
@@ -112,14 +104,14 @@ export class Action {
   }
 
   mustGetName(): string {
-    if (!this.__name) {
+    if (!this.__data.name) {
       throw new Error(`Action "${toTypeString(this)}" doesn't have a name`);
     }
-    return this.__name;
+    return this.__data.name;
   }
 
   attr(name: ActionAttribute, value: unknown): this {
-    this.#attrs.set(name, value);
+    (this.__data.attrs ??= new Map<ActionAttribute, unknown>()).set(name, value);
     return this;
   }
 
@@ -132,9 +124,9 @@ export class Action {
   }
 
   toString(): string {
-    let str = `${toTypeString(this)}(${this.__name}, ${this.__groupTable})`;
-    if (this.__sqlTable && this.__sqlTable !== this.__groupTable) {
-      str += `(${this.__sqlTable})`;
+    let str = `${toTypeString(this)}(${this.__data.name}, ${this.__data.groupTable})`;
+    if (this.__data.sqlTable && this.__data.sqlTable !== this.__data.groupTable) {
+      str += `(${this.__data.sqlTable})`;
     }
     return str;
   }
@@ -155,18 +147,25 @@ export class Action {
 
   // Called by `ta.tableActions`.
   __configure(groupTable: Table, name: string) {
-    if (!this.__name) {
-      this.#name = name;
+    if (!this.__data.name) {
+      this.__data.name = name;
     }
-    if (!this.__groupTable) {
-      this.#groupTable = groupTable;
+    if (!this.__data.groupTable) {
+      this.__data.groupTable = groupTable;
     }
-    this.validate(this.__groupTable || groupTable);
+    this.validate(this.__data.groupTable || groupTable);
+  }
+}
+
+export class EmptyAction extends Action {
+  // eslint-disable-next-line class-methods-use-this
+  initActionData(): ActionData {
+    return {};
   }
 }
 
 // An empty action is ignored in `enumerateActions`.
-export const emptyAction = new Action(ActionType.select);
+export const emptyAction = new EmptyAction(ActionType.select);
 
 function enumerateActions<T extends TableActions>(
   ta: T,

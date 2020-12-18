@@ -1,5 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Action } from './tableActions';
+import { Action, ActionData } from './tableActions';
 import { Column, Table } from '../core/core';
 import SQLConvertible from '../core/sqlConvertible';
 import { convertToSQL, sql } from '../core/sqlHelper';
@@ -9,26 +9,24 @@ export enum AutoSetterType {
   input,
 }
 
-export class CoreUpdateAction extends Action {
-  #setters = new Map<Column, unknown>();
-  get setters(): ReadonlyMap<Column, unknown> {
-    return this.#setters;
-  }
-
+export interface CoreUpdateActionData extends ActionData {
+  setters?: Map<Column, unknown>;
   // You can call both `setInputs()` and `setDefaults()` and the order also matters,
   // we use `Set` to track these auto setters and ES6 set also keeps insertion order.
-  #autoSetters = new Set<AutoSetterType>();
-  get autoSetters(): ReadonlySet<AutoSetterType> {
-    return this.#autoSetters;
+  autoSetters?: Set<AutoSetterType>;
+}
+
+export class CoreUpdateAction extends Action {
+  private get data(): CoreUpdateActionData {
+    return this.__data;
   }
 
   set(column: Column, value: SQLConvertible): this {
     throwIfFalsy(column, 'column');
     throwIfFalsy(value, 'value');
 
-    const setters = this.#setters;
     this.checkColumnFree(column);
-    setters.set(column, convertToSQL(value));
+    (this.data.setters ??= new Map<Column, unknown>()).set(column, convertToSQL(value));
     return this;
   }
 

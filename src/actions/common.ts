@@ -4,17 +4,12 @@ import { Column } from '../core/core';
 import { and } from '../sqlLangHelper';
 import { sql } from '../core/sqlHelper';
 
-export interface ActionWithWhere {
-  whereSQLValue: SQL | null;
-  whereValidator: ((value: SQL) => void) | null;
+export interface ActionDataWithWhere {
+  whereSQLValue?: SQL;
 }
 
-export function where(action: ActionWithWhere, value: SQL) {
+export function where(action: ActionDataWithWhere, value: SQL) {
   throwIfFalsy(value, 'value');
-  if (action.whereValidator) {
-    action.whereValidator(value);
-  }
-
   if (action.whereSQLValue) {
     throw new Error('`where` cannot be called twice');
   }
@@ -22,20 +17,20 @@ export function where(action: ActionWithWhere, value: SQL) {
   action.whereSQLValue = value;
 }
 
-export function by(action: ActionWithWhere, column: Column, name: string | undefined) {
+export function by(action: ActionDataWithWhere, column: Column, name: string | undefined) {
   throwIfFalsy(column, 'column');
   where(action, sql`${column.isEqualToInput(name)}`);
 }
 
-export function andBy(action: ActionWithWhere, column: Column, name: string | undefined) {
+export function andBy(action: ActionDataWithWhere, column: Column, name: string | undefined) {
   throwIfFalsy(column, 'column');
   // Append the expr to the end of the existing WHERE expression.
   let s: SQL;
   if (action.whereSQLValue) {
     s = and(action.whereSQLValue, sql`${column.toInput(name)}`);
-    // Set `whereSQLValue` to null cuz `where` doesn't allow `whereSQLValue` to be set twice.
+    // Set `whereSQLValue` to undefined cuz `where` doesn't allow `whereSQLValue` to be set twice.
     // eslint-disable-next-line no-param-reassign
-    action.whereSQLValue = null;
+    action.whereSQLValue = undefined;
   } else {
     s = sql`${column.toInput()}`;
   }
