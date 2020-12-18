@@ -17,16 +17,16 @@ function testJCCols(
   sourceTable: mm.Table,
   inputName: string,
 ) {
-  eq(jc.__table instanceof mm.JoinedTable, true);
-  eq(jc.__mirroredColumn, selectedColumn);
-  const jt = jc.__table as mm.JoinedTable;
+  eq(jc.__getData().table instanceof mm.JoinedTable, true);
+  eq(jc.__getData().mirroredColumn, selectedColumn);
+  const jt = jc.__getData().table as mm.JoinedTable;
   eq(jt.tableInputName(), tableInputName);
   eq(jt.destTable, destTable);
   eq(jt.destColumn, destColumn);
   eq(jt.srcColumn, srcColumn);
   eq(jt.keyPath, path);
-  eq(jc.getSourceTable(), sourceTable);
-  eq(jc.getInputName(), inputName);
+  eq(jc.__getSourceTable(), sourceTable);
+  eq(jc.__getInputName(), inputName);
 }
 
 it('JoinedColumn', () => {
@@ -90,7 +90,7 @@ it('Join with multiple keys', () => {
     post,
     'title_follower_count',
   );
-  deepEq((jc.__table as mm.JoinedTable).extraColumns, [
+  deepEq((jc.__getData().table as mm.JoinedTable).extraColumns, [
     [post.user_id, user.id],
     [post.snake_case_user_id, user.id],
   ]);
@@ -172,7 +172,7 @@ it('Join arbitrary table and column', () => {
 
 it('Associative join', () => {
   const jc = postCmtAss.cmt_id.associativeJoin(cmt).user_id;
-  eq((jc.__table as mm.JoinedTable).associative, true);
+  eq((jc.__getData().table as mm.JoinedTable).associative, true);
   testJCCols(
     jc,
     'cmt',

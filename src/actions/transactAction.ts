@@ -27,23 +27,24 @@ export interface TransactActionData extends ActionData {
 }
 
 export class TransactAction extends Action {
-  private get data(): TransactActionData {
-    return this.__data;
+  #data = this.__data as TransactActionData;
+  __getData(): TransactActionData {
+    return this.#data;
   }
 
   constructor(members: TransactionMember[]) {
     super(ActionType.transact);
     throwIfFalsy(members, 'members');
 
-    this.data.members = members;
+    this.#data.members = members;
   }
 
-  validate(groupTable: Table) {
-    super.validate(groupTable);
-    if (this.data.members) {
-      for (const mem of this.data.members) {
+  __validate(groupTable: Table) {
+    super.__validate(groupTable);
+    if (this.#data.members) {
+      for (const mem of this.#data.members) {
         const mAction = mem.action;
-        mAction.validate(groupTable);
+        mAction.__validate(groupTable);
       }
     }
   }
@@ -51,7 +52,7 @@ export class TransactAction extends Action {
   setReturnValues(...values: string[]): this {
     throwIfFalsy(values, 'values');
 
-    this.data.returnValues = values;
+    this.#data.returnValues = values;
     return this;
   }
 }

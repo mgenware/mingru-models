@@ -10,20 +10,22 @@ it('Core props', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   let v = ta.t;
-  eq(v.__name, 't');
-  eq(v.__groupTable, user);
-  eq(v.__sqlTable, null);
-  eq(v.mustGetGroupTable(), user);
-  eq(v.mustGetAvailableSQLTable(user), user);
-  eq(v.mustGetName(), 't');
+  let vd = v.__getData();
+  eq(vd.name, 't');
+  eq(vd.groupTable, user);
+  eq(vd.sqlTable, undefined);
+  eq(v.__mustGetGroupTable(), user);
+  eq(v.__mustGetAvailableSQLTable(user), user);
+  eq(v.__mustGetName(), 't');
 
   v = ta.t2;
-  eq(v.__name, 't2');
-  eq(v.__groupTable, user);
-  eq(v.__sqlTable, post);
-  eq(v.mustGetGroupTable(), user);
-  eq(v.mustGetAvailableSQLTable(user), post);
-  eq(v.mustGetName(), 't2');
+  vd = v.__getData();
+  eq(vd.name, 't2');
+  eq(vd.groupTable, user);
+  eq(vd.sqlTable, post);
+  eq(v.__mustGetGroupTable(), user);
+  eq(v.__mustGetAvailableSQLTable(user), post);
+  eq(v.__mustGetName(), 't2');
 });
 
 it('enumerateActions', () => {
@@ -38,7 +40,7 @@ it('enumerateActions', () => {
     emptyAction = mm.emptyAction;
   }
   const ta = mm.tableActions(user, UserTA);
-  deepEq(ta.__actions, {
+  deepEq(ta.__getData().actions, {
     upd: ta.upd,
     sel: ta.sel,
   });
@@ -55,7 +57,8 @@ it('Argument stubs', () => {
   const ta = mm.tableActions(user, UserTA);
 
   const v = ta.t;
-  deepEq(v.__argStubs, stubs);
+  const vd = v.__getData();
+  deepEq(vd.argStubs, stubs);
 });
 
 class MyInsertAction extends mm.InsertAction {
@@ -64,8 +67,8 @@ class MyInsertAction extends mm.InsertAction {
     super(true);
   }
 
-  validate(groupTable: mm.Table) {
-    super.validate(groupTable);
+  __validate(groupTable: mm.Table) {
+    super.__validate(groupTable);
     this.groupTable = groupTable;
   }
 }
@@ -99,7 +102,7 @@ it('Action.attr/attrs', () => {
     }
     const table = mm.tableActions(user, UserTA);
     deepEq(
-      table.t.__attrs,
+      table.t.__getData().attrs,
       new Map<number, unknown>([
         [1, true],
         [2, 's'],
@@ -118,7 +121,7 @@ it('Action.attr/attrs', () => {
     }
     const table = mm.tableActions(user, UserTA);
     deepEq(
-      table.t.__attrs,
+      table.t.__getData().attrs,
       new Map<number, unknown>([
         [1, 's'],
         [2, 4],
@@ -139,7 +142,7 @@ it('Action.privateAttr', () => {
   }
   const table = mm.tableActions(user, UserTA);
   deepEq(
-    table.t.__attrs,
+    table.t.__getData().attrs,
     new Map<number, unknown>([
       [1, true],
       [2, 's'],
@@ -161,7 +164,7 @@ it('Action.resultTypeNameAttr', () => {
   }
   const table = mm.tableActions(user, UserTA);
   deepEq(
-    table.t.__attrs,
+    table.t.__getData().attrs,
     new Map<number, unknown>([
       [1, true],
       [2, 's'],
@@ -182,14 +185,15 @@ it('__actions and props', () => {
     sel = mm.selectRow(user.id);
   }
   const ta = mm.tableActions(user, UserTA);
+  const tad = ta.__getData();
 
-  eq(ta.__table, user);
+  eq(tad.table, user);
   eq(ta instanceof mm.TableActions, true);
-  deepEq(ta.__actions, {
+  deepEq(tad.actions, {
     upd: ta.upd,
     sel: ta.sel,
   });
-  for (const [name, action] of Object.entries(ta.__actions)) {
+  for (const [name, action] of Object.entries(tad.actions)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     eq((ta as any)[name], action);
   }
@@ -203,12 +207,13 @@ it('__actions and props (taCore)', () => {
     sel,
   };
   const ta = mm.tableActionsCore(user, null, actions, undefined);
+  const tad = ta.__getData();
 
-  eq(ta.__table, user);
+  eq(tad.table, user);
   eq(ta instanceof mm.TableActions, true);
-  deepEq(ta.__actions, actions);
+  deepEq(tad.actions, actions);
   // `tableActionsCore` never add property into table actions.
-  for (const [name] of Object.entries(ta.__actions)) {
+  for (const [name] of Object.entries(tad.actions)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     eq((ta as any)[name], undefined);
   }

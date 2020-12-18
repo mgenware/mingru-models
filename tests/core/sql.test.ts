@@ -48,7 +48,7 @@ it('Named input', () => {
 it('Input (foreign key)', () => {
   const col = post.user_id;
   const input = mm.input(col);
-  eq((input.type as mm.Column).__foreignColumn, user.id);
+  eq((input.type as mm.Column).__getData().foreignColumn, user.id);
   eq(input.name, undefined);
   eq(input.column, col);
 });
@@ -56,7 +56,7 @@ it('Input (foreign key)', () => {
 it('Input (joined key)', () => {
   const col = post.user_id.join(user).name;
   const input = mm.input(col);
-  eq((input.type as mm.Column).__mirroredColumn, user.name);
+  eq((input.type as mm.Column).__getData().mirroredColumn, user.name);
   eq(input.name, undefined);
   eq(input.column, col);
 });
@@ -93,7 +93,7 @@ it('Embed string', () => {
 
 it('Embed an action', () => {
   const sql = mm.sql`${mm.selectRow(user.id)}`;
-  eq(sql.toString(), 'SQL(E(SelectAction(null, null), type = 5))');
+  eq(sql.toString(), 'SQL(E(SelectAction(), type = 5))');
 });
 
 it('makeSQL', () => {

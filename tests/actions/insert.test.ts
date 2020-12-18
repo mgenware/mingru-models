@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as assert from 'assert';
 import { itThrows } from 'it-throws';
 import * as mm from '../..';
@@ -10,13 +11,14 @@ it('Insert', () => {
   }
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
+  const vd = v.__getData();
 
-  eq(v.actionType, mm.ActionType.insert);
-  eq(v.ensureOneRowAffected, false);
+  eq(vd.actionType, mm.ActionType.insert);
+  eq(vd.ensureOneRowAffected, false);
   ok(v instanceof mm.InsertAction);
   ok(v instanceof mm.CoreUpdateAction);
   eq(
-    v.settersToString(),
+    v.__settersToString(),
     'title: SQL(E(SQLVar(undefined, desc = Column(title, Table(post))), type = 2)), snake_case_user_id: SQL(E(SQLVar(undefined, desc = Column(snake_case_user_id, Table(post))), type = 2))',
   );
 });
@@ -27,8 +29,9 @@ it('Insert one', () => {
   }
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
+  const vd = v.__getData();
 
-  eq(v.ensureOneRowAffected, true);
+  eq(vd.ensureOneRowAffected, true);
 });
 
 it('unsafeInsert', () => {
@@ -37,7 +40,9 @@ it('unsafeInsert', () => {
   }
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
-  eq(v.allowUnsetColumns, true);
+  const vd = v.__getData();
+
+  eq(vd.allowUnsetColumns, true);
 });
 
 it('unsafeInsertOne', () => {
@@ -46,8 +51,10 @@ it('unsafeInsertOne', () => {
   }
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
-  eq(v.ensureOneRowAffected, true);
-  eq(v.allowUnsetColumns, true);
+  const vd = v.__getData();
+
+  eq(vd.ensureOneRowAffected, true);
+  eq(vd.allowUnsetColumns, true);
 });
 
 it('SQLConvertible value', () => {
@@ -56,11 +63,13 @@ it('SQLConvertible value', () => {
   }
   const ta = mm.tableActions(post, PostTA);
   const v = ta.t;
+  const vd = v.__getData();
+
   deepEq(
-    v.setters,
+    vd.setters,
     new Map<mm.Column, unknown>([[post.title, mm.sql`${mm.localDateNow()}`]]),
   );
-  eq(`${v.setters.get(post.title)}`, 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
+  eq(`${vd.setters!.get(post.title)}`, 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
 });
 
 it('No setters', () => {

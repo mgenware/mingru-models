@@ -5,217 +5,230 @@ import user from '../models/user';
 import { eq, ok } from '../assert-aliases';
 
 it('bigInt', () => {
-  const c = mm.bigInt(20);
-  ok(c.__type.types.includes(mm.dt.bigInt));
-  eq(c.__type.length, 20);
-  eq(c.__type.unsigned, false);
+  const t = mm.bigInt(20).__mustGetType();
+  ok(t.types.includes(mm.dt.bigInt));
+  eq(t.length, 20);
+  eq(t.unsigned, false);
 });
 
 it('unsignedBigInt', () => {
-  const c = mm.uBigInt(20);
-  ok(c.__type.types.includes(mm.dt.bigInt));
-  eq(c.__type.length, 20);
-  eq(c.__type.unsigned, true);
+  const t = mm.uBigInt(20).__mustGetType();
+  ok(t.types.includes(mm.dt.bigInt));
+  eq(t.length, 20);
+  eq(t.unsigned, true);
 });
 
 it('int', () => {
-  const c = mm.int(20);
-  ok(c.__type.types.includes(mm.dt.int));
-  eq(c.__type.length, 20);
-  eq(c.__type.unsigned, false);
+  const t = mm.int(20).__mustGetType();
+  ok(t.types.includes(mm.dt.int));
+  eq(t.length, 20);
+  eq(t.unsigned, false);
 
-  const c2 = mm.int();
-  eq(c2.__type.length, 0);
+  const t2 = mm.int().__mustGetType();
+  eq(t2.length, 0);
 });
 
 it('unsignedInt', () => {
-  const c = mm.uInt(20);
-  ok(c.__type.types.includes(mm.dt.int));
-  eq(c.__type.length, 20);
-  eq(c.__type.unsigned, true);
+  const t = mm.uInt(20).__mustGetType();
+  ok(t.types.includes(mm.dt.int));
+  eq(t.length, 20);
+  eq(t.unsigned, true);
 });
 
 it('smallInt', () => {
-  const c = mm.smallInt(20);
-  ok(c.__type.types.includes(mm.dt.smallInt));
-  eq(c.__type.length, 20);
-  eq(c.__type.unsigned, false);
+  const t = mm.smallInt(20).__mustGetType();
+  ok(t.types.includes(mm.dt.smallInt));
+  eq(t.length, 20);
+  eq(t.unsigned, false);
 });
 
 it('unsignedSmallInt', () => {
-  const c = mm.uSmallInt(20);
-  ok(c.__type.types.includes(mm.dt.smallInt));
-  eq(c.__type.length, 20);
-  eq(c.__type.unsigned, true);
+  const t = mm.uSmallInt(20).__mustGetType();
+  ok(t.types.includes(mm.dt.smallInt));
+  eq(t.length, 20);
+  eq(t.unsigned, true);
 });
 
 it('tinyInt', () => {
-  const c = mm.tinyInt(20);
-  ok(c.__type.types.includes(mm.dt.tinyInt));
-  eq(c.__type.length, 20);
-  eq(c.__type.unsigned, false);
+  const t = mm.tinyInt(20).__mustGetType();
+  ok(t.types.includes(mm.dt.tinyInt));
+  eq(t.length, 20);
+  eq(t.unsigned, false);
 });
 
 it('unsignedTinyInt', () => {
-  const c = mm.uTinyInt(20);
-  ok(c.__type.types.includes(mm.dt.tinyInt));
-  eq(c.__type.length, 20);
-  eq(c.__type.unsigned, true);
+  const t = mm.uTinyInt(20).__mustGetType();
+  ok(t.types.includes(mm.dt.tinyInt));
+  eq(t.length, 20);
+  eq(t.unsigned, true);
 });
 
 it('char', () => {
-  const c = mm.char(20);
-  ok(c.__type.types.includes(mm.dt.char));
-  eq(c.__type.length, 20);
-  eq(c.__type.unsigned, false);
+  const t = mm.char(20).__mustGetType();
+  ok(t.types.includes(mm.dt.char));
+  eq(t.length, 20);
+  eq(t.unsigned, false);
 });
 
 it('varChar', () => {
-  const c = mm.varChar(20);
-  ok(c.__type.types.includes(mm.dt.varChar));
-  eq(c.__type.length, 20);
-  eq(c.__type.unsigned, false);
+  const t = mm.varChar(20).__mustGetType();
+  ok(t.types.includes(mm.dt.varChar));
+  eq(t.length, 20);
+  eq(t.unsigned, false);
 });
 
 it('binary', () => {
-  const c = mm.binary(20);
-  ok(c.__type.types.includes(mm.dt.binary));
-  eq(c.__type.length, 20);
-  eq(c.__type.unsigned, false);
+  const t = mm.binary(20).__mustGetType();
+  ok(t.types.includes(mm.dt.binary));
+  eq(t.length, 20);
+  eq(t.unsigned, false);
 });
 
 it('varBinary', () => {
-  const c = mm.varBinary(20);
-  ok(c.__type.types.includes(mm.dt.varBinary));
-  eq(c.__type.length, 20);
-  eq(c.__type.unsigned, false);
+  const t = mm.varBinary(20).__mustGetType();
+  ok(t.types.includes(mm.dt.varBinary));
+  eq(t.length, 20);
+  eq(t.unsigned, false);
 });
 
 it('pk', () => {
-  const c = mm.pk();
-  ok(c.__type.types.includes(mm.dt.bigInt));
-  eq(c.__type.unique, false);
-  eq(c.__type.nullable, false);
-  eq(c.__type.unsigned, true);
-  eq(c.__type.autoIncrement, true);
+  const t = mm.pk().__mustGetType();
+  ok(t.types.includes(mm.dt.bigInt));
+  eq(t.unique, false);
+  eq(t.nullable, false);
+  eq(t.unsigned, true);
+  eq(t.autoIncrement, true);
 });
 
 it('pk(column)', () => {
   const charCol = mm.char(3);
   const c = mm.pk(charCol);
   eq(c, charCol);
-  eq(c.__type.unique, false);
-  eq(c.__type.nullable, false);
+
+  const t = c.__mustGetType();
+  eq(t.unique, false);
+  eq(t.nullable, false);
 });
 
 it('pk(FK)', () => {
   const c = mm.pk(post.id);
-  eq(c.__type.pk, true);
-  eq(c.__type.unique, false);
-  eq(c.__type.nullable, false);
-  eq(c.__type.autoIncrement, false);
-  eq(c.__foreignColumn, post.id);
+  const t = c.__mustGetType();
+  eq(t.pk, true);
+  eq(t.unique, false);
+  eq(t.nullable, false);
+  eq(t.autoIncrement, false);
+  eq(c.__getData().foreignColumn, post.id);
 
   const likeUserID = like.user_id;
-  eq(likeUserID.__type.pk, true);
-  eq(likeUserID.__foreignColumn, user.id);
-  eq(likeUserID.__type.autoIncrement, false);
+  const t2 = likeUserID.__mustGetType();
+  eq(t2.pk, true);
+  eq(likeUserID.__getData().foreignColumn, user.id);
+  eq(t2.autoIncrement, false);
 });
 
 it('autoIncrement', () => {
-  eq(mm.pk(mm.int()).__type.autoIncrement, false);
-  eq(mm.pk(mm.tinyInt()).__type.autoIncrement, false);
-  eq(mm.pk(mm.bool()).__type.autoIncrement, false);
-  eq(mm.pk(mm.varChar(3)).__type.autoIncrement, false);
+  eq(mm.pk(mm.int()).__mustGetType().autoIncrement, false);
+  eq(mm.pk(mm.tinyInt()).__mustGetType().autoIncrement, false);
+  eq(mm.pk(mm.bool()).__mustGetType().autoIncrement, false);
+  eq(mm.pk(mm.varChar(3)).__mustGetType().autoIncrement, false);
   // Set the AUTO_INCREMENT explicitly
-  eq(mm.pk(mm.int()).noAutoIncrement.__type.autoIncrement, false);
-  eq(mm.pk(mm.varChar(3)).autoIncrement.__type.autoIncrement, true);
+  eq(mm.pk(mm.int()).noAutoIncrement.__mustGetType().autoIncrement, false);
+  eq(mm.pk(mm.varChar(3)).autoIncrement.__mustGetType().autoIncrement, true);
   // FK
-  eq(post.user_id.__type.autoIncrement, false);
+  eq(post.user_id.__mustGetType().autoIncrement, false);
 });
 
-it('isNoDefaultOnCSQL', () => {
-  eq(mm.pk(mm.int(20)).__noDefaultOnCSQL, false);
-  eq(mm.pk(mm.int(20)).noDefaultOnCSQL.__noDefaultOnCSQL, true);
+it('isNoDefaultValueOnCSQL', () => {
+  eq(mm.pk(mm.int(20)).__getData().noDefaultValueOnCSQL, undefined);
+  eq(mm.pk(mm.int(20)).noDefaultValueOnCSQL.__getData().noDefaultValueOnCSQL, true);
 });
 
 it('text', () => {
-  const c = mm.text();
-  ok(c.__type.types.includes(mm.dt.text));
-  eq(c.__type.length, 0);
-  eq(c.__type.unsigned, false);
+  const t = mm.text().__mustGetType();
+  ok(t.types.includes(mm.dt.text));
+  eq(t.length, 0);
+  eq(t.unsigned, false);
 });
 
 it('double', () => {
-  const c = mm.double(20);
-  ok(c.__type.types.includes(mm.dt.double));
-  eq(c.__type.length, 20);
-  eq(c.__type.unsigned, false);
+  const t = mm.double(20).__mustGetType();
+  ok(t.types.includes(mm.dt.double));
+  eq(t.length, 20);
+  eq(t.unsigned, false);
 
-  const c2 = mm.double();
-  eq(c2.__type.length, 0);
+  const t2 = mm.double().__mustGetType();
+  eq(t2.length, 0);
 });
 
 it('float', () => {
-  const c = mm.float(20);
-  ok(c.__type.types.includes(mm.dt.float));
-  eq(c.__type.length, 20);
-  eq(c.__type.unsigned, false);
+  const t = mm.float(20).__mustGetType();
+  ok(t.types.includes(mm.dt.float));
+  eq(t.length, 20);
+  eq(t.unsigned, false);
 });
 
 it('bool', () => {
-  const c = mm.bool();
-  ok(c.__type.types.includes(mm.dt.bool));
-  eq(c.__type.unsigned, false);
+  const t = mm.bool().__mustGetType();
+  ok(t.types.includes(mm.dt.bool));
+  eq(t.unsigned, false);
 });
 
 it('datetime', () => {
   let c = mm.datetime();
-  ok(c.__type.types.includes(mm.dt.datetime));
+  ok(c.__mustGetType().types.includes(mm.dt.datetime));
 
   c = mm.datetime('local');
-  eq(`${c.__defaultValue}`, 'SQL(E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3))');
+  eq(
+    `${c.__getData().defaultValue}`,
+    'SQL(E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3))',
+  );
 
   c = mm.datetime('utc');
-  eq(`${c.__defaultValue}`, 'SQL(E(SQLCall(16, return = ColType(SQL.DATETIME), type = 3))');
+  eq(
+    `${c.__getData().defaultValue}`,
+    'SQL(E(SQLCall(16, return = ColType(SQL.DATETIME), type = 3))',
+  );
 });
 
 it('date', () => {
   let c = mm.date();
-  ok(c.__type.types.includes(mm.dt.date));
+  ok(c.__mustGetType().types.includes(mm.dt.date));
 
   c = mm.date('local');
-  eq(`${c.__defaultValue}`, 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
+  eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
 
   c = mm.date('utc');
-  eq(`${c.__defaultValue}`, 'SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3))');
+  eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3))');
 });
 
 it('time', () => {
   let c = mm.time();
-  ok(c.__type.types.includes(mm.dt.time));
+  ok(c.__mustGetType().types.includes(mm.dt.time));
 
   c = mm.time('local');
-  eq(`${c.__defaultValue}`, 'SQL(E(SQLCall(2, return = ColType(SQL.TIME), type = 3))');
+  eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(2, return = ColType(SQL.TIME), type = 3))');
 
   c = mm.time('utc');
-  eq(`${c.__defaultValue}`, 'SQL(E(SQLCall(18, return = ColType(SQL.TIME), type = 3))');
+  eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(18, return = ColType(SQL.TIME), type = 3))');
 });
 
 it('timestamp', () => {
   let c = mm.timestamp();
-  ok(c.__type.types.includes(mm.dt.timestamp));
+  ok(c.__mustGetType().types.includes(mm.dt.timestamp));
 
   c = mm.timestamp(true);
-  eq(`${c.__defaultValue}`, 'SQL(E(SQLCall(19, return = ColType(SQL.TIMESTAMP), type = 3))');
+  eq(
+    `${c.__getData().defaultValue}`,
+    'SQL(E(SQLCall(19, return = ColType(SQL.TIMESTAMP), type = 3))',
+  );
 });
 
 it('decimal', () => {
-  const c = mm.decimal(5, 2);
-  ok(c.__type.types.includes(mm.dt.decimal));
-  eq(c.__type.length, 5);
-  eq(c.__type.extraLength, 2);
-  eq(c.__type.unsigned, false);
+  const t = mm.decimal(5, 2).__mustGetType();
+  ok(t.types.includes(mm.dt.decimal));
+  eq(t.length, 5);
+  eq(t.extraLength, 2);
+  eq(t.unsigned, false);
 });
 
 it('dt.isInteger', () => {
@@ -256,7 +269,7 @@ it('dt.isTimeRelated', () => {
 
 it('Allow null as default value', () => {
   let c = mm.int();
-  eq(c.__defaultValue, undefined);
+  eq(c.__getData().defaultValue, undefined);
   c = mm.bool();
-  eq(c.__defaultValue, undefined);
+  eq(c.__getData().defaultValue, undefined);
 });

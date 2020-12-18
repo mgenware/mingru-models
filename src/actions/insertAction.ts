@@ -8,28 +8,30 @@ export interface InsertActionData extends CoreUpdateActionData {
 }
 
 export class InsertAction extends CoreUpdateAction {
-  private get data(): InsertActionData {
-    return this.__data;
+  #data = this.__data as InsertActionData;
+  __getData(): InsertActionData {
+    return this.#data;
   }
 
   constructor(ensureOneRowAffected: boolean, allowUnsetColumns = false) {
     super(ActionType.insert);
 
-    this.data.ensureOneRowAffected = ensureOneRowAffected;
-    this.data.allowUnsetColumns = allowUnsetColumns;
+    this.#data.ensureOneRowAffected = ensureOneRowAffected;
+    this.#data.allowUnsetColumns = allowUnsetColumns;
   }
 
-  validate(groupTable: Table) {
-    super.validate(groupTable);
+  __validate(groupTable: Table) {
+    super.__validate(groupTable);
 
-    const setterCount = this.data.setters?.size ?? 0;
-    const table = this.mustGetAvailableSQLTable(groupTable);
+    const setterCount = this.#data.setters?.size ?? 0;
+    const table = this.__mustGetAvailableSQLTable(groupTable);
     // Number of columns = total count - number of auto_increment PKs.
-    const colCount = Object.entries(table.__columns).length - table.__aiPKs.length;
+    const colCount =
+      Object.entries(table.__getData().columns).length - table.__getData().aiPKs.length;
     if (
-      !this.data.allowUnsetColumns &&
+      !this.#data.allowUnsetColumns &&
       // If no wild flags are set.
-      !this.data.autoSetters?.size &&
+      !this.#data.autoSetters?.size &&
       setterCount < colCount
     ) {
       throw new Error(

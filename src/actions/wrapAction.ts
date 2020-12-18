@@ -35,8 +35,9 @@ export interface WrapActionData extends ActionData {
 }
 
 export class WrapAction extends Action {
-  private get data(): WrapActionData {
-    return this.__data;
+  #data = this.__data as WrapActionData;
+  __getData(): WrapActionData {
+    return this.#data;
   }
 
   constructor(innerAction: Action, args: Readonly<Record<string, WrapActionArgValue>>) {
@@ -47,13 +48,17 @@ export class WrapAction extends Action {
     if (Object.entries(args).length === 0) {
       throw new Error('"args" cannot be empty');
     }
-    this.data.innerAction = innerAction;
-    this.data.args = args;
+    this.#data.innerAction = innerAction;
+    this.#data.args = args;
   }
 
-  validate(groupTable: Table) {
-    super.validate(groupTable);
+  __validate(groupTable: Table) {
+    super.__validate(groupTable);
 
-    this.data.innerAction?.validate(groupTable);
+    this.#data.innerAction?.__validate(groupTable);
+  }
+
+  __setArgs(args: Record<string, WrapActionArgValue>) {
+    this.#data.args = args;
   }
 }

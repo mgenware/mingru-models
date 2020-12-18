@@ -10,20 +10,17 @@ export interface TableActionOptions {
   unsafeTableInput?: boolean;
 }
 
+export interface TableActionsData {
+  table: Table;
+  actions: Readonly<Record<string, Action>>;
+  options: TableActionOptions;
+}
+
 export class TableActions {
-  #table!: Table;
-  get __table(): Table {
-    return this.#table;
-  }
+  protected __data!: TableActionsData;
 
-  #actions!: Readonly<Record<string, Action>>;
-  get __actions(): Readonly<Record<string, Action>> {
-    return this.#actions;
-  }
-
-  #options: TableActionOptions = {};
-  get __options(): TableActionOptions | undefined {
-    return this.#options;
+  __getData(): TableActionsData {
+    return this.__data;
   }
 
   __configure(
@@ -31,9 +28,11 @@ export class TableActions {
     actions: Readonly<Record<string, Action>>,
     options: TableActionOptions | undefined,
   ) {
-    this.#table = table;
-    this.#actions = actions;
-    this.#options = options ?? {};
+    this.__data = {
+      table,
+      actions,
+      options: options ?? {},
+    };
   }
 }
 
@@ -61,7 +60,7 @@ export interface ActionData {
 export class Action {
   protected __data: ActionData = {};
 
-  getActionData(): ActionData {
+  __getData(): ActionData {
     return this.__data;
   }
 
@@ -87,25 +86,25 @@ export class Action {
   // initialized from `mm.tableActions`.
   // Finally, for inline actions (if `from` is not called), it can use the
   // `groupTable` from `validate` method.
-  mustGetAvailableSQLTable(groupTable: Table | undefined | null): Table {
+  __mustGetAvailableSQLTable(groupTable: Table | undefined | null): Table {
     const table = this.__data.sqlTable || this.__data.groupTable || groupTable;
     if (!table) {
-      throw new Error(`Action "${toTypeString(this)}" doesn't have any tables`);
+      throw new Error(`Action "${this}" doesn't have any tables`);
     }
     return table;
   }
 
-  mustGetGroupTable(): Table {
+  __mustGetGroupTable(): Table {
     const table = this.__data.groupTable;
     if (!table) {
-      throw new Error(`Action "${toTypeString(this)}" doesn't have a group able`);
+      throw new Error(`Action "${this}" doesn't have a group able`);
     }
     return table;
   }
 
-  mustGetName(): string {
+  __mustGetName(): string {
     if (!this.__data.name) {
-      throw new Error(`Action "${toTypeString(this)}" doesn't have a name`);
+      throw new Error(`Action "${this}" doesn't have a name`);
     }
     return this.__data.name;
   }
@@ -124,7 +123,10 @@ export class Action {
   }
 
   toString(): string {
-    let str = `${toTypeString(this)}(${this.__data.name}, ${this.__data.groupTable})`;
+    const groupTableStr = this.__data.groupTable?.toString() ?? '';
+    let str = `${toTypeString(this)}(${this.__data.name ?? ''}${
+      groupTableStr ? `, ${groupTableStr}` : ''
+    })`;
     if (this.__data.sqlTable && this.__data.sqlTable !== this.__data.groupTable) {
       str += `(${this.__data.sqlTable})`;
     }
@@ -141,7 +143,7 @@ export class Action {
   // If we need to call `validate` on child components (e.g. a TRANSACT action), pass down the
   // `groupTable` param of `validate`.
   // eslint-disable-next-line class-methods-use-this
-  validate(_groupTable: Table) {
+  __validate(_groupTable: Table) {
     // Implemented by subclass.
   }
 
@@ -153,7 +155,7 @@ export class Action {
     if (!this.__data.groupTable) {
       this.__data.groupTable = groupTable;
     }
-    this.validate(this.__data.groupTable || groupTable);
+    this.__validate(this.__data.groupTable || groupTable);
   }
 
   private mustGetAttrs(): Map<ActionAttribute, unknown> {

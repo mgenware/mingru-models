@@ -1,5 +1,4 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import toTypeString from 'to-type-string';
 import { Column } from './core';
 import dt from './dt';
 import * as call from './sqlCallHelper';
@@ -10,43 +9,43 @@ export type DateTimeDefaultValue = 'none' | 'local' | 'utc';
 export function fk(column: Column): Column {
   throwIfFalsy(column, 'column');
   if (!Object.isFrozen(column)) {
-    throw new Error(`The column "${toTypeString(column)}" is not sealed yet`);
+    throw new Error(`The column "${column}" is not sealed yet`);
   }
   return Column.newForeignColumn(column, null);
 }
 
 export function varChar(length: number): Column {
   const col = Column.fromTypes(dt.varChar);
-  col.__type.length = length;
+  col.__mustGetType().length = length;
   return col;
 }
 
 export function char(length: number): Column {
   const col = Column.fromTypes(dt.char);
-  col.__type.length = length;
+  col.__mustGetType().length = length;
   return col;
 }
 
 export function varBinary(length: number): Column {
   const col = Column.fromTypes(dt.varBinary);
-  col.__type.length = length;
+  col.__mustGetType().length = length;
   return col;
 }
 
 export function binary(length: number): Column {
   const col = Column.fromTypes(dt.binary);
-  col.__type.length = length;
+  col.__mustGetType().length = length;
   return col;
 }
 
 function _numeric(type: string, unsigned: boolean, length?: number): Column {
   const col = Column.fromTypes(type);
-  col.__type.unsigned = unsigned;
+  col.__mustGetType().unsigned = unsigned;
   if (length !== undefined) {
     if (length === 0) {
       throw new Error('You should omit length parameter instead of passing a zero');
     }
-    col.__type.length = length;
+    col.__mustGetType().length = length;
   }
   return col;
 }
@@ -93,7 +92,7 @@ export function double(precision?: number): Column {
 
 export function decimal(length: number, scale: number): Column {
   const col = Column.fromTypes(dt.decimal);
-  const colType = col.__type;
+  const colType = col.__mustGetType();
   colType.length = length;
   colType.extraLength = scale;
   return col;
@@ -102,7 +101,7 @@ export function decimal(length: number, scale: number): Column {
 export function unique(col: Column): Column {
   throwIfFalsy(col, 'col');
   // eslint-disable-next-line no-param-reassign
-  col.__type.unique = true;
+  col.__mustGetType().unique = true;
   return col;
 }
 
@@ -112,13 +111,13 @@ export function pk(column?: Column): Column {
     col = column;
   } else {
     col = uBigInt();
-    col.__type.autoIncrement = true;
+    col.__mustGetType().autoIncrement = true;
   }
   if (Object.isFrozen(col)) {
     // col is from another table, therefore an implicit FK
     col = Column.newForeignColumn(col, null);
   }
-  col.__type.pk = true;
+  col.__mustGetType().pk = true;
   return col;
 }
 

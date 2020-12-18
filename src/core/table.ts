@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign */
-import toTypeString from 'to-type-string';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table, Column, JoinedTable } from './core';
 import * as defs from './defs';
@@ -23,8 +22,8 @@ function enumerateColumns(tableObject: Table, cb: (column: Column, prop: string)
 
 export function tableCore(
   tableName: string,
-  dbName: string | null,
-  tableObj: Table | null,
+  dbName: string | undefined,
+  tableObj: Table | undefined,
   columns: Record<string, Column>,
 ): Table {
   throwIfFalsy(tableName, 'tableName');
@@ -32,7 +31,6 @@ export function tableCore(
   try {
     tableObj = tableObj || new Table();
     tableName = toSnakeCase(tableName);
-    dbName = dbName || null;
     const pks: Column[] = [];
     const aiPKs: Column[] = [];
 
@@ -42,11 +40,9 @@ export function tableCore(
         if (!col) {
           throw new Error('Expected empty column object');
         }
-        if (col.__table instanceof JoinedTable) {
+        if (col.__getData().table instanceof JoinedTable) {
           throw new Error(
-            `Unexpected table type "${toTypeString(
-              col,
-            )}". You should not use JoinedColumn in a table definition, JoinedColumn can only be used in SELECT actions.`,
+            `Unexpected table type "${col}". You should not use JoinedColumn in a table definition, JoinedColumn can only be used in SELECT actions.`,
           );
         }
 
@@ -62,9 +58,9 @@ export function tableCore(
         }
 
         columnToAdd.__configure(toSnakeCase(propName), tableObj);
-        if (columnToAdd.__type.pk) {
+        if (columnToAdd.__mustGetType().pk) {
           pks.push(col);
-          if (columnToAdd.__type.autoIncrement) {
+          if (columnToAdd.__mustGetType().autoIncrement) {
             aiPKs.push(col);
           }
         }
@@ -97,7 +93,7 @@ export function table<T extends Table>(CLASS: new (name?: string) => T, dbName?:
   enumerateColumns(tableObj, (col, propName) => {
     columns[propName] = col;
   });
-  return tableCore(tableName, dbName || null, tableObj, columns) as T;
+  return tableCore(tableName, dbName, tableObj, columns) as T;
 }
 
 // A ghost table is a table that is used to create a TA for grouping a set of

@@ -21,28 +21,28 @@ const abcTable = mm.table(ABCTable);
 const defTable = mm.table(DEFTable, 't');
 
 it('Table name and getDBName', () => {
-  eq(abcTable.__name, 'abc_table');
-  eq(abcTable.getDBName(), 'abc_table');
-  eq(defTable.__name, 'def_table');
-  eq(defTable.__dbName, 't');
-  eq(defTable.getDBName(), 't');
+  eq(abcTable.__getData().name, 'abc_table');
+  eq(abcTable.__getDBName(), 'abc_table');
+  eq(defTable.__getData().name, 'def_table');
+  eq(defTable.__getData().dbName, 't');
+  eq(defTable.__getDBName(), 't');
   eq(defTable.toString(), 'Table(def_table|t)');
-  eq(abcTable.StatusString.__name, 'status_string');
-  eq(abcTable.statusType.__name, 'status_type');
-  eq(abcTable.statusID.__name, 'status_id');
-  eq(abcTable.statusID.__dbName, 'customName');
+  eq(abcTable.StatusString.__getData().name, 'status_string');
+  eq(abcTable.statusType.__getData().name, 'status_type');
+  eq(abcTable.statusID.__getData().name, 'status_id');
+  eq(abcTable.statusID.__getData().dbName, 'customName');
 });
 
 it('Rename a FK', () => {
-  eq(abcTable.uid1.__name, 'uid1');
-  eq(abcTable.uid1.__dbName, null);
-  eq(abcTable.uid1.getDBName(), 'uid1');
-  eq(abcTable.uid2.__name, 'uid2');
-  eq(abcTable.uid2.__dbName, null);
-  eq(abcTable.uid2.getDBName(), 'uid2');
-  eq(abcTable.uid3.__name, 'uid3');
-  eq(abcTable.uid3.__dbName, 'UID3');
-  eq(abcTable.uid3.getDBName(), 'UID3');
-  eq(abcTable.uid3.__modelName, 'ModelNAME');
+  eq(abcTable.uid1.__getData().name, 'uid1');
+  eq(abcTable.uid1.__getData().dbName, null);
+  eq(abcTable.uid1.__getDBName(), 'uid1');
+  eq(abcTable.uid2.__getData().name, 'uid2');
+  eq(abcTable.uid2.__getData().dbName, null);
+  eq(abcTable.uid2.__getDBName(), 'uid2');
+  eq(abcTable.uid3.__getData().name, 'uid3');
+  eq(abcTable.uid3.__getData().dbName, 'UID3');
+  eq(abcTable.uid3.__getDBName(), 'UID3');
+  eq(abcTable.uid3.__getData().modelName, 'ModelNAME');
   eq(abcTable.uid3.toString(), 'Column(uid3|UID3, Table(abc_table))');
 });

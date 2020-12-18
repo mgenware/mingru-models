@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
@@ -22,36 +23,41 @@ it('Wrap', () => {
   let v = ta.t;
   ok(v instanceof mm.WrapAction);
   ok(v instanceof mm.Action);
-  eq(v.__name, 't');
-  eq(v.actionType, mm.ActionType.wrap);
-  eq(v.action, ta.s);
-  eq(v.action.__name, 's');
-  eq(v.action.__groupTable, user);
-  eq(v.action.__sqlTable, null);
-  eq(v.action, ta.s);
-  eq(v.__sqlTable, null);
-  eq(v.__groupTable, user);
-  deepEq(v.args, {
+  const ad = v.__getData();
+  const innerAction = ad.innerAction!;
+  const bd = innerAction.__getData();
+  eq(ad.name, 't');
+  eq(ad.actionType, mm.ActionType.wrap);
+  eq(innerAction, ta.s);
+  eq(bd.name, 's');
+  eq(bd.groupTable, user);
+  eq(bd.sqlTable, undefined);
+  eq(ad.sqlTable, undefined);
+  eq(ad.groupTable, user);
+  deepEq(ad.args, {
     id: '1',
   });
 
   v = ta.t2;
-  eq(v.__name, 't2');
-  eq(v.action, postTA.t);
-  eq(v.__sqlTable, null);
-  eq(v.__groupTable, user);
-  deepEq(v.args, {
+  const cd = v.__getData();
+  eq(cd.name, 't2');
+  eq(cd.innerAction, postTA.t);
+  eq(cd.sqlTable, undefined);
+  eq(cd.groupTable, user);
+  deepEq(cd.args, {
     id: '32',
   });
 
   v = ta.t3;
-  eq(v.__name, 't3');
-  eq(v.action.__name, null);
-  eq(v.action.__groupTable, null);
-  eq(v.action.__sqlTable, post);
-  eq(v.__sqlTable, null);
-  eq(v.__groupTable, user);
-  deepEq(v.args, {
+  const dd = v.__getData();
+  const ed = dd.innerAction!.__getData();
+  eq(dd.name, 't3');
+  eq(ed.name, undefined);
+  eq(ed.groupTable, undefined);
+  eq(ed.sqlTable, post);
+  eq(dd.sqlTable, undefined);
+  eq(dd.groupTable, user);
+  deepEq(dd.args, {
     title: '"t3"',
   });
 });
@@ -68,26 +74,27 @@ it('Wrap (chains)', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   let v = ta.t;
+  let vd = v.__getData();
   ok(v instanceof mm.WrapAction);
   ok(v instanceof mm.Action);
-  eq(v.actionType, mm.ActionType.wrap);
-  eq(v.action, ta.s);
-  deepEq(v.args, {
+  eq(vd.actionType, mm.ActionType.wrap);
+  eq(vd.innerAction, ta.s);
+  deepEq(vd.args, {
     id: '33',
     id2: '34',
   });
-  eq(ta.s.__groupTable, user);
-  eq(ta.s.__sqlTable, post);
-  eq(v.__groupTable, user);
-  eq(v.__sqlTable, null);
-  eq(v.action, ta.s);
+  eq(ta.s.__getData().groupTable, user);
+  eq(ta.s.__getData().sqlTable, post);
+  eq(vd.groupTable, user);
+  eq(vd.sqlTable, undefined);
 
   v = ta.t2;
-  eq(v.__groupTable, user);
-  eq(v.__sqlTable, null);
-  eq(v.action, postTA.t);
-  eq(v.action.__sqlTable, null);
-  eq(v.action.__groupTable, post);
+  vd = v.__getData();
+  eq(vd.groupTable, user);
+  eq(vd.sqlTable, undefined);
+  eq(vd.innerAction, postTA.t);
+  eq(vd.innerAction?.__getData().sqlTable, undefined);
+  eq(vd.innerAction?.__getData().groupTable, post);
 });
 
 it('Inline WRAP actions', () => {
@@ -96,12 +103,13 @@ it('Inline WRAP actions', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  eq(v.__sqlTable, null);
-  eq((v as mm.WrapAction).action.__sqlTable, null);
-  eq((v as mm.WrapAction).action.__name, null);
-  eq(v.__groupTable, user);
-  eq(v.__name, 't');
-  deepEq(v.args, { id: '23' });
+  const vd = v.__getData();
+  eq(vd.sqlTable, undefined);
+  eq(vd.innerAction!.__getData().sqlTable, undefined);
+  eq(vd.innerAction!.__getData().name, undefined);
+  eq(vd.groupTable, user);
+  eq(vd.name, 't');
+  deepEq(vd.args, { id: '23' });
 });
 
 it('Inline WRAP actions (chaining)', () => {
@@ -110,13 +118,14 @@ it('Inline WRAP actions (chaining)', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  eq(v.__sqlTable, null);
-  eq((v as mm.WrapAction).action.__groupTable, null);
-  eq((v as mm.WrapAction).action.__sqlTable, null);
-  eq((v as mm.WrapAction).action.__name, null);
-  eq(v.__groupTable, user);
-  eq(v.__name, 't');
-  deepEq(v.args, { id: '23', s: 'name' });
+  const vd = v.__getData();
+  eq(vd.sqlTable, undefined);
+  eq(vd.innerAction!.__getData().groupTable, undefined);
+  eq(vd.innerAction!.__getData().sqlTable, undefined);
+  eq(vd.innerAction!.__getData().name, undefined);
+  eq(vd.groupTable, user);
+  eq(vd.name, 't');
+  deepEq(vd.args, { id: '23', s: 'name' });
 });
 
 it('Inline WRAP actions (with from)', () => {
@@ -125,13 +134,14 @@ it('Inline WRAP actions (with from)', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  eq(v.__sqlTable, null);
-  eq((v as mm.WrapAction).action.__groupTable, null);
-  eq((v as mm.WrapAction).action.__sqlTable, post);
-  eq((v as mm.WrapAction).action.__name, null);
-  eq(v.__groupTable, user);
-  eq(v.__name, 't');
-  deepEq(v.args, { id: '23' });
+  const vd = v.__getData();
+  eq(vd.sqlTable, undefined);
+  eq(vd.innerAction!.__getData().groupTable, undefined);
+  eq(vd.innerAction!.__getData().sqlTable, post);
+  eq(vd.innerAction!.__getData().name, undefined);
+  eq(vd.groupTable, user);
+  eq(vd.name, 't');
+  deepEq(vd.args, { id: '23' });
 });
 
 it('ValueRef', () => {
@@ -150,7 +160,8 @@ it('wrapAsRefs', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  deepEq(v.args, {
+  const vd = v.__getData();
+  deepEq(vd.args, {
     id: new mm.ValueRef('23'),
     id2: new mm.ValueRef('abc'),
   });

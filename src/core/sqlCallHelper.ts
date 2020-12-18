@@ -46,7 +46,7 @@ export function coalesce(...columns: SQLConvertible[]): SQLCall {
   let type: ColumnType | null = null;
   for (const col of columns) {
     if (col instanceof Column) {
-      type = col.__type;
+      type = col.__mustGetType();
       break;
     }
   }

@@ -1,5 +1,5 @@
 import { Action } from './tableActions';
-import { WrapAction, ValueRef, WrapActionArgValue } from './wrapAction';
+import { WrapAction, ValueRef, WrapActionArgValue, WrapActionData } from './wrapAction';
 import { TransactionMember } from './transactAction';
 import { ReturnValues } from '../returnValues';
 
@@ -17,10 +17,10 @@ Action.prototype.wrap = function (args: { [name: string]: WrapActionArgValue }):
   // If this is an inline action, i.e. `mm.selectRow(...).wrap`.
   // And if this is also a WRAP action, we can merge those two actions together.
   // e.g. `mm.selectRow().wrap().wrap().wrap()`.
-  if (!this.__name) {
+  if (!this.__getData().name) {
     if (this instanceof WrapAction) {
       this.__setArgs({
-        ...this.args,
+        ...(this.__getData() as WrapActionData).args,
         ...args,
       });
       return this;

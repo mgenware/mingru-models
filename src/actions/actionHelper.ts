@@ -27,10 +27,6 @@ export function selectFieldRows(column: SelectedColumn): SelectAction {
   return new SelectAction([column], SelectActionMode.fieldList);
 }
 
-export function selectPage(...columns: SelectedColumn[]): SelectAction {
-  return new SelectAction(columns, SelectActionMode.page);
-}
-
 export function selectExists(): SelectAction {
   return new SelectAction([], SelectActionMode.exists);
 }

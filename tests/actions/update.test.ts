@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as assert from 'assert';
 import { itThrows } from 'it-throws';
 import * as mm from '../..';
@@ -14,19 +15,20 @@ it('Update', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
+  const vd = v.__getData();
 
-  eq(v.actionType, mm.ActionType.update);
+  eq(vd.actionType, mm.ActionType.update);
   ok(v instanceof mm.UpdateAction);
   ok(v instanceof mm.CoreUpdateAction);
   ok(v instanceof mm.Action);
-  eq(v.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
-  eq(v.setters.size, 2);
+  eq(v.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(vd.setters?.size, 2);
 
   // extra props
-  eq(v.ensureOneRowAffected, false);
-  eq(v.allowEmptyWhere, false);
+  eq(vd.ensureOneRowAffected, false);
+  eq(vd.unsafeMode, false);
   eq(
-    v.settersToString(),
+    v.__settersToString(),
     'name: SQL(E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2)), follower_count: SQL(E(Column(follower_count, Table(user)), type = 1), E( + 1, type = 0))',
   );
 });
@@ -39,7 +41,7 @@ it('Order of setInputs and set', () => {
   const v = ta.t;
 
   eq(
-    v.settersToString(),
+    v.__settersToString(),
     'snake_case_name: SQL(E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2)), name: SQL(E(SQLVar(b, desc = Column(name, Table(user))), type = 2))',
   );
 });
@@ -52,7 +54,7 @@ it('setInputs and setDefaults', () => {
   const v = ta.t;
 
   eq(
-    v.settersToString(),
+    v.__settersToString(),
     'def_value: abc, snake_case_name: SQL(E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
 });
@@ -69,10 +71,10 @@ it('setInputs with no args', () => {
   const v = ta.t;
 
   eq(
-    v.settersToString(),
+    v.__settersToString(),
     'def_value: abc, snake_case_name: SQL(E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
-  deepEq([...v.autoSetters], [mm.AutoSetterType.input]);
+  deepEq([...v.__getData().autoSetters!], [mm.AutoSetterType.input]);
 });
 
 it('setDefaults with no args', () => {
@@ -87,10 +89,10 @@ it('setDefaults with no args', () => {
   const v = ta.t;
 
   eq(
-    v.settersToString(),
+    v.__settersToString(),
     'def_value: abc, snake_case_name: SQL(E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
-  deepEq([...v.autoSetters], [mm.AutoSetterType.default]);
+  deepEq([...v.__getData().autoSetters!], [mm.AutoSetterType.default]);
 });
 
 it('setInputs and setDefaults twice', () => {
@@ -103,7 +105,7 @@ it('setInputs and setDefaults twice', () => {
     const ta = mm.tableActions(user, UserTA);
     const v = ta.t;
 
-    deepEq([...v.autoSetters], [mm.AutoSetterType.input, mm.AutoSetterType.default]);
+    deepEq([...v.__getData().autoSetters!], [mm.AutoSetterType.input, mm.AutoSetterType.default]);
   }
   {
     class UserTA extends mm.TableActions {
@@ -114,7 +116,7 @@ it('setInputs and setDefaults twice', () => {
     const ta = mm.tableActions(user, UserTA);
     const v = ta.t;
 
-    deepEq([...v.autoSetters], [mm.AutoSetterType.default, mm.AutoSetterType.input]);
+    deepEq([...v.__getData().autoSetters!], [mm.AutoSetterType.default, mm.AutoSetterType.input]);
   }
 });
 
@@ -128,7 +130,7 @@ it('Set same column twice', () => {
   }
   itThrows(
     () => mm.tableActions(user, UserTA),
-    'Column "name" is already set [table "Table(user)"]',
+    'Column "Column(name, Table(user))" is already set [table "Table(user)"]',
   );
 });
 
@@ -138,17 +140,18 @@ it('updateOne', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
+  const vd = v.__getData();
 
   // extra props
-  eq(v.ensureOneRowAffected, true);
-  eq(v.allowEmptyWhere, false);
+  eq(vd.ensureOneRowAffected, true);
+  eq(vd.unsafeMode, false);
 
   itThrows(() => {
     class TA extends mm.TableActions {
       t = mm.updateOne().setInputs(user.snake_case_name);
     }
     mm.tableActions(user, TA);
-  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"] [table "Table(user)"]');
+  }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"] [table "Table(user)"]');
 });
 
 it('updateSome', () => {
@@ -157,17 +160,18 @@ it('updateSome', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
+  const vd = v.__getData();
 
   // extra props
-  eq(v.ensureOneRowAffected, false);
-  eq(v.allowEmptyWhere, false);
+  eq(vd.ensureOneRowAffected, false);
+  eq(vd.unsafeMode, false);
 
   itThrows(() => {
     class TA extends mm.TableActions {
       t = mm.updateSome().setInputs(user.snake_case_name);
     }
     mm.tableActions(user, TA);
-  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"] [table "Table(user)"]');
+  }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"] [table "Table(user)"]');
 });
 
 it('unsafeUpdateAll', () => {
@@ -176,10 +180,11 @@ it('unsafeUpdateAll', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
+  const vd = v.__getData();
 
   // extra props
-  eq(v.ensureOneRowAffected, false);
-  eq(v.allowEmptyWhere, true);
+  eq(vd.ensureOneRowAffected, false);
+  eq(vd.unsafeMode, true);
 });
 
 it('ByID', () => {
@@ -190,7 +195,7 @@ it('ByID', () => {
   const v = ta.t;
 
   eq(
-    v.whereSQLString,
+    v.__whereSQLString,
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2))',
   );
 });
@@ -201,8 +206,9 @@ it('SQLConvertible value', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
+  const vd = v.__getData();
 
-  eq(`${v.setters.get(user.name)}`, 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
+  eq(`${vd.setters?.get(user.name)}`, 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
 });
 
 it('No setters', () => {
@@ -233,7 +239,7 @@ it('by', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
   eq(
-    v.whereSQLString,
+    v.__whereSQLString,
     'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
   );
 });
@@ -247,15 +253,15 @@ it('andBy', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   eq(
-    ta.t1.whereSQLString,
+    ta.t1.__whereSQLString,
     'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2))',
   );
   eq(
-    ta.t2.whereSQLString,
+    ta.t2.__whereSQLString,
     'SQL(E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2))',
   );
   eq(
-    ta.t3.whereSQLString,
+    ta.t3.__whereSQLString,
     'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2))',
   );
 });
@@ -270,6 +276,6 @@ it('where and whereSQL', () => {
     t2 = mm.updateOne().set(user.name, user.name.toInput()).where`${user.id} = 1`;
   }
   const ta = mm.tableActions(user, UserTA);
-  eq(ta.t1.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
-  eq(ta.t2.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(ta.t1.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(ta.t2.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
 });

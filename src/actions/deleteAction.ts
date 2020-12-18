@@ -10,20 +10,21 @@ export interface DeleteActionData extends CoreSelectionActionData {
 }
 
 export class DeleteAction extends CoreSelectAction {
-  private get data(): DeleteActionData {
-    return this.__data;
+  #data = this.__data as DeleteActionData;
+  __getData(): DeleteActionData {
+    return this.#data;
   }
 
   constructor(unsafeMode: boolean, ensureOneRowAffected: boolean) {
     super(ActionType.delete);
 
-    this.data.unsafeMode = unsafeMode;
-    this.data.ensureOneRowAffected = ensureOneRowAffected;
+    this.#data.unsafeMode = unsafeMode;
+    this.#data.ensureOneRowAffected = ensureOneRowAffected;
   }
 
-  validate(groupTable: Table) {
-    super.validate(groupTable);
-    if (!this.data.unsafeMode && !this.data.whereSQLValue) {
+  __validate(groupTable: Table) {
+    super.__validate(groupTable);
+    if (!this.#data.unsafeMode && !this.#data.whereSQLValue) {
       throw new Error(
         '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll`',
       );

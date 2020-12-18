@@ -9,11 +9,13 @@ it('DeleteAction', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
+  const vd = v.__getData();
+
   ok(v instanceof mm.DeleteAction);
   ok(v instanceof mm.CoreSelectAction);
   ok(v instanceof mm.Action);
-  eq(v.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
-  eq(v.actionType, mm.ActionType.delete);
+  eq(v.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(vd.actionType, mm.ActionType.delete);
 });
 
 it('deleteOne', () => {
@@ -22,10 +24,11 @@ it('deleteOne', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
+  const vd = v.__getData();
 
   // extra props
-  eq(v.ensureOneRowAffected, true);
-  eq(v.allowNoWhere, false);
+  eq(vd.ensureOneRowAffected, true);
+  eq(vd.unsafeMode, false);
 
   // Throw error when WHERE is empty
   itThrows(() => {
@@ -33,7 +36,7 @@ it('deleteOne', () => {
       t = mm.deleteOne();
     }
     mm.tableActions(user, TA);
-  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"] [table "Table(user)"]');
+  }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"] [table "Table(user)"]');
 });
 
 it('deleteSome', () => {
@@ -42,10 +45,11 @@ it('deleteSome', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
+  const vd = v.__getData();
 
   // extra props
-  eq(v.ensureOneRowAffected, false);
-  eq(v.allowNoWhere, false);
+  eq(vd.ensureOneRowAffected, false);
+  eq(vd.unsafeMode, false);
 
   // Throw error when WHERE is empty
   itThrows(() => {
@@ -53,7 +57,7 @@ it('deleteSome', () => {
       t = mm.deleteSome();
     }
     mm.tableActions(user, TA);
-  }, '`allowNoWhere` is set to false, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"] [table "Table(user)"]');
+  }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"] [table "Table(user)"]');
 });
 
 it('unsafeDeleteAll', () => {
@@ -62,10 +66,11 @@ it('unsafeDeleteAll', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
+  const vd = v.__getData();
 
   // extra props
-  eq(v.ensureOneRowAffected, false);
-  eq(v.allowNoWhere, true);
+  eq(vd.ensureOneRowAffected, false);
+  eq(vd.unsafeMode, true);
 });
 
 it('where and whereSQL', () => {
@@ -75,6 +80,6 @@ it('where and whereSQL', () => {
     t2 = mm.deleteOne().where`${user.id} = 1`;
   }
   const ta = mm.tableActions(user, UserTA);
-  eq(ta.t1.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
-  eq(ta.t2.whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(ta.t1.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(ta.t2.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
 });

@@ -40,7 +40,7 @@ it('SQL calls', () => {
 
   t = mm.coalesce(mm.sql`haha`, post.title, post.user_id);
   eq(t.type, mm.SQLCallType.coalesce);
-  deepEq(t.returnType, mm.varChar(100).__type);
+  deepEq(t.returnType, mm.varChar(100).__mustGetType());
 
   deepEq(mm.countAll(), mm.count('*'));
 
@@ -120,7 +120,7 @@ it('Embeded in SQL', () => {
 });
 
 it('setReturnType', () => {
-  const type = mm.int().__type;
+  const type = mm.int().__mustGetType();
   const call = mm.IF(mm.exists(mm.selectRow(post.title).by(post.id)), '1', '2').setReturnType(type);
   eq(call.returnType, type);
 });

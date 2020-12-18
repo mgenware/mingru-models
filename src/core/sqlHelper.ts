@@ -1,4 +1,3 @@
-import toTypeString from 'to-type-string';
 import SQLConvertible from './sqlConvertible';
 import { SQL, SQLElement, SQLElementType, SQLVariable, SQLVariableType } from './sql';
 import { RawColumn } from '../actions/rawColumn';
@@ -44,7 +43,7 @@ export class SQLBuilder {
     } else if (param instanceof Action) {
       this.pushElement(new SQLElement(SQLElementType.action, param));
     } else {
-      throw new Error(`Unsupported SQL parameter type "${toTypeString(param)}"`);
+      throw new Error(`Unsupported SQL parameter type "${param}"`);
     }
   }
 
@@ -79,7 +78,7 @@ export function convertToSQL(element: SQLConvertible): SQL {
 
 function getInputTypeName(type: SQLVariableType | Column | ColumnType): string {
   if (type instanceof ColumnType || type instanceof Column) {
-    return toTypeString(type);
+    return `${type}`;
   }
   return type.type;
 }

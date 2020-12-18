@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as mm from '../..';
 import user from '../models/user';
 import post from '../models/post';
@@ -20,13 +21,15 @@ it('Transact', () => {
   const postTA = mm.tableActions(post, PostTA);
 
   let v = postTA.batch;
-  eq(v.actionType, mm.ActionType.transact);
+  let vd = v.__getData();
+  eq(vd.actionType, mm.ActionType.transact);
   ok(v instanceof mm.TransactAction);
   ok(v instanceof mm.Action);
 
   v = postTA.batch2;
+  vd = v.__getData();
   deepEq(
-    v.members,
+    vd.members,
     [postTA.insert, userTA.insert, postTA.batch].map(
       (m) => new mm.TransactionMember(m, undefined, undefined),
     ),
@@ -49,9 +52,10 @@ it('Inline member actions (wrap self)', async () => {
   }
   const user2TA = mm.tableActions(user2, User2TA);
   const v = user2TA.t;
-  const wrapped = v.members[0].action as WrapAction;
-  eq(wrapped.action, user2TA.updatePostCount);
-  deepEq(wrapped.args, { offset: '1' });
+  const vd = v.__getData();
+  const wrapped = vd.members![0].action as WrapAction;
+  eq(wrapped.__getData().innerAction, user2TA.updatePostCount);
+  deepEq(wrapped.__getData().args, { offset: '1' });
 });
 
 it('Inline member actions (wrap other)', async () => {
@@ -78,9 +82,10 @@ it('Inline member actions (wrap other)', async () => {
   }
   const postTA = mm.tableActions(post2, Post2TA);
   const v = postTA.insert;
-  const wrapped = v.members[0].action as WrapAction;
-  eq(wrapped.action, user2TA.updatePostCount);
-  deepEq(wrapped.args, { offset: '1' });
+  const vd = v.__getData();
+  const wrapped = vd.members![0].action as WrapAction;
+  eq(wrapped.__getData().innerAction, user2TA.updatePostCount);
+  deepEq(wrapped.__getData().args, { offset: '1' });
 });
 
 it('Setting __table or inline members', () => {
@@ -100,19 +105,19 @@ it('Setting __table or inline members', () => {
     );
   }
   const postTA = mm.tableActions(post, PostTA);
-  const { members } = postTA.t;
-  eq(members[0].action.__groupTable, null);
-  eq(members[0].action.__sqlTable, null);
-  eq(members[0].action.__name, null);
-  eq(members[1].action.__groupTable, post);
-  eq(members[1].action.__sqlTable, null);
-  eq(members[1].action.__name, 'insert');
-  eq(members[2].action.__groupTable, user);
-  eq(members[2].action.__sqlTable, null);
-  eq(members[2].action.__name, 'insert');
-  eq(members[3].action.__groupTable, null);
-  eq(members[3].action.__sqlTable, null);
-  eq(members[3].action.__name, null);
+  const members = postTA.t.__getData().members!;
+  eq(members[0].action.__getData().groupTable, undefined);
+  eq(members[0].action.__getData().sqlTable, undefined);
+  eq(members[0].action.__getData().name, undefined);
+  eq(members[1].action.__getData().groupTable, post);
+  eq(members[1].action.__getData().sqlTable, undefined);
+  eq(members[1].action.__getData().name, 'insert');
+  eq(members[2].action.__getData().groupTable, user);
+  eq(members[2].action.__getData().sqlTable, undefined);
+  eq(members[2].action.__getData().name, 'insert');
+  eq(members[3].action.__getData().groupTable, undefined);
+  eq(members[3].action.__getData().sqlTable, undefined);
+  eq(members[3].action.__getData().name, undefined);
 });
 
 it('Declare return values', () => {
@@ -135,11 +140,13 @@ it('Declare return values', () => {
   const postTA = mm.tableActions(post, PostTA);
 
   const v = postTA.batch;
-  ok(v.members[0].returnValues === undefined);
-  deepEq(v.members[1].returnValues, { a: '_a' });
-  deepEq(v.members[2].returnValues, { b: '_b' });
-  deepEq(v.members[3].returnValues, {
+  const vd = v.__getData();
+  const members = vd.members!;
+  ok(members[0].returnValues === undefined);
+  deepEq(members[1].returnValues, { a: '_a' });
+  deepEq(members[2].returnValues, { b: '_b' });
+  deepEq(members[3].returnValues, {
     [mm.ReturnValues.insertedID]: 'i',
   });
-  deepEq(v.returnValues, ['_b', '_a']);
+  deepEq(vd.returnValues, ['_b', '_a']);
 });
