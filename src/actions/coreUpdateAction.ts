@@ -51,7 +51,8 @@ export class CoreUpdateAction extends Action {
   setDefaults(...columns: Column[]): this {
     if (!columns.length) {
       this.mustGetAutoSetters().add(AutoSetterType.default);
-      // We don't know if all other columns have a default value as `this.__table` could be null at the point.
+      // We don't know if all other columns have a default value as
+      // `this.__table` could be null at the point.
       // We'll check it later in `onInit()`.
       return this;
     }

@@ -271,13 +271,6 @@ it('Validate columns', () => {
   const t = user;
   itThrows(() => {
     class UserTA extends mm.TableActions {
-      t = mm.selectRows(t.name, (null as unknown) as mm.Column, t.follower_count);
-    }
-    mm.tableActions(user, UserTA);
-  }, 'The column at index 1 is null, action "SelectAction()" [table "Table(user)"]');
-
-  itThrows(() => {
-    class UserTA extends mm.TableActions {
       t = mm.selectRows(t.name, (32 as unknown) as mm.Column, t.follower_count);
     }
     mm.tableActions(user, UserTA);

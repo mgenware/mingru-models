@@ -4,6 +4,7 @@ import { RawColumn } from '../actions/rawColumn';
 import { SQLCall } from './sqlCall';
 
 declare module './sql' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface SQLElement {
     toRawString(): string;
     toColumn(): Column;

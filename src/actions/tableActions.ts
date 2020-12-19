@@ -155,7 +155,7 @@ export class Action {
     if (!this.__data.groupTable) {
       this.__data.groupTable = groupTable;
     }
-    this.__validate(this.__data.groupTable || groupTable);
+    this.__validate(this.__data.groupTable ?? groupTable);
   }
 
   private mustGetAttrs(): Map<ActionAttribute, unknown> {

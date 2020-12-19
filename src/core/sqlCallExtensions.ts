@@ -3,6 +3,7 @@ import { RawColumn } from '../actions/rawColumn';
 import { sql } from './sqlHelper';
 
 declare module './sqlCall' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface SQLCall {
     toColumn(name: string): RawColumn;
   }

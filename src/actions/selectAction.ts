@@ -93,9 +93,6 @@ export class SelectAction extends CoreSelectAction {
 
     // Validate individual columns.
     columns.forEach((col, idx) => {
-      if (!col) {
-        throw new Error(`The column at index ${idx} is null, action "${this}"`);
-      }
       if (col instanceof Column === false && col instanceof RawColumn === false) {
         throw new Error(`The column at index ${idx} is not valid, got "${col}", action "${this}"`);
       }
@@ -205,7 +202,7 @@ export class SelectAction extends CoreSelectAction {
 
   limit(limitValue?: SQLVariable | number): this {
     this.#data.limitFlag = true;
-    if (limitValue) {
+    if (limitValue !== undefined) {
       if (this.#data.limitValue !== undefined) {
         throw new Error(`LIMIT has been set to ${this.#data.limitValue}`);
       }
@@ -216,7 +213,7 @@ export class SelectAction extends CoreSelectAction {
 
   offset(offsetValue?: SQLVariable | number): this {
     this.#data.offsetFlag = true;
-    if (offsetValue) {
+    if (offsetValue !== undefined) {
       if (this.#data.limitValue === undefined) {
         throw new Error('OFFSET cannot be set before LIMIT');
       }

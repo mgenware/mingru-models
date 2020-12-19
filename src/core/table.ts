@@ -24,7 +24,7 @@ export function tableCore(
   tableName: string,
   dbName: string | undefined,
   tableObj: Table | undefined,
-  columns: Record<string, Column>,
+  columns: Record<string, Column | undefined>,
 ): Table {
   throwIfFalsy(tableName, 'tableName');
 

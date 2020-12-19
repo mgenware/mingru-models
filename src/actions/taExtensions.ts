@@ -4,6 +4,7 @@ import { TransactionMember } from './transactAction';
 import { ReturnValues } from '../returnValues';
 
 declare module './tableActions' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Action {
     wrap(args: { [name: string]: WrapActionArgValue }): WrapAction;
     wrapAsRefs(args: { [name: string]: string }): WrapAction;

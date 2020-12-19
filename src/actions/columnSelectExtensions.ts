@@ -4,6 +4,7 @@ import { ColumnAttribute } from '../attrs';
 import { RawColumn } from './rawColumn';
 
 declare module '../core/core' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Column {
     as(name: string): RawColumn;
     attr(name: ColumnAttribute, value: unknown): RawColumn;

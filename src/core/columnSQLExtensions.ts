@@ -4,6 +4,7 @@ import { input, sql } from './sqlHelper';
 import SQLConvertible from './sqlConvertible';
 
 declare module './core' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Column {
     toInput(name?: string): SQLVariable;
     toArrayInput(name?: string): SQLVariable;
