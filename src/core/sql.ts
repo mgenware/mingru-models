@@ -48,7 +48,8 @@ export class SQLElement {
   constructor(public readonly type: SQLElementType, public readonly value: unknown) {}
 
   toString(): string {
-    return `E(${this.value}, type = ${this.type})`;
+    const { value } = this;
+    return `E(${value !== undefined && value !== null ? `${value}, ` : ''}type = ${this.type})`;
   }
 }
 

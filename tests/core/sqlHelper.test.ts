@@ -111,6 +111,6 @@ it('isInArrayInput(string)', () => {
   const sql = user.name.isInArrayInput('haha');
   eq(
     sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( IN (, type = 0), E(SQLVar(haha, desc = Column(name, Table(user))), type = 2), E(), type = 0))',
+    'SQL(E(Column(name, Table(user)), type = 1), E( IN , type = 0), E(SQLVar(haha, desc = Column(name, Table(user))), type = 2))',
   );
 });

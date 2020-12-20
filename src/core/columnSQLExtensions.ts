@@ -67,5 +67,5 @@ Column.prototype.isNotNull = function () {
 };
 
 Column.prototype.isInArrayInput = function (name?: string) {
-  return sql`${this} IN (${this.toArrayInput(name)})`;
+  return sql`${this} IN ${this.toArrayInput(name)}`;
 };
