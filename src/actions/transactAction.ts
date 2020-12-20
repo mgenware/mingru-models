@@ -5,7 +5,7 @@ import { Action, ActionData, ActionType } from './tableActions';
 export class ActionWithReturnValues {
   constructor(
     public readonly action: Action,
-    public readonly returnValues: Readonly<Record<string, string>>,
+    public readonly returnValues: Readonly<Record<string, string | undefined>>,
   ) {}
 }
 
@@ -15,7 +15,7 @@ export class TransactionMember {
   constructor(
     public readonly action: Action,
     public readonly name?: string,
-    public readonly returnValues?: Readonly<Record<string, string>>,
+    public readonly returnValues?: Readonly<Record<string, string | undefined>>,
   ) {
     throwIfFalsy(action, 'action');
   }

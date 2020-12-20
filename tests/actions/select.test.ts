@@ -60,56 +60,63 @@ it('as', () => {
   const b = user.name.as('b');
   const c = user.id.as('c');
 
-  ok(a instanceof mm.RawColumn);
-  eq(a.selectedName, 'a');
-  eq(b.selectedName, 'b');
-  eq(c.selectedName, 'c');
+  eq(a.__getData().selectedName, 'a');
+  eq(b.__getData().selectedName, 'b');
+  eq(c.__getData().selectedName, 'c');
 });
 
 it('RawColumn', () => {
   // as
   let c = user.id.as('x');
-  eq(c.selectedName, 'x');
-  eq(c.core, user.id);
+  let cd = c.__getData();
+  eq(cd.selectedName, 'x');
+  eq(cd.core, user.id);
 
   // new RawColumn
   c = new mm.RawColumn(user.id, 'y');
-  eq(c.selectedName, 'y');
-  eq(c.core, user.id);
+  cd = c.__getData();
+  eq(cd.selectedName, 'y');
+  eq(cd.core, user.id);
 
   // mm.sel
   c = mm.sel(user.id, 'x');
-  eq(c.selectedName, 'x');
-  eq(c.core, user.id);
+  cd = c.__getData();
+  eq(cd.selectedName, 'x');
+  eq(cd.core, user.id);
 
   // new RawColumn
   c = new mm.RawColumn(user.id);
-  eq(c.selectedName, null);
-  eq(c.core, user.id);
+  cd = c.__getData();
+  eq(cd.selectedName, undefined);
+  eq(cd.core, user.id);
 
   // mm.sel
   c = mm.sel(user.id, 'id');
-  eq(c.selectedName, 'id');
-  eq(c.core, user.id);
+  cd = c.__getData();
+  eq(cd.selectedName, 'id');
+  eq(cd.core, user.id);
 });
 
 it('RawColumn (raw SQL)', () => {
   const a = new mm.RawColumn(mm.sql`123`, 'x');
   const b = new mm.RawColumn(mm.sql`COUNT(${user.name})`, 'y');
-  eq(a.selectedName, 'x');
-  eq(a.core.toString(), 'SQL(E(123, type = 0))');
-  eq(b.selectedName, 'y');
+  const ad = a.__getData();
+  const bd = b.__getData();
+  eq(ad.selectedName, 'x');
+  eq(ad.core?.toString(), 'SQL(E(123, type = 0))');
+  eq(bd.selectedName, 'y');
   eq(
-    b.core.toString(),
+    bd.core?.toString(),
     'SQL(E(COUNT(, type = 0), E(Column(name, Table(user)), type = 1), E(), type = 0))',
   );
 });
 
 it('RawColumn (types)', () => {
   const a = new mm.RawColumn(mm.sql`123`, 'x', new mm.ColumnType(['t1', 't2']));
-  eq(a.selectedName, 'x');
-  eq(a.core.toString(), 'SQL(E(123, type = 0))');
-  deepEq(a.type, new mm.ColumnType(['t1', 't2']));
+  const ad = a.__getData();
+  eq(ad.selectedName, 'x');
+  eq(ad.core?.toString(), 'SQL(E(123, type = 0))');
+  deepEq(ad.type, new mm.ColumnType(['t1', 't2']));
 });
 
 it('RawColumn (count)', () => {
@@ -121,31 +128,38 @@ it('RawColumn (count)', () => {
   const vd = v.__getData();
 
   const cc = vd.columns?.[0] as mm.RawColumn;
-  eq(cc.selectedName, 'count');
+  const ccd = cc.__getData();
+  eq(ccd.selectedName, 'count');
   eq(
-    cc.core.toString(),
+    ccd.core?.toString(),
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, (J|0|post|user)[user_id|id]), type = 1))), type = 3))',
   );
 });
 
 it('RawColumn (SQLConvertible)', () => {
   let cc = new mm.RawColumn(post.user_id, 't');
+  let ccd = cc.__getData();
   // Column should not be wrapped in SQL
-  eq(cc.core, post.user_id);
+  eq(ccd.core, post.user_id);
+
   cc = new mm.RawColumn(mm.sql`str`, 't');
-  eq(cc.core.toString(), 'SQL(E(str, type = 0))');
+  ccd = cc.__getData();
+  eq(ccd.core?.toString(), 'SQL(E(str, type = 0))');
+
   cc = new mm.RawColumn(mm.sql`${mm.count(post.id)}`, 't');
+  ccd = cc.__getData();
   eq(
-    cc.core.toString(),
+    ccd.core?.toString(),
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(id, Table(post)), type = 1))), type = 3))',
   );
 });
 
 it('mm.select (types)', () => {
   const a = mm.sel(mm.sql`123`, 'x', new mm.ColumnType(['t1', 't2']));
-  eq(a.selectedName, 'x');
-  eq(a.core.toString(), 'SQL(E(123, type = 0))');
-  deepEq(a.type, new mm.ColumnType(['t1', 't2']));
+  const ad = a.__getData();
+  eq(ad.selectedName, 'x');
+  eq(ad.core?.toString(), 'SQL(E(123, type = 0))');
+  deepEq(ad.type, new mm.ColumnType(['t1', 't2']));
 });
 
 it('byID', () => {
@@ -329,17 +343,24 @@ it('Pagination', () => {
     t = mm.selectRows(user.name).paginate().orderByAsc(user.name);
   }
   const ta = mm.tableActions(user, UserTA);
-  eq(ta.t.__getData().paginateFlag, true);
+  eq(ta.t.__getData().paginationMode === mm.SelectActionPaginationMode.pagination, true);
+});
+
+it('PageMode', () => {
+  class UserTA extends mm.TableActions {
+    t = mm.selectRows(user.name).pageMode().orderByAsc(user.name);
+  }
+  const ta = mm.tableActions(user, UserTA);
+  eq(ta.t.__getData().paginationMode === mm.SelectActionPaginationMode.pageMode, true);
 });
 
 it('LIMIT n OFFSET', () => {
   class UserTA extends mm.TableActions {
-    t = mm.selectRows(user.name).limit().offset().orderByAsc(user.name);
+    t = mm.selectRows(user.name).limit().orderByAsc(user.name);
   }
   const ta = mm.tableActions(user, UserTA);
   const vd = ta.t.__getData();
-  eq(vd.limitFlag, true);
-  eq(vd.offsetFlag, true);
+  eq(vd.paginationMode === mm.SelectActionPaginationMode.limitOffset, true);
 });
 
 it('LIMIT (custom value)', () => {
@@ -348,7 +369,7 @@ it('LIMIT (custom value)', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const vd = ta.t.__getData();
-  eq(vd.limitFlag, true);
+  eq(vd.paginationMode === mm.SelectActionPaginationMode.limitOffset, true);
   eq(vd.limitValue, 20);
 });
 
@@ -362,8 +383,7 @@ it('LIMIT and OFFSET (custom value)', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const vd = ta.t.__getData();
-  eq(vd.limitFlag, true);
-  eq(vd.offsetFlag, true);
+  eq(vd.paginationMode === mm.SelectActionPaginationMode.limitOffset, true);
   eq(vd.limitValue?.toString(), 'SQLVar(limit, desc = Column())');
   eq(vd.offsetValue, 12);
 });
@@ -376,7 +396,7 @@ it('Throw when paginate is called on non-list mode', () => {
       t = mm.selectField(t.name).paginate();
     }
     mm.tableActions(user, UserTA);
-  }, '`paginate` can only be called on `rowList` and `fieldList` modes [table "Table(user)"]');
+  }, '`paginationMode` can only be set for `.rowList` and `.fieldList` modes [table "Table(user)"]');
 });
 
 it('Throw on selecting collection without ORDER BY', () => {
@@ -488,7 +508,7 @@ it('UNION', () => {
 
   const td = t.__getData();
   eq(td.unionMembers![0], t1t2);
-  ok(td.paginateFlag);
+  ok(td.paginationMode === mm.SelectActionPaginationMode.pagination);
   eq(td.unionMembers![1], t3);
   eq(td.unionAllFlag, true);
   eq(td.sqlTable, t1.__getData().sqlTable);

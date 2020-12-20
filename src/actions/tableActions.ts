@@ -12,7 +12,7 @@ export interface TableActionOptions {
 
 export interface TableActionsData {
   table: Table;
-  actions: Readonly<Record<string, Action>>;
+  actions: Readonly<Record<string, Action | undefined>>;
   options: TableActionOptions;
 }
 
@@ -25,7 +25,7 @@ export class TableActions {
 
   __configure(
     table: Table,
-    actions: Readonly<Record<string, Action>>,
+    actions: Readonly<Record<string, Action | undefined>>,
     options: TableActionOptions | undefined,
   ) {
     this.__data = {
@@ -196,7 +196,7 @@ function enumerateActions<T extends TableActions>(
 export function tableActionsCore(
   table: Table,
   tableActionsObj: TableActions | null,
-  actions: Record<string, Action>,
+  actions: Record<string, Action | undefined>,
   options: TableActionOptions | undefined,
 ): TableActions {
   throwIfFalsy(table, 'table');
@@ -204,7 +204,7 @@ export function tableActionsCore(
   tableActionsObj = tableActionsObj || new TableActions();
   for (const [name, action] of Object.entries(actions)) {
     try {
-      action.__configure(table, name);
+      action?.__configure(table, name);
     } catch (err) {
       err.message += ` [action "${name}"]`;
       throw err;
@@ -223,7 +223,7 @@ export function tableActions<T extends Table, A extends TableActions>(
 
   try {
     const taObj = new TACls();
-    const actions: Record<string, Action> = {};
+    const actions: Record<string, Action | undefined> = {};
     enumerateActions(taObj, (action, name) => {
       actions[name] = action;
     });

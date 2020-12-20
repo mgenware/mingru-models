@@ -34,7 +34,7 @@ export function tableCore(
     const pks: Column[] = [];
     const aiPKs: Column[] = [];
 
-    const convertedColumns: Record<string, Column> = {};
+    const convertedColumns: Record<string, Column | undefined> = {};
     for (const [propName, col] of Object.entries(columns)) {
       try {
         if (!col) {
@@ -89,7 +89,7 @@ export function table<T extends Table>(CLASS: new (name?: string) => T, dbName?:
   const tableObj = new CLASS();
   const tableName = tableObj.constructor.name;
 
-  const columns: Record<string, Column> = {};
+  const columns: Record<string, Column | undefined> = {};
   enumerateColumns(tableObj, (col, propName) => {
     columns[propName] = col;
   });

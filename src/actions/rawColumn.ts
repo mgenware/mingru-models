@@ -3,18 +3,25 @@ import { Column, ColumnType } from '../core/core';
 import { SQL } from '../core/sql';
 import { ColumnAttribute } from '../attrs';
 
-export class RawColumn {
-  readonly core: Column | SQL;
-  readonly selectedName: string | null;
-  readonly type: ColumnType | null;
+export interface RawColumnData {
+  core?: Column | SQL;
+  selectedName?: string;
+  type?: ColumnType;
+  attrs?: Map<ColumnAttribute, unknown>;
+}
 
-  #attrs = new Map<ColumnAttribute, unknown>();
-  get __attrs(): ReadonlyMap<ColumnAttribute, unknown> {
-    return this.#attrs;
+export class RawColumn {
+  protected __data: RawColumnData = {};
+  __getData(): RawColumnData {
+    return this.__data;
   }
 
-  get __type(): ColumnType | null {
-    return this.type;
+  private get data(): RawColumnData {
+    return this.__data;
+  }
+
+  private mustGetAttrs(): Map<ColumnAttribute, unknown> {
+    return (this.data.attrs ??= new Map<ColumnAttribute, unknown>());
   }
 
   constructor(
@@ -26,12 +33,13 @@ export class RawColumn {
     type?: ColumnType,
   ) {
     throwIfFalsy(core, 'core');
-    this.selectedName = selectedName || null;
-    this.type = type || null;
+
+    this.data.selectedName = selectedName;
+    this.data.type = type;
     if (core instanceof Column) {
-      this.core = core;
+      this.data.core = core;
     } else {
-      this.core = core;
+      this.data.core = core;
       if (!selectedName) {
         throw new Error(
           'The argument `selectedName` is required for a `RawColumn` with SQL expression',
@@ -41,7 +49,7 @@ export class RawColumn {
   }
 
   attr(name: ColumnAttribute, value: unknown): this {
-    this.#attrs.set(name, value);
+    this.mustGetAttrs().set(name, value);
     return this;
   }
 
@@ -50,6 +58,6 @@ export class RawColumn {
   }
 
   toString(): string {
-    return `RawColumn(${this.selectedName}, core = ${this.core.toString()})`;
+    return `RawColumn(${this.data.selectedName}, core = ${this.data.core})`;
   }
 }

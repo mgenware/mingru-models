@@ -367,7 +367,7 @@ export class Column {
 }
 
 export interface TableData {
-  columns: Record<string, Column>;
+  columns: Record<string, Column | undefined>;
   name: string;
   dbName?: string;
   pks: Column[];
@@ -411,7 +411,7 @@ export class Table {
   __configure(
     name: string,
     dbName: string | undefined,
-    columns: Record<string, Column>,
+    columns: Record<string, Column | undefined>,
     pks: Column[],
     aiPKs: Column[],
   ) {

@@ -30,11 +30,20 @@ export class OrderByColumnInput {
 export type OrderByColumnType = OrderByColumn | OrderByColumnInput;
 
 export enum SelectActionMode {
-  row,
+  row = 1,
   field,
   rowList,
   fieldList,
   exists,
+}
+
+export enum SelectActionPaginationMode {
+  // When the user calls `limit` and `offset`.
+  limitOffset = 1,
+  // When the user calls `paginate`.
+  pagination,
+  // When the user calls `pageMode`.
+  pageMode,
 }
 
 export interface SelectActionData extends CoreSelectionActionData {
@@ -43,11 +52,9 @@ export interface SelectActionData extends CoreSelectionActionData {
   havingSQLValue?: SQL;
   orderByColumns?: OrderByColumnType[];
   groupByColumns?: string[];
-  limitFlag?: boolean;
-  offsetFlag?: boolean;
+  paginationMode?: SelectActionPaginationMode;
   limitValue?: SQLVariable | number;
   offsetValue?: SQLVariable | number;
-  paginateFlag?: boolean;
   distinctFlag?: boolean;
   unionAllFlag?: boolean;
   unionMembers?: [SelectAction, SelectAction];
@@ -123,10 +130,11 @@ export class SelectAction extends CoreSelectAction {
       if (column instanceof Column) {
         name = column.__getDBName();
       } else if (column instanceof RawColumn) {
-        if (!column.selectedName) {
+        const { selectedName } = column.__getData();
+        if (!selectedName) {
           throw new Error(`Unexpected empty selected name in ${column.toString()}`);
         }
-        name = column.selectedName;
+        name = selectedName;
       } else {
         name = column;
       }
@@ -136,12 +144,24 @@ export class SelectAction extends CoreSelectAction {
   }
 
   paginate(): this {
-    const { mode } = this.#data;
-    if (mode !== SelectActionMode.rowList && mode !== SelectActionMode.fieldList) {
-      throw new Error('`paginate` can only be called on `rowList` and `fieldList` modes');
-    }
-    this.#data.paginateFlag = true;
+    this.setPaginationMode(SelectActionPaginationMode.pagination);
     return this;
+  }
+
+  pageMode(): this {
+    this.setPaginationMode(SelectActionPaginationMode.pageMode);
+    return this;
+  }
+
+  private setPaginationMode(pgMode: SelectActionPaginationMode) {
+    const { paginationMode, mode } = this.#data;
+    if (mode !== SelectActionMode.rowList && mode !== SelectActionMode.fieldList) {
+      throw new Error('`paginationMode` can only be set for `.rowList` and `.fieldList` modes');
+    }
+    if (paginationMode) {
+      throw new Error(`\`paginationMode\` has been set to "${this.#data.paginationMode}"`);
+    }
+    this.#data.paginationMode = pgMode;
   }
 
   havingSQL(value: SQL): this {
@@ -201,22 +221,16 @@ export class SelectAction extends CoreSelectAction {
   }
 
   limit(limitValue?: SQLVariable | number): this {
-    this.#data.limitFlag = true;
-    if (limitValue !== undefined) {
-      if (this.#data.limitValue !== undefined) {
-        throw new Error(`LIMIT has been set to ${this.#data.limitValue}`);
-      }
-      this.#data.limitValue = limitValue;
-    }
+    this.setPaginationMode(SelectActionPaginationMode.limitOffset);
+    this.#data.limitValue = limitValue;
     return this;
   }
 
-  offset(offsetValue?: SQLVariable | number): this {
-    this.#data.offsetFlag = true;
+  offset(offsetValue: SQLVariable | number): this {
+    if (this.#data.paginationMode !== SelectActionPaginationMode.limitOffset) {
+      throw new Error('`offset` can only called after `limit`');
+    }
     if (offsetValue !== undefined) {
-      if (this.#data.limitValue === undefined) {
-        throw new Error('OFFSET cannot be set before LIMIT');
-      }
       if (this.#data.offsetValue !== undefined) {
         throw new Error(`OFFSET has been set to ${this.#data.offsetValue}`);
       }

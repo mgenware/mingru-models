@@ -211,9 +211,10 @@ it('Column.attr n RawColumn.attr', () => {
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
     const columns = t.__getData().columns!;
-    eq((columns[0] as mm.RawColumn).core, user.follower_count);
+    const rd = (columns[0] as mm.RawColumn).__getData();
+    eq(rd.core, user.follower_count);
     deepEq(
-      (columns[0] as mm.RawColumn).__attrs,
+      rd.attrs,
       new Map<number, unknown>([
         [1, 3],
         [2, 's'],
@@ -228,9 +229,10 @@ it('Column.attr n RawColumn.attr', () => {
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
     const columns = t.__getData().columns!;
-    eq((columns[0] as mm.RawColumn).core, user.follower_count);
+    const rd = (columns[0] as mm.RawColumn).__getData();
+    eq(rd.core, user.follower_count);
     deepEq(
-      (columns[0] as mm.RawColumn).__attrs,
+      rd.attrs,
       new Map<number, unknown>([
         [1, 3],
         [2, 's'],
@@ -248,9 +250,10 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
     const columns = t.__getData().columns!;
-    eq((columns[0] as mm.RawColumn).core, user.follower_count);
+    const rd = (columns[0] as mm.RawColumn).__getData();
+    eq(rd.core, user.follower_count);
     deepEq(
-      (columns[0] as mm.RawColumn).__attrs,
+      rd.attrs,
       new Map<number, unknown>([
         [1, 3],
         [2, 's'],
@@ -265,9 +268,10 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
     const table = mm.tableActions(user, UserTA);
     const t = table.t as mm.SelectAction;
     const columns = t.__getData().columns!;
-    eq((columns[0] as mm.RawColumn).core, user.follower_count);
+    const rd = (columns[0] as mm.RawColumn).__getData();
+    eq(rd.core, user.follower_count);
     deepEq(
-      (columns[0] as mm.RawColumn).__attrs,
+      rd.attrs,
       new Map<number, unknown>([
         [1, 3],
         [2, 's'],

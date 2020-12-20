@@ -202,7 +202,7 @@ it('__actions and props', () => {
 it('__actions and props (taCore)', () => {
   const sel = mm.selectRow();
   const del = mm.deleteOne().by(user.id);
-  const actions: Record<string, mm.Action> = {
+  const actions: Record<string, mm.Action | undefined> = {
     del,
     sel,
   };

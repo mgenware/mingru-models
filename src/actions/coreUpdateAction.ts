@@ -18,6 +18,9 @@ export interface CoreUpdateActionData extends ActionData {
 
 export class CoreUpdateAction extends Action {
   #data = this.__data as CoreUpdateActionData;
+  __getData(): CoreUpdateActionData {
+    return this.#data;
+  }
 
   private mustGetSetters(): Map<Column, unknown> {
     return (this.#data.setters ??= new Map<Column, unknown>());
