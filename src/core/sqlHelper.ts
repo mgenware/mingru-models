@@ -15,7 +15,9 @@ export class SQLBuilder {
         this.pushElement(new SQLElement(SQLElementType.rawString, literals[i]));
       }
       const param = params[i];
-      this.push(param);
+      if (param !== undefined) {
+        this.push(param);
+      }
     }
 
     // push the last literal

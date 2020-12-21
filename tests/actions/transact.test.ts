@@ -53,7 +53,7 @@ it('Inline member actions (wrap self)', async () => {
   const user2TA = mm.tableActions(user2, User2TA);
   const v = user2TA.t;
   const vd = v.__getData();
-  const wrapped = vd.members![0].action as WrapAction;
+  const wrapped = vd.members![0]!.action as WrapAction;
   eq(wrapped.__getData().innerAction, user2TA.updatePostCount);
   deepEq(wrapped.__getData().args, { offset: '1' });
 });
@@ -83,7 +83,7 @@ it('Inline member actions (wrap other)', async () => {
   const postTA = mm.tableActions(post2, Post2TA);
   const v = postTA.insert;
   const vd = v.__getData();
-  const wrapped = vd.members![0].action as WrapAction;
+  const wrapped = vd.members![0]!.action as WrapAction;
   eq(wrapped.__getData().innerAction, user2TA.updatePostCount);
   deepEq(wrapped.__getData().args, { offset: '1' });
 });
@@ -106,18 +106,18 @@ it('Setting __table or inline members', () => {
   }
   const postTA = mm.tableActions(post, PostTA);
   const members = postTA.t.__getData().members!;
-  eq(members[0].action.__getData().groupTable, undefined);
-  eq(members[0].action.__getData().sqlTable, undefined);
-  eq(members[0].action.__getData().name, undefined);
-  eq(members[1].action.__getData().groupTable, post);
-  eq(members[1].action.__getData().sqlTable, undefined);
-  eq(members[1].action.__getData().name, 'insert');
-  eq(members[2].action.__getData().groupTable, user);
-  eq(members[2].action.__getData().sqlTable, undefined);
-  eq(members[2].action.__getData().name, 'insert');
-  eq(members[3].action.__getData().groupTable, undefined);
-  eq(members[3].action.__getData().sqlTable, undefined);
-  eq(members[3].action.__getData().name, undefined);
+  eq(members[0]?.action.__getData().groupTable, undefined);
+  eq(members[0]?.action.__getData().sqlTable, undefined);
+  eq(members[0]?.action.__getData().name, undefined);
+  eq(members[1]?.action.__getData().groupTable, post);
+  eq(members[1]?.action.__getData().sqlTable, undefined);
+  eq(members[1]?.action.__getData().name, 'insert');
+  eq(members[2]?.action.__getData().groupTable, user);
+  eq(members[2]?.action.__getData().sqlTable, undefined);
+  eq(members[2]?.action.__getData().name, 'insert');
+  eq(members[3]?.action.__getData().groupTable, undefined);
+  eq(members[3]?.action.__getData().sqlTable, undefined);
+  eq(members[3]?.action.__getData().name, undefined);
 });
 
 it('Declare return values', () => {
@@ -142,10 +142,10 @@ it('Declare return values', () => {
   const v = postTA.batch;
   const vd = v.__getData();
   const members = vd.members!;
-  ok(members[0].returnValues === undefined);
-  deepEq(members[1].returnValues, { a: '_a' });
-  deepEq(members[2].returnValues, { b: '_b' });
-  deepEq(members[3].returnValues, {
+  ok(members[0]!.returnValues === undefined);
+  deepEq(members[1]!.returnValues, { a: '_a' });
+  deepEq(members[2]!.returnValues, { b: '_b' });
+  deepEq(members[3]!.returnValues, {
     [mm.ReturnValues.insertedID]: 'i',
   });
   deepEq(vd.returnValues, ['_b', '_a']);

@@ -12,7 +12,11 @@ export class ValueRef {
 
   constructor(public readonly path: string) {
     const nameComponents = path.split('.');
-    this.firstName = nameComponents[nameComponents.length - 1];
+    const name = nameComponents[nameComponents.length - 1];
+    if (!name) {
+      throw new Error('Unexpected empty name');
+    }
+    this.firstName = name;
     if (nameComponents.length > 1) {
       this.hasPropertyAccess = true;
     } else {
