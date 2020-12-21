@@ -16,6 +16,8 @@ export class SQLVariable {
     public readonly name?: string,
     isArray?: boolean,
     public readonly column?: Column | undefined,
+    // Use this to override the nullability of the `type` property.
+    public readonly nullable?: boolean,
   ) {
     throwIfFalsy(type, 'type');
     this.isArray = isArray || false;

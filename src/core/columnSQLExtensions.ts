@@ -1,31 +1,31 @@
 import { Column } from './core';
 import { SQL, SQLVariable } from './sql';
-import { input, sql } from './sqlHelper';
+import { input, sql, InputAttributes } from './sqlHelper';
 import SQLConvertible from './sqlConvertible';
 
 declare module './core' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Column {
-    toInput(name?: string): SQLVariable;
-    toArrayInput(name?: string): SQLVariable;
+    toInput(name?: string, opt?: InputAttributes): SQLVariable;
+    toArrayInput(name?: string, opt?: InputAttributes): SQLVariable;
     isEqualTo(literals: TemplateStringsArray, ...params: SQLConvertible[]): SQL;
     isEqualToSQL(valueSQL: SQL): SQL;
-    isEqualToInput(name?: string): SQL;
-    isInArrayInput(name?: string): SQL;
+    isEqualToInput(name?: string, opt?: InputAttributes): SQL;
+    isInArrayInput(name?: string, opt?: InputAttributes): SQL;
     isNotEqualTo(literals: TemplateStringsArray, ...params: SQLConvertible[]): SQL;
     isNotEqualToSQL(valueSQL: SQL): SQL;
-    isNotEqualToInput(name?: string): SQL;
+    isNotEqualToInput(name?: string, opt?: InputAttributes): SQL;
     isNull(): SQL;
     isNotNull(): SQL;
   }
 }
 
-Column.prototype.toInput = function (name?: string) {
-  return input(this, name, undefined, this);
+Column.prototype.toInput = function (name?: string, opt?: InputAttributes) {
+  return input(this, name, { column: this, ...opt });
 };
 
-Column.prototype.toArrayInput = function (name?: string) {
-  return input(this, name, true, this);
+Column.prototype.toArrayInput = function (name?: string, opt?: InputAttributes) {
+  return input(this, name, { isArray: true, column: this, ...opt });
 };
 
 Column.prototype.isEqualToSQL = function (valueSQL: SQL) {
@@ -39,8 +39,8 @@ Column.prototype.isEqualTo = function (
   return this.isEqualToSQL(sql(literals, ...params));
 };
 
-Column.prototype.isEqualToInput = function (name?: string) {
-  return this.isEqualToSQL(sql`${this.toInput(name)}`);
+Column.prototype.isEqualToInput = function (name?: string, opt?: InputAttributes) {
+  return this.isEqualToSQL(sql`${this.toInput(name, opt)}`);
 };
 
 Column.prototype.isNotEqualToSQL = function (valueSQL: SQL) {
@@ -54,8 +54,8 @@ Column.prototype.isNotEqualTo = function (
   return this.isNotEqualToSQL(sql(literals, ...params));
 };
 
-Column.prototype.isNotEqualToInput = function (name?: string) {
-  return this.isNotEqualToSQL(sql`${this.toInput(name)}`);
+Column.prototype.isNotEqualToInput = function (name?: string, opt?: InputAttributes) {
+  return this.isNotEqualToSQL(sql`${this.toInput(name, opt)}`);
 };
 
 Column.prototype.isNull = function () {
@@ -66,6 +66,6 @@ Column.prototype.isNotNull = function () {
   return sql`${this} IS NOT NULL`;
 };
 
-Column.prototype.isInArrayInput = function (name?: string) {
-  return sql`${this} IN ${this.toArrayInput(name)}`;
+Column.prototype.isInArrayInput = function (name?: string, opt?: InputAttributes) {
+  return sql`${this} IN ${this.toArrayInput(name, opt)}`;
 };

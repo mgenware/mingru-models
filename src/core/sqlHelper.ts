@@ -85,21 +85,28 @@ function getInputTypeName(type: SQLVariableType | Column | ColumnType): string {
   return type.type;
 }
 
+export interface InputAttributes {
+  isArray?: boolean;
+  column?: Column;
+  nullable?: boolean;
+}
+
 export function input(
   type: SQLVariableType | Column | ColumnType,
   name?: string,
-  isArray?: boolean,
-  column?: Column | undefined,
+  attrs?: InputAttributes,
 ): SQLVariable {
-  let tableColumn = column;
+  // eslint-disable-next-line no-param-reassign
+  attrs ??= {};
+  let tableColumn = attrs.column;
   if (!tableColumn && type instanceof Column) {
     tableColumn = type;
   }
   if (!tableColumn && !name) {
-    // Throws neither column nor name is present.
+    // Throws when neither column nor name is present.
     throw new Error(`Unexpected empty input name for type \`${getInputTypeName(type)}\``);
   }
-  return new SQLVariable(type, name, isArray || false, tableColumn);
+  return new SQLVariable(type, name, attrs.isArray || false, tableColumn, attrs.nullable);
 }
 
 export function sqlCall(
