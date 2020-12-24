@@ -440,7 +440,7 @@ export class JoinedTable {
     public readonly srcColumn: Column,
     public readonly destTable: Table,
     public readonly destColumn: Column,
-    public readonly type: JoinType,
+    public readonly joinType: JoinType,
     public readonly associative: boolean, // If `srcColumn` is associative.
     public readonly extraColumns: [Column, Column][], // Join tables with composite PKs.
   ) {
@@ -453,7 +453,7 @@ export class JoinedTable {
       localTableString = srcTable.__getDBName();
     }
     const remoteTableString = destTable.__getDBName();
-    let keyPath = `(J|${this.type}|${localTableString}|${remoteTableString})`;
+    let keyPath = `(J|${this.joinType}|${localTableString}|${remoteTableString})`;
     // Append columns.
     // We are not using `column.getPath()` as we assume src and dest columns are
     // always from src and dest tables.

@@ -198,3 +198,14 @@ it('Associative join', () => {
     'user_name',
   );
 });
+
+function getJoinType(jc: mm.Column): mm.JoinType {
+  return (jc.__getData().table as mm.JoinedTable).joinType;
+}
+
+it('Join types', () => {
+  eq(getJoinType(post.title.join(user, user.name).id), mm.JoinType.inner);
+  eq(getJoinType(post.title.leftJoin(user, user.name).id), mm.JoinType.left);
+  eq(getJoinType(post.title.rightJoin(user, user.name).id), mm.JoinType.right);
+  eq(getJoinType(post.title.fullJoin(user, user.name).id), mm.JoinType.full);
+});
