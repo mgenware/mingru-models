@@ -770,7 +770,7 @@ COLLATE=utf8mb4_unicode_ci
 
 Note that the columns above have same generated `INSERT` and `UPDATE` code since default values are also explicitly set in `INSERT` and `UPDATE` actions.
 
-### `JoinedTable`
+### `JoinTable`
 
 Imagine the following join:
 
@@ -781,7 +781,7 @@ post.user_id.join(user).name;
 It returns an object of `JoinedColumn`:
 
 ```ts
-export declare class JoinedTable {
+export declare class JoinTable {
   srcColumn: Column;
   destTable: Table;
   destColumn: Column;
@@ -791,7 +791,7 @@ export declare class JoinedTable {
 }
 ```
 
-An anatomy of a `JoinedTable`:
+An anatomy of a `JoinTable`:
 
 ```
 post.user_id.join(user).name;
@@ -799,7 +799,7 @@ post.user_id.join(user).name;
      |        |     |      |
     srcColumn |  destTable |
      |        |     |      |
-     |--- JoinedTable      |
+     |--- JoinTable      |
               |            |
               -------- destColumn
 ```
@@ -810,10 +810,10 @@ Multiple joins are also allowed:
 cmt.post_id.join(post).user_id.join(user).name
 |                  |
 --------------------
-               JoinedTable
+               JoinTable
                    |                  |
                    --------------------
-                                  JoinedTable
+                                  JoinTable
 ```
 
 - For first joined table:

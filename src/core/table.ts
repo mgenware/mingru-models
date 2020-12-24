@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Table, Column, JoinedTable } from './core';
+import { Table, Column, JoinTable } from './core';
 import * as defs from './defs';
 import { toSnakeCase } from '../lib/utils';
 
@@ -40,7 +40,7 @@ export function tableCore(
         if (!col) {
           throw new Error('Expected empty column object');
         }
-        if (col.__getData().table instanceof JoinedTable) {
+        if (col.__getData().table instanceof JoinTable) {
           throw new Error(
             `Unexpected table type "${col}". You should not use JoinedColumn in a table definition, JoinedColumn can only be used in SELECT actions.`,
           );

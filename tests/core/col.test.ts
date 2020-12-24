@@ -85,7 +85,7 @@ it('Column.newForeignColumn', () => {
 });
 
 it('Column.newJoinedColumn', () => {
-  const t = (post.user_id.join(user) as unknown) as mm.JoinedTable;
+  const t = (post.user_id.join(user) as unknown) as mm.JoinTable;
   const a = user.name;
   const ad = a.__getData();
   const at = a.__mustGetType();

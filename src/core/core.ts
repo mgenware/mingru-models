@@ -36,7 +36,7 @@ export interface ColumnData {
   noDefaultValueOnCSQL?: boolean;
   dbName?: string;
   modelName?: string;
-  table?: Table | JoinedTable;
+  table?: Table | JoinTable;
   inputName?: string;
   // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any
   // table, the foreignColumn property only indicates a column property is declared as FK and
@@ -66,7 +66,7 @@ export class Column {
     return copied;
   }
 
-  static newJoinedColumn(mirroredColumn: Column, table: JoinedTable): Column {
+  static newJoinedColumn(mirroredColumn: Column, table: JoinTable): Column {
     const copied = Column.copyFrom(mirroredColumn, table, true);
     copied.#data.mirroredColumn = mirroredColumn;
     return copied;
@@ -74,7 +74,7 @@ export class Column {
 
   private static copyFrom(
     from: Column,
-    newTable: Table | JoinedTable | null,
+    newTable: Table | JoinTable | null,
     copyNames: boolean,
   ): Column {
     const to = new Column(from.__mustGetType());
@@ -184,7 +184,7 @@ export class Column {
     return this.#data.dbName ?? this.#data.name ?? '';
   }
 
-  __mustGetTable(): Table | JoinedTable {
+  __mustGetTable(): Table | JoinTable {
     if (!this.#data.table) {
       throw new Error(`Column "${this}" doesn't have a table`);
     }
@@ -213,7 +213,7 @@ export class Column {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    if (table instanceof JoinedTable) {
+    if (table instanceof JoinTable) {
       if (table.associative) {
         return name;
       }
@@ -228,7 +228,7 @@ export class Column {
       return null;
     }
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    if (table instanceof JoinedTable) {
+    if (table instanceof JoinTable) {
       return table.srcColumn.__getSourceTable();
     }
     return table;
@@ -341,9 +341,9 @@ export class Column {
 
     // Join returns a proxy, each property access first retrieves the original column
     // from original joined table, then it constructs a new copied column with
-    // `props.table` set to a newly created JoinedTable.
+    // `props.table` set to a newly created JoinTable.
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    const joinedTable = new JoinedTable(this, destTable, destCol, type, associative, extraColumns);
+    const joinedTable = new JoinTable(this, destTable, destCol, type, associative, extraColumns);
     return new Proxy<T>(destTable, {
       get(target, propKey, receiver) {
         const selectedColumn = Reflect.get(target, propKey, receiver) as Column | undefined;
@@ -431,8 +431,8 @@ export class Table {
  destTable: user (Table)
  destColumn: user.id (Column)
 */
-export class JoinedTable {
-  // `keyPath` is useful to detect duplicate joins, if multiple `JoinedTable` instances are
+export class JoinTable {
+  // `keyPath` is useful to detect duplicate joins, if multiple `JoinTable` instances are
   // created with same columns and tables, they'd have the same `keyPath`.
   readonly keyPath: string;
 
@@ -446,7 +446,7 @@ export class JoinedTable {
   ) {
     const srcTable = srcColumn.__mustGetTable();
     let localTableString: string;
-    if (srcTable instanceof JoinedTable) {
+    if (srcTable instanceof JoinTable) {
       // Source column is a joined column.
       localTableString = srcTable.keyPath;
     } else {
@@ -473,7 +473,7 @@ export class JoinedTable {
     const srcName = srcColumn.__mustGetName();
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const curName = makeMiddleName(srcName);
-    if (srcTable instanceof JoinedTable) {
+    if (srcTable instanceof JoinTable) {
       if (srcTable.associative) {
         return curName;
       }

@@ -17,9 +17,9 @@ function testJCCols(
   sourceTable: mm.Table,
   inputName: string,
 ) {
-  eq(jc.__getData().table instanceof mm.JoinedTable, true);
+  eq(jc.__getData().table instanceof mm.JoinTable, true);
   eq(jc.__getData().mirroredColumn, selectedColumn);
-  const jt = jc.__getData().table as mm.JoinedTable;
+  const jt = jc.__getData().table as mm.JoinTable;
   eq(jt.tableInputName(), tableInputName);
   eq(jt.destTable, destTable);
   eq(jt.destColumn, destColumn);
@@ -90,7 +90,7 @@ it('Join with multiple keys', () => {
     post,
     'title_follower_count',
   );
-  deepEq((jc.__getData().table as mm.JoinedTable).extraColumns, [
+  deepEq((jc.__getData().table as mm.JoinTable).extraColumns, [
     [post.user_id, user.id],
     [post.snake_case_user_id, user.id],
   ]);
@@ -172,7 +172,7 @@ it('Join arbitrary table and column', () => {
 
 it('Associative join', () => {
   const jc = postCmtAss.cmt_id.associativeJoin(cmt).user_id;
-  eq((jc.__getData().table as mm.JoinedTable).associative, true);
+  eq((jc.__getData().table as mm.JoinTable).associative, true);
   testJCCols(
     jc,
     'cmt',
@@ -200,7 +200,7 @@ it('Associative join', () => {
 });
 
 function getJoinType(jc: mm.Column): mm.JoinType {
-  return (jc.__getData().table as mm.JoinedTable).joinType;
+  return (jc.__getData().table as mm.JoinTable).joinType;
 }
 
 it('Join types', () => {
