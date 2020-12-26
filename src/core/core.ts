@@ -23,7 +23,7 @@ export class ColumnType {
 }
 
 export enum JoinType {
-  inner,
+  inner = 1,
   left,
   right,
   full,
