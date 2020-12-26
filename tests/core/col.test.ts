@@ -175,7 +175,7 @@ class JCTable extends mm.Table {
 it('JoinedColumn in table def', () => {
   itThrows(
     () => mm.table(JCTable),
-    'Unexpected table type "Column(name, (J|0|post|user)[user_id|id])". You should not use JoinedColumn in a table definition, JoinedColumn can only be used in SELECT actions. [column "jc"] [table "jc_table"]',
+    'Unexpected table type "Column(name, (J|1|post|user)[user_id|id])". You should not use JoinedColumn in a table definition, JoinedColumn can only be used in SELECT actions. [column "jc"] [table "jc_table"]',
   );
 });
 
@@ -284,7 +284,7 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
 it('Column.getPath', () => {
   eq(user.id.__getPath(), 'user.id');
   eq(employee.id.__getPath(), 'employees.emp_no');
-  eq(post.user_id.join(user).name.__getPath(), '(J|0|post|user)[user_id|id].name');
+  eq(post.user_id.join(user).name.__getPath(), '(J|1|post|user)[user_id|id].name');
   eq(
     post.title
       .join(user, user.name, [
@@ -292,7 +292,7 @@ it('Column.getPath', () => {
         [post.snake_case_user_id, user.id],
       ])
       .follower_count.__getPath(),
-    '(J|0|post|user)[title|name][user_id|id][snake_case_user_id|id].follower_count',
+    '(J|1|post|user)[title|name][user_id|id][snake_case_user_id|id].follower_count',
   );
 });
 

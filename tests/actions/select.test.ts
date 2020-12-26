@@ -132,7 +132,7 @@ it('RawColumn (count)', () => {
   eq(ccd.selectedName, 'count');
   eq(
     ccd.core?.toString(),
-    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, (J|0|post|user)[user_id|id]), type = 1))), type = 3))',
+    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, (J|1|post|user)[user_id|id]), type = 1))), type = 3))',
   );
 });
 
