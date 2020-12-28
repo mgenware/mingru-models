@@ -530,3 +530,7 @@ it('UNION on a ghost table', () => {
   eq(td.groupTable, mm.ghostTable);
   eq(td.sqlTable, user);
 });
+
+it('mm.select == mm.selectRow', () => {
+  eq(mm.select, mm.selectRow);
+});

@@ -15,6 +15,8 @@ export function selectRow(...columns: SelectedColumn[]): SelectAction {
   return new SelectAction(columns, SelectActionMode.row);
 }
 
+export const select = selectRow;
+
 export function selectRows(...columns: SelectedColumn[]): SelectAction {
   return new SelectAction(columns, SelectActionMode.rowList);
 }
