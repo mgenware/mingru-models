@@ -21,7 +21,7 @@
     "r": "daizong"
   },
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=12.0.0"
   },
   "files": [
     "/dist/**/*.js",
@@ -39,8 +39,10 @@
     "eslint-config-mgenware": "^0.0.2",
     "eslint-plugin-import": "^2.22.1",
     "it-throws": "^3.2.1",
+    "mgenware-tsconfig-node": "^12.0.0",
     "mocha": "^8.2.1",
     "source-map-support": "^0.5.19",
+    "tslib": "^2.1.0",
     "typescript": "^4.1.3"
   },
   "dependencies": {
