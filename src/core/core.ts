@@ -119,51 +119,43 @@ export class Column {
   }
 
   get nullable(): Column {
-    this.checkMutability();
     this.__mustGetType().nullable = true;
     return this;
   }
 
   get unique(): Column {
-    this.checkMutability();
     this.__mustGetType().unique = true;
     return this;
   }
 
   get autoIncrement(): Column {
-    this.checkMutability();
     this.__mustGetType().autoIncrement = true;
     return this;
   }
 
   get noAutoIncrement(): Column {
-    this.checkMutability();
     this.__mustGetType().autoIncrement = false;
     return this;
   }
 
   get noDefaultValueOnCSQL(): Column {
-    this.checkMutability();
     this.#data.noDefaultValueOnCSQL = true;
     return this;
   }
 
   default(value: unknown): this {
-    this.checkMutability();
     this.#data.defaultValue = value;
     return this;
   }
 
   setDBName(name: string): this {
     throwIfFalsy(name, 'name');
-    this.checkMutability();
     this.#data.dbName = name;
     return this;
   }
 
   setModelName(name: string): this {
     throwIfFalsy(name, 'name');
-    this.checkMutability();
     this.#data.modelName = name;
     return this;
   }
@@ -355,14 +347,6 @@ export class Column {
         return Column.newJoinedColumn(selectedColumn, joinedTable);
       },
     });
-  }
-
-  private checkMutability() {
-    if (Object.isFrozen(this)) {
-      throw new Error(
-        `Column "${this}" is frozen. Did you try to change a column from another table?`,
-      );
-    }
   }
 }
 
