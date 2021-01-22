@@ -116,7 +116,7 @@ it('Mutate a frozen column', () => {
   a.__freeze();
   itThrows(
     () => a.nullable,
-    'Column "Column()" is frozen. Did you try to change a column from another table?',
+    "Cannot assign to read only property 'nullable' of object '[object Object]'",
   );
 });
 
