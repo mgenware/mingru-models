@@ -98,13 +98,6 @@ export function decimal(length: number, scale: number): Column {
   return col;
 }
 
-export function unique(col: Column): Column {
-  throwIfFalsy(col, 'col');
-  // eslint-disable-next-line no-param-reassign
-  col.__mustGetType().unique = true;
-  return col;
-}
-
 export function pk(column?: Column): Column {
   let col: Column;
   if (column) {

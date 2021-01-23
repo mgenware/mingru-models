@@ -81,7 +81,6 @@ it('Column.newForeignColumn', () => {
   eq(ad.defaultValue, bd.defaultValue);
   deepEq(at.types, bt.types);
   eq(at.nullable, bt.nullable);
-  eq(at.unique, bt.unique);
 });
 
 it('Column.newJoinedColumn', () => {
@@ -108,7 +107,6 @@ it('Column.newJoinedColumn', () => {
   eq(ad.defaultValue, bd.defaultValue);
   deepEq(at.types, bt.types);
   eq(at.nullable, bt.nullable);
-  eq(at.unique, bt.unique);
 });
 
 it('Mutate a frozen column', () => {
@@ -130,14 +128,36 @@ it('nullable', () => {
   eq(c.__mustGetType().nullable, true);
 });
 
-it('unique', () => {
-  const c = mm.int(123).unique;
-  eq(c.__mustGetType().unique, true);
+it('uniqueConstraint', () => {
+  const c = mm.int(123).uniqueConstraint;
+  eq(c.__getData().uniqueConstraint, true);
 });
 
-it('unique (default)', () => {
+it('uniqueConstraint (default)', () => {
   const c = mm.int(123);
-  eq(c.__mustGetType().unique, false);
+  eq(c.__getData().uniqueConstraint, undefined);
+});
+
+it('Index', () => {
+  const c = mm.int(123).index;
+  eq(c.__getData().index, true);
+});
+
+it('Index (default)', () => {
+  const c = mm.int(123);
+  eq(c.__getData().index, undefined);
+});
+
+it('Unique index', () => {
+  const c = mm.int(123).uniqueIndex;
+  eq(c.__getData().index, true);
+  eq(c.__getData().isUniqueIndex, true);
+});
+
+it('Unique index (default)', () => {
+  const c = mm.int(123);
+  eq(c.__getData().index, undefined);
+  eq(c.__getData().isUniqueIndex, undefined);
 });
 
 it('setDefault', () => {

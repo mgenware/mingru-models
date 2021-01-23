@@ -6,7 +6,6 @@ export class ColumnType {
   pk = false;
   nullable = false;
   unsigned = false;
-  unique = false;
   length = 0;
   autoIncrement = false;
   // Used in DECIMAL data type.
@@ -44,6 +43,11 @@ export interface ColumnData {
   foreignColumn?: Column;
   // See `Column.join` for details
   mirroredColumn?: Column;
+
+  uniqueConstraint?: boolean;
+  index?: boolean;
+  // No effect when `index` is false;
+  isUniqueIndex?: boolean;
 }
 
 export class Column {
@@ -123,8 +127,19 @@ export class Column {
     return this;
   }
 
-  get unique(): Column {
-    this.__mustGetType().unique = true;
+  get uniqueConstraint(): Column {
+    this.#data.uniqueConstraint = true;
+    return this;
+  }
+
+  get index(): Column {
+    this.#data.index = true;
+    return this;
+  }
+
+  get uniqueIndex(): Column {
+    this.#data.index = true;
+    this.#data.isUniqueIndex = true;
     return this;
   }
 

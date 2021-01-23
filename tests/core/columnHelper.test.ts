@@ -94,7 +94,6 @@ it('varBinary', () => {
 it('pk', () => {
   const t = mm.pk().__mustGetType();
   ok(t.types.includes(mm.dt.bigInt));
-  eq(t.unique, false);
   eq(t.nullable, false);
   eq(t.unsigned, true);
   eq(t.autoIncrement, true);
@@ -106,7 +105,6 @@ it('pk(column)', () => {
   eq(c, charCol);
 
   const t = c.__mustGetType();
-  eq(t.unique, false);
   eq(t.nullable, false);
 });
 
@@ -114,7 +112,6 @@ it('pk(FK)', () => {
   const c = mm.pk(post.id);
   const t = c.__mustGetType();
   eq(t.pk, true);
-  eq(t.unique, false);
   eq(t.nullable, false);
   eq(t.autoIncrement, false);
   eq(c.__getData().foreignColumn, post.id);
