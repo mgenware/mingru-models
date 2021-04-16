@@ -1,8 +1,5 @@
-import { ColumnType, Column } from '../core/core';
-import { RawColumn } from './rawColumn';
+import { ColumnType, Column, SQLCall, RawColumn, SQL } from '../core/core';
 import { convertToSQL } from '../core/sqlHelper';
-import { SQLCall } from '../core/sqlCall';
-import { SQL } from '../core/sql';
 
 export function sel(
   value: Column | SQL | SQLCall,

@@ -1,9 +1,8 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { ActionType } from './tableActions';
-import { SQL } from '../core/sql';
 import { CoreUpdateAction, CoreUpdateActionData } from './coreUpdateAction';
 import { where, by, andBy } from './common';
-import { Column, Table } from '../core/core';
+import { Column, Table, SQL } from '../core/core';
 import { sql } from '../core/sqlHelper';
 import SQLConvertible from '../core/sqlConvertible';
 import { CoreSelectionActionData } from './coreSelectAction';

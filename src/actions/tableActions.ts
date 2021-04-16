@@ -2,9 +2,8 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import toTypeString from 'to-type-string';
 import { ActionAttribute } from '../attrs';
-import { Table } from '../core/core';
+import { Table, SQLVariable } from '../core/core';
 import * as defs from '../core/defs';
-import { SQLVariable } from '../core/sql';
 
 export interface TableActionOptions {
   unsafeTableInput?: boolean;

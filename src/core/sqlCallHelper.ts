@@ -1,7 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { ColumnType, Column } from './core';
+import { ColumnType, Column, SQLCall, SQLCallType } from './core';
 import dt from './dt';
-import { SQLCall, SQLCallType } from './sqlCall';
 import SQLConvertible from './sqlConvertible';
 import { sqlCall } from './sqlHelper';
 

@@ -1,5 +1,4 @@
-import { Column } from './core';
-import { SQL, SQLVariable } from './sql';
+import { Column, SQL } from './core';
 import { input, sql, InputAttributes } from './sqlHelper';
 import SQLConvertible from './sqlConvertible';
 

@@ -1,6 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { SQL } from '../core/sql';
-import { Column } from '../core/core';
+import { Column, SQL } from '../core/core';
 import { and } from '../sqlLangHelper';
 import { sql } from '../core/sqlHelper';
 

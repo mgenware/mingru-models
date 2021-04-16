@@ -1,8 +1,16 @@
 import SQLConvertible from './sqlConvertible';
-import { SQL, SQLElement, SQLElementType, SQLVariable, SQLVariableType } from './sql';
-import { RawColumn } from '../actions/rawColumn';
-import { Column, ColumnType } from './core';
-import { SQLCall, SQLCallType } from './sqlCall';
+import {
+  Column,
+  ColumnType,
+  RawColumn,
+  SQL,
+  SQLElement,
+  SQLElementType,
+  SQLVariable,
+  SQLVariableType,
+  SQLCall,
+  SQLCallType,
+} from './core';
 import { Action } from '../actions/tableActions';
 
 export class SQLBuilder {

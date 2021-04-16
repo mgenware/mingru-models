@@ -1,4 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
+import { ColumnAttribute } from '../attrs';
 import * as utils from '../lib/utils';
 
 export class ColumnType {
@@ -498,4 +499,182 @@ function makeMiddleName(s: string): string {
     throw new Error('Unexpected empty value in "makeMiddleName"');
   }
   return utils.stripTrailingSnakeID(s);
+}
+
+export interface SQLVariableType {
+  type: string;
+  defaultValue: unknown;
+  module?: string;
+  importPath?: string;
+}
+
+export class SQLVariable {
+  readonly isArray: boolean;
+
+  constructor(
+    public readonly type: SQLVariableType | Column | ColumnType,
+    public readonly name?: string,
+    isArray?: boolean,
+    public readonly column?: Column | undefined,
+    // Use this to override the nullability of the `type` property.
+    public readonly nullable?: boolean,
+  ) {
+    throwIfFalsy(type, 'type');
+    this.isArray = isArray || false;
+  }
+
+  toString(): string {
+    const { type } = this;
+    let desc = '';
+    if (typeof type === 'string') {
+      desc = `String(${type})`;
+    } else if (type instanceof Column || type instanceof ColumnType) {
+      desc = type.toString();
+    } else {
+      desc = JSON.stringify(type);
+    }
+    return `SQLVar(${this.name}, desc = ${desc})`;
+  }
+}
+
+export enum SQLElementType {
+  rawString,
+  column,
+  input,
+  call,
+  rawColumn,
+  action,
+}
+
+export class SQLElement {
+  constructor(public readonly type: SQLElementType, public readonly value: unknown) {}
+
+  toString(): string {
+    const { value } = this;
+    return `E(${value !== undefined && value !== null ? `${value}, ` : ''}type = ${this.type})`;
+  }
+}
+
+export class SQL {
+  constructor(public elements: ReadonlyArray<SQLElement>) {}
+
+  toString(): string {
+    return `SQL(${this.elements.map((e) => e.toString()).join(', ')})`;
+  }
+}
+
+export interface RawColumnData {
+  core?: Column | SQL;
+  selectedName?: string;
+  type?: ColumnType;
+  attrs?: Map<ColumnAttribute, unknown>;
+}
+
+export class RawColumn {
+  protected __data: RawColumnData = {};
+  __getData(): RawColumnData {
+    return this.__data;
+  }
+
+  private get data(): RawColumnData {
+    return this.__data;
+  }
+
+  private mustGetAttrs(): Map<ColumnAttribute, unknown> {
+    return (this.data.attrs ??= new Map<ColumnAttribute, unknown>());
+  }
+
+  constructor(
+    core: Column | SQL,
+    // `selectedName` can be undefined if `core` is a column.
+    // In that case, when you call `toInput`, a name will be generated from all its joined columns,
+    // so that you don't need to specify names when using joins.
+    selectedName?: string,
+    type?: ColumnType,
+  ) {
+    throwIfFalsy(core, 'core');
+
+    this.data.selectedName = selectedName;
+    this.data.type = type;
+    if (core instanceof Column) {
+      this.data.core = core;
+    } else {
+      this.data.core = core;
+      if (!selectedName) {
+        throw new Error(
+          'The argument `selectedName` is required for a `RawColumn` with SQL expression',
+        );
+      }
+    }
+  }
+
+  attr(name: ColumnAttribute, value: unknown): this {
+    this.mustGetAttrs().set(name, value);
+    return this;
+  }
+
+  privateAttr(): this {
+    return this.attr(ColumnAttribute.isPrivate, true);
+  }
+
+  toString(): string {
+    return `RawColumn(${this.data.selectedName}, core = ${this.data.core})`;
+  }
+}
+
+export enum SQLCallType {
+  localDatetimeNow, // NOW() for DATETIME
+  localDateNow, // NOW() for DATE
+  localTimeNow, // NOW() for TIME
+  count, // COUNT()
+  avg, // AVG()
+  sum, // SUM()
+  coalesce, // COALESCE()
+  min, // MIN()
+  max, // MAX()
+  year,
+  month,
+  week,
+  day,
+  hour,
+  minute,
+  second,
+  utcDatetimeNow,
+  utcDateNow,
+  utcTimeNow,
+  timestampNow,
+  exists,
+  notExists,
+  ifNull,
+  // Use uppercase to not conflict with the if keyword.
+  IF,
+}
+
+export class SQLCall {
+  #returnType: ColumnType | number;
+  get returnType(): ColumnType | number {
+    return this.#returnType;
+  }
+
+  constructor(
+    public readonly type: SQLCallType,
+    // A number value indicates the return value is inferred from the index of a params.
+    returnType: ColumnType | number,
+    public readonly params: ReadonlyArray<SQL>,
+  ) {
+    this.#returnType = returnType;
+  }
+
+  toString(): string {
+    let paramsDesc = '';
+    if (this.params.length) {
+      paramsDesc = `, params = ${this.params.join(', ')})`;
+    }
+    return `SQLCall(${this.type}, return = ${this.returnType.toString()}${paramsDesc}`;
+  }
+
+  setReturnType(type: ColumnType): this {
+    this.#returnType = type;
+    return this;
+  }
 }

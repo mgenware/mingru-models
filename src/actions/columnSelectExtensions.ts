@@ -1,7 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Column } from '../core/core';
+import { Column, RawColumn } from '../core/core';
 import { ColumnAttribute } from '../attrs';
-import { RawColumn } from './rawColumn';
 
 declare module '../core/core' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

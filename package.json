@@ -31,18 +31,18 @@
   "devDependencies": {
     "@types/mocha": "^8.2.1",
     "@types/node": "^14.14.31",
-    "@typescript-eslint/eslint-plugin": "^4.15.2",
-    "@typescript-eslint/parser": "^4.15.2",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
     "daizong": "^0.13.0",
-    "eslint": "^7.20.0",
-    "eslint-config-airbnb-typescript-lite": "^12.0.0",
+    "eslint": "^7.24.0",
+    "eslint-config-airbnb-typescript-lite": "^12.1.1",
     "eslint-config-mgenware": "^0.0.5",
     "eslint-plugin-import": "^2.22.1",
     "it-throws": "^3.2.1",
     "mgenware-tsconfig-node": "^14.0.2",
     "mocha": "^8.3.0",
     "source-map-support": "^0.5.19",
-    "typescript": "^4.2.2"
+    "typescript": "^4.2.4"
   },
   "dependencies": {
     "decamelize": "^5.0.0",

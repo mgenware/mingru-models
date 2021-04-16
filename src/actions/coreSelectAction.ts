@@ -1,7 +1,6 @@
 import { Action, ActionData } from './tableActions';
-import { SQL } from '../core/sql';
 import { where, by, andBy } from './common';
-import { Column } from '../core/core';
+import { Column, SQL } from '../core/core';
 import SQLConvertible from '../core/sqlConvertible';
 import { sql } from '../core/sqlHelper';
 

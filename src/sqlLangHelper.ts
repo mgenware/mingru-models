@@ -1,4 +1,4 @@
-import { SQL } from './core/sql';
+import { SQL } from './core/core';
 import { sql } from './core/sqlHelper';
 
 export function and(a: SQL, b: SQL): SQL {

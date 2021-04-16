@@ -4,8 +4,6 @@ export * from './core/core';
 export { default as dt } from './core/dt';
 export * from './core/columnHelper';
 export * from './core/table';
-export * from './core/sql';
-export * from './core/sqlCall';
 export * from './core/sqlCallHelper';
 export { default as SQLConvertible } from './core/sqlConvertible';
 export * from './core/sqlHelper';
@@ -24,7 +22,6 @@ export * from './actions/insertAction';
 export * from './actions/deleteAction';
 export * from './actions/wrapAction';
 export * from './actions/transactAction';
-export * from './actions/rawColumn';
 export * from './actions/rawColumnBuilder';
 
 // Extensions
