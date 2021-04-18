@@ -104,7 +104,7 @@ it('Join with multiple keys and an extra SQL', () => {
       [post.user_id, user.id],
       [post.snake_case_user_id, user.id],
     ],
-    mm.sql`${post.title.join(user, user.name).follower_count} = 2`,
+    (jt) => mm.sql`${jt.follower_count} = 2`,
   ).follower_count;
   testJCCols(
     jc,
@@ -123,7 +123,7 @@ it('Join with multiple keys and an extra SQL', () => {
   ]);
   eq(
     (jc.__getData().table as mm.JoinTable).extraSQL?.toString(),
-    'SQL(E(Column(follower_count, (J|1|post|user)[title|name]), type = 1), E( = 2, type = 0))',
+    'SQL(E(Column(follower_count, (J|1|post|user)[title|name][user_id|id][snake_case_user_id|id]), type = 1), E( = 2, type = 0))',
   );
 });
 
