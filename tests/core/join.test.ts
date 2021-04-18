@@ -96,6 +96,37 @@ it('Join with multiple keys', () => {
   ]);
 });
 
+it('Join with multiple keys and an extra SQL', () => {
+  const jc = post.title.join(
+    user,
+    user.name,
+    [
+      [post.user_id, user.id],
+      [post.snake_case_user_id, user.id],
+    ],
+    mm.sql`${post.title.join(user, user.name).follower_count} = 2`,
+  ).follower_count;
+  testJCCols(
+    jc,
+    'title',
+    user,
+    user.name,
+    user.follower_count,
+    post.title,
+    '(J|1|post|user)[title|name][user_id|id][snake_case_user_id|id]',
+    post,
+    'title_follower_count',
+  );
+  deepEq((jc.__getData().table as mm.JoinTable).extraColumns, [
+    [post.user_id, user.id],
+    [post.snake_case_user_id, user.id],
+  ]);
+  eq(
+    (jc.__getData().table as mm.JoinTable).extraSQL?.toString(),
+    'SQL(E(Column(follower_count, (J|1|post|user)[title|name]), type = 1), E( = 2, type = 0))',
+  );
+});
+
 it('Nested JoinedColumn', () => {
   const jc1 = postCmt.post_id.join(post).user_id;
   const jc2 = jc1.join(user).name;

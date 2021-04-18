@@ -499,11 +499,6 @@ export class JoinTable {
       keyPath += `[${col1.__getDBName()}|${col2.__getDBName()}]`;
     }
 
-    // Extra SQL.
-    if (extraSQL) {
-      keyPath += `[SQL: ${extraSQL}]`;
-    }
-
     this.keyPath = keyPath;
   }
 
