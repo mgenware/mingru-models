@@ -270,52 +270,76 @@ export class Column {
     return `Column(${name ?? ''}${tableStr ? `, ${tableStr}` : ''})`;
   }
 
-  join<T extends Table>(destTable: T, destCol?: Column, extraColumns?: [Column, Column][]): T {
-    return this.joinCore(JoinType.inner, destTable, destCol, false, extraColumns || []);
+  join<T extends Table>(
+    destTable: T,
+    destCol?: Column,
+    extraColumns?: [Column, Column][],
+    extraSQL?: SQL,
+  ): T {
+    return this.joinCore(JoinType.inner, destTable, destCol, false, extraColumns || [], extraSQL);
   }
 
-  leftJoin<T extends Table>(destTable: T, destCol?: Column, extraColumns?: [Column, Column][]): T {
-    return this.joinCore(JoinType.left, destTable, destCol, false, extraColumns || []);
+  leftJoin<T extends Table>(
+    destTable: T,
+    destCol?: Column,
+    extraColumns?: [Column, Column][],
+    extraSQL?: SQL,
+  ): T {
+    return this.joinCore(JoinType.left, destTable, destCol, false, extraColumns || [], extraSQL);
   }
 
-  rightJoin<T extends Table>(destTable: T, destCol?: Column, extraColumns?: [Column, Column][]): T {
-    return this.joinCore(JoinType.right, destTable, destCol, false, extraColumns || []);
+  rightJoin<T extends Table>(
+    destTable: T,
+    destCol?: Column,
+    extraColumns?: [Column, Column][],
+    extraSQL?: SQL,
+  ): T {
+    return this.joinCore(JoinType.right, destTable, destCol, false, extraColumns || [], extraSQL);
   }
 
-  fullJoin<T extends Table>(destTable: T, destCol?: Column, extraColumns?: [Column, Column][]): T {
-    return this.joinCore(JoinType.full, destTable, destCol, false, extraColumns || []);
+  fullJoin<T extends Table>(
+    destTable: T,
+    destCol?: Column,
+    extraColumns?: [Column, Column][],
+    extraSQL?: SQL,
+  ): T {
+    return this.joinCore(JoinType.full, destTable, destCol, false, extraColumns || [], extraSQL);
   }
 
   associativeJoin<T extends Table>(
     destTable: T,
     destCol?: Column,
     extraColumns?: [Column, Column][],
+    extraSQL?: SQL,
   ): T {
-    return this.joinCore(JoinType.inner, destTable, destCol, true, extraColumns || []);
+    return this.joinCore(JoinType.inner, destTable, destCol, true, extraColumns || [], extraSQL);
   }
 
   leftAssociativeJoin<T extends Table>(
     destTable: T,
     destCol?: Column,
     extraColumns?: [Column, Column][],
+    extraSQL?: SQL,
   ): T {
-    return this.joinCore(JoinType.left, destTable, destCol, true, extraColumns || []);
+    return this.joinCore(JoinType.left, destTable, destCol, true, extraColumns || [], extraSQL);
   }
 
   rightAssociativeJoin<T extends Table>(
     destTable: T,
     destCol?: Column,
     extraColumns?: [Column, Column][],
+    extraSQL?: SQL,
   ): T {
-    return this.joinCore(JoinType.right, destTable, destCol, true, extraColumns || []);
+    return this.joinCore(JoinType.right, destTable, destCol, true, extraColumns || [], extraSQL);
   }
 
   fullAssociativeJoin<T extends Table>(
     destTable: T,
     destCol?: Column,
     extraColumns?: [Column, Column][],
+    extraSQL?: SQL,
   ): T {
-    return this.joinCore(JoinType.full, destTable, destCol, true, extraColumns || []);
+    return this.joinCore(JoinType.full, destTable, destCol, true, extraColumns || [], extraSQL);
   }
 
   // Called by `mm.table`.
@@ -334,6 +358,7 @@ export class Column {
     destCol: Column | undefined,
     associative: boolean,
     extraColumns: [Column, Column][],
+    extraSQL: SQL | undefined,
   ): T {
     throwIfFalsy(destTable, 'destTable');
     // source column + dest table + dest column = joined table
@@ -351,7 +376,15 @@ export class Column {
     // from original joined table, then it constructs a new copied column with
     // `props.table` set to a newly created JoinTable.
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    const joinedTable = new JoinTable(this, destTable, destCol, type, associative, extraColumns);
+    const joinedTable = new JoinTable(
+      this,
+      destTable,
+      destCol,
+      type,
+      associative,
+      extraColumns,
+      extraSQL,
+    );
     return new Proxy<T>(destTable, {
       get(target, propKey, receiver) {
         const selectedColumn = Reflect.get(target, propKey, receiver) as Column | undefined;
@@ -443,6 +476,7 @@ export class JoinTable {
     public readonly joinType: JoinType,
     public readonly associative: boolean, // If `srcColumn` is associative.
     public readonly extraColumns: [Column, Column][], // Join tables with composite PKs.
+    public readonly extraSQL: SQL | undefined,
   ) {
     const srcTable = srcColumn.__mustGetTable();
     let localTableString: string;
@@ -464,6 +498,12 @@ export class JoinTable {
     for (const [col1, col2] of extraColumns) {
       keyPath += `[${col1.__getDBName()}|${col2.__getDBName()}]`;
     }
+
+    // Extra SQL.
+    if (extraSQL) {
+      keyPath += `[SQL: ${extraSQL}]`;
+    }
+
     this.keyPath = keyPath;
   }
 
