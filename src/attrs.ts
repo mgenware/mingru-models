@@ -16,4 +16,8 @@ export enum ActionAttribute {
 
   // Whether this action is private in its belonging scope.
   isPrivate,
+
+  // Ignore `ColumnAttribute.isPrivate` and treat all columns
+  // as public.
+  ignorePrivateColumns,
 }
