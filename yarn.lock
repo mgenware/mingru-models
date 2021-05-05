@@ -2204,10 +2204,10 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-throw-if-arg-empty@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/throw-if-arg-empty/-/throw-if-arg-empty-2.2.1.tgz#11943398b93dec94531d2834b0216950b9b9ca8d"
-  integrity sha512-/xUwfM9w3W2pzpQkA9eC0SXbgPwDirTXCcPsvlg+BF1A0hpWtptpzUlMv0D9ZiSJ8rFu3Wm93bisKp+co07iMw==
+throw-if-arg-empty@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/throw-if-arg-empty/-/throw-if-arg-empty-3.0.0.tgz#78a1a35badb42d6b39319496fa8d6ca68ed8b3f4"
+  integrity sha512-NKyQBOBZQYGydWAsGa9XLCbglauS71VhW0SNvbF4LqTdz7LXVk1yQlDe/7iKlk3jxnUSkcygazl+jFtL65KFbA==
 
 to-regex-range@^5.0.1:
   version "5.0.1"
