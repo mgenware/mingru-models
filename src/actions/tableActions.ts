@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import toTypeString from 'to-type-string';
-import { ActionAttribute } from '../attrs';
-import { Table, SQLVariable } from '../core/core';
-import * as defs from '../core/defs';
+import { ActionAttribute } from '../attrs.js';
+import { Table, SQLVariable } from '../core/core.js';
+import * as defs from '../core/defs.js';
 
 export interface TableActionOptions {
   unsafeTableInput?: boolean;

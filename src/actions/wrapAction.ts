@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Action, ActionData, ActionType } from './tableActions';
-import { Table } from '../core/core';
+import { Action, ActionData, ActionType } from './tableActions.js';
+import { Table } from '../core/core.js';
 
 export type WrapActionArgValue = string | ValueRef | Table;
 

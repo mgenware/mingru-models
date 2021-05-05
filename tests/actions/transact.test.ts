@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import * as mm from '../..';
-import user from '../models/user';
-import post from '../models/post';
-import { WrapAction } from '../..';
-import { eq, ok, deepEq } from '../assert-aliases';
+import * as mm from '../../dist/main.js';
+import user from '../models/user.js';
+import post from '../models/post.js';
+import { eq, ok, deepEq } from '../assert-aliases.js';
 
 it('Transact', () => {
   class UserTA extends mm.TableActions {
@@ -53,7 +52,7 @@ it('Inline member actions (wrap self)', async () => {
   const user2TA = mm.tableActions(user2, User2TA);
   const v = user2TA.t;
   const vd = v.__getData();
-  const wrapped = vd.members![0]!.action as WrapAction;
+  const wrapped = vd.members![0]!.action as mm.WrapAction;
   eq(wrapped.__getData().innerAction, user2TA.updatePostCount);
   deepEq(wrapped.__getData().args, { offset: '1' });
 });
@@ -83,7 +82,7 @@ it('Inline member actions (wrap other)', async () => {
   const postTA = mm.tableActions(post2, Post2TA);
   const v = postTA.insert;
   const vd = v.__getData();
-  const wrapped = vd.members![0]!.action as WrapAction;
+  const wrapped = vd.members![0]!.action as mm.WrapAction;
   eq(wrapped.__getData().innerAction, user2TA.updatePostCount);
   deepEq(wrapped.__getData().args, { offset: '1' });
 });

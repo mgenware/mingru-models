@@ -1,5 +1,5 @@
-import { ColumnType, Column, SQLCall, RawColumn, SQL } from '../core/core';
-import { convertToSQL } from '../core/sqlHelper';
+import { ColumnType, Column, SQLCall, RawColumn, SQL } from '../core/core.js';
+import { convertToSQL } from '../core/sqlHelper.js';
 
 export function sel(
   value: Column | SQL | SQLCall,

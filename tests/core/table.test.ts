@@ -1,8 +1,8 @@
-import * as mm from '../..';
-import user from '../models/user';
-import employee from '../models/employee';
-import like from '../models/like';
-import { eq, deepEq } from '../assert-aliases';
+import * as mm from '../../dist/main.js';
+import user from '../models/user.js';
+import employee from '../models/employee.js';
+import like from '../models/like.js';
+import { eq, deepEq } from '../assert-aliases.js';
 
 it('Table name, DB name and input name', () => {
   const d = user.__getData();

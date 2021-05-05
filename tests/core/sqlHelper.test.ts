@@ -1,6 +1,6 @@
 import * as assert from 'assert';
-import * as mm from '../..';
-import user from '../models/user';
+import * as mm from '../../dist/main.js';
+import user from '../models/user.js';
 
 const eq = assert.equal;
 

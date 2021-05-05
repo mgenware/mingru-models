@@ -1,5 +1,5 @@
-import * as mm from '../..';
-import user from './user';
+import * as mm from '../../dist/main.js';
+import user from './user.js';
 
 class Like extends mm.Table {
   user_id = mm.pk(user.id);

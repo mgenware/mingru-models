@@ -1,10 +1,10 @@
-import * as mm from '../..';
-import user from '../models/user';
-import post from '../models/post';
-import postCmt from '../models/postCmt';
-import postCmtAss from '../models/postCmtAss';
-import cmt from '../models/cmt';
-import { eq, deepEq } from '../assert-aliases';
+import * as mm from '../../dist/main.js';
+import user from '../models/user.js';
+import post from '../models/post.js';
+import postCmt from '../models/postCmt.js';
+import postCmtAss from '../models/postCmtAss.js';
+import cmt from '../models/cmt.js';
+import { eq, deepEq } from '../assert-aliases.js';
 
 function testJCCols(
   jc: mm.Column,

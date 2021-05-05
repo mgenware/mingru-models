@@ -1,7 +1,7 @@
 import { itThrows } from 'it-throws';
-import * as mm from '../..';
-import user from '../models/user';
-import { eq, ok } from '../assert-aliases';
+import * as mm from '../../dist/main.js';
+import user from '../models/user.js';
+import { eq, ok } from '../assert-aliases.js';
 
 it('DeleteAction', () => {
   class UserTA extends mm.TableActions {

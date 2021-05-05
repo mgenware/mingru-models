@@ -1,7 +1,7 @@
-import * as mm from '../..';
-import user from '../models/user';
-import post from '../models/post';
-import { eq, ok, deepEq } from '../assert-aliases';
+import * as mm from '../../dist/main.js';
+import user from '../models/user.js';
+import post from '../models/post.js';
+import { eq, ok, deepEq } from '../assert-aliases.js';
 
 it('Core props', () => {
   class UserTA extends mm.TableActions {

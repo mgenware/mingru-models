@@ -2,7 +2,8 @@
   "name": "mingru-models",
   "version": "0.55.1",
   "description": "Strongly typed database models in TypeScript",
-  "main": "dist/main.js",
+  "type": "module",
+  "exports": "./dist/main.js",
   "types": "dist/main.d.ts",
   "author": "Mgenware (https://github.com/mgenware)",
   "homepage": "https://github.com/mgenware/mingru-models",
@@ -29,24 +30,23 @@
     "/dist/**/*.map"
   ],
   "devDependencies": {
-    "@types/mocha": "^8.2.1",
-    "@types/node": "^14.14.31",
-    "@typescript-eslint/eslint-plugin": "^4.22.0",
-    "@typescript-eslint/parser": "^4.22.0",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^15.0.2",
+    "@typescript-eslint/eslint-plugin": "^4.22.1",
+    "@typescript-eslint/parser": "^4.22.1",
     "daizong": "^0.13.0",
-    "eslint": "^7.24.0",
-    "eslint-config-airbnb-typescript-lite": "^12.1.1",
-    "eslint-config-mgenware": "^0.0.5",
+    "eslint": "^7.25.0",
+    "eslint-config-mgenware": "^0.1.0",
     "eslint-plugin-import": "^2.22.1",
-    "it-throws": "^3.2.1",
+    "it-throws": "^4.0.0",
     "mgenware-tsconfig-node": "^14.0.2",
-    "mocha": "^8.3.0",
+    "mocha": "^8.3.2",
     "source-map-support": "^0.5.19",
     "typescript": "^4.2.4"
   },
   "dependencies": {
     "decamelize": "^5.0.0",
     "throw-if-arg-empty": "^2.2.1",
-    "to-type-string": "^1.1.0"
+    "to-type-string": "^2.0.0"
   }
 }

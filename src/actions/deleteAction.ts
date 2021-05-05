@@ -1,6 +1,6 @@
-import { ActionType } from './tableActions';
-import { CoreSelectAction, CoreSelectionActionData } from './coreSelectAction';
-import { Table } from '../core/core';
+import { ActionType } from './tableActions.js';
+import { CoreSelectAction, CoreSelectionActionData } from './coreSelectAction.js';
+import { Table } from '../core/core.js';
 
 export interface DeleteActionData extends CoreSelectionActionData {
   // Allow deleting all rows (without a WHERE clause).

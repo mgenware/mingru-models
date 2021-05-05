@@ -1,5 +1,5 @@
-import { SQL } from './core/core';
-import { sql } from './core/sqlHelper';
+import { SQL } from './core/core.js';
+import { sql } from './core/sqlHelper.js';
 
 export function and(a: SQL, b: SQL): SQL {
   return sql`(${a} AND ${b})`;

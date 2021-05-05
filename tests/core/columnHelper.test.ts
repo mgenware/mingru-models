@@ -1,8 +1,8 @@
-import * as mm from '../..';
-import post from '../models/post';
-import like from '../models/like';
-import user from '../models/user';
-import { eq, ok } from '../assert-aliases';
+import * as mm from '../../dist/main.js';
+import post from '../models/post.js';
+import like from '../models/like.js';
+import user from '../models/user.js';
+import { eq, ok } from '../assert-aliases.js';
 
 it('bigInt', () => {
   const t = mm.bigInt(20).__mustGetType();

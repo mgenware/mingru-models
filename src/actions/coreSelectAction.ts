@@ -1,8 +1,8 @@
-import { Action, ActionData } from './tableActions';
-import { where, by, andBy } from './common';
-import { Column, SQL } from '../core/core';
-import SQLConvertible from '../core/sqlConvertible';
-import { sql } from '../core/sqlHelper';
+import { Action, ActionData } from './tableActions.js';
+import { where, by, andBy } from './common.js';
+import { Column, SQL } from '../core/core.js';
+import SQLConvertible from '../core/sqlConvertible.js';
+import { sql } from '../core/sqlHelper.js';
 
 export interface CoreSelectionActionData extends ActionData {
   whereSQLValue?: SQL;

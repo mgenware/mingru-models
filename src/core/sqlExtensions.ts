@@ -1,6 +1,6 @@
-import { Column, RawColumn, SQLElement, SQLVariable, SQLCall } from './core';
+import { Column, RawColumn, SQLElement, SQLVariable, SQLCall } from './core.js';
 
-declare module './core' {
+declare module './core.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface SQLElement {
     toRawString(): string;

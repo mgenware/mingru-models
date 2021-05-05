@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as assert from 'assert';
 import { itThrows } from 'it-throws';
-import * as mm from '../..';
-import post from '../models/post';
-import { deepEq, eq, ok } from '../assert-aliases';
+import * as mm from '../../dist/main.js';
+import post from '../models/post.js';
+import { deepEq, eq, ok } from '../assert-aliases.js';
 
 it('Insert', () => {
   class PostTA extends mm.TableActions {

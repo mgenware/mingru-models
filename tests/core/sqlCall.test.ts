@@ -1,7 +1,6 @@
-import * as mm from '../..';
-import post from '../models/post';
-import { RawColumn } from '../..';
-import { eq, deepEq } from '../assert-aliases';
+import * as mm from '../../dist/main.js';
+import post from '../models/post.js';
+import { eq, deepEq } from '../assert-aliases.js';
 
 const { dt } = mm;
 function dtc(dtString: string): mm.ColumnType {
@@ -126,7 +125,7 @@ it('setReturnType', () => {
 });
 
 it('SQLCall.toColumn', () => {
-  const c1 = new RawColumn(mm.sql`${mm.utcDateNow()}`, 'd');
+  const c1 = new mm.RawColumn(mm.sql`${mm.utcDateNow()}`, 'd');
   eq(
     c1.toString(),
     'RawColumn(d, core = SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3)))',

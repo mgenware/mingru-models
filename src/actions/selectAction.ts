@@ -1,9 +1,9 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { ActionType } from './tableActions';
-import { Column, Table, RawColumn, SQL, SQLVariable } from '../core/core';
-import { CoreSelectAction, CoreSelectionActionData } from './coreSelectAction';
-import SQLConvertible from '../core/sqlConvertible';
-import { sql } from '../core/sqlHelper';
+import { ActionType } from './tableActions.js';
+import { Column, Table, RawColumn, SQL, SQLVariable } from '../core/core.js';
+import { CoreSelectAction, CoreSelectionActionData } from './coreSelectAction.js';
+import SQLConvertible from '../core/sqlConvertible.js';
+import { sql } from '../core/sqlHelper.js';
 
 export type SelectedColumn = Column | RawColumn;
 export type SelectedColumnAndName = SelectedColumn | string;

@@ -1,6 +1,6 @@
-import { ActionType } from './tableActions';
-import { CoreUpdateAction, CoreUpdateActionData } from './coreUpdateAction';
-import { Table } from '../core/core';
+import { ActionType } from './tableActions.js';
+import { CoreUpdateAction, CoreUpdateActionData } from './coreUpdateAction.js';
+import { Table } from '../core/core.js';
 
 export interface InsertActionData extends CoreUpdateActionData {
   ensureOneRowAffected?: boolean;

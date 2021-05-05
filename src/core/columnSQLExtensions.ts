@@ -1,8 +1,8 @@
-import { Column, SQL } from './core';
-import { input, sql, InputAttributes } from './sqlHelper';
-import SQLConvertible from './sqlConvertible';
+import { Column, SQL } from './core.js';
+import { input, sql, InputAttributes } from './sqlHelper.js';
+import SQLConvertible from './sqlConvertible.js';
 
-declare module './core' {
+declare module './core.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Column {
     toInput(name?: string, opt?: InputAttributes): SQLVariable;

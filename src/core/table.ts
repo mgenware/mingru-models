@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Table, Column, JoinTable } from './core';
-import * as defs from './defs';
-import { toSnakeCase } from '../lib/utils';
+import { Table, Column, JoinTable } from './core.js';
+import * as defs from './defs.js';
+import { toSnakeCase } from '../lib/utils.js';
 
 function enumerateColumns(tableObject: Table, cb: (column: Column, prop: string) => void): void {
   throwIfFalsy(tableObject, 'tableObject');

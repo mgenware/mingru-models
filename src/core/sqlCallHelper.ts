@@ -1,8 +1,8 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { ColumnType, Column, SQLCall, SQLCallType } from './core';
-import dt from './dt';
-import SQLConvertible from './sqlConvertible';
-import { sqlCall } from './sqlHelper';
+import { ColumnType, Column, SQLCall, SQLCallType } from './core.js';
+import dt from './dt.js';
+import SQLConvertible from './sqlConvertible.js';
+import { sqlCall } from './sqlHelper.js';
 
 export function localDatetimeNow(): SQLCall {
   return sqlCall(SQLCallType.localDatetimeNow, new ColumnType(dt.datetime));

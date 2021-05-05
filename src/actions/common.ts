@@ -1,7 +1,7 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Column, SQL } from '../core/core';
-import { and } from '../sqlLangHelper';
-import { sql } from '../core/sqlHelper';
+import { Column, SQL } from '../core/core.js';
+import { and } from '../sqlLangHelper.js';
+import { sql } from '../core/sqlHelper.js';
 
 export interface ActionDataWithWhere {
   whereSQLValue?: SQL;

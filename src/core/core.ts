@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { ColumnAttribute } from '../attrs';
-import * as utils from '../lib/utils';
+import { ColumnAttribute } from '../attrs.js';
+import * as utils from '../lib/utils.js';
 
 export class ColumnType {
   types: string[];

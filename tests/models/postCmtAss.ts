@@ -1,6 +1,6 @@
-import * as mm from '../..';
-import post from './post';
-import cmt from './cmt';
+import * as mm from '../../dist/main.js';
+import post from './post.js';
+import cmt from './cmt.js';
 
 export class PostCmtAss extends mm.Table {
   post_id = mm.pk(post.id);

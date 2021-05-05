@@ -1,15 +1,15 @@
 /* eslint-disable object-curly-newline */
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { UpdateAction } from './updateAction';
-import { InsertAction } from './insertAction';
-import { DeleteAction } from './deleteAction';
-import { SelectAction, SelectedColumn, SelectActionMode } from './selectAction';
+import { UpdateAction } from './updateAction.js';
+import { InsertAction } from './insertAction.js';
+import { DeleteAction } from './deleteAction.js';
+import { SelectAction, SelectedColumn, SelectActionMode } from './selectAction.js';
 import {
   TransactAction,
   TransactionMemberTypes,
   TransactionMember,
   ActionWithReturnValues,
-} from './transactAction';
+} from './transactAction.js';
 
 export function selectRow(...columns: SelectedColumn[]): SelectAction {
   return new SelectAction(columns, SelectActionMode.row);

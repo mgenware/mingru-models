@@ -1,8 +1,8 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Column } from './core';
-import dt from './dt';
-import * as call from './sqlCallHelper';
-import { sql } from './sqlHelper';
+import { Column } from './core.js';
+import dt from './dt.js';
+import * as call from './sqlCallHelper.js';
+import { sql } from './sqlHelper.js';
 
 export type DateTimeDefaultValue = 'none' | 'local' | 'utc';
 

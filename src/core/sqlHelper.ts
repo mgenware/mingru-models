@@ -1,4 +1,4 @@
-import SQLConvertible from './sqlConvertible';
+import SQLConvertible from './sqlConvertible.js';
 import {
   Column,
   ColumnType,
@@ -10,8 +10,8 @@ import {
   SQLVariableType,
   SQLCall,
   SQLCallType,
-} from './core';
-import { Action } from '../actions/tableActions';
+} from './core.js';
+import { Action } from '../actions/tableActions.js';
 
 export class SQLBuilder {
   elements: SQLElement[] = [];

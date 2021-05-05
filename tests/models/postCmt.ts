@@ -1,6 +1,6 @@
-import * as mm from '../..';
-import user from './user';
-import post from './post';
+import * as mm from '../../dist/main.js';
+import user from './user.js';
+import post from './post.js';
 
 class PostCmt extends mm.Table {
   id = mm.pk();

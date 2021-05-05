@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as assert from 'assert';
 import { itThrows } from 'it-throws';
-import * as mm from '../..';
-import user from '../models/user';
-import post from '../models/post';
-import { eq, deepEq, ok } from '../assert-aliases';
+import * as mm from '../../dist/main.js';
+import user from '../models/user.js';
+import post from '../models/post.js';
+import { eq, deepEq, ok } from '../assert-aliases.js';
 
 it('select', () => {
   class UserTA extends mm.TableActions {

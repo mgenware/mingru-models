@@ -1,9 +1,9 @@
-import { Action } from './tableActions';
-import { WrapAction, ValueRef, WrapActionArgValue, WrapActionData } from './wrapAction';
-import { TransactionMember } from './transactAction';
-import { ReturnValues } from '../returnValues';
+import { Action } from './tableActions.js';
+import { WrapAction, ValueRef, WrapActionArgValue, WrapActionData } from './wrapAction.js';
+import { TransactionMember } from './transactAction.js';
+import { ReturnValues } from '../returnValues.js';
 
-declare module './tableActions' {
+declare module './tableActions.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Action {
     wrap(args: { [name: string]: WrapActionArgValue }): WrapAction;

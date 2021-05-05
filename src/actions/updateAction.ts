@@ -1,11 +1,11 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { ActionType } from './tableActions';
-import { CoreUpdateAction, CoreUpdateActionData } from './coreUpdateAction';
-import { where, by, andBy } from './common';
-import { Column, Table, SQL } from '../core/core';
-import { sql } from '../core/sqlHelper';
-import SQLConvertible from '../core/sqlConvertible';
-import { CoreSelectionActionData } from './coreSelectAction';
+import { ActionType } from './tableActions.js';
+import { CoreUpdateAction, CoreUpdateActionData } from './coreUpdateAction.js';
+import { where, by, andBy } from './common.js';
+import { Column, Table, SQL } from '../core/core.js';
+import { sql } from '../core/sqlHelper.js';
+import SQLConvertible from '../core/sqlConvertible.js';
+import { CoreSelectionActionData } from './coreSelectAction.js';
 
 export interface UpdateActionData extends CoreUpdateActionData, CoreSelectionActionData {
   unsafeMode?: boolean;

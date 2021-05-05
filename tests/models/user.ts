@@ -1,4 +1,4 @@
-import * as mm from '../..';
+import * as mm from '../../dist/main.js';
 
 class User extends mm.Table {
   id = mm.pk();

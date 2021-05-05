@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as assert from 'assert';
 import { itThrows } from 'it-throws';
-import * as mm from '../..';
-import user from '../models/user';
-import post from '../models/post';
-import cmt from '../models/postCmt';
-import employee from '../models/employee';
-import { eq, deepEq, notEq } from '../assert-aliases';
+import * as mm from '../../dist/main.js';
+import user from '../models/user.js';
+import post from '../models/post.js';
+import cmt from '../models/postCmt.js';
+import employee from '../models/employee.js';
+import { eq, deepEq, notEq } from '../assert-aliases.js';
 
 it('Frozen after mm.table', () => {
   eq(Object.isFrozen(post.id), true);

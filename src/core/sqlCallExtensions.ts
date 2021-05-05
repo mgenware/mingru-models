@@ -1,7 +1,7 @@
-import { SQLCall, RawColumn } from './core';
-import { sql } from './sqlHelper';
+import { SQLCall, RawColumn } from './core.js';
+import { sql } from './sqlHelper.js';
 
-declare module './core' {
+declare module './core.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface SQLCall {
     toColumn(name: string): RawColumn;

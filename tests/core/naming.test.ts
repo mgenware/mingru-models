@@ -1,8 +1,6 @@
-import * as assert from 'assert';
-import * as mm from '../..';
-import user from '../models/user';
-
-const eq = assert.equal;
+import * as mm from '../../dist/main.js';
+import { eq } from '../assert-aliases.js';
+import user from '../models/user.js';
 
 class ABCTable extends mm.Table {
   StatusString = mm.varChar(10);
@@ -35,10 +33,10 @@ it('Table name and getDBName', () => {
 
 it('Rename a FK', () => {
   eq(abcTable.uid1.__getData().name, 'uid1');
-  eq(abcTable.uid1.__getData().dbName, null);
+  eq(abcTable.uid1.__getData().dbName, undefined);
   eq(abcTable.uid1.__getDBName(), 'uid1');
   eq(abcTable.uid2.__getData().name, 'uid2');
-  eq(abcTable.uid2.__getData().dbName, null);
+  eq(abcTable.uid2.__getData().dbName, undefined);
   eq(abcTable.uid2.__getDBName(), 'uid2');
   eq(abcTable.uid3.__getData().name, 'uid3');
   eq(abcTable.uid3.__getData().dbName, 'UID3');

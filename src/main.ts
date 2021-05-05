@@ -1,32 +1,32 @@
 /* eslint-disable import/first */
 
-export * from './core/core';
-export { default as dt } from './core/dt';
-export * from './core/columnHelper';
-export * from './core/table';
-export * from './core/sqlCallHelper';
-export { default as SQLConvertible } from './core/sqlConvertible';
-export * from './core/sqlHelper';
-export * from './returnValues';
-export * from './attrs';
-export * from './sqlLangHelper';
+export * from './core/core.js';
+export { default as dt } from './core/dt.js';
+export * from './core/columnHelper.js';
+export * from './core/table.js';
+export * from './core/sqlCallHelper.js';
+export { default as SQLConvertible } from './core/sqlConvertible.js';
+export * from './core/sqlHelper.js';
+export * from './returnValues.js';
+export * from './attrs.js';
+export * from './sqlLangHelper.js';
 
 // Table actions
-export * from './actions/tableActions';
-export * from './actions/actionHelper';
-export * from './actions/coreSelectAction';
-export * from './actions/selectAction';
-export * from './actions/coreUpdateAction';
-export * from './actions/updateAction';
-export * from './actions/insertAction';
-export * from './actions/deleteAction';
-export * from './actions/wrapAction';
-export * from './actions/transactAction';
-export * from './actions/rawColumnBuilder';
+export * from './actions/tableActions.js';
+export * from './actions/actionHelper.js';
+export * from './actions/coreSelectAction.js';
+export * from './actions/selectAction.js';
+export * from './actions/coreUpdateAction.js';
+export * from './actions/updateAction.js';
+export * from './actions/insertAction.js';
+export * from './actions/deleteAction.js';
+export * from './actions/wrapAction.js';
+export * from './actions/transactAction.js';
+export * from './actions/rawColumnBuilder.js';
 
 // Extensions
-import './core/columnSQLExtensions';
-import './core/sqlExtensions';
-import './core/sqlCallExtensions';
-import './actions/columnSelectExtensions';
-import './actions/taExtensions';
+import './core/columnSQLExtensions.js';
+import './core/sqlExtensions.js';
+import './core/sqlCallExtensions.js';
+import './actions/columnSelectExtensions.js';
+import './actions/taExtensions.js';

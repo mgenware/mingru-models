@@ -1,8 +1,8 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Action, ActionData } from './tableActions';
-import { Column, Table } from '../core/core';
-import SQLConvertible from '../core/sqlConvertible';
-import { convertToSQL, sql } from '../core/sqlHelper';
+import { Action, ActionData } from './tableActions.js';
+import { Column, Table } from '../core/core.js';
+import SQLConvertible from '../core/sqlConvertible.js';
+import { convertToSQL, sql } from '../core/sqlHelper.js';
 
 export enum AutoSetterType {
   default = 1,

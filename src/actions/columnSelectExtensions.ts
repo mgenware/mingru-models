@@ -1,8 +1,8 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Column, RawColumn } from '../core/core';
-import { ColumnAttribute } from '../attrs';
+import { Column, RawColumn } from '../core/core.js';
+import { ColumnAttribute } from '../attrs.js';
 
-declare module '../core/core' {
+declare module '../core/core.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Column {
     as(name: string): RawColumn;
