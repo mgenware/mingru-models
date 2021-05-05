@@ -16,6 +16,7 @@ it('DeleteAction', () => {
   ok(v instanceof mm.Action);
   eq(v.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
   eq(vd.actionType, mm.ActionType.delete);
+  eq(v.toString(), 'DeleteAction(t, Table(user))');
 });
 
 it('deleteOne', () => {

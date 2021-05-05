@@ -23,6 +23,7 @@ it('Wrap', () => {
   let v = ta.t;
   ok(v instanceof mm.WrapAction);
   ok(v instanceof mm.Action);
+  eq(v.toString(), 'WrapAction(t, Table(user))');
   const ad = v.__getData();
   const innerAction = ad.innerAction!;
   const bd = innerAction.__getData();

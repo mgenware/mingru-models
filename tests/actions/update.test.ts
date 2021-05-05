@@ -23,6 +23,7 @@ it('Update', () => {
   ok(v instanceof mm.Action);
   eq(v.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
   eq(vd.setters?.size, 2);
+  eq(v.toString(), 'UpdateAction(t, Table(user))');
 
   // extra props
   eq(vd.ensureOneRowAffected, false);

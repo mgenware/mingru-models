@@ -23,6 +23,7 @@ it('select', () => {
   eq(v.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
   eq(vd.mode, mm.SelectActionMode.row);
   eq(vd.actionType, mm.ActionType.select);
+  eq(v.toString(), 'SelectAction(t, Table(user))');
 });
 
 it('where and whereSQL', () => {

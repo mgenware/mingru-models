@@ -21,6 +21,7 @@ it('Insert', () => {
     v.__settersToString(),
     'title: SQL(E(SQLVar(undefined, desc = Column(title, Table(post))), type = 2)), snake_case_user_id: SQL(E(SQLVar(undefined, desc = Column(snake_case_user_id, Table(post))), type = 2))',
   );
+  eq(v.toString(), 'InsertAction(t, Table(post))');
 });
 
 it('Insert one', () => {
