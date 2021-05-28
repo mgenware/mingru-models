@@ -22,7 +22,7 @@ export class DeleteAction extends CoreSelectAction {
     this.#data.ensureOneRowAffected = ensureOneRowAffected;
   }
 
-  __validate(groupTable: Table) {
+  override __validate(groupTable: Table) {
     super.__validate(groupTable);
     if (!this.#data.unsafeMode && !this.#data.whereSQLValue) {
       throw new Error(

@@ -39,7 +39,7 @@ export class TransactAction extends Action {
     this.#data.members = members;
   }
 
-  __validate(groupTable: Table) {
+  override __validate(groupTable: Table) {
     super.__validate(groupTable);
     if (this.#data.members) {
       for (const mem of this.#data.members) {

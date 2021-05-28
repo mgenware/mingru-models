@@ -56,7 +56,7 @@ export class WrapAction extends Action {
     this.#data.args = args;
   }
 
-  __validate(groupTable: Table) {
+  override __validate(groupTable: Table) {
     super.__validate(groupTable);
 
     this.#data.innerAction?.__validate(groupTable);

@@ -20,7 +20,7 @@ export class InsertAction extends CoreUpdateAction {
     this.#data.allowUnsetColumns = allowUnsetColumns;
   }
 
-  __validate(groupTable: Table) {
+  override __validate(groupTable: Table) {
     super.__validate(groupTable);
 
     const setterCount = this.#data.setters?.size ?? 0;

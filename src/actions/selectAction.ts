@@ -189,7 +189,7 @@ export class SelectAction extends CoreSelectAction {
     return this;
   }
 
-  __validate(groupTable: Table) {
+  override __validate(groupTable: Table) {
     super.__validate(groupTable);
 
     const { mode } = this.#data;

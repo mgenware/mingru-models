@@ -46,7 +46,7 @@ export class UpdateAction extends CoreUpdateAction {
     return this;
   }
 
-  __validate(groupTable: Table) {
+  override __validate(groupTable: Table) {
     super.__validate(groupTable);
 
     if (!this.#data.unsafeMode && !this.#data.whereSQLValue) {

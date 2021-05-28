@@ -67,7 +67,7 @@ class MyInsertAction extends mm.InsertAction {
     super(true);
   }
 
-  __validate(groupTable: mm.Table) {
+  override __validate(groupTable: mm.Table) {
     super.__validate(groupTable);
     this.groupTable = groupTable;
   }
