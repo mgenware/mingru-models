@@ -31,18 +31,18 @@
   ],
   "devDependencies": {
     "@types/mocha": "^8.2.2",
-    "@types/node": "^15.6.1",
-    "@typescript-eslint/eslint-plugin": "^4.25.0",
-    "@typescript-eslint/parser": "^4.25.0",
-    "daizong": "^0.13.0",
-    "eslint": "^7.27.0",
-    "eslint-config-mgenware": "^0.1.0",
-    "eslint-plugin-import": "^2.23.3",
+    "@types/node": "^15.12.5",
+    "@typescript-eslint/eslint-plugin": "^4.28.1",
+    "@typescript-eslint/parser": "^4.28.1",
+    "daizong": "^0.15.2",
+    "eslint": "^7.29.0",
+    "eslint-config-mgenware": "^0.2.0",
+    "eslint-plugin-import": "^2.23.4",
     "it-throws": "^4.1.0",
     "mgenware-tsconfig-node": "^14.0.2",
-    "mocha": "^8.4.0",
+    "mocha": "^9.0.1",
     "source-map-support": "^0.5.19",
-    "typescript": "^4.3.2"
+    "typescript": "^4.3.4"
   },
   "dependencies": {
     "decamelize": "^5.0.0",
