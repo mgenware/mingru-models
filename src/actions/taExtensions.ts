@@ -1,5 +1,5 @@
 import { Action } from './tableActions.js';
-import { WrapAction, ValueRef, WrapActionArgValue, WrapActionData } from './wrapAction.js';
+import { WrapAction, ValueRef, WrapActionArgValue } from './wrapAction.js';
 import { TransactionMember } from './transactAction.js';
 import { ReturnValues } from '../returnValues.js';
 
@@ -21,7 +21,7 @@ Action.prototype.wrap = function (args: { [name: string]: WrapActionArgValue }):
   if (!this.__getData().name) {
     if (this instanceof WrapAction) {
       this.__setArgs({
-        ...(this.__getData() as WrapActionData).args,
+        ...this.__getData().args,
         ...args,
       });
       return this;

@@ -36,7 +36,7 @@ it('Transact', () => {
   );
 });
 
-it('Inline member actions (wrap self)', async () => {
+it('Inline member actions (wrap self)', () => {
   class User2 extends mm.Table {
     id = mm.pk();
     postCount = mm.int();
@@ -58,7 +58,7 @@ it('Inline member actions (wrap self)', async () => {
   deepEq(wrapped.__getData().args, { offset: '1' });
 });
 
-it('Inline member actions (wrap other)', async () => {
+it('Inline member actions (wrap other)', () => {
   class User2 extends mm.Table {
     id = mm.pk();
     postCount = mm.int();

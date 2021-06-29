@@ -286,7 +286,7 @@ it('Validate columns', () => {
   const t = user;
   itThrows(() => {
     class UserTA extends mm.TableActions {
-      t = mm.selectRows(t.name, (32 as unknown) as mm.Column, t.follower_count);
+      t = mm.selectRows(t.name, 32 as unknown as mm.Column, t.follower_count);
     }
     mm.tableActions(user, UserTA);
   }, 'The column at index 1 is not valid, got "32", action "SelectAction()" [table "Table(user)"]');
@@ -434,6 +434,7 @@ it('Throw on selecting collection without ORDER BY', () => {
   }, 'An ORDER BY clause is required when selecting multiple rows [action "t"] [table "Table(user)"]');
   assert.doesNotThrow(() => {
     class UserTA extends mm.TableActions {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       t = mm.selectRows(t.name).noOrderBy;
     }
     mm.tableActions(user, UserTA);

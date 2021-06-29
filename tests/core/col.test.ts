@@ -84,7 +84,7 @@ it('Column.newForeignColumn', () => {
 });
 
 it('Column.newJoinedColumn', () => {
-  const t = (post.user_id.join(user) as unknown) as mm.JoinTable;
+  const t = post.user_id.join(user) as unknown as mm.JoinTable;
   const a = user.name;
   const ad = a.__getData();
   const at = a.__mustGetType();
@@ -229,7 +229,7 @@ it('Column.attr n RawColumn.attr', () => {
       t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
     }
     const table = mm.tableActions(user, UserTA);
-    const t = table.t as mm.SelectAction;
+    const { t } = table;
     const columns = t.__getData().columns!;
     const rd = (columns[0] as mm.RawColumn).__getData();
     eq(rd.core, user.follower_count);
@@ -247,7 +247,7 @@ it('Column.attr n RawColumn.attr', () => {
       t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
     }
     const table = mm.tableActions(user, UserTA);
-    const t = table.t as mm.SelectAction;
+    const { t } = table;
     const columns = t.__getData().columns!;
     const rd = (columns[0] as mm.RawColumn).__getData();
     eq(rd.core, user.follower_count);
@@ -268,7 +268,7 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
       t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).privateAttr());
     }
     const table = mm.tableActions(user, UserTA);
-    const t = table.t as mm.SelectAction;
+    const { t } = table;
     const columns = t.__getData().columns!;
     const rd = (columns[0] as mm.RawColumn).__getData();
     eq(rd.core, user.follower_count);
@@ -286,7 +286,7 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
       t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).privateAttr());
     }
     const table = mm.tableActions(user, UserTA);
-    const t = table.t as mm.SelectAction;
+    const { t } = table;
     const columns = t.__getData().columns!;
     const rd = (columns[0] as mm.RawColumn).__getData();
     eq(rd.core, user.follower_count);
