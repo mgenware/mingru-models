@@ -46,6 +46,14 @@ export class UpdateAction extends CoreUpdateAction {
     return this;
   }
 
+  addAssign(column: Column, value: SQLConvertible): this {
+    return this.set(column, sql`${column} + ${value}`);
+  }
+
+  subAssign(column: Column, value: SQLConvertible): this {
+    return this.set(column, sql`${column} - ${value}`);
+  }
+
   override __validate(groupTable: Table) {
     super.__validate(groupTable);
 

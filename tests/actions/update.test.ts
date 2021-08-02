@@ -280,3 +280,35 @@ it('where and whereSQL', () => {
   eq(ta.t1.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
   eq(ta.t2.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
 });
+
+it('addAssign', () => {
+  class UserTA extends mm.TableActions {
+    t = mm
+      .updateOne()
+      .addAssign(user.follower_count, mm.sql`1`)
+      .by(user.id);
+  }
+  const ta = mm.tableActions(user, UserTA);
+  const v = ta.t;
+
+  eq(
+    v.__settersToString(),
+    'follower_count: SQL(E(Column(follower_count, Table(user)), type = 1), E( + , type = 0), E(1, type = 0))',
+  );
+});
+
+it('subAssign', () => {
+  class UserTA extends mm.TableActions {
+    t = mm
+      .updateOne()
+      .subAssign(user.follower_count, mm.sql`1`)
+      .by(user.id);
+  }
+  const ta = mm.tableActions(user, UserTA);
+  const v = ta.t;
+
+  eq(
+    v.__settersToString(),
+    'follower_count: SQL(E(Column(follower_count, Table(user)), type = 1), E( - , type = 0), E(1, type = 0))',
+  );
+});
