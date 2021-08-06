@@ -122,14 +122,14 @@ export class Action {
   }
 
   toString(): string {
-    const groupTableStr = this.__data.groupTable?.toString() ?? '';
-    let str = `${toTypeString(this)}(${this.__data.name ?? ''}${
-      groupTableStr ? `, ${groupTableStr}` : ''
-    })`;
+    const data: Record<string, string | undefined> = {
+      data: this.__data.name,
+      groupTable: this.__data.groupTable?.toString(),
+    };
     if (this.__data.sqlTable && this.__data.sqlTable !== this.__data.groupTable) {
-      str += `(${this.__data.sqlTable})`;
+      data.sqlTable = this.__data.sqlTable?.toString();
     }
-    return str;
+    return toTypeString(this) + JSON.stringify(data);
   }
 
   // Automatically called by `mm.tableActions` for all the columns it walks through.
