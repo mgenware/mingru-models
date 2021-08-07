@@ -16,6 +16,10 @@ export class ColumnType {
     throwIfFalsy(types, 'types');
     this.types = typeof types === 'string' ? [types] : types;
   }
+
+  toString(): string {
+    return `ColType(${this.types.join(', ')})`;
+  }
 }
 
 export enum JoinType {
