@@ -563,6 +563,16 @@ export class SQLVariable {
     this.isArray = isArray || false;
   }
 
+  scalarVariable(handleArray: boolean): SQLVariable {
+    return new SQLVariable(
+      this.type,
+      this.name,
+      handleArray ? false : this.isArray,
+      this.column,
+      false,
+    );
+  }
+
   toString(): string {
     const { type } = this;
     let desc = '';
@@ -573,7 +583,14 @@ export class SQLVariable {
     } else {
       desc = JSON.stringify(type);
     }
-    return `SQLVar(${this.name}, desc = ${desc})`;
+    let s = `SQLVar(${this.name}, desc = ${desc})`;
+    if (this.nullable) {
+      s += '?';
+    }
+    if (this.isArray) {
+      s += '[]';
+    }
+    return s;
   }
 }
 

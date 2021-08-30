@@ -111,6 +111,17 @@ it('isInArrayInput(string)', () => {
   const sql = user.name.isInArrayInput('haha');
   eq(
     sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( IN , type = 0), E(SQLVar(haha, desc = Column(name, Table(user))), type = 2))',
+    'SQL(E(Column(name, Table(user)), type = 1), E( IN , type = 0), E(SQLVar(haha, desc = Column(name, Table(user)))[], type = 2))',
+  );
+});
+
+it('scalarType', () => {
+  eq(
+    new mm.SQLVariable(user.id, 'id', true, undefined, true).scalarVariable(false).toString(),
+    'SQLVar(id, desc = Column(id, Table(user)))[]',
+  );
+  eq(
+    new mm.SQLVariable(user.id, 'id', true, undefined, true).scalarVariable(true).toString(),
+    'SQLVar(id, desc = Column(id, Table(user)))',
   );
 });
