@@ -1,8 +1,6 @@
-import * as assert from 'assert';
 import * as mm from '../../dist/main.js';
 import user from '../models/user.js';
-
-const eq = assert.equal;
+import { eq } from '../assert-aliases.js';
 
 it('and', () => {
   eq(
