@@ -214,11 +214,12 @@ export class Column {
   }
 
   __getInputName(): string {
-    const table = this.__mustGetTable();
-    const name = this.__mustGetName();
     if (this.#data.inputName) {
       return this.#data.inputName;
     }
+
+    const table = this.__mustGetTable();
+    const name = this.__mustGetName();
 
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     if (table instanceof JoinTable) {
