@@ -30,14 +30,13 @@ export enum JoinType {
 }
 
 export interface ColumnData {
-  name?: string;
+  propertyName?: string;
   type?: ColumnType;
   defaultValue?: unknown;
   noDefaultValueOnCSQL?: boolean;
   dbName?: string;
   modelName?: string;
   table?: Table | JoinTable;
-  inputName?: string;
   // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any
   // table, the foreignColumn property only indicates a column property is declared as FK and
   // doesn't have any effect on join(), the real dest table and column are determined by join().
@@ -67,7 +66,7 @@ export class Column {
     const copied = Column.copyFrom(srcColumn, table, false);
     copied.#data.foreignColumn = srcColumn;
     // For foreign columns, `__name` is reset to null.
-    copied.#data.name = undefined;
+    copied.#data.propertyName = undefined;
     return copied;
   }
 
@@ -91,7 +90,7 @@ export class Column {
       toData.table = newTable;
     }
     if (copyNames) {
-      toData.name = fromData.name;
+      toData.propertyName = fromData.propertyName;
       toData.modelName = fromData.modelName;
       toData.dbName = fromData.dbName;
     }
@@ -176,12 +175,6 @@ export class Column {
     return this;
   }
 
-  setInputName(name: string): this {
-    throwIfFalsy(name, 'name');
-    this.#data.inputName = name;
-    return this;
-  }
-
   __freeze() {
     Object.freeze(this.#data.type);
     Object.freeze(this.#data);
@@ -189,7 +182,11 @@ export class Column {
   }
 
   __getDBName(): string {
-    return this.#data.dbName ?? this.#data.name ?? '';
+    return this.#data.dbName ?? this.__mustGetPropertyName();
+  }
+
+  __getModelName(): string {
+    return this.#data.modelName ?? this.__mustGetPropertyName();
   }
 
   __mustGetTable(): Table | JoinTable {
@@ -199,11 +196,11 @@ export class Column {
     return this.#data.table;
   }
 
-  __mustGetName(): string {
-    if (!this.#data.name) {
+  __mustGetPropertyName(): string {
+    if (!this.#data.propertyName) {
       throw new Error(`Column "${this}" doesn't have a name`);
     }
-    return this.#data.name;
+    return this.#data.propertyName;
   }
 
   __mustGetType(): ColumnType {
@@ -214,12 +211,8 @@ export class Column {
   }
 
   __getInputName(): string {
-    if (this.#data.inputName) {
-      return this.#data.inputName;
-    }
-
     const table = this.__mustGetTable();
-    const name = this.__mustGetName();
+    const name = this.__getModelName();
 
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     if (table instanceof JoinTable) {
@@ -262,7 +255,8 @@ export class Column {
   }
 
   toString(): string {
-    let { name } = this.#data;
+    const d = this.#data;
+    let name = d.propertyName;
     const dbName = this.__getDBName();
     if (dbName && dbName !== name) {
       name += `|${this.__getDBName()}`;
@@ -345,8 +339,8 @@ export class Column {
 
   // Called by `mm.table`.
   __configure(name: string, table: Table) {
-    if (!this.#data.name) {
-      this.#data.name = name;
+    if (!this.#data.propertyName) {
+      this.#data.propertyName = name;
     }
     if (!this.#data.table) {
       this.#data.table = table;
@@ -511,7 +505,7 @@ export class JoinTable {
   tableInputName(): string {
     const { srcColumn } = this;
     const srcTable = srcColumn.__mustGetTable();
-    const srcName = srcColumn.__mustGetName();
+    const srcName = srcColumn.__getModelName();
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const curName = makeMiddleName(srcName);
     if (srcTable instanceof JoinTable) {

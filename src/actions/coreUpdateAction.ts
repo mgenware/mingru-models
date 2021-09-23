@@ -76,7 +76,7 @@ export class CoreUpdateAction extends Action {
 
   __settersToString(): string {
     return [...this.mustGetSetters().entries()]
-      .map(([k, v]) => `${k.__getData().name}: ${v}`)
+      .map(([k, v]) => `${k.__mustGetPropertyName()}: ${v}`)
       .join(', ');
   }
 

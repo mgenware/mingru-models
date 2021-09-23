@@ -16,7 +16,7 @@ it('Frozen after mm.table', () => {
 
 it('Normal col', () => {
   const d = post.id.__getData();
-  eq(d.name, 'id');
+  eq(d.propertyName, 'id');
   eq(d.table, post);
   eq(post.id.toString(), 'Column(id, Table(post))');
 });
@@ -25,7 +25,7 @@ it('Implicit FK', () => {
   const col = post.user_id;
   const d = col.__getData();
   eq(d.table, post);
-  eq(d.name, 'user_id');
+  eq(d.propertyName, 'user_id');
   eq(d.foreignColumn, user.id);
   notEq(d.type, user.id.__getData().type);
 });
@@ -34,7 +34,7 @@ it('Explicit FK', () => {
   const col = post.e_user_id_n;
   const d = col.__getData();
   eq(d.table, post);
-  eq(d.name, 'e_user_id_n');
+  eq(d.propertyName, 'e_user_id_n');
   eq(d.foreignColumn, user.id);
   notEq(col, user.id.__mustGetType());
   eq(col.__mustGetType().nullable, true);
@@ -44,7 +44,7 @@ it('Explicit FK (untouched)', () => {
   const col = post.e_user_id;
   const d = col.__getData();
   eq(d.table, post);
-  eq(d.name, 'e_user_id');
+  eq(d.propertyName, 'e_user_id');
   eq(d.foreignColumn, user.id);
   notEq(col.__mustGetType(), user.id.__mustGetType());
   eq(col.__mustGetType().nullable, false);
@@ -67,7 +67,7 @@ it('Column.newForeignColumn', () => {
   // FK
   eq(bd.foreignColumn, a);
   // name is cleared
-  eq(bd.name, undefined);
+  eq(bd.propertyName, undefined);
   // Value being reset
   eq(bt.pk, false);
   eq(bt.autoIncrement, false);
@@ -96,7 +96,7 @@ it('Column.newJoinedColumn', () => {
   // Value being reset
   eq(bt.pk, false);
   eq(bt.autoIncrement, false);
-  eq(bd.name, ad.name);
+  eq(bd.propertyName, ad.propertyName);
   eq(bd.table, t);
   // props are copied
   notEq(bt, at);
@@ -219,8 +219,8 @@ it('Column.mustGet', () => {
   const t = mm.table(User);
   const v = t.id;
   eq(v.__mustGetTable(), t);
-  eq(v.__mustGetName(), 'id');
-  itThrows(() => mm.pk().__mustGetName(), 'Column "Column()" doesn\'t have a name');
+  eq(v.__mustGetPropertyName(), 'id');
+  itThrows(() => mm.pk().__mustGetPropertyName(), 'Column "Column()" doesn\'t have a name');
 });
 
 it('Column.attr n RawColumn.attr', () => {

@@ -70,7 +70,8 @@ export function tableCore(
         (tableObj as any)[propName] = columnToAdd;
 
         columnToAdd.__freeze();
-      } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
         err.message += ` [column "${propName}"]`;
         throw err;
       }
@@ -78,7 +79,8 @@ export function tableCore(
 
     tableObj.__configure(tableName, dbName, convertedColumns, pks, aiPKs);
     return tableObj;
-  } catch (topErr) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (topErr: any) {
     topErr.message += ` [table "${tableName}"]`;
     throw topErr;
   }

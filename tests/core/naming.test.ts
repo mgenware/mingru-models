@@ -25,20 +25,20 @@ it('Table name and getDBName', () => {
   eq(defTable.__getData().dbName, 't');
   eq(defTable.__getDBName(), 't');
   eq(defTable.toString(), 'Table(def_table|t)');
-  eq(abcTable.StatusString.__getData().name, 'status_string');
-  eq(abcTable.statusType.__getData().name, 'status_type');
-  eq(abcTable.statusID.__getData().name, 'status_id');
+  eq(abcTable.StatusString.__getData().propertyName, 'status_string');
+  eq(abcTable.statusType.__getData().propertyName, 'status_type');
+  eq(abcTable.statusID.__getData().propertyName, 'status_id');
   eq(abcTable.statusID.__getData().dbName, 'customName');
 });
 
 it('Rename a FK', () => {
-  eq(abcTable.uid1.__getData().name, 'uid1');
+  eq(abcTable.uid1.__getData().propertyName, 'uid1');
   eq(abcTable.uid1.__getData().dbName, undefined);
   eq(abcTable.uid1.__getDBName(), 'uid1');
-  eq(abcTable.uid2.__getData().name, 'uid2');
+  eq(abcTable.uid2.__getData().propertyName, 'uid2');
   eq(abcTable.uid2.__getData().dbName, undefined);
   eq(abcTable.uid2.__getDBName(), 'uid2');
-  eq(abcTable.uid3.__getData().name, 'uid3');
+  eq(abcTable.uid3.__getData().propertyName, 'uid3');
   eq(abcTable.uid3.__getData().dbName, 'UID3');
   eq(abcTable.uid3.__getDBName(), 'UID3');
   eq(abcTable.uid3.__getData().modelName, 'ModelNAME');
