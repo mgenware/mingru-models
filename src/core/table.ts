@@ -52,7 +52,7 @@ export function tableCore(
         // Note: `mm.fk` can set up an explicit foreign key.
         if (Object.isFrozen(col)) {
           // Copy the frozen column.
-          columnToAdd = Column.newForeignColumn(col, tableObj);
+          columnToAdd = Column.newForeignColumn(col);
         } else {
           columnToAdd = col;
         }

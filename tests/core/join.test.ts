@@ -8,25 +8,25 @@ import { eq, deepEq } from '../assert-aliases.js';
 
 function testJCCols(
   jc: mm.Column,
-  tableInputName: string,
+  tableDBName: string,
   destTable: mm.Table,
   destColumn: mm.Column,
   selectedColumn: mm.Column,
   srcColumn: mm.Column,
   path: string,
   sourceTable: mm.Table,
-  inputName: string,
+  jsModelName: string | undefined,
 ) {
   eq(jc.__getData().table instanceof mm.JoinTable, true);
   eq(jc.__getData().mirroredColumn, selectedColumn);
   const jt = jc.__getData().table as mm.JoinTable;
-  eq(jt.tableInputName(), tableInputName);
+  eq(jt.modelName, tableDBName);
   eq(jt.destTable, destTable);
   eq(jt.destColumn, destColumn);
   eq(jt.srcColumn, srcColumn);
   eq(jt.keyPath, path);
   eq(jc.__getSourceTable(), sourceTable);
-  eq(jc.__getInputName(), inputName);
+  eq(jc.__getModelName(), jsModelName);
 }
 
 it('JoinedColumn', () => {
@@ -130,6 +130,15 @@ it('Join with multiple keys and an extra SQL', () => {
 it('Nested JoinedColumn', () => {
   const jc1 = postCmt.post_id.join(post).user_id;
   const jc2 = jc1.join(user).name;
+
+  const jc1d = jc1.__getData();
+  eq(jc1d.propertyName, 'user_id');
+  eq(jc1d.dbName, undefined);
+  eq(jc1d.modelName, undefined);
+  const jc2d = jc2.__getData();
+  eq(jc2d.propertyName, 'name');
+  eq(jc2d.dbName, undefined);
+  eq(jc2d.modelName, undefined);
 
   testJCCols(
     jc1,

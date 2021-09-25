@@ -57,11 +57,20 @@ it('freeze', () => {
   eq(Object.isFrozen(col.__type()), true);
 });
 
+it('new Column(ColumnType)', () => {
+  const col = new mm.Column(user.id.__type());
+
+  const t = col.__type();
+  eq(t.pk, false);
+  eq(t.autoIncrement, false);
+  notEq(t, user.id.__type());
+});
+
 it('Column.newForeignColumn', () => {
   const a = user.id;
   const ad = a.__getData();
   const at = a.__type();
-  const b = mm.Column.newForeignColumn(a, post);
+  const b = mm.Column.newForeignColumn(a);
   const bd = b.__getData();
   const bt = b.__type();
   // FK
@@ -71,37 +80,9 @@ it('Column.newForeignColumn', () => {
   // Value being reset
   eq(bt.pk, false);
   eq(bt.autoIncrement, false);
-  eq(bd.table, post);
+  eq(bd.table, undefined);
   // props are copied
   notEq(bd.type, ad.type);
-  // props.types are copied
-  notEq(bt.types, at.types);
-
-  // Check equality
-  eq(ad.defaultValue, bd.defaultValue);
-  deepEq(at.types, bt.types);
-  eq(at.nullable, bt.nullable);
-});
-
-it('Column.newJoinedColumn', () => {
-  const t = post.user_id.join(user) as unknown as mm.JoinTable;
-  const a = user.name;
-  const ad = a.__getData();
-  const at = a.__type();
-  const b = mm.Column.newJoinedColumn(a, t);
-  const bd = b.__getData();
-  const bt = b.__type();
-  // mirroredColumn
-  eq(bd.mirroredColumn, a);
-  // Value being reset
-  eq(bt.pk, false);
-  eq(bt.autoIncrement, false);
-  eq(bd.propertyName, ad.propertyName);
-  eq(bd.table, t);
-  // props are copied
-  notEq(bt, at);
-  // props.types are copied
-  notEq(bt.types, at.types);
 
   // Check equality
   eq(ad.defaultValue, bd.defaultValue);
@@ -168,22 +149,22 @@ it('setDefault', () => {
   eq(c.__getData().defaultValue, null);
 });
 
-it('Column.inputName', () => {
-  eq(user.id.__getInputName(), 'id');
-  eq(user.snake_case_name.__getInputName(), 'snake_case_name');
-  eq(cmt.snake_case_post_id.__getInputName(), 'snake_case_post_id');
+it('Column.modelName', () => {
+  eq(user.id.__getModelName(), 'id');
+  eq(user.snake_case_name.__getModelName(), 'snake_case_name');
+  eq(cmt.snake_case_post_id.__getModelName(), 'snake_case_post_id');
 });
 
-it('ForeignColumn.inputName', () => {
-  eq(post.snake_case_user_id.__getInputName(), 'snake_case_user_id');
+it('ForeignColumn.modelName', () => {
+  eq(post.snake_case_user_id.__getModelName(), 'snake_case_user_id');
 });
 
-it('JoinedColumn.inputName', () => {
-  eq(post.snake_case_user_id.join(user).id.__getInputName(), 'snake_case_user_id');
-  eq(post.snake_case_user_id.join(user).name.__getInputName(), 'snake_case_user_name');
-  eq(cmt.post_id.join(post).user_id.join(user).id.__getInputName(), 'post_user_id');
+it('JoinedColumn.modelName', () => {
+  eq(post.snake_case_user_id.join(user).id.__getModelName(), 'snake_case_user_id');
+  eq(post.snake_case_user_id.join(user).name.__getModelName(), 'snake_case_user_name');
+  eq(cmt.post_id.join(post).user_id.join(user).id.__getModelName(), 'post_user_id');
   eq(
-    cmt.post_id.join(post).snake_case_user_id.join(user).name.__getInputName(),
+    cmt.post_id.join(post).snake_case_user_id.join(user).name.__getModelName(),
     'post_snake_case_user_name',
   );
 });
@@ -303,7 +284,8 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
 
 it('Column.getPath', () => {
   eq(user.id.__getPath(), 'user.id');
-  eq(employee.id.__getPath(), 'employees.emp_no');
+  eq(employee.id.__getPath(), 'employees.id');
+
   eq(post.user_id.join(user).name.__getPath(), '(J|1|post|user)[user_id|id].name');
   eq(
     post.title

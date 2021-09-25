@@ -9,7 +9,7 @@ it('Table name, DB name and input name', () => {
   eq(d.name, 'user');
   eq(d.dbName, undefined);
   eq(user.__getDBName(), 'user');
-  eq(user.__getInputName(), 'user');
+  eq(user.__getModelName(), 'user');
   eq(user.toString(), 'Table(user)');
 
   class MyTable extends mm.Table {
@@ -20,7 +20,7 @@ it('Table name, DB name and input name', () => {
   eq(d2.name, 'my_table');
   eq(d2.dbName, 'my_table');
   eq(myTable.__getDBName(), 'my_table');
-  eq(myTable.__getInputName(), 'my_table');
+  eq(myTable.__getModelName(), 'my_table');
   eq(myTable.toString(), 'Table(my_table)');
 });
 

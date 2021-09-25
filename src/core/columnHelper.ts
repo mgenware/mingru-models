@@ -11,7 +11,7 @@ export function fk(column: Column): Column {
   if (!Object.isFrozen(column)) {
     throw new Error(`The column "${column}" is not sealed yet`);
   }
-  return Column.newForeignColumn(column, null);
+  return Column.newForeignColumn(column);
 }
 
 export function varChar(length: number): Column {

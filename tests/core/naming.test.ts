@@ -42,5 +42,5 @@ it('Rename a FK', () => {
   eq(abcTable.uid3.__getData().dbName, 'UID3');
   eq(abcTable.uid3.__getDBName(), 'UID3');
   eq(abcTable.uid3.__getData().modelName, 'ModelNAME');
-  eq(abcTable.uid3.toString(), 'Column(uid3|UID3, Table(abc_table))');
+  eq(abcTable.uid3.toString(), 'Column(uid3|UID3|ModelNAME, Table(abc_table))');
 });

@@ -37,6 +37,8 @@ export interface ColumnData {
   noDefaultValueOnCSQL?: boolean;
   dbName?: string;
   modelName?: string;
+  // Only set in joined columns.
+  autoModelName?: string;
   table?: Table | JoinTable;
   // After v0.14.0, Column.foreignColumn is pretty useless since we allow join any column to any
   // table, the foreignColumn property only indicates a column property is declared as FK and
@@ -72,7 +74,15 @@ export class Column {
     throwIfFalsy(table, 'table');
     const col = new Column(mirroredColumn.__type());
     const cd = col.__data;
+    const mcd = mirroredColumn.__data;
     cd.mirroredColumn = mirroredColumn;
+    cd.table = table;
+    cd.propertyName = mcd.propertyName;
+
+    // Joined columns come with a auto-generated model name.
+    cd.autoModelName = table.associative
+      ? mirroredColumn.__getModelName()
+      : `${table.modelName}_${mirroredColumn.__getModelName()}`;
     return col;
   }
 
@@ -87,10 +97,13 @@ export class Column {
 
   constructor(type: ColumnType) {
     throwIfFalsy(type, 'type');
-    const copiedType = new ColumnType(type.types);
+    // NOTE: `types` field is deeply copied.
+    const copiedType = new ColumnType([...type.types]);
     Object.assign(copiedType, type);
-    // Deep copy types
-    copiedType.types = [...type.types];
+    // Reset values.
+    copiedType.pk = false;
+    copiedType.autoIncrement = false;
+
     this.__data = {
       type: copiedType,
     };
@@ -160,7 +173,7 @@ export class Column {
   }
 
   __getModelName(): string {
-    return this.#data.modelName ?? this.__mustGetPropertyName();
+    return this.#data.modelName ?? this.#data.autoModelName ?? this.__mustGetPropertyName();
   }
 
   __mustGetTable(): Table | JoinTable {
@@ -179,20 +192,6 @@ export class Column {
       throw new Error(`Column "${this}" doesn't have a name`);
     }
     return this.#data.propertyName;
-  }
-
-  __getInputName(): string {
-    const table = this.__mustGetTable();
-    const name = this.__getModelName();
-
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    if (table instanceof JoinTable) {
-      if (table.associative) {
-        return name;
-      }
-      return `${table.tableInputName()}_${name}`;
-    }
-    return name;
   }
 
   __getSourceTable(): Table | null {
@@ -217,22 +216,25 @@ export class Column {
 
   __getPath(): string {
     const table = this.__mustGetTable();
-    const dbName = this.__getDBName();
+    const curName = this.__mustGetPropertyName();
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     if (table instanceof Table) {
-      return `${table.__getDBName()}.${dbName}`;
+      return `${table.__getDBName()}.${curName}`;
     }
-    return `${table.keyPath}.${dbName}`;
+    return `${table.keyPath}.${curName}`;
   }
 
   toString(): string {
     const d = this.#data;
     let name = d.propertyName;
-    const dbName = this.__getDBName();
+    const { dbName, modelName } = d;
     if (dbName && dbName !== name) {
-      name += `|${this.__getDBName()}`;
+      name += `|${dbName}`;
     }
-    const tableStr = this.#data.table?.toString() ?? '';
+    if (modelName && modelName !== name) {
+      name += `|${modelName}`;
+    }
+    const tableStr = d.table?.toString() ?? '';
     return `Column(${name ?? ''}${tableStr ? `, ${tableStr}` : ''})`;
   }
 
@@ -390,7 +392,7 @@ export class Table {
     return data.dbName ?? data.name;
   }
 
-  __getInputName(): string {
+  __getModelName(): string {
     return this.__data.name;
   }
 
@@ -430,6 +432,9 @@ export class JoinTable {
   // `keyPath` is useful to detect duplicate joins, if multiple `JoinTable` instances are
   // created with same columns and tables, they'd have the same `keyPath`.
   readonly keyPath: string;
+
+  // This name is used to generate `autoModelName` of a column.
+  readonly modelName: string;
 
   #extraSQL: SQL | undefined;
   get extraSQL(): SQL | undefined {
@@ -471,12 +476,13 @@ export class JoinTable {
     }
 
     this.keyPath = keyPath;
+    this.modelName = this.getModelName();
   }
 
-  tableInputName(): string {
+  private getModelName(): string {
     const { srcColumn } = this;
     const srcTable = srcColumn.__mustGetTable();
-    const srcName = srcColumn.__getModelName();
+    const srcName = srcColumn.__mustGetPropertyName();
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const curName = makeMiddleName(srcName);
     if (srcTable instanceof JoinTable) {
@@ -485,7 +491,7 @@ export class JoinTable {
       }
       // If `srcColumn` is a joined column, e.g.
       // `cmt.post_id.join(post).user_id.join(user)`, returns `post_user` in this case.
-      return `${srcTable.tableInputName()}_${curName}`;
+      return `${srcTable.modelName}_${curName}`;
     }
     // If `srcColumn` is not a joined column, omit the table name,
     // e.g. `post.user_id.join(user)`, returns `user.
