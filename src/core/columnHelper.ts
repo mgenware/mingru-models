@@ -108,7 +108,7 @@ export function pk(column?: Column): Column {
   }
   if (Object.isFrozen(col)) {
     // col is from another table, therefore an implicit FK
-    col = Column.newForeignColumn(col, null);
+    col = fk(col);
   }
   col.__mustGetType().pk = true;
   return col;

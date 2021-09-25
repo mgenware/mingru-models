@@ -30,8 +30,9 @@ export enum JoinType {
 }
 
 export interface ColumnData {
+  type: ColumnType;
+
   propertyName?: string;
-  type?: ColumnType;
   defaultValue?: unknown;
   noDefaultValueOnCSQL?: boolean;
   dbName?: string;
@@ -41,7 +42,7 @@ export interface ColumnData {
   // table, the foreignColumn property only indicates a column property is declared as FK and
   // doesn't have any effect on join(), the real dest table and column are determined by join().
   foreignColumn?: Column;
-  // See `Column.join` for details
+  // See `Column.join` for details.
   mirroredColumn?: Column;
 
   uniqueConstraint?: boolean;
@@ -53,77 +54,50 @@ export interface ColumnData {
 export class Column {
   static fromTypes(types: string | string[], defaultValue?: unknown): Column {
     const col = new Column(new ColumnType(typeof types === 'string' ? [types] : types));
-    col.#data.defaultValue = defaultValue;
+    col.__data.defaultValue = defaultValue;
     return col;
   }
 
-  static newForeignColumn(
-    srcColumn: Column,
-    table: Table | null, // can be null, used by `mm.fk` which doesn't have a table param.
-  ): Column {
+  static newForeignColumn(srcColumn: Column): Column {
     throwIfFalsy(srcColumn, 'srcColumn');
 
-    const copied = Column.copyFrom(srcColumn, table, false);
-    copied.#data.foreignColumn = srcColumn;
-    // For foreign columns, `__name` is reset to null.
-    copied.#data.propertyName = undefined;
-    return copied;
+    const col = new Column(srcColumn.__type());
+    const cd = col.__data;
+    cd.foreignColumn = srcColumn;
+    return col;
   }
 
   static newJoinedColumn(mirroredColumn: Column, table: JoinTable): Column {
-    const copied = Column.copyFrom(mirroredColumn, table, true);
-    copied.#data.mirroredColumn = mirroredColumn;
-    return copied;
+    throwIfFalsy(mirroredColumn, 'mirroredColumn');
+    throwIfFalsy(table, 'table');
+    const col = new Column(mirroredColumn.__type());
+    const cd = col.__data;
+    cd.mirroredColumn = mirroredColumn;
+    return col;
   }
 
-  private static copyFrom(
-    from: Column,
-    newTable: Table | JoinTable | null,
-    copyNames: boolean,
-  ): Column {
-    const to = new Column(from.__mustGetType());
-    const toData = to.#data;
-    const fromData = from.#data;
-    // Copy values
-    toData.defaultValue = fromData.defaultValue;
-    if (newTable) {
-      toData.table = newTable;
-    }
-    if (copyNames) {
-      toData.propertyName = fromData.propertyName;
-      toData.modelName = fromData.modelName;
-      toData.dbName = fromData.dbName;
-    }
-    toData.foreignColumn = fromData.foreignColumn;
-    toData.mirroredColumn = fromData.mirroredColumn;
-    // Reset values.
-    to.__mustGetType().pk = false;
-    to.__mustGetType().autoIncrement = false;
-    return to;
-  }
-
-  protected __data: ColumnData = {};
-  #data = this.__data;
+  protected __data: ColumnData;
   __getData(): ColumnData {
+    return this.__data;
+  }
+
+  get #data(): ColumnData {
     return this.__data;
   }
 
   constructor(type: ColumnType) {
     throwIfFalsy(type, 'type');
-    // Copy if frozen.
-    if (Object.isFrozen(type)) {
-      const t = new ColumnType(type.types);
-      Object.assign(t, type);
-      // Deep copy types
-      t.types = [...type.types];
-      this.#data.type = t;
-    } else {
-      this.#data.type = type;
-    }
+    const copiedType = new ColumnType(type.types);
+    Object.assign(copiedType, type);
+    // Deep copy types
+    copiedType.types = [...type.types];
+    this.__data = {
+      type: copiedType,
+    };
   }
 
   get nullable(): Column {
-    this.__mustGetType().nullable = true;
+    this.__type().nullable = true;
     return this;
   }
 
@@ -144,12 +118,12 @@ export class Column {
   }
 
   get autoIncrement(): Column {
-    this.__mustGetType().autoIncrement = true;
+    this.__type().autoIncrement = true;
     return this;
   }
 
   get noAutoIncrement(): Column {
-    this.__mustGetType().autoIncrement = false;
+    this.__type().autoIncrement = false;
     return this;
   }
 
@@ -196,18 +170,15 @@ export class Column {
     return this.#data.table;
   }
 
+  __type(): ColumnType {
+    return this.#data.type;
+  }
+
   __mustGetPropertyName(): string {
     if (!this.#data.propertyName) {
       throw new Error(`Column "${this}" doesn't have a name`);
     }
     return this.#data.propertyName;
-  }
-
-  __mustGetType(): ColumnType {
-    if (!this.#data.type) {
-      throw new Error(`Unexpected empty type at column "${this}"`);
-    }
-    return this.#data.type;
   }
 
   __getInputName(): string {
@@ -339,12 +310,12 @@ export class Column {
 
   // Called by `mm.table`.
   __configure(name: string, table: Table) {
-    if (!this.#data.propertyName) {
-      this.#data.propertyName = name;
+    const d = this.#data;
+    if (d.propertyName || d.table) {
+      throw new Error('Column.data is already set');
     }
-    if (!this.#data.table) {
-      this.#data.table = table;
-    }
+    this.#data.propertyName = name;
+    this.#data.table = table;
   }
 
   private joinCore<T extends Table>(
