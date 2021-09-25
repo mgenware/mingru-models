@@ -36,8 +36,8 @@ it('Explicit FK', () => {
   eq(d.table, post);
   eq(d.propertyName, 'e_user_id_n');
   eq(d.foreignColumn, user.id);
-  notEq(col, user.id.__mustGetType());
-  eq(col.__mustGetType().nullable, true);
+  notEq(col, user.id.__type());
+  eq(col.__type().nullable, true);
 });
 
 it('Explicit FK (untouched)', () => {
@@ -46,24 +46,24 @@ it('Explicit FK (untouched)', () => {
   eq(d.table, post);
   eq(d.propertyName, 'e_user_id');
   eq(d.foreignColumn, user.id);
-  notEq(col.__mustGetType(), user.id.__mustGetType());
-  eq(col.__mustGetType().nullable, false);
+  notEq(col.__type(), user.id.__type());
+  eq(col.__type().nullable, false);
 });
 
 it('freeze', () => {
   const col = mm.int(234);
   col.__freeze();
   eq(Object.isFrozen(col), true);
-  eq(Object.isFrozen(col.__mustGetType()), true);
+  eq(Object.isFrozen(col.__type()), true);
 });
 
 it('Column.newForeignColumn', () => {
   const a = user.id;
   const ad = a.__getData();
-  const at = a.__mustGetType();
+  const at = a.__type();
   const b = mm.Column.newForeignColumn(a, post);
   const bd = b.__getData();
-  const bt = b.__mustGetType();
+  const bt = b.__type();
   // FK
   eq(bd.foreignColumn, a);
   // name is cleared
@@ -87,10 +87,10 @@ it('Column.newJoinedColumn', () => {
   const t = post.user_id.join(user) as unknown as mm.JoinTable;
   const a = user.name;
   const ad = a.__getData();
-  const at = a.__mustGetType();
+  const at = a.__type();
   const b = mm.Column.newJoinedColumn(a, t);
   const bd = b.__getData();
-  const bt = b.__mustGetType();
+  const bt = b.__type();
   // mirroredColumn
   eq(bd.mirroredColumn, a);
   // Value being reset
@@ -120,12 +120,12 @@ it('Mutate a frozen column', () => {
 
 it('notNull (default)', () => {
   const c = mm.int(123);
-  eq(c.__mustGetType().nullable, false);
+  eq(c.__type().nullable, false);
 });
 
 it('nullable', () => {
   const c = mm.int(123).nullable;
-  eq(c.__mustGetType().nullable, true);
+  eq(c.__type().nullable, true);
 });
 
 it('uniqueConstraint', () => {
@@ -326,5 +326,5 @@ it('Nullable FK', () => {
   const t = myPost.user_id;
   const d = t.__getData();
   eq(d.foreignColumn, user.id);
-  eq(t.__mustGetType().nullable, true);
+  eq(t.__type().nullable, true);
 });

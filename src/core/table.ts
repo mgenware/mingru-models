@@ -58,9 +58,9 @@ export function tableCore(
         }
 
         columnToAdd.__configure(toSnakeCase(propName), tableObj);
-        if (columnToAdd.__mustGetType().pk) {
+        if (columnToAdd.__type().pk) {
           pks.push(col);
-          if (columnToAdd.__mustGetType().autoIncrement) {
+          if (columnToAdd.__type().autoIncrement) {
             aiPKs.push(col);
           }
         }

@@ -16,36 +16,36 @@ export function fk(column: Column): Column {
 
 export function varChar(length: number): Column {
   const col = Column.fromTypes(dt.varChar);
-  col.__mustGetType().length = length;
+  col.__type().length = length;
   return col;
 }
 
 export function char(length: number): Column {
   const col = Column.fromTypes(dt.char);
-  col.__mustGetType().length = length;
+  col.__type().length = length;
   return col;
 }
 
 export function varBinary(length: number): Column {
   const col = Column.fromTypes(dt.varBinary);
-  col.__mustGetType().length = length;
+  col.__type().length = length;
   return col;
 }
 
 export function binary(length: number): Column {
   const col = Column.fromTypes(dt.binary);
-  col.__mustGetType().length = length;
+  col.__type().length = length;
   return col;
 }
 
 function numeric(type: string, unsigned: boolean, length?: number): Column {
   const col = Column.fromTypes(type);
-  col.__mustGetType().unsigned = unsigned;
+  col.__type().unsigned = unsigned;
   if (length !== undefined) {
     if (length === 0) {
       throw new Error('You should omit length parameter instead of passing a zero');
     }
-    col.__mustGetType().length = length;
+    col.__type().length = length;
   }
   return col;
 }
@@ -92,7 +92,7 @@ export function double(precision?: number): Column {
 
 export function decimal(length: number, scale: number): Column {
   const col = Column.fromTypes(dt.decimal);
-  const colType = col.__mustGetType();
+  const colType = col.__type();
   colType.length = length;
   colType.extraLength = scale;
   return col;
@@ -104,13 +104,13 @@ export function pk(column?: Column): Column {
     col = column;
   } else {
     col = uBigInt();
-    col.__mustGetType().autoIncrement = true;
+    col.__type().autoIncrement = true;
   }
   if (Object.isFrozen(col)) {
     // col is from another table, therefore an implicit FK
     col = fk(col);
   }
-  col.__mustGetType().pk = true;
+  col.__type().pk = true;
   return col;
 }
 

@@ -5,94 +5,94 @@ import user from '../models/user.js';
 import { eq, ok } from '../assert-aliases.js';
 
 it('bigInt', () => {
-  const t = mm.bigInt(20).__mustGetType();
+  const t = mm.bigInt(20).__type();
   ok(t.types.includes(mm.dt.bigInt));
   eq(t.length, 20);
   eq(t.unsigned, false);
 });
 
 it('unsignedBigInt', () => {
-  const t = mm.uBigInt(20).__mustGetType();
+  const t = mm.uBigInt(20).__type();
   ok(t.types.includes(mm.dt.bigInt));
   eq(t.length, 20);
   eq(t.unsigned, true);
 });
 
 it('int', () => {
-  const t = mm.int(20).__mustGetType();
+  const t = mm.int(20).__type();
   ok(t.types.includes(mm.dt.int));
   eq(t.length, 20);
   eq(t.unsigned, false);
 
-  const t2 = mm.int().__mustGetType();
+  const t2 = mm.int().__type();
   eq(t2.length, 0);
 });
 
 it('unsignedInt', () => {
-  const t = mm.uInt(20).__mustGetType();
+  const t = mm.uInt(20).__type();
   ok(t.types.includes(mm.dt.int));
   eq(t.length, 20);
   eq(t.unsigned, true);
 });
 
 it('smallInt', () => {
-  const t = mm.smallInt(20).__mustGetType();
+  const t = mm.smallInt(20).__type();
   ok(t.types.includes(mm.dt.smallInt));
   eq(t.length, 20);
   eq(t.unsigned, false);
 });
 
 it('unsignedSmallInt', () => {
-  const t = mm.uSmallInt(20).__mustGetType();
+  const t = mm.uSmallInt(20).__type();
   ok(t.types.includes(mm.dt.smallInt));
   eq(t.length, 20);
   eq(t.unsigned, true);
 });
 
 it('tinyInt', () => {
-  const t = mm.tinyInt(20).__mustGetType();
+  const t = mm.tinyInt(20).__type();
   ok(t.types.includes(mm.dt.tinyInt));
   eq(t.length, 20);
   eq(t.unsigned, false);
 });
 
 it('unsignedTinyInt', () => {
-  const t = mm.uTinyInt(20).__mustGetType();
+  const t = mm.uTinyInt(20).__type();
   ok(t.types.includes(mm.dt.tinyInt));
   eq(t.length, 20);
   eq(t.unsigned, true);
 });
 
 it('char', () => {
-  const t = mm.char(20).__mustGetType();
+  const t = mm.char(20).__type();
   ok(t.types.includes(mm.dt.char));
   eq(t.length, 20);
   eq(t.unsigned, false);
 });
 
 it('varChar', () => {
-  const t = mm.varChar(20).__mustGetType();
+  const t = mm.varChar(20).__type();
   ok(t.types.includes(mm.dt.varChar));
   eq(t.length, 20);
   eq(t.unsigned, false);
 });
 
 it('binary', () => {
-  const t = mm.binary(20).__mustGetType();
+  const t = mm.binary(20).__type();
   ok(t.types.includes(mm.dt.binary));
   eq(t.length, 20);
   eq(t.unsigned, false);
 });
 
 it('varBinary', () => {
-  const t = mm.varBinary(20).__mustGetType();
+  const t = mm.varBinary(20).__type();
   ok(t.types.includes(mm.dt.varBinary));
   eq(t.length, 20);
   eq(t.unsigned, false);
 });
 
 it('pk', () => {
-  const t = mm.pk().__mustGetType();
+  const t = mm.pk().__type();
   ok(t.types.includes(mm.dt.bigInt));
   eq(t.nullable, false);
   eq(t.unsigned, true);
@@ -104,35 +104,35 @@ it('pk(column)', () => {
   const c = mm.pk(charCol);
   eq(c, charCol);
 
-  const t = c.__mustGetType();
+  const t = c.__type();
   eq(t.nullable, false);
 });
 
 it('pk(FK)', () => {
   const c = mm.pk(post.id);
-  const t = c.__mustGetType();
+  const t = c.__type();
   eq(t.pk, true);
   eq(t.nullable, false);
   eq(t.autoIncrement, false);
   eq(c.__getData().foreignColumn, post.id);
 
   const likeUserID = like.user_id;
-  const t2 = likeUserID.__mustGetType();
+  const t2 = likeUserID.__type();
   eq(t2.pk, true);
   eq(likeUserID.__getData().foreignColumn, user.id);
   eq(t2.autoIncrement, false);
 });
 
 it('autoIncrement', () => {
-  eq(mm.pk(mm.int()).__mustGetType().autoIncrement, false);
-  eq(mm.pk(mm.tinyInt()).__mustGetType().autoIncrement, false);
-  eq(mm.pk(mm.bool()).__mustGetType().autoIncrement, false);
-  eq(mm.pk(mm.varChar(3)).__mustGetType().autoIncrement, false);
+  eq(mm.pk(mm.int()).__type().autoIncrement, false);
+  eq(mm.pk(mm.tinyInt()).__type().autoIncrement, false);
+  eq(mm.pk(mm.bool()).__type().autoIncrement, false);
+  eq(mm.pk(mm.varChar(3)).__type().autoIncrement, false);
   // Set the AUTO_INCREMENT explicitly
-  eq(mm.pk(mm.int()).noAutoIncrement.__mustGetType().autoIncrement, false);
-  eq(mm.pk(mm.varChar(3)).autoIncrement.__mustGetType().autoIncrement, true);
+  eq(mm.pk(mm.int()).noAutoIncrement.__type().autoIncrement, false);
+  eq(mm.pk(mm.varChar(3)).autoIncrement.__type().autoIncrement, true);
   // FK
-  eq(post.user_id.__mustGetType().autoIncrement, false);
+  eq(post.user_id.__type().autoIncrement, false);
 });
 
 it('isNoDefaultValueOnCSQL', () => {
@@ -141,38 +141,38 @@ it('isNoDefaultValueOnCSQL', () => {
 });
 
 it('text', () => {
-  const t = mm.text().__mustGetType();
+  const t = mm.text().__type();
   ok(t.types.includes(mm.dt.text));
   eq(t.length, 0);
   eq(t.unsigned, false);
 });
 
 it('double', () => {
-  const t = mm.double(20).__mustGetType();
+  const t = mm.double(20).__type();
   ok(t.types.includes(mm.dt.double));
   eq(t.length, 20);
   eq(t.unsigned, false);
 
-  const t2 = mm.double().__mustGetType();
+  const t2 = mm.double().__type();
   eq(t2.length, 0);
 });
 
 it('float', () => {
-  const t = mm.float(20).__mustGetType();
+  const t = mm.float(20).__type();
   ok(t.types.includes(mm.dt.float));
   eq(t.length, 20);
   eq(t.unsigned, false);
 });
 
 it('bool', () => {
-  const t = mm.bool().__mustGetType();
+  const t = mm.bool().__type();
   ok(t.types.includes(mm.dt.bool));
   eq(t.unsigned, false);
 });
 
 it('datetime', () => {
   let c = mm.datetime();
-  ok(c.__mustGetType().types.includes(mm.dt.datetime));
+  ok(c.__type().types.includes(mm.dt.datetime));
 
   c = mm.datetime('local');
   eq(
@@ -189,7 +189,7 @@ it('datetime', () => {
 
 it('date', () => {
   let c = mm.date();
-  ok(c.__mustGetType().types.includes(mm.dt.date));
+  ok(c.__type().types.includes(mm.dt.date));
 
   c = mm.date('local');
   eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
@@ -200,7 +200,7 @@ it('date', () => {
 
 it('time', () => {
   let c = mm.time();
-  ok(c.__mustGetType().types.includes(mm.dt.time));
+  ok(c.__type().types.includes(mm.dt.time));
 
   c = mm.time('local');
   eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(2, return = ColType(SQL.TIME), type = 3))');
@@ -211,7 +211,7 @@ it('time', () => {
 
 it('timestamp', () => {
   let c = mm.timestamp();
-  ok(c.__mustGetType().types.includes(mm.dt.timestamp));
+  ok(c.__type().types.includes(mm.dt.timestamp));
 
   c = mm.timestamp(true);
   eq(
@@ -221,7 +221,7 @@ it('timestamp', () => {
 });
 
 it('decimal', () => {
-  const t = mm.decimal(5, 2).__mustGetType();
+  const t = mm.decimal(5, 2).__type();
   ok(t.types.includes(mm.dt.decimal));
   eq(t.length, 5);
   eq(t.extraLength, 2);
