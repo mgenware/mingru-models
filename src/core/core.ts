@@ -216,7 +216,7 @@ export class Column {
 
   __getPath(): string {
     const table = this.__mustGetTable();
-    const curName = this.__mustGetPropertyName();
+    const curName = this.__getDBName();
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     if (table instanceof Table) {
       return `${table.__getDBName()}.${curName}`;

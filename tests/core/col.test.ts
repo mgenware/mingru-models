@@ -284,7 +284,7 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
 
 it('Column.getPath', () => {
   eq(user.id.__getPath(), 'user.id');
-  eq(employee.id.__getPath(), 'employees.id');
+  eq(employee.id.__getPath(), 'employees.emp_no');
 
   eq(post.user_id.join(user).name.__getPath(), '(J|1|post|user)[user_id|id].name');
   eq(
