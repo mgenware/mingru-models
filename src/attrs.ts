@@ -5,6 +5,9 @@ export enum ColumnAttribute {
   // Whether this column is excluded in JSON serialization if it's empty.
   // NOTE: 0, false, nil, empty string, empty collection are all considered empty values.
   excludeEmptyValue,
+
+  // CREATE TABLE SQL adds extra generated virtual columns for columns with an alias.
+  alias,
 }
 
 export enum ActionAttribute {
