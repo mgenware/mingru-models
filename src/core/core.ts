@@ -1,5 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { ColumnAttribute } from '../attrs.js';
+import { SelectedColumnAttribute, ColumnAttribute } from '../attrs.js';
 import * as utils from '../lib/utils.js';
 
 export class ColumnType {
@@ -51,6 +51,8 @@ export interface ColumnData {
   index?: boolean;
   // No effect when `index` is false;
   isUniqueIndex?: boolean;
+  // Attributes associated with this column.
+  attrs?: Map<ColumnAttribute, unknown>;
 }
 
 export class Column {
@@ -160,6 +162,15 @@ export class Column {
     throwIfFalsy(name, 'name');
     this.#data.modelName = name;
     return this;
+  }
+
+  colAttr(name: ColumnAttribute, value: unknown): this {
+    this.mustGetAttrs().set(name, value);
+    return this;
+  }
+
+  private mustGetAttrs(): Map<ColumnAttribute, unknown> {
+    return (this.#data.attrs ??= new Map<ColumnAttribute, unknown>());
   }
 
   __freeze() {
@@ -596,7 +607,7 @@ export interface SelectedColumnData {
   core?: Column | SQL;
   selectedName?: string;
   type?: ColumnType;
-  attrs?: Map<ColumnAttribute, unknown>;
+  attrs?: Map<SelectedColumnAttribute, unknown>;
 }
 
 export class SelectedColumn {
@@ -609,8 +620,8 @@ export class SelectedColumn {
     return this.__data;
   }
 
-  private mustGetAttrs(): Map<ColumnAttribute, unknown> {
-    return (this.data.attrs ??= new Map<ColumnAttribute, unknown>());
+  private mustGetAttrs(): Map<SelectedColumnAttribute, unknown> {
+    return (this.data.attrs ??= new Map<SelectedColumnAttribute, unknown>());
   }
 
   constructor(
@@ -637,13 +648,13 @@ export class SelectedColumn {
     }
   }
 
-  attr(name: ColumnAttribute, value: unknown): this {
+  attr(name: SelectedColumnAttribute, value: unknown): this {
     this.mustGetAttrs().set(name, value);
     return this;
   }
 
   privateAttr(): this {
-    return this.attr(ColumnAttribute.isPrivate, true);
+    return this.attr(SelectedColumnAttribute.isPrivate, true);
   }
 
   toString(): string {

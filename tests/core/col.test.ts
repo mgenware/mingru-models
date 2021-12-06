@@ -243,6 +243,45 @@ it('Column.attr n SelectedColumn.attr', () => {
   }
 });
 
+it('Column.colAttr', () => {
+  {
+    class T extends mm.Table {
+      id = mm.pk();
+      name = mm
+        .varChar(100)
+        .colAttr(mm.ColumnAttribute.alias, 'haha')
+        .colAttr(100 as mm.ColumnAttribute.alias, 'val');
+    }
+    const table = mm.table(T);
+    const rd = table.name.__getData();
+    deepEq(
+      rd.attrs,
+      new Map<number, unknown>([
+        [0, 'haha'],
+        [100, 'val'],
+      ]),
+    );
+  }
+  {
+    class UserTA extends mm.TableActions {
+      t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
+    }
+    const table = mm.tableActions(user, UserTA);
+    const { t } = table;
+    const columns = t.__getData().columns!;
+    const rd = (columns[0] as mm.SelectedColumn).__getData();
+    eq(rd.core, user.follower_count);
+    deepEq(
+      rd.attrs,
+      new Map<number, unknown>([
+        [1, 3],
+        [2, 's'],
+        [4, 3],
+      ]),
+    );
+  }
+});
+
 it('Column.privateAttr n SelectedColumn.privateAttr', () => {
   {
     class UserTA extends mm.TableActions {
@@ -258,7 +297,7 @@ it('Column.privateAttr n SelectedColumn.privateAttr', () => {
       new Map<number, unknown>([
         [1, 3],
         [2, 's'],
-        [mm.ColumnAttribute.isPrivate, true],
+        [mm.SelectedColumnAttribute.isPrivate, true],
       ]),
     );
   }
@@ -276,7 +315,7 @@ it('Column.privateAttr n SelectedColumn.privateAttr', () => {
       new Map<number, unknown>([
         [1, 3],
         [2, 's'],
-        [mm.ColumnAttribute.isPrivate, true],
+        [mm.SelectedColumnAttribute.isPrivate, true],
       ]),
     );
   }

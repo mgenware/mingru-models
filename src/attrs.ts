@@ -1,11 +1,13 @@
-export enum ColumnAttribute {
+export enum SelectedColumnAttribute {
   // Whether this column is excluded in JSON serialization.
   isPrivate = 1,
 
   // Whether this column is excluded in JSON serialization if it's empty.
   // NOTE: 0, false, nil, empty string, empty collection are all considered empty values.
   excludeEmptyValue,
+}
 
+export enum ColumnAttribute {
   // CREATE TABLE SQL adds extra generated virtual columns for columns with an alias.
   alias,
 }
