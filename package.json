@@ -1,6 +1,6 @@
 {
   "name": "mingru-models",
-  "version": "0.57.2",
+  "version": "0.58.0",
   "description": "Strongly typed database models in TypeScript",
   "type": "module",
   "exports": "./dist/main.js",
