@@ -23,7 +23,7 @@ export * from './actions/insertAction.js';
 export * from './actions/deleteAction.js';
 export * from './actions/wrapAction.js';
 export * from './actions/transactAction.js';
-export * from './actions/rawColumnBuilder.js';
+export * from './actions/sel.js';
 
 // Extensions
 import './core/columnSQLExtensions.js';

@@ -1,12 +1,12 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { ActionType } from './tableActions.js';
-import { Column, Table, RawColumn, SQL, SQLVariable } from '../core/core.js';
+import { Column, Table, SelectedColumn, SQL, SQLVariable } from '../core/core.js';
 import { CoreSelectAction, CoreSelectionActionData } from './coreSelectAction.js';
 import SQLConvertible from '../core/sqlConvertible.js';
 import { sql } from '../core/sqlHelper.js';
 
-export type SelectedColumn = Column | RawColumn;
-export type SelectedColumnAndName = SelectedColumn | string;
+export type SelectedColumnTypes = Column | SelectedColumn;
+export type SelectedColumnTypesOrName = SelectedColumnTypes | string;
 
 export interface UnionTuple {
   action: SelectAction;
@@ -14,13 +14,13 @@ export interface UnionTuple {
 }
 
 export class OrderByColumn {
-  constructor(public readonly column: SelectedColumnAndName, public readonly desc = false) {
+  constructor(public readonly column: SelectedColumnTypesOrName, public readonly desc = false) {
     throwIfFalsy(column, 'column');
   }
 }
 
 export class OrderByColumnInput {
-  constructor(public readonly columns: ReadonlyArray<SelectedColumnAndName>) {
+  constructor(public readonly columns: ReadonlyArray<SelectedColumnTypesOrName>) {
     throwIfFalsy(columns, 'columns');
   }
 }
@@ -46,7 +46,7 @@ export enum SelectActionPaginationMode {
 
 export interface SelectActionData extends CoreSelectionActionData {
   mode?: SelectActionMode;
-  columns?: SelectedColumn[];
+  columns?: SelectedColumnTypes[];
   havingSQLValue?: SQL;
   orderByColumns?: OrderByColumnType[];
   groupByColumns?: string[];
@@ -90,7 +90,7 @@ export class SelectAction extends CoreSelectAction {
     return (this.#data.orderByColumns ??= []);
   }
 
-  constructor(columns: SelectedColumn[], mode: SelectActionMode) {
+  constructor(columns: SelectedColumnTypes[], mode: SelectActionMode) {
     super(ActionType.select);
 
     this.#data.columns = columns;
@@ -98,36 +98,36 @@ export class SelectAction extends CoreSelectAction {
 
     // Validate individual columns.
     columns.forEach((col, idx) => {
-      if (col instanceof Column === false && col instanceof RawColumn === false) {
+      if (col instanceof Column === false && col instanceof SelectedColumn === false) {
         throw new Error(`The column at index ${idx} is not valid, got "${col}", action "${this}"`);
       }
     });
   }
 
-  orderByAsc(column: SelectedColumnAndName): this {
+  orderByAsc(column: SelectedColumnTypesOrName): this {
     throwIfFalsy(column, 'column');
     this.mustGetOrderByColumns().push(new OrderByColumn(column, false));
     return this;
   }
 
-  orderByDesc(column: SelectedColumnAndName): this {
+  orderByDesc(column: SelectedColumnTypesOrName): this {
     throwIfFalsy(column, 'column');
     this.mustGetOrderByColumns().push(new OrderByColumn(column, true));
     return this;
   }
 
-  orderByInput(...columns: SelectedColumnAndName[]): this {
+  orderByInput(...columns: SelectedColumnTypesOrName[]): this {
     this.mustGetOrderByColumns().push(new OrderByColumnInput(columns));
     return this;
   }
 
-  groupBy(...columns: SelectedColumnAndName[]): this {
+  groupBy(...columns: SelectedColumnTypesOrName[]): this {
     throwIfFalsy(columns, 'columns');
     for (const column of columns) {
       let name: string;
       if (column instanceof Column) {
         name = column.__getDBName();
-      } else if (column instanceof RawColumn) {
+      } else if (column instanceof SelectedColumn) {
         const { selectedName } = column.__getData();
         if (!selectedName) {
           throw new Error(`Unexpected empty selected name in ${column.toString()}`);

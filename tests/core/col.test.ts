@@ -204,7 +204,7 @@ it('Column.mustGet', () => {
   itThrows(() => mm.pk().__mustGetPropertyName(), 'Column "Column()" doesn\'t have a name');
 });
 
-it('Column.attr n RawColumn.attr', () => {
+it('Column.attr n SelectedColumn.attr', () => {
   {
     class UserTA extends mm.TableActions {
       t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
@@ -212,7 +212,7 @@ it('Column.attr n RawColumn.attr', () => {
     const table = mm.tableActions(user, UserTA);
     const { t } = table;
     const columns = t.__getData().columns!;
-    const rd = (columns[0] as mm.RawColumn).__getData();
+    const rd = (columns[0] as mm.SelectedColumn).__getData();
     eq(rd.core, user.follower_count);
     deepEq(
       rd.attrs,
@@ -230,7 +230,7 @@ it('Column.attr n RawColumn.attr', () => {
     const table = mm.tableActions(user, UserTA);
     const { t } = table;
     const columns = t.__getData().columns!;
-    const rd = (columns[0] as mm.RawColumn).__getData();
+    const rd = (columns[0] as mm.SelectedColumn).__getData();
     eq(rd.core, user.follower_count);
     deepEq(
       rd.attrs,
@@ -243,7 +243,7 @@ it('Column.attr n RawColumn.attr', () => {
   }
 });
 
-it('Column.privateAttr n RawColumn.privateAttr', () => {
+it('Column.privateAttr n SelectedColumn.privateAttr', () => {
   {
     class UserTA extends mm.TableActions {
       t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).privateAttr());
@@ -251,7 +251,7 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
     const table = mm.tableActions(user, UserTA);
     const { t } = table;
     const columns = t.__getData().columns!;
-    const rd = (columns[0] as mm.RawColumn).__getData();
+    const rd = (columns[0] as mm.SelectedColumn).__getData();
     eq(rd.core, user.follower_count);
     deepEq(
       rd.attrs,
@@ -269,7 +269,7 @@ it('Column.privateAttr n RawColumn.privateAttr', () => {
     const table = mm.tableActions(user, UserTA);
     const { t } = table;
     const columns = t.__getData().columns!;
-    const rd = (columns[0] as mm.RawColumn).__getData();
+    const rd = (columns[0] as mm.SelectedColumn).__getData();
     eq(rd.core, user.follower_count);
     deepEq(
       rd.attrs,

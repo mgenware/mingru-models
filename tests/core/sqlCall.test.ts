@@ -125,15 +125,15 @@ it('setReturnType', () => {
 });
 
 it('SQLCall.toColumn', () => {
-  const c1 = new mm.RawColumn(mm.sql`${mm.utcDateNow()}`, 'd');
+  const c1 = new mm.SelectedColumn(mm.sql`${mm.utcDateNow()}`, 'd');
   eq(
     c1.toString(),
-    'RawColumn(d, core = SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3)))',
+    'SelectedColumn(d, core = SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3)))',
   );
 
   const c2 = mm.utcDateNow().toColumn('d');
   eq(
     c2.toString(),
-    'RawColumn(d, core = SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3)))',
+    'SelectedColumn(d, core = SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3)))',
   );
 });

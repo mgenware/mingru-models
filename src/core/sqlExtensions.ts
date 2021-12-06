@@ -1,11 +1,11 @@
-import { Column, RawColumn, SQLElement, SQLVariable, SQLCall } from './core.js';
+import { Column, SelectedColumn, SQLElement, SQLVariable, SQLCall } from './core.js';
 
 declare module './core.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface SQLElement {
     toRawString(): string;
     toColumn(): Column;
-    toRawColumn(): RawColumn;
+    toSelectedColumn(): SelectedColumn;
     toInput(): SQLVariable;
     toCall(): SQLCall;
   }
@@ -19,8 +19,8 @@ SQLElement.prototype.toColumn = function (): Column {
   return this.value as Column;
 };
 
-SQLElement.prototype.toRawColumn = function (): RawColumn {
-  return this.value as RawColumn;
+SQLElement.prototype.toSelectedColumn = function (): SelectedColumn {
+  return this.value as SelectedColumn;
 };
 
 SQLElement.prototype.toInput = function (): SQLVariable {

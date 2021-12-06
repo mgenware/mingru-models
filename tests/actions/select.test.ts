@@ -66,15 +66,15 @@ it('as', () => {
   eq(c.__getData().selectedName, 'c');
 });
 
-it('RawColumn', () => {
+it('SelectedColumn', () => {
   // as
   let c = user.id.as('x');
   let cd = c.__getData();
   eq(cd.selectedName, 'x');
   eq(cd.core, user.id);
 
-  // new RawColumn
-  c = new mm.RawColumn(user.id, 'y');
+  // new SelectedColumn
+  c = new mm.SelectedColumn(user.id, 'y');
   cd = c.__getData();
   eq(cd.selectedName, 'y');
   eq(cd.core, user.id);
@@ -85,8 +85,8 @@ it('RawColumn', () => {
   eq(cd.selectedName, 'x');
   eq(cd.core, user.id);
 
-  // new RawColumn
-  c = new mm.RawColumn(user.id);
+  // new SelectedColumn
+  c = new mm.SelectedColumn(user.id);
   cd = c.__getData();
   eq(cd.selectedName, undefined);
   eq(cd.core, user.id);
@@ -98,9 +98,9 @@ it('RawColumn', () => {
   eq(cd.core, user.id);
 });
 
-it('RawColumn (raw SQL)', () => {
-  const a = new mm.RawColumn(mm.sql`123`, 'x');
-  const b = new mm.RawColumn(mm.sql`COUNT(${user.name})`, 'y');
+it('SelectedColumn (raw SQL)', () => {
+  const a = new mm.SelectedColumn(mm.sql`123`, 'x');
+  const b = new mm.SelectedColumn(mm.sql`COUNT(${user.name})`, 'y');
   const ad = a.__getData();
   const bd = b.__getData();
   eq(ad.selectedName, 'x');
@@ -112,15 +112,15 @@ it('RawColumn (raw SQL)', () => {
   );
 });
 
-it('RawColumn (types)', () => {
-  const a = new mm.RawColumn(mm.sql`123`, 'x', new mm.ColumnType(['t1', 't2']));
+it('SelectedColumn (types)', () => {
+  const a = new mm.SelectedColumn(mm.sql`123`, 'x', new mm.ColumnType(['t1', 't2']));
   const ad = a.__getData();
   eq(ad.selectedName, 'x');
   eq(ad.core?.toString(), 'SQL(E(123, type = 0))');
   deepEq(ad.type, new mm.ColumnType(['t1', 't2']));
 });
 
-it('RawColumn (count)', () => {
+it('SelectedColumn (count)', () => {
   class UserTA extends mm.TableActions {
     t = mm.selectRow(mm.sel(mm.sql`${mm.count(mm.sql`${post.user_id.join(user).name}`)}`, 'count'));
   }
@@ -128,7 +128,7 @@ it('RawColumn (count)', () => {
   const v = ta.t;
   const vd = v.__getData();
 
-  const cc = vd.columns?.[0] as mm.RawColumn;
+  const cc = vd.columns?.[0] as mm.SelectedColumn;
   const ccd = cc.__getData();
   eq(ccd.selectedName, 'count');
   eq(
@@ -137,17 +137,17 @@ it('RawColumn (count)', () => {
   );
 });
 
-it('RawColumn (SQLConvertible)', () => {
-  let cc = new mm.RawColumn(post.user_id, 't');
+it('SelectedColumn (SQLConvertible)', () => {
+  let cc = new mm.SelectedColumn(post.user_id, 't');
   let ccd = cc.__getData();
   // Column should not be wrapped in SQL
   eq(ccd.core, post.user_id);
 
-  cc = new mm.RawColumn(mm.sql`str`, 't');
+  cc = new mm.SelectedColumn(mm.sql`str`, 't');
   ccd = cc.__getData();
   eq(ccd.core?.toString(), 'SQL(E(str, type = 0))');
 
-  cc = new mm.RawColumn(mm.sql`${mm.count(post.id)}`, 't');
+  cc = new mm.SelectedColumn(mm.sql`${mm.count(post.id)}`, 't');
   ccd = cc.__getData();
   eq(
     ccd.core?.toString(),

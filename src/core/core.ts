@@ -592,20 +592,20 @@ export class SQL {
   }
 }
 
-export interface RawColumnData {
+export interface SelectedColumnData {
   core?: Column | SQL;
   selectedName?: string;
   type?: ColumnType;
   attrs?: Map<ColumnAttribute, unknown>;
 }
 
-export class RawColumn {
-  protected __data: RawColumnData = {};
-  __getData(): RawColumnData {
+export class SelectedColumn {
+  protected __data: SelectedColumnData = {};
+  __getData(): SelectedColumnData {
     return this.__data;
   }
 
-  private get data(): RawColumnData {
+  private get data(): SelectedColumnData {
     return this.__data;
   }
 
@@ -631,7 +631,7 @@ export class RawColumn {
       this.data.core = core;
       if (!selectedName) {
         throw new Error(
-          'The argument `selectedName` is required for a `RawColumn` with SQL expression',
+          'The argument `selectedName` is required for a `SelectedColumn` with SQL expression',
         );
       }
     }
@@ -647,7 +647,7 @@ export class RawColumn {
   }
 
   toString(): string {
-    return `RawColumn(${this.data.selectedName}, core = ${this.data.core})`;
+    return `SelectedColumn(${this.data.selectedName}, core = ${this.data.core})`;
   }
 }
 

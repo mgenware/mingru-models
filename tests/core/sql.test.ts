@@ -121,12 +121,12 @@ it('Input.isEqualTo', () => {
   assert.notDeepStrictEqual(c, e);
 });
 
-it('RawColumn', () => {
+it('SelectedColumn', () => {
   const rawCol = mm.sel(user.id, 'haha');
   const sql = mm.sql`${user.id} = ${rawCol}`;
   eq(
     sql.toString(),
-    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(RawColumn(haha, core = Column(id, Table(user))), type = 4))',
+    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SelectedColumn(haha, core = Column(id, Table(user))), type = 4))',
   );
 });
 

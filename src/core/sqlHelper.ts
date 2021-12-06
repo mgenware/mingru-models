@@ -2,7 +2,7 @@ import SQLConvertible from './sqlConvertible.js';
 import {
   Column,
   ColumnType,
-  RawColumn,
+  SelectedColumn,
   SQL,
   SQLElement,
   SQLElementType,
@@ -48,7 +48,7 @@ export class SQLBuilder {
       }
     } else if (param instanceof SQLCall) {
       this.pushElement(new SQLElement(SQLElementType.call, param));
-    } else if (param instanceof RawColumn) {
+    } else if (param instanceof SelectedColumn) {
       this.pushElement(new SQLElement(SQLElementType.rawColumn, param));
     } else if (param instanceof Action) {
       this.pushElement(new SQLElement(SQLElementType.action, param));
