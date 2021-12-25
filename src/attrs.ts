@@ -25,4 +25,7 @@ export enum ActionAttribute {
   // Ignore `ColumnAttribute.isPrivate` and treat all columns
   // as public.
   ignorePrivateColumns,
+
+  // TypeScript interface name.
+  tsTypeName,
 }
