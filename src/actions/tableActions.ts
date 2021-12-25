@@ -154,6 +154,7 @@ export class Action {
     if (!this.__data.groupTable) {
       this.__data.groupTable = groupTable;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     this.__validate(this.__data.groupTable ?? groupTable);
   }
 

@@ -125,27 +125,21 @@ export function bool(): Column {
 export function datetime(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
   return Column.fromTypes(
     dt.datetime,
-    defaultsToNow
-      ? sql`${defaultsToNow === 'utc' ? call.utcDatetimeNow() : call.localDatetimeNow()}`
-      : undefined,
+    sql`${defaultsToNow === 'utc' ? call.utcDatetimeNow() : call.localDatetimeNow()}`,
   );
 }
 
 export function date(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
   return Column.fromTypes(
     dt.date,
-    defaultsToNow
-      ? sql`${defaultsToNow === 'utc' ? call.utcDateNow() : call.localDateNow()}`
-      : undefined,
+    sql`${defaultsToNow === 'utc' ? call.utcDateNow() : call.localDateNow()}`,
   );
 }
 
 export function time(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
   return Column.fromTypes(
     dt.time,
-    defaultsToNow
-      ? sql`${defaultsToNow === 'utc' ? call.utcTimeNow() : call.localTimeNow()}`
-      : undefined,
+    sql`${defaultsToNow === 'utc' ? call.utcTimeNow() : call.localTimeNow()}`,
   );
 }
 

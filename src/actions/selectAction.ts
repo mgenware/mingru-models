@@ -224,7 +224,7 @@ export class SelectAction extends CoreSelectAction {
     return this;
   }
 
-  offset(offsetValue: SQLVariable | number): this {
+  offset(offsetValue: SQLVariable | number | undefined): this {
     if (this.#data.paginationMode !== SelectActionPaginationMode.limitOffset) {
       throw new Error('`offset` can only called after `limit`');
     }
