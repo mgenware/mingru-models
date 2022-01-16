@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { throwIfFalsy } from 'throw-if-arg-empty';
+import mustBeErr from 'must-be-err';
 import { Table, Column, JoinTable } from './core.js';
 import * as defs from './defs.js';
 import { toSnakeCase } from '../lib/utils.js';
@@ -70,8 +71,8 @@ export function tableCore(
         (tableObj as any)[propName] = columnToAdd;
 
         columnToAdd.__freeze();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (err: any) {
+      } catch (err) {
+        mustBeErr(err);
         err.message += ` [column "${propName}"]`;
         throw err;
       }
@@ -79,9 +80,8 @@ export function tableCore(
 
     tableObj.__configure(tableName, dbName, convertedColumns, pks, aiPKs);
     return tableObj;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (topErr: any) {
-    topErr.message += ` [table "${tableName}"]`;
+  } catch (topErr) {
+    mustBeErr(topErr);
     throw topErr;
   }
 }

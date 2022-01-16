@@ -237,7 +237,7 @@ export class Column {
 
   toString(): string {
     const d = this.#data;
-    let name = d.propertyName;
+    let name = d.propertyName ?? '';
     const { dbName, modelName } = d;
     if (dbName && dbName !== name) {
       name += `|${dbName}`;
@@ -246,7 +246,7 @@ export class Column {
       name += `|${modelName}`;
     }
     const tableStr = d.table?.toString() ?? '';
-    return `Column(${name ?? ''}${tableStr ? `, ${tableStr}` : ''})`;
+    return `Column(${name}${tableStr ? `, ${tableStr}` : ''})`;
   }
 
   join<T extends Table>(

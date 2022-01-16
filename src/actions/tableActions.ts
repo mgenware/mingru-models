@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import toTypeString from 'to-type-string';
+import mustBeErr from 'must-be-err';
 import { ActionAttribute } from '../attrs.js';
 import { Table, SQLVariable } from '../core/core.js';
 import * as defs from '../core/defs.js';
@@ -205,8 +206,8 @@ export function tableActionsCore(
   for (const [name, action] of Object.entries(actions)) {
     try {
       action?.__configure(table, name);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
+    } catch (err) {
+      mustBeErr(err);
       err.message += ` [action "${name}"]`;
       throw err;
     }
@@ -229,8 +230,8 @@ export function tableActions<T extends Table, A extends TableActions>(
       actions[name] = action;
     });
     return tableActionsCore(table, taObj, actions, options) as A;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
+  } catch (err) {
+    mustBeErr(err);
     err.message += ` [table "${table}"]`;
     throw err;
   }

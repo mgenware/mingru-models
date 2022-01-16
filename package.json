@@ -46,6 +46,7 @@
   },
   "dependencies": {
     "decamelize": "^6.0.0",
+    "must-be-err": "^0.1.0",
     "throw-if-arg-empty": "^3.1.0",
     "to-type-string": "^2.0.0"
   }
