@@ -82,6 +82,7 @@ export function tableCore(
     return tableObj;
   } catch (topErr) {
     mustBeErr(topErr);
+    topErr.message += ` [table "${tableName}"]`;
     throw topErr;
   }
 }
