@@ -546,3 +546,15 @@ it('noOrderByFlag', () => {
   eq(ta.t1.__getData().noOrderByFlag, undefined);
   eq(ta.t2.__getData().noOrderByFlag, true);
 });
+
+it('Lock mode', () => {
+  class UserTA extends mm.TableActions {
+    t1 = mm.selectRow();
+    t2 = mm.selectRow().lock(mm.SelectActionLockMode.forUpdate);
+    t3 = mm.selectRow().lock(mm.SelectActionLockMode.inShareMode);
+  }
+  const ta = mm.tableActions(user, UserTA);
+  eq(ta.t1.__getData().lockMode, undefined);
+  eq(ta.t2.__getData().lockMode, mm.SelectActionLockMode.forUpdate);
+  eq(ta.t3.__getData().lockMode, mm.SelectActionLockMode.inShareMode);
+});
