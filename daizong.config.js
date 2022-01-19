@@ -1,13 +1,8 @@
 export default {
-  // Starts the development mode, which watches and compiles all source files including tests files.
+  // Starts development mode: watches and compiles all source files including tests.
   dev: {
     run: ['#clean', 'tsc -b tests -w'],
     envGroups: ['development'],
-  },
-
-  // Runs tests (you need to build the project first).
-  t: {
-    run: 'mocha --parallel --require source-map-support/register dist_tests/**/*.test.js',
   },
 
   // Cleans, lints, compiles sources and runs tests.
@@ -16,17 +11,18 @@ export default {
     envGroups: ['production'],
   },
 
-  // Deletes compiled files, auto triggered by `yarn r dev` or `yarn r build`.
+  // Deletes compiled files, auto triggered by `#dev` or `#build`.
   clean: {
     run: {
       del: ['dist', 'dist_tests'],
     },
   },
 
-  // Lints the project using ESLint, auto triggered by `yarn r build`.
-  lint: {
-    run: 'eslint --max-warnings 0 --ext .ts src/ tests/',
-  },
+  // Lints the project using ESLint, auto triggered by `#build`.
+  lint: 'eslint --max-warnings 0 --ext .ts src/ tests/',
+
+  // Runs tests when you already have `#dev` running.
+  t: 'mocha --parallel --require source-map-support/register dist_tests/**/*.test.js',
 
   _: {
     envGroups: {
