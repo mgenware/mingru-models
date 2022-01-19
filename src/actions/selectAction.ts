@@ -35,6 +35,13 @@ export enum SelectActionMode {
   exists,
 }
 
+export enum SelectActionLockMode {
+  // SELECT ... FOR UPDATE
+  forUpdate,
+  // SELECT ... LOCK IN SHARE MODE 
+  inShareMode,
+}
+
 export enum SelectActionPaginationMode {
   // When the user calls `limit` and `offset`.
   limitOffset = 1,
@@ -57,6 +64,7 @@ export interface SelectActionData extends CoreSelectionActionData {
   unionAllFlag?: boolean;
   unionMembers?: [SelectAction, SelectAction];
   noOrderByFlag?: boolean;
+  lockMode?: SelectActionLockMode;
 }
 
 /**
@@ -186,6 +194,11 @@ export class SelectAction extends CoreSelectAction {
 
   noOrderBy(): this {
     this.#data.noOrderByFlag = true;
+    return this;
+  }
+
+  lock(mode: SelectActionLockMode): this {
+    this.#data.lockMode = mode;
     return this;
   }
 

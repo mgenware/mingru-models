@@ -536,3 +536,13 @@ it('UNION on a ghost table', () => {
 it('mm.select == mm.selectRow', () => {
   eq(mm.select, mm.selectRow);
 });
+
+it('noOrderByFlag', () => {
+  class UserTA extends mm.TableActions {
+    t1 = mm.selectRow();
+    t2 = mm.selectRow().noOrderBy();
+  }
+  const ta = mm.tableActions(user, UserTA);
+  eq(ta.t1.__getData().noOrderByFlag, undefined);
+  eq(ta.t2.__getData().noOrderByFlag, true);
+});
