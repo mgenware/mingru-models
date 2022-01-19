@@ -38,7 +38,7 @@ export enum SelectActionMode {
 export enum SelectActionLockMode {
   // SELECT ... FOR UPDATE
   forUpdate,
-  // SELECT ... LOCK IN SHARE MODE 
+  // SELECT ... LOCK IN SHARE MODE
   inShareMode,
 }
 
