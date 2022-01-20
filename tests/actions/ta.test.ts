@@ -228,3 +228,13 @@ it('Ghost table', () => {
   ok(mm.ghostTable instanceof mm.GhostTable);
   eq(v.groupTable, mm.ghostTable);
 });
+
+it('Table as input', () => {
+  class MyTA extends mm.TableActions {
+    t = mm.insertOne().setDefaults().tableAsInput();
+    t2 = mm.insertOne().setDefaults().tableAsInput('custom');
+  }
+  const ta = mm.tableActions(user, MyTA);
+  eq(ta.t.__getData().tableInputName, 'table');
+  eq(ta.t2.__getData().tableInputName, 'custom');
+});

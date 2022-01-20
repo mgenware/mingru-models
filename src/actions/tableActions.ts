@@ -55,6 +55,7 @@ export interface ActionData {
   groupTable?: Table;
   argStubs?: SQLVariable[];
   attrs?: Map<ActionAttribute, unknown>;
+  tableInputName?: string;
 }
 
 export class Action {
@@ -120,6 +121,11 @@ export class Action {
 
   resultTypeNameAttr(resultTypeName: string): this {
     return this.attr(ActionAttribute.resultTypeName, resultTypeName);
+  }
+
+  tableAsInput(name?: string): this {
+    this.__data.tableInputName = name ?? 'table';
+    return this;
   }
 
   toString(): string {
