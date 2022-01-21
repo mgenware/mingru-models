@@ -228,3 +228,11 @@ it('Ghost table', () => {
   ok(mm.ghostTable instanceof mm.GhostTable);
   eq(v.groupTable, mm.ghostTable);
 });
+
+it('Opt.configurableTable', () => {
+  class MyTA extends mm.TableActions {
+    t = new MyInsertAction().from(post).setInputs();
+  }
+  const ta = mm.tableActions(post, MyTA, { configurableTable: true });
+  eq(ta.__getData().options.configurableTable, true);
+});

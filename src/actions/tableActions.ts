@@ -7,7 +7,8 @@ import { Table, SQLVariable } from '../core/core.js';
 import * as defs from '../core/defs.js';
 
 export interface TableActionOptions {
-  unsafeTableInput?: boolean;
+  // Make table configurable via an extra parameter.
+  configurableTable?: boolean;
 }
 
 export interface TableActionsData {
