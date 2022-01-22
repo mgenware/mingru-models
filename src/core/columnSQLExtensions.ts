@@ -58,11 +58,11 @@ Column.prototype.isNotEqualToInput = function (name?: string, opt?: InputAttribu
 };
 
 Column.prototype.isNull = function () {
-  return sql`${this} IS NULL`;
+  return sql`${this} IS ${null}`;
 };
 
 Column.prototype.isNotNull = function () {
-  return sql`${this} IS NOT NULL`;
+  return sql`${this} IS NOT ${null}`;
 };
 
 Column.prototype.isInArrayInput = function (name?: string, opt?: InputAttributes) {

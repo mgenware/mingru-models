@@ -12,6 +12,7 @@ import {
   SQLCallType,
 } from './core.js';
 import { Action } from '../actions/tableActions.js';
+import { sqlNull } from './defs.js';
 
 export class SQLBuilder {
   elements: SQLElement[] = [];
@@ -36,7 +37,9 @@ export class SQLBuilder {
   }
 
   push(param: SQLConvertible) {
-    if (typeof param === 'string') {
+    if (param === null) {
+      this.pushElement(new SQLElement(SQLElementType.rawString, sqlNull));
+    } else if (typeof param === 'string') {
       this.pushElement(new SQLElement(SQLElementType.rawString, param));
     } else if (param instanceof Column) {
       this.pushElement(new SQLElement(SQLElementType.column, param));

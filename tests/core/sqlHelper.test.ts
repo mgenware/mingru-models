@@ -97,12 +97,18 @@ it('isNotEqualToInput(string)', () => {
 
 it('isNull', () => {
   const sql = user.name.isNull();
-  eq(sql.toString(), 'SQL(E(Column(name, Table(user)), type = 1), E( IS NULL, type = 0))');
+  eq(
+    sql.toString(),
+    'SQL(E(Column(name, Table(user)), type = 1), E( IS , type = 0), E(NULL, type = 0))',
+  );
 });
 
 it('isNotNull', () => {
   const sql = user.name.isNotNull();
-  eq(sql.toString(), 'SQL(E(Column(name, Table(user)), type = 1), E( IS NOT NULL, type = 0))');
+  eq(
+    sql.toString(),
+    'SQL(E(Column(name, Table(user)), type = 1), E( IS NOT , type = 0), E(NULL, type = 0))',
+  );
 });
 
 it('isInArrayInput(string)', () => {
@@ -121,5 +127,13 @@ it('scalarType', () => {
   eq(
     new mm.SQLVariable(user.id, 'id', true, undefined, true).scalarVariable(true).toString(),
     'SQLVar(id, desc = Column(id, Table(user)))',
+  );
+});
+
+it('SQLConvertible accepts null', () => {
+  const sql = user.name.isEqualTo`${null}`;
+  eq(
+    sql.toString(),
+    'SQL(E(Column(name, Table(user)), type = 1), E( = , type = 0), E(NULL, type = 0))',
   );
 });
