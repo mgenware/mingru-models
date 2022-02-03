@@ -15,6 +15,7 @@ it('Wrap', () => {
 
     t = this.s.wrap({
       id: '1',
+      offset: -2,
     });
 
     t3 = mm.updateOne().from(post).setInputs().by(post.id).wrap({ title: '"t3"' });
@@ -37,6 +38,7 @@ it('Wrap', () => {
   eq(ad.groupTable, user);
   deepEq(ad.args, {
     id: '1',
+    offset: -2,
   });
 
   v = ta.t2;

@@ -2,8 +2,6 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action, ActionData, ActionType } from './tableActions.js';
 import { Table } from '../core/core.js';
 
-export type WrapActionArgValue = string | ValueRef | Table;
-
 // Use this to reference an external from outer context.
 export class ValueRef {
   // Returns the first variable name if path contains property access.
@@ -34,7 +32,7 @@ export function valueRef(name: string): ValueRef {
 }
 
 export interface WrapActionData extends ActionData {
-  args?: Record<string, WrapActionArgValue | undefined>;
+  args?: Record<string, unknown>;
   innerAction?: Action;
 }
 
@@ -44,7 +42,7 @@ export class WrapAction extends Action {
     return this.#data;
   }
 
-  constructor(innerAction: Action, args: Readonly<Record<string, WrapActionArgValue | undefined>>) {
+  constructor(innerAction: Action, args: Readonly<Record<string, unknown>>) {
     super(ActionType.wrap);
     throwIfFalsy(innerAction, 'innerAction');
     throwIfFalsy(args, 'args');
@@ -62,7 +60,7 @@ export class WrapAction extends Action {
     this.#data.innerAction?.__validate(groupTable);
   }
 
-  __setArgs(args: Record<string, WrapActionArgValue | undefined>) {
+  __setArgs(args: Record<string, unknown>) {
     this.#data.args = args;
   }
 }
