@@ -10,7 +10,7 @@ export * from './core/sqlHelper.js';
 export * from './returnValues.js';
 export * from './attrs.js';
 export * from './sqlLangHelper.js';
-export { default as constants } from './constants.js';
+export * as constants from './constants.js';
 
 // Table actions
 export * from './actions/tableActions.js';

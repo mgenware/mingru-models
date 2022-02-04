@@ -1,8 +1,6 @@
-import { sql } from './core/sqlHelper.js';
+export const internalPropPrefix = '__';
 
-export class Constants {
-  t = sql`1`;
-  f = sql`0`;
-}
-
-export default new Constants();
+// ALL-CAPS names are for SQL.
+export const NULL = 'NULL';
+export const T = '1';
+export const F = '0';

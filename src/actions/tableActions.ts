@@ -4,7 +4,7 @@ import toTypeString from 'to-type-string';
 import mustBeErr from 'must-be-err';
 import { ActionAttribute } from '../attrs.js';
 import { Table, SQLVariable } from '../core/core.js';
-import * as defs from '../core/defs.js';
+import * as constants from '../constants.js';
 
 export interface TableActionOptions {
   // Make table configurable via an extra parameter.
@@ -185,7 +185,7 @@ function enumerateActions<T extends TableActions>(
     const name = pair[0];
     const value = pair[1] as unknown;
     // Ignore internal props and functions.
-    if (name.startsWith(defs.InternalPropPrefix)) {
+    if (name.startsWith(constants.internalPropPrefix)) {
       continue;
     }
     // eslint-disable-next-line @typescript-eslint/no-use-before-define

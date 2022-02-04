@@ -2,7 +2,7 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import mustBeErr from 'must-be-err';
 import { Table, Column, JoinTable } from './core.js';
-import * as defs from './defs.js';
+import * as constants from '../constants.js';
 import { toSnakeCase } from '../lib/utils.js';
 
 function enumerateColumns(tableObject: Table, cb: (column: Column, prop: string) => void): void {
@@ -12,7 +12,7 @@ function enumerateColumns(tableObject: Table, cb: (column: Column, prop: string)
     const name = pair[0];
     const value = pair[1] as unknown;
     // Ignore internal props and functions.
-    if (name.startsWith(defs.InternalPropPrefix)) {
+    if (name.startsWith(constants.internalPropPrefix)) {
       continue;
     }
     if (value instanceof Column) {
