@@ -31,8 +31,10 @@ export function valueRef(name: string): ValueRef {
   return new ValueRef(name);
 }
 
+export type WrapArgValue = string | number | Table | ValueRef | null;
+
 export interface WrapActionData extends ActionData {
-  args?: Record<string, unknown>;
+  args?: Record<string, WrapArgValue>;
   innerAction?: Action;
 }
 
@@ -42,7 +44,7 @@ export class WrapAction extends Action {
     return this.#data;
   }
 
-  constructor(innerAction: Action, args: Readonly<Record<string, unknown>>) {
+  constructor(innerAction: Action, args: Readonly<Record<string, WrapArgValue>>) {
     super(ActionType.wrap);
     throwIfFalsy(innerAction, 'innerAction');
     throwIfFalsy(args, 'args');
@@ -60,7 +62,7 @@ export class WrapAction extends Action {
     this.#data.innerAction?.__validate(groupTable);
   }
 
-  __setArgs(args: Record<string, unknown>) {
+  __setArgs(args: Record<string, WrapArgValue>) {
     this.#data.args = args;
   }
 }
