@@ -26,6 +26,6 @@ export enum ActionAttribute {
   // as public.
   ignorePrivateColumns,
 
-  // TypeScript interface name.
-  tsTypeName,
+  // Whether TypeScript definition generation is enabled.
+  enableTSResultType,
 }
