@@ -7,8 +7,8 @@ import { Table, SQLVariable } from '../core/core.js';
 import * as constants from '../constants.js';
 
 export interface TableActionOptions {
-  // Make table configurable via an extra parameter.
-  configurableTable?: boolean;
+  // Make table configurable by an param with the given name.
+  configurableTableName?: string;
 }
 
 export interface TableActionsData {

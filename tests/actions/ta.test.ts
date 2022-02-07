@@ -233,6 +233,6 @@ it('Opt.configurableTable', () => {
   class MyTA extends mm.TableActions {
     t = new MyInsertAction().from(post).setInputs();
   }
-  const ta = mm.tableActions(post, MyTA, { configurableTable: true });
-  eq(ta.__getData().options.configurableTable, true);
+  const ta = mm.tableActions(post, MyTA, { configurableTableName: 'tableInput' });
+  eq(ta.__getData().options.configurableTableName, 'tableInput');
 });
