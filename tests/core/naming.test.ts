@@ -16,7 +16,7 @@ class DEFTable extends mm.Table {
 }
 
 const abcTable = mm.table(ABCTable);
-const defTable = mm.table(DEFTable, 't');
+const defTable = mm.table(DEFTable, { dbName: 't' });
 
 it('Table name and getDBName', () => {
   eq(abcTable.__getData().name, 'abc_table');

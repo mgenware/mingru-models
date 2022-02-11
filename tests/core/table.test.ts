@@ -15,7 +15,7 @@ it('Table name, DB name and input name', () => {
   class MyTable extends mm.Table {
     id = mm.pk();
   }
-  const myTable = mm.table(MyTable, 'my_table');
+  const myTable = mm.table(MyTable, { dbName: 'my_table' });
   const d2 = myTable.__getData();
   eq(d2.name, 'my_table');
   eq(d2.dbName, 'my_table');
@@ -47,7 +47,7 @@ it('__pks', () => {
     id = mm.pk(mm.int()).setDBName('emp_no').autoIncrement;
     firstName = mm.varChar(50);
   }
-  const emp2 = mm.table(Employee2, 'employees');
+  const emp2 = mm.table(Employee2, { dbName: 'employees' });
   const emp2D = emp2.__getData();
   deepEq(emp2D.pks, [emp2.id]);
   deepEq(emp2D.aiPKs, [emp2.id]);
@@ -76,7 +76,7 @@ it('__columns', () => {
 it('tableCore', () => {
   const id = mm.pk();
   const name = mm.varChar(250);
-  const table = mm.tableCore('A', 'a_a', undefined, { id, name });
+  const table = mm.tableCore('A', undefined, { id, name }, { dbName: 'a_a' });
   const d = table.__getData();
   eq(d.name, 'a');
   eq(d.dbName, 'a_a');

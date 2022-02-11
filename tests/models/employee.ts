@@ -9,4 +9,4 @@ class Employee extends mm.Table {
   hireDate = mm.date();
 }
 
-export default mm.table(Employee, 'employees');
+export default mm.table(Employee, { dbName: 'employees' });

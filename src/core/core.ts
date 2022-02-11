@@ -380,6 +380,7 @@ export interface TableData {
   dbName?: string;
   pks: Column[];
   aiPKs: Column[];
+  virtualTable: boolean;
 }
 
 export class Table {
@@ -391,6 +392,7 @@ export class Table {
       name: '',
       pks: [],
       aiPKs: [],
+      virtualTable: false,
     };
   }
 
@@ -422,6 +424,7 @@ export class Table {
     columns: Record<string, Column | undefined>,
     pks: Column[],
     aiPKs: Column[],
+    virtualTable: boolean,
   ) {
     const data = this.__data;
     data.name = name;
@@ -429,6 +432,7 @@ export class Table {
     data.columns = columns;
     data.pks = pks;
     data.aiPKs = aiPKs;
+    data.virtualTable = virtualTable;
   }
 }
 

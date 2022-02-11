@@ -21,11 +21,16 @@ function enumerateColumns(tableObject: Table, cb: (column: Column, prop: string)
   }
 }
 
+export interface TableOptions {
+  dbName?: string;
+  virtualTable?: string;
+}
+
 export function tableCore(
   tableName: string,
-  dbName: string | undefined,
   tableObj: Table | undefined,
   columns: Record<string, Column | undefined>,
+  opt?: TableOptions,
 ): Table {
   throwIfFalsy(tableName, 'tableName');
 
@@ -78,7 +83,7 @@ export function tableCore(
       }
     }
 
-    tableObj.__configure(tableName, dbName, convertedColumns, pks, aiPKs);
+    tableObj.__configure(tableName, opt?.dbName, convertedColumns, pks, aiPKs, !!opt?.virtualTable);
     return tableObj;
   } catch (topErr) {
     mustBeErr(topErr);
@@ -87,7 +92,7 @@ export function tableCore(
   }
 }
 
-export function table<T extends Table>(CLASS: new (name?: string) => T, dbName?: string): T {
+export function table<T extends Table>(CLASS: new (name?: string) => T, opt?: TableOptions): T {
   throwIfFalsy(CLASS, 'CLASS');
   const tableObj = new CLASS();
   const tableName = tableObj.constructor.name;
@@ -96,7 +101,7 @@ export function table<T extends Table>(CLASS: new (name?: string) => T, dbName?:
   enumerateColumns(tableObj, (col, propName) => {
     columns[propName] = col;
   });
-  return tableCore(tableName, dbName, tableObj, columns) as T;
+  return tableCore(tableName, tableObj, columns, opt) as T;
 }
 
 // A ghost table is a table that is used to create a TA for grouping a set of
