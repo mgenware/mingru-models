@@ -23,7 +23,7 @@ function enumerateColumns(tableObject: Table, cb: (column: Column, prop: string)
 
 export interface TableOptions {
   dbName?: string;
-  virtualTable?: string;
+  virtualTable?: boolean;
 }
 
 export function tableCore(

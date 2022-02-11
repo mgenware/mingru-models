@@ -4,13 +4,14 @@ import employee from '../models/employee.js';
 import like from '../models/like.js';
 import { eq, deepEq } from '../assert-aliases.js';
 
-it('Table name, DB name and input name', () => {
+it('Core props', () => {
   const d = user.__getData();
   eq(d.name, 'user');
   eq(d.dbName, undefined);
   eq(user.__getDBName(), 'user');
   eq(user.__getModelName(), 'user');
   eq(user.toString(), 'Table(user)');
+  eq(d.virtualTable, false);
 
   class MyTable extends mm.Table {
     id = mm.pk();
@@ -88,4 +89,10 @@ it('tableCore', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     eq((table as any)[prop], column);
   }
+});
+
+it('Virtual table', () => {
+  class VT extends mm.Table {}
+  const vt = mm.table(VT, { virtualTable: true });
+  eq(vt.__getData().virtualTable, true);
 });
