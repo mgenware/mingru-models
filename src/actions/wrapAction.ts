@@ -2,9 +2,9 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action, ActionData, ActionType } from './tableActions.js';
 import { Table } from '../core/core.js';
 
-// Use this to reference an external from outer context.
+// Used to reference an external variable from outer context.
 export class ValueRef {
-  // Returns the first variable name if path contains property access.
+  // Returns the first variable name if `this.path` contains property access.
   readonly firstName: string;
   readonly hasPropertyAccess: boolean;
 
@@ -31,7 +31,15 @@ export function valueRef(name: string): ValueRef {
   return new ValueRef(name);
 }
 
-export type WrapArgValue = string | number | Table | ValueRef | null;
+export class RenameArg {
+  constructor(public name: string) {}
+}
+
+export function renameArg(name: string): RenameArg {
+  return new RenameArg(name);
+}
+
+export type WrapArgValue = string | number | Table | ValueRef | RenameArg | null;
 
 export interface WrapActionData extends ActionData {
   args?: Record<string, WrapArgValue>;
