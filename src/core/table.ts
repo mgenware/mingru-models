@@ -3,7 +3,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import mustBeErr from 'must-be-err';
 import { Table, Column, JoinTable } from './core.js';
 import * as constants from '../constants.js';
-import { toSnakeCase } from '../lib/utils.js';
+import * as su from '../lib/stringUtil.js';
 
 function enumerateColumns(tableObject: Table, cb: (column: Column, prop: string) => void): void {
   throwIfFalsy(tableObject, 'tableObject');
@@ -36,7 +36,7 @@ export function tableCore(
 
   try {
     tableObj = tableObj || new Table();
-    tableName = toSnakeCase(tableName);
+    tableName = su.toSnakeCase(tableName);
     const pks: Column[] = [];
     const aiPKs: Column[] = [];
 
@@ -63,7 +63,7 @@ export function tableCore(
           columnToAdd = col;
         }
 
-        columnToAdd.__configure(toSnakeCase(propName), tableObj);
+        columnToAdd.__configure(su.toSnakeCase(propName), tableObj);
         if (columnToAdd.__type().pk) {
           pks.push(col);
           if (columnToAdd.__type().autoIncrement) {

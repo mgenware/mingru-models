@@ -1,6 +1,6 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import { SelectedColumnAttribute, ColumnAttribute } from '../attrs.js';
-import * as utils from '../lib/utils.js';
+import * as su from '../lib/stringUtil.js';
 
 export class ColumnType {
   types: string[];
@@ -527,7 +527,7 @@ function makeMiddleName(s: string): string {
   if (!s) {
     throw new Error('Unexpected empty value in "makeMiddleName"');
   }
-  return utils.stripTrailingSnakeID(s);
+  return su.stripTrailingSnakeID(s);
 }
 
 export interface SQLVariableType {
