@@ -185,6 +185,9 @@ it('datetime', () => {
     `${c.__getData().defaultValue}`,
     'SQL(E(SQLCall(16, return = ColType(SQL.DATETIME), type = 3))',
   );
+
+  c = mm.datetime({ fsp: 4 });
+  eq(c.__getData().type.length, 4);
 });
 
 it('date', () => {
@@ -196,6 +199,9 @@ it('date', () => {
 
   c = mm.date({ defaultToNow: 'utc' });
   eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3))');
+
+  c = mm.date({ fsp: 4 });
+  eq(c.__getData().type.length, 4);
 });
 
 it('time', () => {
@@ -207,6 +213,9 @@ it('time', () => {
 
   c = mm.time({ defaultToNow: 'utc' });
   eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(18, return = ColType(SQL.TIME), type = 3))');
+
+  c = mm.time({ fsp: 4 });
+  eq(c.__getData().type.length, 4);
 });
 
 it('timestamp', () => {
@@ -218,6 +227,9 @@ it('timestamp', () => {
     `${c.__getData().defaultValue}`,
     'SQL(E(SQLCall(19, return = ColType(SQL.TIMESTAMP), type = 3))',
   );
+
+  c = mm.timestamp({ fsp: 4 });
+  eq(c.__getData().type.length, 4);
 });
 
 it('decimal', () => {
