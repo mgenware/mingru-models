@@ -174,13 +174,13 @@ it('datetime', () => {
   let c = mm.datetime();
   ok(c.__type().types.includes(mm.dt.datetime));
 
-  c = mm.datetime('local');
+  c = mm.datetime({ defaultToNow: 'local' });
   eq(
     `${c.__getData().defaultValue}`,
     'SQL(E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3))',
   );
 
-  c = mm.datetime('utc');
+  c = mm.datetime({ defaultToNow: 'utc' });
   eq(
     `${c.__getData().defaultValue}`,
     'SQL(E(SQLCall(16, return = ColType(SQL.DATETIME), type = 3))',
@@ -191,10 +191,10 @@ it('date', () => {
   let c = mm.date();
   ok(c.__type().types.includes(mm.dt.date));
 
-  c = mm.date('local');
+  c = mm.date({ defaultToNow: 'local' });
   eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
 
-  c = mm.date('utc');
+  c = mm.date({ defaultToNow: 'utc' });
   eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3))');
 });
 
@@ -202,10 +202,10 @@ it('time', () => {
   let c = mm.time();
   ok(c.__type().types.includes(mm.dt.time));
 
-  c = mm.time('local');
+  c = mm.time({ defaultToNow: 'local' });
   eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(2, return = ColType(SQL.TIME), type = 3))');
 
-  c = mm.time('utc');
+  c = mm.time({ defaultToNow: 'utc' });
   eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(18, return = ColType(SQL.TIME), type = 3))');
 });
 
@@ -213,7 +213,7 @@ it('timestamp', () => {
   let c = mm.timestamp();
   ok(c.__type().types.includes(mm.dt.timestamp));
 
-  c = mm.timestamp(true);
+  c = mm.timestamp({ defaultToNow: 'utc' });
   eq(
     `${c.__getData().defaultValue}`,
     'SQL(E(SQLCall(19, return = ColType(SQL.TIMESTAMP), type = 3))',
