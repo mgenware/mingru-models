@@ -1,4 +1,3 @@
-import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Column, SelectedColumn } from '../core/core.js';
 import { SelectedColumnAttribute } from '../attrs.js';
 
@@ -12,7 +11,6 @@ declare module '../core/core.js' {
 }
 
 Column.prototype.as = function (name: string): SelectedColumn {
-  throwIfFalsy(name, 'name');
   return new SelectedColumn(this, name);
 };
 

@@ -1,13 +1,10 @@
 /* eslint-disable no-param-reassign */
-import { throwIfFalsy } from 'throw-if-arg-empty';
 import mustBeErr from 'must-be-err';
 import { Table, Column, JoinTable } from './core.js';
 import * as constants from '../constants.js';
 import * as su from '../lib/stringUtil.js';
 
 function enumerateColumns(tableObject: Table, cb: (column: Column, prop: string) => void): void {
-  throwIfFalsy(tableObject, 'tableObject');
-
   for (const pair of Object.entries(tableObject)) {
     const name = pair[0];
     const value = pair[1] as unknown;
@@ -32,8 +29,6 @@ export function tableCore(
   columns: Record<string, Column | undefined>,
   opt?: TableOptions,
 ): Table {
-  throwIfFalsy(tableName, 'tableName');
-
   try {
     tableObj = tableObj || new Table();
     tableName = su.toSnakeCase(tableName);
@@ -93,7 +88,6 @@ export function tableCore(
 }
 
 export function table<T extends Table>(CLASS: new (name?: string) => T, opt?: TableOptions): T {
-  throwIfFalsy(CLASS, 'CLASS');
   const tableObj = new CLASS();
   const tableName = tableObj.constructor.name;
 

@@ -1,6 +1,6 @@
-import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Table } from '../core/core.js';
 import { Action, ActionData, ActionType } from './tableActions.js';
+import { throwOnEmptyArray } from '../lib/arrayUtil.js';
 
 export class ActionWithReturnValues {
   constructor(
@@ -16,9 +16,7 @@ export class TransactionMember {
     public readonly action: Action,
     public readonly name?: string,
     public readonly returnValues?: Readonly<Record<string, string | undefined>>,
-  ) {
-    throwIfFalsy(action, 'action');
-  }
+  ) {}
 }
 
 export interface TransactActionData extends ActionData {
@@ -34,7 +32,7 @@ export class TransactAction extends Action {
 
   constructor(members: TransactionMember[]) {
     super(ActionType.transact);
-    throwIfFalsy(members, 'members');
+    throwOnEmptyArray(members, 'members');
 
     this.#data.members = members;
   }
@@ -50,7 +48,7 @@ export class TransactAction extends Action {
   }
 
   setReturnValues(...values: string[]): this {
-    throwIfFalsy(values, 'values');
+    throwOnEmptyArray(values, 'values');
 
     this.#data.returnValues = values;
     return this;

@@ -1,4 +1,3 @@
-import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action, ActionData, ActionType } from './tableActions.js';
 import { Table } from '../core/core.js';
 
@@ -54,8 +53,6 @@ export class WrapAction extends Action {
 
   constructor(innerAction: Action, args: Readonly<Record<string, WrapArgValue>>) {
     super(ActionType.wrap);
-    throwIfFalsy(innerAction, 'innerAction');
-    throwIfFalsy(args, 'args');
 
     if (Object.entries(args).length === 0) {
       throw new Error('"args" cannot be empty');

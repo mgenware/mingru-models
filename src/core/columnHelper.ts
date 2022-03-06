@@ -1,4 +1,3 @@
-import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Column, ColumnType, SQLCall, SQL } from './core.js';
 import dt from './dt.js';
 import * as call from './sqlCallHelper.js';
@@ -7,7 +6,6 @@ import { sql } from './sqlHelper.js';
 export type DateTimeDefaultValue = 'local' | 'utc';
 
 export function fk(column: Column): Column {
-  throwIfFalsy(column, 'column');
   if (!Object.isFrozen(column)) {
     throw new Error(`The column "${column}" is not sealed yet`);
   }

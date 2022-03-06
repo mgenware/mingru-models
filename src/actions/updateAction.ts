@@ -1,4 +1,3 @@
-import { throwIfFalsy } from 'throw-if-arg-empty';
 import { ActionType } from './tableActions.js';
 import { CoreUpdateAction, CoreUpdateActionData } from './coreUpdateAction.js';
 import { where, by, andBy } from './common.js';
@@ -26,7 +25,6 @@ export class UpdateAction extends CoreUpdateAction {
   }
 
   whereSQL(value: SQL): this {
-    throwIfFalsy(value, 'value');
     where(this.#data, value);
     return this;
   }

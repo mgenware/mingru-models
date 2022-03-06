@@ -1,6 +1,6 @@
-import { throwIfFalsy } from 'throw-if-arg-empty';
 import { SelectedColumnAttribute, ColumnAttribute } from '../attrs.js';
 import * as su from '../lib/stringUtil.js';
+import { throwOnEmptyArray } from '../lib/arrayUtil.js';
 
 export class ColumnType {
   types: string[];
@@ -13,7 +13,9 @@ export class ColumnType {
   extraLength = 0;
 
   constructor(types: string | string[]) {
-    throwIfFalsy(types, 'types');
+    if (Array.isArray(types)) {
+      throwOnEmptyArray(types, 'types');
+    }
     this.types = typeof types === 'string' ? [types] : types;
   }
 
@@ -65,8 +67,6 @@ export class Column {
   }
 
   static newForeignColumn(srcColumn: Column): Column {
-    throwIfFalsy(srcColumn, 'srcColumn');
-
     const col = new Column(srcColumn.__type());
     const cd = col.__data;
     cd.foreignColumn = srcColumn;
@@ -74,8 +74,6 @@ export class Column {
   }
 
   static newJoinedColumn(mirroredColumn: Column, table: JoinTable): Column {
-    throwIfFalsy(mirroredColumn, 'mirroredColumn');
-    throwIfFalsy(table, 'table');
     const col = new Column(mirroredColumn.__type());
     const cd = col.__data;
     const mcd = mirroredColumn.__data;
@@ -100,7 +98,6 @@ export class Column {
   }
 
   constructor(type: ColumnType) {
-    throwIfFalsy(type, 'type');
     // NOTE: `types` field is deeply copied.
     const copiedType = new ColumnType([...type.types]);
     Object.assign(copiedType, type);
@@ -155,13 +152,11 @@ export class Column {
   }
 
   setDBName(name: string): this {
-    throwIfFalsy(name, 'name');
     this.#data.dbName = name;
     return this;
   }
 
   setModelName(name: string): this {
-    throwIfFalsy(name, 'name');
     this.#data.modelName = name;
     return this;
   }
@@ -341,7 +336,6 @@ export class Column {
     extraColumns: [Column, Column][],
     extraSQLFn: ((jt: T) => SQL) | undefined,
   ): T {
-    throwIfFalsy(destTable, 'destTable');
     // source column + dest table + dest column = joined table
 
     // Try using dest table's PK if destCol is not present
@@ -548,7 +542,6 @@ export class SQLVariable {
     // Use this to override the nullability of the `type` property.
     public readonly nullable?: boolean,
   ) {
-    throwIfFalsy(type, 'type');
     this.isArray = isArray || false;
   }
 
@@ -638,8 +631,6 @@ export class SelectedColumn {
     selectedName?: string,
     type?: ColumnType,
   ) {
-    throwIfFalsy(core, 'core');
-
     this.data.selectedName = selectedName;
     this.data.type = type;
     if (core instanceof Column) {

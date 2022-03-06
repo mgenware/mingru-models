@@ -1,5 +1,5 @@
 /* eslint-disable object-curly-newline */
-import { throwIfFalsy } from 'throw-if-arg-empty';
+import { throwOnEmptyArray } from '../lib/arrayUtil.js';
 import { UpdateAction } from './updateAction.js';
 import { InsertAction } from './insertAction.js';
 import { DeleteAction } from './deleteAction.js';
@@ -74,7 +74,7 @@ export function unsafeDeleteAll(): DeleteAction {
 }
 
 export function transact(...actions: TransactionMemberTypes[]): TransactAction {
-  throwIfFalsy(actions, 'actions');
+  throwOnEmptyArray(actions, 'actions');
   return new TransactAction(
     actions.map((a) => {
       if (a instanceof TransactionMember) {

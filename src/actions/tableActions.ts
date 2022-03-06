@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign */
-import { throwIfFalsy } from 'throw-if-arg-empty';
 import toTypeString from 'to-type-string';
 import mustBeErr from 'must-be-err';
 import { ActionAttribute } from '../attrs.js';
@@ -179,8 +178,6 @@ function enumerateActions<T extends TableActions>(
   ta: T,
   cb: (action: Action, prop: string) => void,
 ) {
-  throwIfFalsy(ta, 'ta');
-
   for (const pair of Object.entries(ta)) {
     const name = pair[0];
     const value = pair[1] as unknown;
@@ -201,8 +198,6 @@ export function tableActionsCore(
   actions: Record<string, Action | undefined>,
   options: TableActionOptions | undefined,
 ): TableActions {
-  throwIfFalsy(table, 'table');
-
   tableActionsObj = tableActionsObj || new TableActions();
   for (const [name, action] of Object.entries(actions)) {
     try {
@@ -222,8 +217,6 @@ export function tableActions<T extends Table, A extends TableActions>(
   TACls: new () => A,
   options?: TableActionOptions,
 ): A {
-  throwIfFalsy(table, 'table');
-
   try {
     const taObj = new TACls();
     const actions: Record<string, Action | undefined> = {};

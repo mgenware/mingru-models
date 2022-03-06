@@ -1,4 +1,3 @@
-import { throwIfFalsy } from 'throw-if-arg-empty';
 import { Action, ActionData } from './tableActions.js';
 import { Column, Table } from '../core/core.js';
 import SQLConvertible from '../core/sqlConvertible.js';
@@ -31,9 +30,6 @@ export class CoreUpdateAction extends Action {
   }
 
   set(column: Column, value: SQLConvertible): this {
-    throwIfFalsy(column, 'column');
-    throwIfFalsy(value, 'value');
-
     this.checkColumnFree(column);
     this.mustGetSetters().set(column, convertToSQL(value));
     return this;

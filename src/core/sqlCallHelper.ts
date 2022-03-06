@@ -1,8 +1,8 @@
-import { throwIfFalsy } from 'throw-if-arg-empty';
 import { ColumnType, Column, SQLCall, SQLCallType } from './core.js';
 import dt from './dt.js';
 import SQLConvertible from './sqlConvertible.js';
 import { sqlCall } from './sqlHelper.js';
+import { throwOnEmptyArray } from '../lib/arrayUtil.js';
 
 export function localDatetimeNow(): SQLCall {
   return sqlCall(SQLCallType.localDatetimeNow, new ColumnType(dt.datetime));
@@ -41,7 +41,7 @@ export function countAll(): SQLCall {
 }
 
 export function coalesce(...columns: SQLConvertible[]): SQLCall {
-  throwIfFalsy(columns, 'columns');
+  throwOnEmptyArray(columns, 'columns');
   let type: ColumnType | null = null;
   for (const col of columns) {
     if (col instanceof Column) {

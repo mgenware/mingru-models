@@ -1,9 +1,9 @@
-import { throwIfFalsy } from 'throw-if-arg-empty';
 import { ActionType } from './tableActions.js';
 import { Column, Table, SelectedColumn, SQL, SQLVariable } from '../core/core.js';
 import { CoreSelectAction, CoreSelectionActionData } from './coreSelectAction.js';
 import SQLConvertible from '../core/sqlConvertible.js';
 import { sql } from '../core/sqlHelper.js';
+import { throwOnEmptyArray } from '../lib/arrayUtil.js';
 
 export type SelectedColumnTypes = Column | SelectedColumn;
 export type SelectedColumnTypesOrName = SelectedColumnTypes | string;
@@ -14,14 +14,12 @@ export interface UnionTuple {
 }
 
 export class OrderByColumn {
-  constructor(public readonly column: SelectedColumnTypesOrName, public readonly desc = false) {
-    throwIfFalsy(column, 'column');
-  }
+  constructor(public readonly column: SelectedColumnTypesOrName, public readonly desc = false) {}
 }
 
 export class OrderByColumnInput {
   constructor(public readonly columns: ReadonlyArray<SelectedColumnTypesOrName>) {
-    throwIfFalsy(columns, 'columns');
+    throwOnEmptyArray(columns, 'columns');
   }
 }
 
@@ -113,13 +111,11 @@ export class SelectAction extends CoreSelectAction {
   }
 
   orderByAsc(column: SelectedColumnTypesOrName): this {
-    throwIfFalsy(column, 'column');
     this.mustGetOrderByColumns().push(new OrderByColumn(column, false));
     return this;
   }
 
   orderByDesc(column: SelectedColumnTypesOrName): this {
-    throwIfFalsy(column, 'column');
     this.mustGetOrderByColumns().push(new OrderByColumn(column, true));
     return this;
   }
@@ -130,7 +126,7 @@ export class SelectAction extends CoreSelectAction {
   }
 
   groupBy(...columns: SelectedColumnTypesOrName[]): this {
-    throwIfFalsy(columns, 'columns');
+    throwOnEmptyArray(columns, 'columns');
     for (const column of columns) {
       let name: string;
       if (column instanceof Column) {
@@ -171,7 +167,6 @@ export class SelectAction extends CoreSelectAction {
   }
 
   havingSQL(value: SQL): this {
-    throwIfFalsy(value, 'value');
     if (!this.#data.groupByColumns) {
       throw new Error('You have to call `having` after `groupBy`');
     }
@@ -221,7 +216,6 @@ export class SelectAction extends CoreSelectAction {
   }
 
   private unionCore(action: SelectAction, unionAll: boolean): SelectAction {
-    throwIfFalsy(action, 'action');
     const newAction = new SelectAction([], SelectActionMode.rowList);
     if (this.#data.sqlTable) {
       newAction.from(this.#data.sqlTable);
