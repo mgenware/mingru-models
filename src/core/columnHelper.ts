@@ -1,5 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Column, ColumnType, SQLCall } from './core.js';
+import { Column, ColumnType, SQLCall, SQL } from './core.js';
 import dt from './dt.js';
 import * as call from './sqlCallHelper.js';
 import { sql } from './sqlHelper.js';
@@ -134,7 +134,7 @@ function createDateTimeCol(
   utcNow: SQLCall,
   localNow: SQLCall | null,
 ) {
-  let defValue: unknown;
+  let defValue: SQL | undefined;
   if (opt?.defaultToNow) {
     if (!localNow) {
       defValue = sql`${utcNow}`;

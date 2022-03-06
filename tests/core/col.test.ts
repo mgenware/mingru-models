@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import * as assert from 'assert';
 import { itThrows } from 'it-throws';
 import * as mm from '../../dist/main.js';
 import user from '../models/user.js';
@@ -178,15 +177,6 @@ it('JoinedColumn in table def', () => {
     () => mm.table(JCTable),
     'Unexpected table type "Column(name, (J|1|post|user)[user_id|id])". You should not use JoinedColumn in a table definition, JoinedColumn can only be used in SELECT actions. [column "jc"] [table "jc_table"]',
   );
-});
-
-it('Throw on default value of complex SQL', () => {
-  assert.doesNotThrow(() => {
-    class T extends mm.Table {
-      t = mm.varChar(23).default(mm.localDatetimeNow());
-    }
-    mm.table(T);
-  });
 });
 
 it('getSourceTable', () => {

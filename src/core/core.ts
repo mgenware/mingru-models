@@ -29,11 +29,13 @@ export enum JoinType {
   full,
 }
 
+export type ColumnDefaultValue = SQL | number | string | null;
+
 export interface ColumnData {
   type: ColumnType;
 
   propertyName?: string;
-  defaultValue?: unknown;
+  defaultValue?: ColumnDefaultValue;
   noDefaultValueOnCSQL?: boolean;
   dbName?: string;
   modelName?: string;
@@ -56,7 +58,7 @@ export interface ColumnData {
 }
 
 export class Column {
-  static fromTypes(types: string | string[], defaultValue?: unknown): Column {
+  static fromTypes(types: string | string[], defaultValue?: SQL): Column {
     const col = new Column(new ColumnType(typeof types === 'string' ? [types] : types));
     col.__data.defaultValue = defaultValue;
     return col;
@@ -147,7 +149,7 @@ export class Column {
     return this;
   }
 
-  default(value: unknown): this {
+  default(value: ColumnDefaultValue): this {
     this.#data.defaultValue = value;
     return this;
   }
