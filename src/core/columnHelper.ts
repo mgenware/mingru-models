@@ -1,5 +1,5 @@
 import { throwIfFalsy } from 'throw-if-arg-empty';
-import { Column } from './core.js';
+import { Column, ColumnType, SQL } from './core.js';
 import dt from './dt.js';
 import * as call from './sqlCallHelper.js';
 import { sql } from './sqlHelper.js';
@@ -122,27 +122,43 @@ export function bool(): Column {
   return Column.fromTypes(dt.bool);
 }
 
-export function datetime(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
-  return Column.fromTypes(
-    dt.datetime,
-    sql`${defaultsToNow === 'utc' ? call.utcDatetimeNow() : call.localDatetimeNow()}`,
-  );
+export interface TimeOptions {
+  defaultsToNow?: DateTimeDefaultValue;
+  // See https://dev.mysql.com/doc/refman/5.6/en/fractional-seconds.html.
+  fsp?: number;
 }
 
-export function date(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
-  return Column.fromTypes(
-    dt.date,
-    sql`${defaultsToNow === 'utc' ? call.utcDateNow() : call.localDateNow()}`,
-  );
+function createDateTimeCol(type: string, opt: TimeOptions | undefined, forcedNowValue?: SQL) {
+  let defValue: unknown;
+  if (opt?.defaultsToNow) {
+    defValue =
+      forcedNowValue ??
+      sql`${opt.defaultsToNow === 'utc' ? call.utcDatetimeNow() : call.localDatetimeNow()}`;
+  }
+  const colType = new ColumnType(type);
+  if (opt?.fsp) {
+    colType.length = opt.fsp;
+  }
+  const col = new Column(colType);
+  col.__getData().defaultValue = defValue;
+  return col;
 }
 
-export function time(defaultsToNow: DateTimeDefaultValue = 'none'): Column {
-  return Column.fromTypes(
-    dt.time,
-    sql`${defaultsToNow === 'utc' ? call.utcTimeNow() : call.localTimeNow()}`,
-  );
+export function datetime(opt?: TimeOptions): Column {
+  return createDateTimeCol(dt.datetime, opt);
 }
 
-export function timestamp(defaultsToNow = false): Column {
-  return Column.fromTypes(dt.timestamp, defaultsToNow ? sql`${call.timestampNow()}` : undefined);
+export function date(opt?: TimeOptions): Column {
+  return createDateTimeCol(dt.date, opt);
+}
+
+export function time(opt?: TimeOptions): Column {
+  return createDateTimeCol(dt.time, opt);
+}
+
+export function timestamp(opt?: TimeOptions): Column {
+  if (opt?.defaultsToNow === 'local') {
+    throw new Error('"local" is not support in TIMESTAMP, use "utc" instead.');
+  }
+  return createDateTimeCol(dt.timestamp, opt, sql`${call.timestampNow()}`);
 }
