@@ -30,23 +30,23 @@
     "/dist/**/*.map"
   ],
   "devDependencies": {
-    "@types/mocha": "^9.0.0",
-    "@types/node": "^17.0.8",
-    "@typescript-eslint/eslint-plugin": "^5.9.1",
-    "@typescript-eslint/parser": "^5.9.1",
+    "@types/mocha": "^9.1.0",
+    "@types/node": "^17.0.21",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
     "daizong": "^0.23.0",
-    "eslint": "^8.7.0",
+    "eslint": "^8.10.0",
     "eslint-config-mgenware": "^0.7.1",
     "eslint-plugin-import": "^2.25.4",
     "it-throws": "^4.2.0",
-    "mgenware-tsconfig-node": "^14.0.2",
-    "mocha": "^9.1.4",
+    "mgenware-tsconfig-node": "^14.1.0",
+    "mocha": "^9.2.1",
     "source-map-support": "^0.5.21",
-    "typescript": "^4.5.4"
+    "typescript": "^4.6.2"
   },
   "dependencies": {
     "decamelize": "^6.0.0",
-    "must-be-err": "^0.1.0",
+    "must-be-err": "^0.1.1",
     "throw-if-arg-empty": "^3.1.0",
     "to-type-string": "^2.0.0"
   }
