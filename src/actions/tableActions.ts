@@ -97,7 +97,7 @@ export class Action {
   __mustGetGroupTable(): Table {
     const table = this.__data.groupTable;
     if (!table) {
-      throw new Error(`Action "${this}" doesn't have a group able`);
+      throw new Error(`Action "${this}" doesn't have a group table`);
     }
     return table;
   }
