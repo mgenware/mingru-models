@@ -575,7 +575,7 @@ export class SQLVariable {
     } else {
       desc = JSON.stringify(type);
     }
-    let s = `SQLVar(${this.name}, desc=${desc})`;
+    let s = `VAR(${desc}${this.name ? `, name=${this.name}` : ''})`;
     if (this.nullable) {
       s += '?';
     }
@@ -599,8 +599,7 @@ export class SQLElement {
   constructor(public readonly type: SQLElementType, public readonly value: unknown) {}
 
   toString(): string {
-    const { value } = this;
-    return `E(${value !== undefined && value !== null ? `${value}, ` : ''}type = ${this.type})`;
+    return `${this.value}`;
   }
 }
 
@@ -608,7 +607,7 @@ export class SQL {
   constructor(public elements: ReadonlyArray<SQLElement>) {}
 
   toString(): string {
-    return `SQL(${this.elements.map((e) => e.toString()).join(', ')})`;
+    return `SQL(${this.elements.map((e) => e.toString()).join('')})`;
   }
 }
 
@@ -713,11 +712,7 @@ export class SQLCall {
   }
 
   toString(): string {
-    let paramsDesc = '';
-    if (this.params.length) {
-      paramsDesc = `, params = ${this.params.join(', ')})`;
-    }
-    return `SQLCall(${this.type}, return = ${this.returnType.toString()}${paramsDesc}`;
+    return `${SQLCallType[this.type]?.toUpperCase()}(${this.params.join(',')})`;
   }
 
   setReturnType(type: ColumnType): this {

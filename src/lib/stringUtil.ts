@@ -30,7 +30,7 @@ function formatDescValue(v: unknown) {
 }
 
 export function desc(obj: unknown, content: unknown, props?: Record<string, unknown>) {
-  const type = toTypeString(obj);
+  const type = typeof obj === 'string' ? obj : toTypeString(obj);
   let propsStr = '';
   if (props) {
     for (const [k, v] of Object.entries(props)) {
