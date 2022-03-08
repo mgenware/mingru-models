@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
-import toTypeString from 'to-type-string';
 import mustBeErr from 'must-be-err';
 import { ActionAttribute } from '../attrs.js';
 import { Table, SQLVariable } from '../core/core.js';
 import * as constants from '../constants.js';
+import * as su from '../lib/stringUtil.js';
 
 export interface TableActionOptions {
   // Make table configurable by an param with the given name.
@@ -123,14 +123,8 @@ export class Action {
   }
 
   toString(): string {
-    const groupTableStr = this.__data.groupTable?.toString() ?? '';
-    let str = `${toTypeString(this)}(${this.__data.name ?? ''}${
-      groupTableStr ? `, ${groupTableStr}` : ''
-    })`;
-    if (this.__data.sqlTable && this.__data.sqlTable !== this.__data.groupTable) {
-      str += `(${this.__data.sqlTable})`;
-    }
-    return str;
+    const d = this.__data;
+    return su.desc(this, d.name, { t: d.groupTable?.toString(), ft: d.sqlTable?.toString() });
   }
 
   // Automatically called by `mm.tableActions` for all the columns it walks through.

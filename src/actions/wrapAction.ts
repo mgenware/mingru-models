@@ -1,5 +1,6 @@
 import { Action, ActionData, ActionType } from './tableActions.js';
 import { Table } from '../core/core.js';
+import * as su from '../lib/stringUtil.js';
 
 // Used to reference an external variable from outer context.
 export class ValueRef {
@@ -22,7 +23,7 @@ export class ValueRef {
   }
 
   toString(): string {
-    return `ValueRef(${this.path})`;
+    return su.desc(this, this.path);
   }
 }
 

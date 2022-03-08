@@ -1,6 +1,6 @@
 import { SelectedColumnAttribute, ColumnAttribute } from '../attrs.js';
 import * as su from '../lib/stringUtil.js';
-import { throwOnEmptyArray } from '../lib/arrayUtil.js';
+import * as au from '../lib/arrayUtil.js';
 
 export class ColumnType {
   types: string[];
@@ -14,13 +14,32 @@ export class ColumnType {
 
   constructor(types: string | string[]) {
     if (Array.isArray(types)) {
-      throwOnEmptyArray(types, 'types');
+      au.throwOnEmptyArray(types, 'types');
     }
     this.types = typeof types === 'string' ? [types] : types;
   }
 
-  toString(): string {
-    return `ColType(${this.types.join(', ')})`;
+  toString() {
+    let s = this.types.join(',');
+    if (this.length) {
+      s += `(${this.length})`;
+    }
+    if (this.pk) {
+      s += '[pk]';
+    }
+    if (this.nullable) {
+      s += '[nullable]';
+    }
+    if (this.unsigned) {
+      s += '[unsigned]';
+    }
+    if (this.autoIncrement) {
+      s += '[ai]';
+    }
+    if (this.extraLength) {
+      s += `[el:${this.extraLength}]`;
+    }
+    return s;
   }
 }
 
@@ -234,16 +253,11 @@ export class Column {
 
   toString(): string {
     const d = this.#data;
-    let name = d.propertyName ?? '';
-    const { dbName, modelName } = d;
-    if (dbName && dbName !== name) {
-      name += `|${dbName}`;
-    }
-    if (modelName && modelName !== name) {
-      name += `|${modelName}`;
-    }
-    const tableStr = d.table?.toString() ?? '';
-    return `Column(${name}${tableStr ? `, ${tableStr}` : ''})`;
+    return su.desc(this, d.propertyName, {
+      db: d.dbName,
+      modelName: d.modelName,
+      t: d.table?.toString(),
+    });
   }
 
   join<T extends Table>(
@@ -406,11 +420,7 @@ export class Table {
   }
 
   toString(): string {
-    let { name } = this.__data;
-    if (name !== this.__getDBName()) {
-      name += `|${this.__getDBName()}`;
-    }
-    return `Table(${name})`;
+    return su.desc(this, this.__data.name, { db: this.__data.dbName });
   }
 
   // Called by `mm.table`.
@@ -510,7 +520,7 @@ export class JoinTable {
   }
 
   toString(): string {
-    return this.keyPath;
+    return su.desc(this, this.keyPath);
   }
 }
 
@@ -565,7 +575,7 @@ export class SQLVariable {
     } else {
       desc = JSON.stringify(type);
     }
-    let s = `SQLVar(${this.name}, desc = ${desc})`;
+    let s = `SQLVar(${this.name}, desc=${desc})`;
     if (this.nullable) {
       s += '?';
     }
@@ -655,7 +665,7 @@ export class SelectedColumn {
   }
 
   toString(): string {
-    return `SelectedColumn(${this.data.selectedName}, core = ${this.data.core})`;
+    return su.desc(this, this.data.selectedName, { core: this.data.core?.toString() });
   }
 }
 
