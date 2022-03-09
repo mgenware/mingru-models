@@ -5,14 +5,14 @@ import { eq } from '../assert-aliases.js';
 it('and', () => {
   eq(
     mm.and(mm.sql`1`, user.id.isEqualToInput()).toString(),
-    'SQL(E((, type = 0), E(1, type = 0), E( AND , type = 0), E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2), E(), type = 0))',
+    '`(1 AND Column(id, t=User(user)) = VAR(Column(id, t=User(user))))`',
   );
 });
 
 it('or', () => {
   eq(
     mm.or(mm.sql`1`, user.id.isEqualToInput()).toString(),
-    'SQL(E((, type = 0), E(1, type = 0), E( OR , type = 0), E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2), E(), type = 0))',
+    '`(1 OR Column(id, t=User(user)) = VAR(Column(id, t=User(user))))`',
   );
 });
 
@@ -38,91 +38,61 @@ it('toArrayInput(string)', () => {
 
 it('isEqualTo', () => {
   const sql = user.name.isEqualToSQL(mm.sql`"haha"`);
-  eq(
-    sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( = , type = 0), E("haha", type = 0))',
-  );
+  eq(sql.toString(), '`Column(name, t=User(user)) = "haha"`');
   const sql2 = user.name.isEqualTo`"haha"`;
-  eq(
-    sql2.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( = , type = 0), E("haha", type = 0))',
-  );
+  eq(sql2.toString(), '`Column(name, t=User(user)) = "haha"`');
 });
 
 it('isEqualToInput', () => {
   const sql = user.name.isEqualToInput();
-  eq(
-    sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
-  );
+  eq(sql.toString(), '`Column(name, t=User(user)) = VAR(Column(name, t=User(user)))`');
 });
 
 it('isEqualToInput(string)', () => {
   const sql = user.name.isEqualToInput('haha');
-  eq(
-    sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(haha, desc = Column(name, Table(user))), type = 2))',
-  );
+  eq(sql.toString(), '`Column(name, t=User(user)) = VAR(Column(name, t=User(user)), name=haha)`');
 });
 
 it('isNotEqualTo', () => {
   const sql = user.name.isNotEqualToSQL(mm.sql`"haha"`);
-  eq(
-    sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( <> , type = 0), E("haha", type = 0))',
-  );
+  eq(sql.toString(), '`Column(name, t=User(user)) <> "haha"`');
 
   const sql2 = user.name.isNotEqualTo`"haha"`;
-  eq(
-    sql2.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( <> , type = 0), E("haha", type = 0))',
-  );
+  eq(sql2.toString(), '`Column(name, t=User(user)) <> "haha"`');
 });
 
 it('isNotEqualToInput', () => {
   const sql = user.name.isNotEqualToInput();
-  eq(
-    sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( <> , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
-  );
+  eq(sql.toString(), '`Column(name, t=User(user)) <> VAR(Column(name, t=User(user)))`');
 });
 
 it('isNotEqualToInput(string)', () => {
   const sql = user.name.isNotEqualToInput('haha');
-  eq(
-    sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( <> , type = 0), E(SQLVar(haha, desc = Column(name, Table(user))), type = 2))',
-  );
+  eq(sql.toString(), '`Column(name, t=User(user)) <> VAR(Column(name, t=User(user)), name=haha)`');
 });
 
 it('isNull', () => {
   const sql = user.name.isNull();
-  eq(
-    sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( IS , type = 0), E(NULL, type = 0))',
-  );
+  eq(sql.toString(), '`Column(name, t=User(user)) IS NULL`');
 });
 
 it('isNotNull', () => {
   const sql = user.name.isNotNull();
-  eq(
-    sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( IS NOT , type = 0), E(NULL, type = 0))',
-  );
+  eq(sql.toString(), '`Column(name, t=User(user)) IS NOT NULL`');
 });
 
 it('isInArrayInput(string)', () => {
   const sql = user.name.isInArrayInput('haha');
   eq(
     sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( IN , type = 0), E(SQLVar(haha, desc = Column(name, Table(user)))[], type = 2))',
+    '`Column(name, t=User(user)) IN VAR(Column(name, t=User(user)), name=haha)[]`',
   );
 });
 
 it('scalarType', () => {
   eq(
     new mm.SQLVariable(user.id, 'id', true, undefined, true).scalarVariable(false).toString(),
-    'SQLVar(id, desc = Column(id, Table(user)))[]',
+    'VAR(Column(id, t=User(user)), name=id)[]',
   );
   eq(
     new mm.SQLVariable(user.id, 'id', true, undefined, true).scalarVariable(true).toString(),
@@ -132,8 +102,5 @@ it('scalarType', () => {
 
 it('SQLConvertible accepts null', () => {
   const sql = user.name.isEqualTo`${null}`;
-  eq(
-    sql.toString(),
-    'SQL(E(Column(name, Table(user)), type = 1), E( = , type = 0), E(NULL, type = 0))',
-  );
+  eq(sql.toString(), '`Column(name, t=User(user)) = NULL`');
 });

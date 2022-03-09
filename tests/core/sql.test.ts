@@ -18,7 +18,7 @@ it('Flatten another SQL', () => {
   const sql = mm.sql`${mm.sql`${mm.sql`${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}`}`}`;
   eq(
     sql.toString(),
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
+    '`Column(id, t=User(user)) = 1 OR Column(name, t=User(user)) = VAR(Column(name, t=User(user)))`',
   );
   ok(sql instanceof mm.SQL);
 });
@@ -27,7 +27,7 @@ it('SQL with input', () => {
   const sql = mm.sql`START${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}END`;
   eq(
     sql.toString(),
-    'SQL(E(START, type = 0), E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2), E(END, type = 0))',
+    '`STARTColumn(id, t=User(user)) = 1 OR Column(name, t=User(user)) = VAR(Column(name, t=User(user)))END`',
   );
 });
 
@@ -64,7 +64,7 @@ it('Input (joined key)', () => {
 it('Raw type input', () => {
   const input = mm.input({ type: 'uint32', defaultValue: 0 }, 'uid');
   deepEq(input.type, { type: 'uint32', defaultValue: 0 });
-  eq(input.toString(), 'SQLVar(uid, desc = {"type":"uint32","defaultValue":0})');
+  eq(input.toString(), 'VAR({"type":"uint32","defaultValue":0}, name=uid)');
 });
 
 it('Empty name for raw type input', () => {
@@ -79,27 +79,24 @@ it('Embed another sql', () => {
   const sql = mm.sql`START${embedded} OR ${user.name} = ${mm.input(user.name)}`;
   eq(
     sql.toString(),
-    'SQL(E(START, type = 0), E(_, type = 0), E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2), E( OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
+    '`START_Column(id, t=User(user)) = VAR(Column(id, t=User(user))) OR Column(name, t=User(user)) = VAR(Column(name, t=User(user)))`',
   );
 });
 
 it('Embed string', () => {
   const sql = mm.sql`${user.id} = ${'123'}`;
-  eq(
-    sql.toString(),
-    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(123, type = 0))',
-  );
+  eq(sql.toString(), '`Column(id, t=User(user)) = 123`');
 });
 
 it('Embed an action', () => {
   const sql = mm.sql`${mm.selectRow(user.id)}`;
-  eq(sql.toString(), 'SQL(E(SelectAction(), type = 5))');
+  eq(sql.toString(), '`SelectAction(-)`');
 });
 
 it('makeSQL', () => {
   const s = mm.sql`haha`;
   eq(mm.convertToSQL(s), s);
-  eq(mm.convertToSQL('haha').toString(), 'SQL(E(haha, type = 0))');
+  eq(mm.convertToSQL('haha').toString(), 'haha');
   eq(mm.convertToSQL(post.user_id).toString(), 'SQL(E(Column(user_id, Table(post)), type = 1))');
   eq(
     mm.convertToSQL(mm.count(post.user_id)).toString(),
@@ -126,7 +123,7 @@ it('SelectedColumn', () => {
   const sql = mm.sql`${user.id} = ${rawCol}`;
   eq(
     sql.toString(),
-    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SelectedColumn(haha, core = Column(id, Table(user))), type = 4))',
+    '`Column(id, t=User(user)) = SelectedColumn(haha, core=Column(id, t=User(user)))`',
   );
 });
 
@@ -140,7 +137,7 @@ it('SQLBuilder', () => {
   const sql = builder.toSQL();
   eq(
     sql.toString(),
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
+    '`Column(id, t=User(user)) = 1 OR Column(name, t=User(user)) = VAR(Column(name, t=User(user)))`',
   );
   ok(sql instanceof mm.SQL);
 });

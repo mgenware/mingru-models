@@ -20,7 +20,7 @@ it('select', () => {
   eq(vd.columns?.length, 2);
   eq(vd.columns?.[0], user.id);
   eq(vd.columns?.[1], user.name);
-  eq(v.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(v.__whereSQLString, '`Column(id, t=User(user)) = 1`');
   eq(vd.mode, mm.SelectActionMode.row);
   eq(vd.actionType, mm.ActionType.select);
   eq(v.toString(), 'SelectAction(t, Table(user))');
@@ -32,8 +32,8 @@ it('where and whereSQL', () => {
     t2 = mm.selectRow(user.id, user.name).where`${user.id} = 1`;
   }
   const ta = mm.tableActions(user, UserTA);
-  eq(ta.t1.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
-  eq(ta.t2.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(ta.t1.__whereSQLString, '`Column(id, t=User(user)) = 1`');
+  eq(ta.t2.__whereSQLString, '`Column(id, t=User(user)) = 1`');
 });
 
 it('Select *', () => {
@@ -104,7 +104,7 @@ it('SelectedColumn (raw SQL)', () => {
   const ad = a.__getData();
   const bd = b.__getData();
   eq(ad.selectedName, 'x');
-  eq(ad.core?.toString(), 'SQL(E(123, type = 0))');
+  eq(ad.core?.toString(), '`123`');
   eq(bd.selectedName, 'y');
   eq(
     bd.core?.toString(),
@@ -116,7 +116,7 @@ it('SelectedColumn (types)', () => {
   const a = new mm.SelectedColumn(mm.sql`123`, 'x', new mm.ColumnType(['t1', 't2']));
   const ad = a.__getData();
   eq(ad.selectedName, 'x');
-  eq(ad.core?.toString(), 'SQL(E(123, type = 0))');
+  eq(ad.core?.toString(), '`123`');
   deepEq(ad.type, new mm.ColumnType(['t1', 't2']));
 });
 
@@ -131,10 +131,7 @@ it('SelectedColumn (count)', () => {
   const cc = vd.columns?.[0] as mm.SelectedColumn;
   const ccd = cc.__getData();
   eq(ccd.selectedName, 'count');
-  eq(
-    ccd.core?.toString(),
-    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, (J|1|post|user)[user_id|id]), type = 1))), type = 3))',
-  );
+  eq(ccd.core?.toString(), '`COUNT(`Column(name, t=JoinTable((J|1|post|user)[user_id|id]))`)`');
 });
 
 it('SelectedColumn (SQLConvertible)', () => {
@@ -145,7 +142,7 @@ it('SelectedColumn (SQLConvertible)', () => {
 
   cc = new mm.SelectedColumn(mm.sql`str`, 't');
   ccd = cc.__getData();
-  eq(ccd.core?.toString(), 'SQL(E(str, type = 0))');
+  eq(ccd.core?.toString(), '`str`');
 
   cc = new mm.SelectedColumn(mm.sql`${mm.count(post.id)}`, 't');
   ccd = cc.__getData();
@@ -159,7 +156,7 @@ it('mm.select (types)', () => {
   const a = mm.sel(mm.sql`123`, 'x', new mm.ColumnType(['t1', 't2']));
   const ad = a.__getData();
   eq(ad.selectedName, 'x');
-  eq(ad.core?.toString(), 'SQL(E(123, type = 0))');
+  eq(ad.core?.toString(), '`123`');
   deepEq(ad.type, new mm.ColumnType(['t1', 't2']));
 });
 
@@ -169,10 +166,7 @@ it('byID', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  eq(
-    v.__whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2))',
-  );
+  eq(v.__whereSQLString, '`Column(id, t=User(user)) = VAR(Column(id, t=User(user)))`');
 });
 
 it('byID with inputName', () => {
@@ -181,10 +175,7 @@ it('byID with inputName', () => {
   }
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
-  eq(
-    v.__whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(haha, desc = Column(id, Table(user))), type = 2))',
-  );
+  eq(v.__whereSQLString, '`Column(id, t=User(user)) = VAR(Column(id, t=User(user)), name=haha)`');
 });
 
 it('by', () => {
@@ -195,7 +186,7 @@ it('by', () => {
   const v = ta.t;
   eq(
     v.__whereSQLString,
-    'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
+    '`Column(snake_case_name, t=User(user)) = VAR(Column(snake_case_name, t=User(user)))`',
   );
 });
 
@@ -208,7 +199,7 @@ it('andBy', () => {
   const ta = mm.tableActions(user, UserTA);
   eq(
     ta.t1.__whereSQLString,
-    'SQL(E((, type = 0), E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2), E(), type = 0))',
+    '`(Column(snake_case_name, t=User(user)) = VAR(Column(snake_case_name, t=User(user))) AND VAR(Column(follower_count, t=User(user))))`',
   );
   eq(
     ta.t2.__whereSQLString,
@@ -289,7 +280,7 @@ it('Validate columns', () => {
       t = mm.selectRows(t.name, 32 as unknown as mm.Column, t.follower_count);
     }
     mm.tableActions(user, UserTA);
-  }, 'The column at index 1 is not valid, got "32", action "SelectAction()" [table "Table(user)"]');
+  }, 'The column at index 1 is not valid, got "32", action "SelectAction(-)" [table "User(user)"]');
 });
 
 it('GROUP BY names', () => {
@@ -306,10 +297,7 @@ it('GROUP BY names', () => {
   const vd = v.__getData();
 
   eq(vd.groupByColumns![0], user.name.__getDBName());
-  eq(
-    vd.havingSQLValue!.toString(),
-    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
-  );
+  eq(vd.havingSQLValue!.toString(), '`COUNT(`Column(name, t=User(user))`) > 2`');
 });
 
 it('HAVING', () => {
@@ -329,10 +317,7 @@ it('HAVING', () => {
   const vd = v.__getData();
 
   eq(vd.groupByColumns![0], user.name.__getDBName());
-  eq(
-    vd.havingSQLValue!.toString(),
-    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
-  );
+  eq(vd.havingSQLValue!.toString(), '`COUNT(`Column(name, t=User(user))`) > 2`');
   eq(
     ta.t2.__getData().havingSQLValue!.toString(),
     'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
@@ -385,7 +370,7 @@ it('LIMIT and OFFSET (custom value)', () => {
   const ta = mm.tableActions(user, UserTA);
   const vd = ta.t.__getData();
   eq(vd.paginationMode === mm.SelectActionPaginationMode.limitOffset, true);
-  eq(vd.limitValue?.toString(), 'SQLVar(limit, desc = Column())');
+  eq(vd.limitValue?.toString(), 'VAR(Column(-), name=limit)');
   eq(vd.offsetValue, 12);
 });
 
@@ -397,7 +382,7 @@ it('Throw when paginate is called on non-list mode', () => {
       t = mm.selectField(t.name).paginate();
     }
     mm.tableActions(user, UserTA);
-  }, '`paginationMode` can only be set for `.rowList` and `.fieldList` modes [table "Table(user)"]');
+  }, '`paginationMode` can only be set for `.rowList` and `.fieldList` modes [table "User(user)"]');
 });
 
 it('Throw on selecting collection without ORDER BY', () => {
@@ -431,7 +416,7 @@ it('Throw on selecting collection without ORDER BY', () => {
       t = mm.selectRows(t.name);
     }
     mm.tableActions(user, UserTA);
-  }, 'An ORDER BY clause is required when selecting multiple rows [action "t"] [table "Table(user)"]');
+  }, 'An ORDER BY clause is required when selecting multiple rows [action "t"] [table "User(user)"]');
   assert.doesNotThrow(() => {
     class UserTA extends mm.TableActions {
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -444,7 +429,7 @@ it('Throw on selecting collection without ORDER BY', () => {
       t = mm.selectRows(t.name).paginate();
     }
     mm.tableActions(user, UserTA);
-  }, 'An ORDER BY clause is required when selecting multiple rows [action "t"] [table "Table(user)"]');
+  }, 'An ORDER BY clause is required when selecting multiple rows [action "t"] [table "User(user)"]');
 });
 
 it('Set action.__table via from()', () => {
@@ -473,10 +458,7 @@ it('Subquery', () => {
       .from(user)}`}`;
   }
   const ta = mm.tableActions(post, PostTA);
-  eq(
-    ta.t.__whereSQLString,
-    'SQL(E(Column(user_id, Table(post)), type = 1), E( = , type = 0), E(SelectAction()(Table(user)), type = 5))',
-  );
+  eq(ta.t.__whereSQLString, '`Column(user_id, t=Post(post)) = SelectAction(-, ft=User(user))`');
 });
 
 it('Select DISTINCT', () => {

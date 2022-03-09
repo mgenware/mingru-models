@@ -607,7 +607,7 @@ export class SQL {
   constructor(public elements: ReadonlyArray<SQLElement>) {}
 
   toString(): string {
-    return `SQL(${this.elements.map((e) => e.toString()).join('')})`;
+    return `\`${this.elements.map((e) => e.toString()).join('')}\``;
   }
 }
 

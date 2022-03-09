@@ -10,7 +10,7 @@ it('Core props', () => {
   eq(d.dbName, undefined);
   eq(user.__getDBName(), 'user');
   eq(user.__getModelName(), 'user');
-  eq(user.toString(), 'Table(user)');
+  eq(user.toString(), 'User(user)');
   eq(d.virtualTable, false);
 
   class MyTable extends mm.Table {

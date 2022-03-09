@@ -107,7 +107,7 @@ it('SQL calls', () => {
 it('Embeded in SQL', () => {
   eq(
     mm.sql`haha ${mm.localDatetimeNow()} ${mm.localDateNow()}`.toString(),
-    'SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(SQL.DATE), type = 3))',
+    '`haha LOCALDATETIMENOW() LOCALDATENOW()`',
   );
   eq(
     mm.sql`haha ${mm.sqlCall(
@@ -126,14 +126,8 @@ it('setReturnType', () => {
 
 it('SQLCall.toColumn', () => {
   const c1 = new mm.SelectedColumn(mm.sql`${mm.utcDateNow()}`, 'd');
-  eq(
-    c1.toString(),
-    'SelectedColumn(d, core = SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3)))',
-  );
+  eq(c1.toString(), 'SelectedColumn(d, core=`UTCDATENOW()`)');
 
   const c2 = mm.utcDateNow().toColumn('d');
-  eq(
-    c2.toString(),
-    'SelectedColumn(d, core = SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3)))',
-  );
+  eq(c2.toString(), 'SelectedColumn(d, core=`UTCDATENOW()`)');
 });

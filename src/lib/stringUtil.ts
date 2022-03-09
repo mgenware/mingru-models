@@ -39,6 +39,13 @@ export function desc(obj: unknown, content: unknown, props?: Record<string, unkn
       }
     }
   }
-  const contentStr = content === '' ? '-' : `${content}`;
+  let contentStr: string;
+  if (content === undefined) {
+    contentStr = '-';
+  } else if (content === '') {
+    contentStr = '""';
+  } else {
+    contentStr = `${content}`;
+  }
   return `${type}(${contentStr}${propsStr})`;
 }

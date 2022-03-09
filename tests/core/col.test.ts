@@ -17,7 +17,7 @@ it('Normal col', () => {
   const d = post.id.__getData();
   eq(d.propertyName, 'id');
   eq(d.table, post);
-  eq(post.id.toString(), 'Column(id, Table(post))');
+  eq(post.id.toString(), 'Column(id, t=Post(post))');
 });
 
 it('Implicit FK', () => {
@@ -175,7 +175,7 @@ class JCTable extends mm.Table {
 it('JoinedColumn in table def', () => {
   itThrows(
     () => mm.table(JCTable),
-    'Unexpected table type "Column(name, (J|1|post|user)[user_id|id])". You should not use JoinedColumn in a table definition, JoinedColumn can only be used in SELECT actions. [column "jc"] [table "jc_table"]',
+    'Unexpected table type "Column(name, t=JoinTable((J|1|post|user)[user_id|id]))". You should not use JoinedColumn in a table definition, JoinedColumn can only be used in SELECT actions. [column "jc"] [table "jc_table"]',
   );
 });
 
@@ -191,7 +191,7 @@ it('Column.mustGet', () => {
   const v = t.id;
   eq(v.__mustGetTable(), t);
   eq(v.__mustGetPropertyName(), 'id');
-  itThrows(() => mm.pk().__mustGetPropertyName(), 'Column "Column()" doesn\'t have a name');
+  itThrows(() => mm.pk().__mustGetPropertyName(), 'Column "Column(-)" doesn\'t have a name');
 });
 
 it('Column.attr n SelectedColumn.attr', () => {

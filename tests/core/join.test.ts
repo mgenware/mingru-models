@@ -123,7 +123,7 @@ it('Join with multiple keys and an extra SQL', () => {
   ]);
   eq(
     (jc.__getData().table as mm.JoinTable).extraSQL?.toString(),
-    'SQL(E(Column(follower_count, (J|1|post|user)[title|name][user_id|id][snake_case_user_id|id]), type = 1), E( = 2, type = 0))',
+    '`Column(follower_count, t=JoinTable((J|1|post|user)[title|name][user_id|id][snake_case_user_id|id])) = 2`',
   );
 });
 
