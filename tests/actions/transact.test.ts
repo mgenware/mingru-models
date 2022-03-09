@@ -24,7 +24,7 @@ it('Transact', () => {
   eq(vd.actionType, mm.ActionType.transact);
   ok(v instanceof mm.TransactAction);
   ok(v instanceof mm.Action);
-  eq(v.toString(), 'TransactAction(batch, Table(post))');
+  eq(v.toString(), 'TransactAction(batch, t=Post(post))');
 
   v = postTA.batch2;
   vd = v.__getData();

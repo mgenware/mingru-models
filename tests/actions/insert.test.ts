@@ -19,9 +19,9 @@ it('Insert', () => {
   ok(v instanceof mm.CoreUpdateAction);
   eq(
     v.__settersToString(),
-    'title: SQL(E(SQLVar(undefined, desc = Column(title, Table(post))), type = 2)), snake_case_user_id: SQL(E(SQLVar(undefined, desc = Column(snake_case_user_id, Table(post))), type = 2))',
+    'title: `VAR(Column(title, t=Post(post)))`, snake_case_user_id: `VAR(Column(snake_case_user_id, t=Post(post)))`',
   );
-  eq(v.toString(), 'InsertAction(t, Table(post))');
+  eq(v.toString(), 'InsertAction(t, t=Post(post))');
 });
 
 it('Insert one', () => {
@@ -66,11 +66,8 @@ it('SQLConvertible value', () => {
   const v = ta.t;
   const vd = v.__getData();
 
-  deepEq(
-    vd.setters,
-    new Map<mm.Column, unknown>([[post.title, mm.sql`${mm.localDateNow()}`]]),
-  );
-  eq(`${vd.setters!.get(post.title)}`, 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
+  deepEq(vd.setters, new Map<mm.Column, unknown>([[post.title, mm.sql`${mm.localDateNow()}`]]));
+  eq(`${vd.setters!.get(post.title)}`, '`LOCALDATENOW()`');
 });
 
 it('No setters', () => {
@@ -79,7 +76,7 @@ it('No setters', () => {
       t = mm.insert();
     }
     mm.tableActions(post, PostTA);
-  }, 'No setters [action "t"] [table "Table(post)"]');
+  }, 'No setters [action "t"] [table "Post(post)"]');
 });
 
 it('Column number check', () => {
@@ -88,7 +85,7 @@ it('Column number check', () => {
       t = mm.insert().setInputs(post.e_user_id);
     }
     mm.tableActions(post, PostTA);
-  }, 'You only set 1 of all 5 columns (not including AUTO_INCREMENT columns), you should set all columns or use `unsafeInsert` to bypass this check [action "t"] [table "Table(post)"]');
+  }, 'You only set 1 of all 5 columns (not including AUTO_INCREMENT columns), you should set all columns or use `unsafeInsert` to bypass this check [action "t"] [table "Post(post)"]');
   assert.doesNotThrow(() => {
     class PostTA extends mm.TableActions {
       t = mm.insert().setInputs();

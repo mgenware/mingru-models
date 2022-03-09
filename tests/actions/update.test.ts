@@ -21,16 +21,16 @@ it('Update', () => {
   ok(v instanceof mm.UpdateAction);
   ok(v instanceof mm.CoreUpdateAction);
   ok(v instanceof mm.Action);
-  eq(v.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(v.__whereSQLString, '`Column(id, t=User(user)) = 1`');
   eq(vd.setters?.size, 2);
-  eq(v.toString(), 'UpdateAction(t, Table(user))');
+  eq(v.toString(), 'UpdateAction(t, t=User(user))');
 
   // extra props
   eq(vd.ensureOneRowAffected, false);
   eq(vd.unsafeMode, false);
   eq(
     v.__settersToString(),
-    'name: SQL(E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2)), follower_count: SQL(E(Column(follower_count, Table(user)), type = 1), E( + 1, type = 0))',
+    'name: `VAR(Column(name, t=User(user)))`, follower_count: `Column(follower_count, t=User(user)) + 1`',
   );
 });
 
@@ -43,7 +43,7 @@ it('Order of setInputs and set', () => {
 
   eq(
     v.__settersToString(),
-    'snake_case_name: SQL(E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2)), name: SQL(E(SQLVar(b, desc = Column(name, Table(user))), type = 2))',
+    'snake_case_name: `VAR(Column(snake_case_name, t=User(user)))`, name: `VAR(Column(name, t=User(user)), name=b)`',
   );
 });
 
@@ -56,7 +56,7 @@ it('setInputs and setDefaults', () => {
 
   eq(
     v.__settersToString(),
-    'def_value: abc, snake_case_name: SQL(E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
+    'def_value: abc, snake_case_name: `VAR(Column(snake_case_name, t=User(user)))`',
   );
 });
 
@@ -73,7 +73,7 @@ it('setInputs with no args', () => {
 
   eq(
     v.__settersToString(),
-    'def_value: abc, snake_case_name: SQL(E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
+    'def_value: abc, snake_case_name: `VAR(Column(snake_case_name, t=User(user)))`',
   );
   deepEq([...v.__getData().autoSetters!], [mm.AutoSetterType.input]);
 });
@@ -91,7 +91,7 @@ it('setDefaults with no args', () => {
 
   eq(
     v.__settersToString(),
-    'def_value: abc, snake_case_name: SQL(E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
+    'def_value: abc, snake_case_name: `VAR(Column(snake_case_name, t=User(user)))`',
   );
   deepEq([...v.__getData().autoSetters!], [mm.AutoSetterType.default]);
 });
@@ -131,7 +131,7 @@ it('Set same column twice', () => {
   }
   itThrows(
     () => mm.tableActions(user, UserTA),
-    'Column "Column(name, Table(user))" is already set [table "Table(user)"]',
+    'Column "Column(name, t=User(user))" is already set [table "User(user)"]',
   );
 });
 
@@ -152,7 +152,7 @@ it('updateOne', () => {
       t = mm.updateOne().setInputs(user.snake_case_name);
     }
     mm.tableActions(user, TA);
-  }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"] [table "Table(user)"]');
+  }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"] [table "User(user)"]');
 });
 
 it('updateSome', () => {
@@ -172,7 +172,7 @@ it('updateSome', () => {
       t = mm.updateSome().setInputs(user.snake_case_name);
     }
     mm.tableActions(user, TA);
-  }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"] [table "Table(user)"]');
+  }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"] [table "User(user)"]');
 });
 
 it('unsafeUpdateAll', () => {
@@ -195,10 +195,7 @@ it('ByID', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  eq(
-    v.__whereSQLString,
-    'SQL(E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2))',
-  );
+  eq(v.__whereSQLString, '`Column(id, t=User(user)) = VAR(Column(id, t=User(user)))`');
 });
 
 it('SQLConvertible value', () => {
@@ -209,7 +206,7 @@ it('SQLConvertible value', () => {
   const v = ta.t;
   const vd = v.__getData();
 
-  eq(`${vd.setters?.get(user.name)}`, 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
+  eq(`${vd.setters?.get(user.name)}`, '`LOCALDATENOW()`');
 });
 
 it('No setters', () => {
@@ -218,7 +215,7 @@ it('No setters', () => {
       t = mm.unsafeUpdateAll();
     }
     mm.tableActions(user, UserTA);
-  }, 'No setters [action "t"] [table "Table(user)"]');
+  }, 'No setters [action "t"] [table "User(user)"]');
   assert.doesNotThrow(() => {
     class UserTA extends mm.TableActions {
       t = mm.unsafeUpdateAll().setInputs();
@@ -241,7 +238,7 @@ it('by', () => {
   const v = ta.t;
   eq(
     v.__whereSQLString,
-    'SQL(E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2))',
+    '`Column(snake_case_name, t=User(user)) = VAR(Column(snake_case_name, t=User(user)))`',
   );
 });
 
@@ -255,15 +252,12 @@ it('andBy', () => {
   const ta = mm.tableActions(user, UserTA);
   eq(
     ta.t1.__whereSQLString,
-    'SQL(E((, type = 0), E(Column(snake_case_name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(snake_case_name, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2), E(), type = 0))',
+    '`(Column(snake_case_name, t=User(user)) = VAR(Column(snake_case_name, t=User(user))) AND VAR(Column(follower_count, t=User(user))))`',
   );
-  eq(
-    ta.t2.__whereSQLString,
-    'SQL(E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2))',
-  );
+  eq(ta.t2.__whereSQLString, '`VAR(Column(follower_count, t=User(user)))`');
   eq(
     ta.t3.__whereSQLString,
-    'SQL(E((, type = 0), E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2), E(), type = 0))',
+    '`(Column(id, t=User(user)) = VAR(Column(id, t=User(user))) AND VAR(Column(follower_count, t=User(user))))`',
   );
 });
 
@@ -277,8 +271,8 @@ it('where and whereSQL', () => {
     t2 = mm.updateOne().set(user.name, user.name.toInput()).where`${user.id} = 1`;
   }
   const ta = mm.tableActions(user, UserTA);
-  eq(ta.t1.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
-  eq(ta.t2.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(ta.t1.__whereSQLString, '`Column(id, t=User(user)) = 1`');
+  eq(ta.t2.__whereSQLString, '`Column(id, t=User(user)) = 1`');
 });
 
 it('addAssign', () => {
@@ -291,10 +285,7 @@ it('addAssign', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  eq(
-    v.__settersToString(),
-    'follower_count: SQL(E(Column(follower_count, Table(user)), type = 1), E( + , type = 0), E(1, type = 0))',
-  );
+  eq(v.__settersToString(), 'follower_count: `Column(follower_count, t=User(user)) + 1`');
 });
 
 it('subAssign', () => {
@@ -307,8 +298,5 @@ it('subAssign', () => {
   const ta = mm.tableActions(user, UserTA);
   const v = ta.t;
 
-  eq(
-    v.__settersToString(),
-    'follower_count: SQL(E(Column(follower_count, Table(user)), type = 1), E( - , type = 0), E(1, type = 0))',
-  );
+  eq(v.__settersToString(), 'follower_count: `Column(follower_count, t=User(user)) - 1`');
 });

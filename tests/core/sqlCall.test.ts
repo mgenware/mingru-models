@@ -114,7 +114,7 @@ it('Embeded in SQL', () => {
       mm.SQLCallType.localDatetimeNow,
       new mm.ColumnType('c1'),
     )} ${mm.sqlCall(mm.SQLCallType.localDateNow, new mm.ColumnType('c2'))}`.toString(),
-    'SQL(E(haha , type = 0), E(SQLCall(0, return = ColType(c1), type = 3), E( , type = 0), E(SQLCall(1, return = ColType(c2), type = 3))',
+    '`haha LOCALDATETIMENOW() LOCALDATENOW()`',
   );
 });
 

@@ -14,9 +14,9 @@ it('DeleteAction', () => {
   ok(v instanceof mm.DeleteAction);
   ok(v instanceof mm.CoreSelectAction);
   ok(v instanceof mm.Action);
-  eq(v.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(v.__whereSQLString, '`Column(id, t=User(user)) = 1`');
   eq(vd.actionType, mm.ActionType.delete);
-  eq(v.toString(), 'DeleteAction(t, Table(user))');
+  eq(v.toString(), 'DeleteAction(t, t=User(user))');
 });
 
 it('deleteOne', () => {
@@ -37,7 +37,7 @@ it('deleteOne', () => {
       t = mm.deleteOne();
     }
     mm.tableActions(user, TA);
-  }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"] [table "Table(user)"]');
+  }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"] [table "User(user)"]');
 });
 
 it('deleteSome', () => {
@@ -58,7 +58,7 @@ it('deleteSome', () => {
       t = mm.deleteSome();
     }
     mm.tableActions(user, TA);
-  }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"] [table "Table(user)"]');
+  }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"] [table "User(user)"]');
 });
 
 it('unsafeDeleteAll', () => {
@@ -81,6 +81,6 @@ it('where and whereSQL', () => {
     t2 = mm.deleteOne().where`${user.id} = 1`;
   }
   const ta = mm.tableActions(user, UserTA);
-  eq(ta.t1.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
-  eq(ta.t2.__whereSQLString, 'SQL(E(Column(id, Table(user)), type = 1), E( = 1, type = 0))');
+  eq(ta.t1.__whereSQLString, '`Column(id, t=User(user)) = 1`');
+  eq(ta.t2.__whereSQLString, '`Column(id, t=User(user)) = 1`');
 });

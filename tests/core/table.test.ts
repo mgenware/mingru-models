@@ -22,7 +22,7 @@ it('Core props', () => {
   eq(d2.dbName, 'my_table');
   eq(myTable.__getDBName(), 'my_table');
   eq(myTable.__getModelName(), 'my_table');
-  eq(myTable.toString(), 'Table(my_table)');
+  eq(myTable.toString(), 'MyTable(my_table, db=my_table)');
 });
 
 it('enumerateColumns', () => {

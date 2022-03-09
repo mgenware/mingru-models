@@ -96,7 +96,7 @@ it('scalarType', () => {
   );
   eq(
     new mm.SQLVariable(user.id, 'id', true, undefined, true).scalarVariable(true).toString(),
-    'SQLVar(id, desc = Column(id, Table(user)))',
+    'VAR(Column(id, t=User(user)), name=id)',
   );
 });
 

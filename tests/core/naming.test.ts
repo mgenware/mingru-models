@@ -24,7 +24,7 @@ it('Table name and getDBName', () => {
   eq(defTable.__getData().name, 'def_table');
   eq(defTable.__getData().dbName, 't');
   eq(defTable.__getDBName(), 't');
-  eq(defTable.toString(), 'Table(def_table|t)');
+  eq(defTable.toString(), 'DEFTable(def_table, db=t)');
   eq(abcTable.StatusString.__getData().propertyName, 'status_string');
   eq(abcTable.statusType.__getData().propertyName, 'status_type');
   eq(abcTable.statusID.__getData().propertyName, 'status_id');
@@ -42,5 +42,5 @@ it('Rename a FK', () => {
   eq(abcTable.uid3.__getData().dbName, 'UID3');
   eq(abcTable.uid3.__getDBName(), 'UID3');
   eq(abcTable.uid3.__getData().modelName, 'ModelNAME');
-  eq(abcTable.uid3.toString(), 'Column(uid3|UID3|ModelNAME, Table(abc_table))');
+  eq(abcTable.uid3.toString(), 'Column(uid3, db=UID3, modelName=ModelNAME, t=ABCTable(abc_table))');
 });

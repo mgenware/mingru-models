@@ -175,16 +175,10 @@ it('datetime', () => {
   ok(c.__type().types.includes(mm.dt.datetime));
 
   c = mm.datetime({ defaultToNow: 'local' });
-  eq(
-    `${c.__getData().defaultValue}`,
-    'SQL(E(SQLCall(0, return = ColType(SQL.DATETIME), type = 3))',
-  );
+  eq(`${c.__getData().defaultValue}`, '`LOCALDATETIMENOW()`');
 
   c = mm.datetime({ defaultToNow: 'utc' });
-  eq(
-    `${c.__getData().defaultValue}`,
-    'SQL(E(SQLCall(16, return = ColType(SQL.DATETIME), type = 3))',
-  );
+  eq(`${c.__getData().defaultValue}`, '`UTCDATETIMENOW()`');
 
   c = mm.datetime({ fsp: 4 });
   eq(c.__getData().type.length, 4);
@@ -195,10 +189,10 @@ it('date', () => {
   ok(c.__type().types.includes(mm.dt.date));
 
   c = mm.date({ defaultToNow: 'local' });
-  eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(1, return = ColType(SQL.DATE), type = 3))');
+  eq(`${c.__getData().defaultValue}`, '`LOCALDATENOW()`');
 
   c = mm.date({ defaultToNow: 'utc' });
-  eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(17, return = ColType(SQL.DATE), type = 3))');
+  eq(`${c.__getData().defaultValue}`, '`UTCDATENOW()`');
 
   c = mm.date({ fsp: 4 });
   eq(c.__getData().type.length, 4);
@@ -209,10 +203,10 @@ it('time', () => {
   ok(c.__type().types.includes(mm.dt.time));
 
   c = mm.time({ defaultToNow: 'local' });
-  eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(2, return = ColType(SQL.TIME), type = 3))');
+  eq(`${c.__getData().defaultValue}`, '`LOCALTIMENOW()`');
 
   c = mm.time({ defaultToNow: 'utc' });
-  eq(`${c.__getData().defaultValue}`, 'SQL(E(SQLCall(18, return = ColType(SQL.TIME), type = 3))');
+  eq(`${c.__getData().defaultValue}`, '`UTCTIMENOW()`');
 
   c = mm.time({ fsp: 4 });
   eq(c.__getData().type.length, 4);
@@ -223,10 +217,7 @@ it('timestamp', () => {
   ok(c.__type().types.includes(mm.dt.timestamp));
 
   c = mm.timestamp({ defaultToNow: 'utc' });
-  eq(
-    `${c.__getData().defaultValue}`,
-    'SQL(E(SQLCall(19, return = ColType(SQL.TIMESTAMP), type = 3))',
-  );
+  eq(`${c.__getData().defaultValue}`, '`TIMESTAMPNOW()`');
 
   c = mm.timestamp({ fsp: 4 });
   eq(c.__getData().type.length, 4);

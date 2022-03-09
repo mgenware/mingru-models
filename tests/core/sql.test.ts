@@ -9,7 +9,7 @@ it('SQL', () => {
   const sql = mm.sql`${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}`;
   eq(
     sql.toString(),
-    'SQL(E(Column(id, Table(user)), type = 1), E( = 1 OR , type = 0), E(Column(name, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(name, Table(user))), type = 2))',
+    '`Column(id, t=User(user)) = 1 OR Column(name, t=User(user)) = VAR(Column(name, t=User(user)))`',
   );
   ok(sql instanceof mm.SQL);
 });
@@ -96,11 +96,11 @@ it('Embed an action', () => {
 it('makeSQL', () => {
   const s = mm.sql`haha`;
   eq(mm.convertToSQL(s), s);
-  eq(mm.convertToSQL('haha').toString(), 'haha');
-  eq(mm.convertToSQL(post.user_id).toString(), 'SQL(E(Column(user_id, Table(post)), type = 1))');
+  eq(mm.convertToSQL('haha').toString(), '`haha`');
+  eq(mm.convertToSQL(post.user_id).toString(), '`Column(user_id, t=Post(post))`');
   eq(
     mm.convertToSQL(mm.count(post.user_id)).toString(),
-    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(user_id, Table(post)), type = 1))), type = 3))',
+    '`COUNT(`Column(user_id, t=Post(post))`)`',
   );
 });
 

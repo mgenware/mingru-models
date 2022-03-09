@@ -23,7 +23,7 @@ it('select', () => {
   eq(v.__whereSQLString, '`Column(id, t=User(user)) = 1`');
   eq(vd.mode, mm.SelectActionMode.row);
   eq(vd.actionType, mm.ActionType.select);
-  eq(v.toString(), 'SelectAction(t, Table(user))');
+  eq(v.toString(), 'SelectAction(t, t=User(user))');
 });
 
 it('where and whereSQL', () => {
@@ -106,10 +106,7 @@ it('SelectedColumn (raw SQL)', () => {
   eq(ad.selectedName, 'x');
   eq(ad.core?.toString(), '`123`');
   eq(bd.selectedName, 'y');
-  eq(
-    bd.core?.toString(),
-    'SQL(E(COUNT(, type = 0), E(Column(name, Table(user)), type = 1), E(), type = 0))',
-  );
+  eq(bd.core?.toString(), '`COUNT(Column(name, t=User(user)))`');
 });
 
 it('SelectedColumn (types)', () => {
@@ -146,10 +143,7 @@ it('SelectedColumn (SQLConvertible)', () => {
 
   cc = new mm.SelectedColumn(mm.sql`${mm.count(post.id)}`, 't');
   ccd = cc.__getData();
-  eq(
-    ccd.core?.toString(),
-    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(id, Table(post)), type = 1))), type = 3))',
-  );
+  eq(ccd.core?.toString(), '`COUNT(`Column(id, t=Post(post))`)`');
 });
 
 it('mm.select (types)', () => {
@@ -201,13 +195,10 @@ it('andBy', () => {
     ta.t1.__whereSQLString,
     '`(Column(snake_case_name, t=User(user)) = VAR(Column(snake_case_name, t=User(user))) AND VAR(Column(follower_count, t=User(user))))`',
   );
-  eq(
-    ta.t2.__whereSQLString,
-    'SQL(E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2))',
-  );
+  eq(ta.t2.__whereSQLString, '`VAR(Column(follower_count, t=User(user)))`');
   eq(
     ta.t3.__whereSQLString,
-    'SQL(E((, type = 0), E(Column(id, Table(user)), type = 1), E( = , type = 0), E(SQLVar(undefined, desc = Column(id, Table(user))), type = 2), E( AND , type = 0), E(SQLVar(undefined, desc = Column(follower_count, Table(user))), type = 2), E(), type = 0))',
+    '`(Column(id, t=User(user)) = VAR(Column(id, t=User(user))) AND VAR(Column(follower_count, t=User(user))))`',
   );
 });
 
@@ -318,10 +309,7 @@ it('HAVING', () => {
 
   eq(vd.groupByColumns![0], user.name.__getDBName());
   eq(vd.havingSQLValue!.toString(), '`COUNT(`Column(name, t=User(user))`) > 2`');
-  eq(
-    ta.t2.__getData().havingSQLValue!.toString(),
-    'SQL(E(SQLCall(3, return = ColType(SQL.INT), params = SQL(E(Column(name, Table(user)), type = 1))), type = 3), E( > 2, type = 0))',
-  );
+  eq(ta.t2.__getData().havingSQLValue!.toString(), '`COUNT(`Column(name, t=User(user))`) > 2`');
 });
 
 it('Pagination', () => {
