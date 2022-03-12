@@ -1,5 +1,5 @@
 import { Action } from './tableActions.js';
-import { WrapAction, ValueRef, WrapArgValue } from './wrapAction.js';
+import { WrapAction, CapturedVar, WrapArgValue } from './wrapAction.js';
 import { TransactionMember } from './transactAction.js';
 import { ReturnValues } from '../returnValues.js';
 
@@ -45,9 +45,9 @@ Action.prototype.declareInsertedID = function (value: string): TransactionMember
 };
 
 Action.prototype.wrapAsRefs = function (args: { [name: string]: string }): WrapAction {
-  const converted: { [name: string]: ValueRef } = {};
+  const converted: { [name: string]: CapturedVar } = {};
   for (const [k, v] of Object.entries(args)) {
-    converted[k] = new ValueRef(v);
+    converted[k] = new CapturedVar(v);
   }
   return this.wrap(converted);
 };

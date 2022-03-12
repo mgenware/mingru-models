@@ -148,12 +148,12 @@ it('Inline WRAP actions (with from)', () => {
 });
 
 it('ValueRef', () => {
-  const v = new mm.ValueRef('a');
+  const v = new mm.CapturedVar('a');
   eq(v.firstName, 'a');
 });
 
 it('mm.valueRef', () => {
-  const v = mm.valueRef('a');
+  const v = mm.captureVar('a');
   eq(v.firstName, 'a');
 });
 
@@ -165,7 +165,7 @@ it('wrapAsRefs', () => {
   const v = ta.t;
   const vd = v.__getData();
   deepEq(vd.args, {
-    id: new mm.ValueRef('23'),
-    id2: new mm.ValueRef('abc'),
+    id: new mm.CapturedVar('23'),
+    id2: new mm.CapturedVar('abc'),
   });
 });

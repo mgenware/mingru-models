@@ -2,8 +2,8 @@ import { Action, ActionData, ActionType } from './tableActions.js';
 import { Table } from '../core/core.js';
 import * as su from '../lib/stringUtil.js';
 
-// Used to reference an external variable from outer context.
-export class ValueRef {
+// Capture a variable from outer scope.
+export class CapturedVar {
   // Returns the first variable name if `this.path` contains property access.
   readonly firstName: string;
   readonly hasPropertyAccess: boolean;
@@ -27,8 +27,8 @@ export class ValueRef {
   }
 }
 
-export function valueRef(name: string): ValueRef {
-  return new ValueRef(name);
+export function captureVar(name: string): CapturedVar {
+  return new CapturedVar(name);
 }
 
 export class RenameArg {
@@ -39,7 +39,7 @@ export function renameArg(name: string): RenameArg {
   return new RenameArg(name);
 }
 
-export type WrapArgValue = string | number | Table | ValueRef | RenameArg | null;
+export type WrapArgValue = string | number | Table | CapturedVar | RenameArg | null;
 
 export interface WrapActionData extends ActionData {
   args?: Record<string, WrapArgValue>;
