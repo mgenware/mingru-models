@@ -235,4 +235,5 @@ it('Opt.configurableTable', () => {
   }
   const ta = mm.actionGroup(post, MyTA, { configurableTableName: 'tableInput' });
   eq(ta.__getData().options.configurableTableName, 'tableInput');
+  deepEq(ta.t.__getGroupOptions(), { configurableTableName: 'tableInput' });
 });

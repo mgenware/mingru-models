@@ -60,11 +60,14 @@ export interface ActionData {
 export class Action {
   protected __data: ActionData = {};
   // Called in `__configure`.
-  protected __groupTable!: Table;
   protected __groupOptions!: TableActionOptions;
 
   __getData(): ActionData {
     return this.__data;
+  }
+
+  __getGroupOptions() {
+    return this.__groupOptions;
   }
 
   constructor(actionType: ActionType) {
@@ -152,7 +155,6 @@ export class Action {
     if (!this.__data.groupTable) {
       this.__data.groupTable = groupTable;
     }
-    this.__groupTable = groupTable;
     this.__groupOptions = groupOptions;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     this.__validate(this.__data.groupTable ?? groupTable);
