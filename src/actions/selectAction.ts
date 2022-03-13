@@ -1,4 +1,4 @@
-import { ActionType } from './tableActions.js';
+import { ActionType } from './actionGroup.js';
 import { Column, Table, SelectedColumn, SQL, SQLVariable } from '../core/core.js';
 import { CoreSelectAction, CoreSelectionActionData } from './coreSelectAction.js';
 import SQLConvertible from '../core/sqlConvertible.js';

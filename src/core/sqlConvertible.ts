@@ -1,5 +1,5 @@
 import { Column, SQLVariable, SQL, SQLCall, SelectedColumn } from './core.js';
-import { Action } from '../actions/tableActions.js';
+import { Action } from '../actions/actionGroup.js';
 
 // Allowed types in `mm.sql`.
 type SQLConvertible =

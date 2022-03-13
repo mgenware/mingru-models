@@ -13,7 +13,7 @@ export * from './sqlLangHelper.js';
 export * as constants from './constants.js';
 
 // Table actions
-export * from './actions/tableActions.js';
+export * from './actions/actionGroup.js';
 export * from './actions/actionHelper.js';
 export * from './actions/coreSelectAction.js';
 export * from './actions/selectAction.js';

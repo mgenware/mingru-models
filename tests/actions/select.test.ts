@@ -7,10 +7,10 @@ import post from '../models/post.js';
 import { eq, deepEq, ok } from '../assert-aliases.js';
 
 it('select', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.selectRow(user.id, user.name).whereSQL(mm.sql`${user.id} = 1`);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
 
   ok(v instanceof mm.SelectAction);
@@ -27,30 +27,30 @@ it('select', () => {
 });
 
 it('where and whereSQL', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t1 = mm.selectRow(user.id, user.name).whereSQL(mm.sql`${user.id} = 1`);
     t2 = mm.selectRow(user.id, user.name).where`${user.id} = 1`;
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   eq(ta.t1.__whereSQLString, '`Column(id, t=User(user)) = 1`');
   eq(ta.t2.__whereSQLString, '`Column(id, t=User(user)) = 1`');
 });
 
 it('Select *', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.selectRow();
   }
-  assert.doesNotThrow(() => mm.tableActions(user, UserTA));
+  assert.doesNotThrow(() => mm.actionGroup(user, UserTA));
 });
 
 it('selectRows', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm
       .selectRows(user.id, user.name)
       .whereSQL(mm.sql`${user.id} = 1`)
       .orderByAsc(user.id);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
   eq(vd.mode, mm.SelectActionMode.rowList);
@@ -118,10 +118,10 @@ it('SelectedColumn (types)', () => {
 });
 
 it('SelectedColumn (count)', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.selectRow(mm.sel(mm.sql`${mm.count(mm.sql`${post.user_id.join(user).name}`)}`, 'count'));
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
 
@@ -155,28 +155,28 @@ it('mm.select (types)', () => {
 });
 
 it('byID', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.selectRow(user.name).by(user.id);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   eq(v.__whereSQLString, '`Column(id, t=User(user)) = VAR(Column(id, t=User(user)))`');
 });
 
 it('byID with inputName', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.selectRow(user.name).by(user.id, 'haha');
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   eq(v.__whereSQLString, '`Column(id, t=User(user)) = VAR(Column(id, t=User(user)), name=haha)`');
 });
 
 it('by', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.selectRow(user.name).by(user.snake_case_name);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   eq(
     v.__whereSQLString,
@@ -185,12 +185,12 @@ it('by', () => {
 });
 
 it('andBy', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t1 = mm.selectRow(user.name).by(user.snake_case_name).andBy(user.follower_count);
     t2 = mm.selectRow(user.name).andBy(user.follower_count);
     t3 = mm.selectRow(user.name).by(user.id).andBy(user.follower_count);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   eq(
     ta.t1.__whereSQLString,
     '`(Column(snake_case_name, t=User(user)) = VAR(Column(snake_case_name, t=User(user))) AND VAR(Column(follower_count, t=User(user))))`',
@@ -204,11 +204,11 @@ it('andBy', () => {
 
 it('selectField', () => {
   const sc = mm.sel(mm.sql`mm.count('*')`, 'c');
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.selectField(user.name).by(user.id);
     t2 = mm.selectField(sc);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
 
@@ -221,10 +221,10 @@ it('selectField', () => {
 });
 
 it('selectExists', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.selectExists().by(user.id);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
   eq(vd.mode, mm.SelectActionMode.exists);
@@ -232,7 +232,7 @@ it('selectExists', () => {
 
 it('Order by', () => {
   const cc = mm.sel(mm.sql`haha`, 'name', new mm.ColumnType('int'));
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm
       .selectRow(user.name, user.follower_count, cc)
       .by(user.id)
@@ -241,7 +241,7 @@ it('Order by', () => {
       .orderByDesc(user.follower_count)
       .orderByInput(user.name, user.id);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
   const orderByColumns = vd.orderByColumns!;
@@ -267,23 +267,23 @@ it('Order by', () => {
 it('Validate columns', () => {
   const t = user;
   itThrows(() => {
-    class UserTA extends mm.TableActions {
+    class UserTA extends mm.ActionGroup {
       t = mm.selectRows(t.name, 32 as unknown as mm.Column, t.follower_count);
     }
-    mm.tableActions(user, UserTA);
+    mm.actionGroup(user, UserTA);
   }, 'The column at index 1 is not valid, got "32", action "SelectAction(-)" [table "User(user)"]');
 });
 
 it('GROUP BY names', () => {
   const col = mm.sel(user.id, 'raw');
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm
       .selectRows(user.id, col)
       .groupBy(user.name, col, 'haha')
       .havingSQL(mm.sql`${mm.count(user.name)} > 2`)
       .orderByAsc(user.id);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
 
@@ -292,7 +292,7 @@ it('GROUP BY names', () => {
 });
 
 it('HAVING', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.selectRows(user.id, user.name).groupBy(user.name).having`${mm.count(
       user.name,
     )} > 2`.orderByAsc(user.id);
@@ -303,7 +303,7 @@ it('HAVING', () => {
       .havingSQL(mm.sql`${mm.count(user.name)} > 2`)
       .orderByAsc(user.id);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
 
@@ -313,49 +313,49 @@ it('HAVING', () => {
 });
 
 it('Pagination', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.selectRows(user.name).paginate().orderByAsc(user.name);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   eq(ta.t.__getData().paginationMode === mm.SelectActionPaginationMode.pagination, true);
 });
 
 it('PageMode', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.selectRows(user.name).pageMode().orderByAsc(user.name);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   eq(ta.t.__getData().paginationMode === mm.SelectActionPaginationMode.pageMode, true);
 });
 
 it('LIMIT n OFFSET', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.selectRows(user.name).limit().orderByAsc(user.name);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const vd = ta.t.__getData();
   eq(vd.paginationMode === mm.SelectActionPaginationMode.limitOffset, true);
 });
 
 it('LIMIT (custom value)', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.selectRows(user.name).orderByAsc(user.name).limit(20);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const vd = ta.t.__getData();
   eq(vd.paginationMode === mm.SelectActionPaginationMode.limitOffset, true);
   eq(vd.limitValue, 20);
 });
 
 it('LIMIT and OFFSET (custom value)', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm
       .selectRows(user.name)
       .orderByAsc(user.name)
       .limit(new mm.SQLVariable(mm.int(), 'limit'))
       .offset(12);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const vd = ta.t.__getData();
   eq(vd.paginationMode === mm.SelectActionPaginationMode.limitOffset, true);
   eq(vd.limitValue?.toString(), 'VAR(Column(-), name=limit)');
@@ -366,66 +366,66 @@ it('Throw when paginate is called on non-list mode', () => {
   const t = user;
 
   itThrows(() => {
-    class UserTA extends mm.TableActions {
+    class UserTA extends mm.ActionGroup {
       t = mm.selectField(t.name).paginate();
     }
-    mm.tableActions(user, UserTA);
+    mm.actionGroup(user, UserTA);
   }, '`paginationMode` can only be set for `.rowList` and `.fieldList` modes [table "User(user)"]');
 });
 
 it('Throw on selecting collection without ORDER BY', () => {
   const t = user;
   assert.doesNotThrow(() => {
-    class UserTA extends mm.TableActions {
+    class UserTA extends mm.ActionGroup {
       t = mm.selectField(t.name);
     }
-    mm.tableActions(user, UserTA);
+    mm.actionGroup(user, UserTA);
   });
   assert.doesNotThrow(() => {
-    class UserTA extends mm.TableActions {
+    class UserTA extends mm.ActionGroup {
       t = mm.selectRow(t.name);
     }
-    mm.tableActions(user, UserTA);
+    mm.actionGroup(user, UserTA);
   });
   assert.doesNotThrow(() => {
-    class UserTA extends mm.TableActions {
+    class UserTA extends mm.ActionGroup {
       t = mm.selectRows(t.name).orderByAsc(t.name);
     }
-    mm.tableActions(user, UserTA);
+    mm.actionGroup(user, UserTA);
   });
   assert.doesNotThrow(() => {
-    class UserTA extends mm.TableActions {
+    class UserTA extends mm.ActionGroup {
       t = mm.selectRows(t.name).orderByAsc(t.name).paginate();
     }
-    mm.tableActions(user, UserTA);
+    mm.actionGroup(user, UserTA);
   });
   itThrows(() => {
-    class UserTA extends mm.TableActions {
+    class UserTA extends mm.ActionGroup {
       t = mm.selectRows(t.name);
     }
-    mm.tableActions(user, UserTA);
+    mm.actionGroup(user, UserTA);
   }, 'An ORDER BY clause is required when selecting multiple rows [action "t"] [table "User(user)"]');
   assert.doesNotThrow(() => {
-    class UserTA extends mm.TableActions {
+    class UserTA extends mm.ActionGroup {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       t = mm.selectRows(t.name).noOrderBy;
     }
-    mm.tableActions(user, UserTA);
+    mm.actionGroup(user, UserTA);
   }, 'An ORDER BY clause is required when selecting multiple rows [action "t"] [table "Table(user)"]');
   itThrows(() => {
-    class UserTA extends mm.TableActions {
+    class UserTA extends mm.ActionGroup {
       t = mm.selectRows(t.name).paginate();
     }
-    mm.tableActions(user, UserTA);
+    mm.actionGroup(user, UserTA);
   }, 'An ORDER BY clause is required when selecting multiple rows [action "t"] [table "User(user)"]');
 });
 
 it('Set action.__table via from()', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.selectRow(user.id, user.name);
     t2 = mm.selectRow(post.id).from(post);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const td = ta.t.__getData();
   const t2d = ta.t2.__getData();
   eq(td.sqlTable, undefined);
@@ -440,21 +440,21 @@ it('Set action.__table via from()', () => {
 });
 
 it('Subquery', () => {
-  class PostTA extends mm.TableActions {
+  class PostTA extends mm.ActionGroup {
     t = mm.selectRow(post.title).where`${post.user_id.isEqualTo`${mm
       .selectRow(mm.max(user.id).toColumn('maxID'))
       .from(user)}`}`;
   }
-  const ta = mm.tableActions(post, PostTA);
+  const ta = mm.actionGroup(post, PostTA);
   eq(ta.t.__whereSQLString, '`Column(user_id, t=Post(post)) = SelectAction(-, ft=User(user))`');
 });
 
 it('Select DISTINCT', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t1 = mm.selectRow();
     t2 = mm.selectRow().distinct();
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   eq(ta.t1.__getData().distinctFlag, undefined);
   eq(ta.t2.__getData().distinctFlag, true);
 });
@@ -464,10 +464,10 @@ it('UNION', () => {
   const t2 = mm.selectRow();
   const t3 = mm.selectRow();
   const t1t2 = t1.union(t2).orderByAsc(user.id);
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = t1t2.unionAll(t3).orderByAsc(user.id).paginate();
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const { t } = ta;
   ok(t1t2 instanceof mm.SelectAction);
   const t1t2d = t1t2.__getData();
@@ -490,10 +490,10 @@ it('UNION', () => {
 it('UNION on a ghost table', () => {
   const t1 = mm.selectRow(user.id).from(user);
   const t2 = mm.selectRow();
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = t1.union(t2).orderByAsc(user.id);
   }
-  const ta = mm.tableActions(mm.ghostTable, UserTA);
+  const ta = mm.actionGroup(mm.ghostTable, UserTA);
   const { t } = ta;
   const td = t.__getData();
   eq(td.unionMembers![0], t1);
@@ -508,22 +508,22 @@ it('mm.select == mm.selectRow', () => {
 });
 
 it('noOrderByFlag', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t1 = mm.selectRow();
     t2 = mm.selectRow().noOrderBy();
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   eq(ta.t1.__getData().noOrderByFlag, undefined);
   eq(ta.t2.__getData().noOrderByFlag, true);
 });
 
 it('Lock mode', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t1 = mm.selectRow();
     t2 = mm.selectRow().lock(mm.SelectActionLockMode.forUpdate);
     t3 = mm.selectRow().lock(mm.SelectActionLockMode.inShareMode);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   eq(ta.t1.__getData().lockMode, undefined);
   eq(ta.t2.__getData().lockMode, mm.SelectActionLockMode.forUpdate);
   eq(ta.t3.__getData().lockMode, mm.SelectActionLockMode.inShareMode);

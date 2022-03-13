@@ -1,4 +1,4 @@
-import { Action, ActionData } from './tableActions.js';
+import { Action, ActionData } from './actionGroup.js';
 import { Column, Table } from '../core/core.js';
 import SQLConvertible from '../core/sqlConvertible.js';
 import { convertToSQL, sql } from '../core/sqlHelper.js';

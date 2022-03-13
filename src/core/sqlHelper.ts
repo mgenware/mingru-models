@@ -11,7 +11,7 @@ import {
   SQLCall,
   SQLCallType,
 } from './core.js';
-import { Action } from '../actions/tableActions.js';
+import { Action } from '../actions/actionGroup.js';
 import * as constants from '../constants.js';
 
 export class SQLBuilder {

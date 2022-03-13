@@ -235,14 +235,14 @@ export default mm.table(Post);
 
 ### Overview
 
-Similar to defining a table, to define table actions, we need declare a class inheriting from `mm.TableActions` (**TA** stands for **t**able **a**ctions), and define actions as properties, finally export a single table actions object via `mm.ta`.
+Similar to defining a table, to define table actions, we need declare a class inheriting from `mm.ActionGroup` (**TA** stands for **t**able **a**ctions), and define actions as properties, finally export a single table actions object via `mm.ta`.
 
 ```ts
 // Import the underlying table object
 import user from './user';
 
 // --- userTA.ts ---
-export class UserTA extends mm.TableActions {
+export class UserTA extends mm.ActionGroup {
   // Selects all users
   selectAllUsers = mm.selectRows(user.id, user.name);
   // Selects a single user by ID
@@ -253,7 +253,7 @@ export class UserTA extends mm.TableActions {
   deleteUser = mm.deleteOne().byID();
 }
 // Export a table actions object
-export default mm.tableActions(user, UserTA);
+export default mm.actionGroup(user, UserTA);
 ```
 
 ### `SELECT` Actions Basics
@@ -294,7 +294,7 @@ export default mm.table(User);
 // ----------- user table actions (userTA.ts) -----------
 import user from './user';
 
-export class UserTA extends mm.TableActions {
+export class UserTA extends mm.ActionGroup {
   // Select a user profile by ID.
   selectProfile = mm.selectRow(user.id, user.name, user.sig).byID();
   // Select all user profiles.
@@ -303,7 +303,7 @@ export class UserTA extends mm.TableActions {
   selectSig = mm.selectField(user.sig).byID();
 }
 
-export default mm.tableActions(user, UserTA);
+export default mm.actionGroup(user, UserTA);
 ```
 
 It would generate the following Go code (only function headers shown for simplicity):
@@ -865,7 +865,7 @@ return insertedUserID
 There are actually 3 types of variables above, those used as transaction func return values, those used by other transaction member functions, and those are both. To use a return value from other function, you have to declare it first by calling `Action.declareReturnValue`:
 
 ```ts
-class MyTableTA extends mm.TableActions {
+class MyTableTA extends mm.ActionGroup {
   exampleTransaction = mm
     .transact(
       txMemberFunc1,

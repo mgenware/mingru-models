@@ -196,10 +196,10 @@ it('Column.mustGet', () => {
 
 it('Column.attr n SelectedColumn.attr', () => {
   {
-    class UserTA extends mm.TableActions {
+    class UserTA extends mm.ActionGroup {
       t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
     }
-    const table = mm.tableActions(user, UserTA);
+    const table = mm.actionGroup(user, UserTA);
     const { t } = table;
     const columns = t.__getData().columns!;
     const rd = (columns[0] as mm.SelectedColumn).__getData();
@@ -214,10 +214,10 @@ it('Column.attr n SelectedColumn.attr', () => {
     );
   }
   {
-    class UserTA extends mm.TableActions {
+    class UserTA extends mm.ActionGroup {
       t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
     }
-    const table = mm.tableActions(user, UserTA);
+    const table = mm.actionGroup(user, UserTA);
     const { t } = table;
     const columns = t.__getData().columns!;
     const rd = (columns[0] as mm.SelectedColumn).__getData();
@@ -253,10 +253,10 @@ it('Column.colAttr', () => {
     );
   }
   {
-    class UserTA extends mm.TableActions {
+    class UserTA extends mm.ActionGroup {
       t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
     }
-    const table = mm.tableActions(user, UserTA);
+    const table = mm.actionGroup(user, UserTA);
     const { t } = table;
     const columns = t.__getData().columns!;
     const rd = (columns[0] as mm.SelectedColumn).__getData();
@@ -274,10 +274,10 @@ it('Column.colAttr', () => {
 
 it('Column.privateAttr n SelectedColumn.privateAttr', () => {
   {
-    class UserTA extends mm.TableActions {
+    class UserTA extends mm.ActionGroup {
       t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).privateAttr());
     }
-    const table = mm.tableActions(user, UserTA);
+    const table = mm.actionGroup(user, UserTA);
     const { t } = table;
     const columns = t.__getData().columns!;
     const rd = (columns[0] as mm.SelectedColumn).__getData();
@@ -292,10 +292,10 @@ it('Column.privateAttr n SelectedColumn.privateAttr', () => {
     );
   }
   {
-    class UserTA extends mm.TableActions {
+    class UserTA extends mm.ActionGroup {
       t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).privateAttr());
     }
-    const table = mm.tableActions(user, UserTA);
+    const table = mm.actionGroup(user, UserTA);
     const { t } = table;
     const columns = t.__getData().columns!;
     const rd = (columns[0] as mm.SelectedColumn).__getData();

@@ -1,4 +1,4 @@
-import { Action, ActionData, ActionType } from './tableActions.js';
+import { Action, ActionData, ActionType } from './actionGroup.js';
 import { Table } from '../core/core.js';
 import * as su from '../lib/stringUtil.js';
 

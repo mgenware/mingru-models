@@ -1,4 +1,4 @@
-import { ActionType } from './tableActions.js';
+import { ActionType } from './actionGroup.js';
 import { CoreSelectAction, CoreSelectionActionData } from './coreSelectAction.js';
 import { Table } from '../core/core.js';
 

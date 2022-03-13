@@ -4,10 +4,10 @@ import user from '../models/user.js';
 import { eq, ok } from '../assert-aliases.js';
 
 it('DeleteAction', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.deleteOne().whereSQL(mm.sql`${user.id} = 1`);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
 
@@ -20,10 +20,10 @@ it('DeleteAction', () => {
 });
 
 it('deleteOne', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.deleteOne().whereSQL(mm.sql`${user.id} = 1`);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
 
@@ -33,18 +33,18 @@ it('deleteOne', () => {
 
   // Throw error when WHERE is empty
   itThrows(() => {
-    class TA extends mm.TableActions {
+    class TA extends mm.ActionGroup {
       t = mm.deleteOne();
     }
-    mm.tableActions(user, TA);
+    mm.actionGroup(user, TA);
   }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"] [table "User(user)"]');
 });
 
 it('deleteSome', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.deleteSome().whereSQL(mm.sql`${user.id} = 1`);
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
 
@@ -54,18 +54,18 @@ it('deleteSome', () => {
 
   // Throw error when WHERE is empty
   itThrows(() => {
-    class TA extends mm.TableActions {
+    class TA extends mm.ActionGroup {
       t = mm.deleteSome();
     }
-    mm.tableActions(user, TA);
+    mm.actionGroup(user, TA);
   }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll` [action "t"] [table "User(user)"]');
 });
 
 it('unsafeDeleteAll', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.unsafeDeleteAll();
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
 
@@ -75,12 +75,12 @@ it('unsafeDeleteAll', () => {
 });
 
 it('where and whereSQL', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t1 = mm.deleteOne().whereSQL(mm.sql`${user.id} = 1`);
 
     t2 = mm.deleteOne().where`${user.id} = 1`;
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   eq(ta.t1.__whereSQLString, '`Column(id, t=User(user)) = 1`');
   eq(ta.t2.__whereSQLString, '`Column(id, t=User(user)) = 1`');
 });

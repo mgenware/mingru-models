@@ -6,10 +6,10 @@ import post from '../models/post.js';
 import { deepEq, eq, ok } from '../assert-aliases.js';
 
 it('Insert', () => {
-  class PostTA extends mm.TableActions {
+  class PostTA extends mm.ActionGroup {
     t = mm.insert().setInputs(post.title, post.snake_case_user_id).setInputs();
   }
-  const ta = mm.tableActions(post, PostTA);
+  const ta = mm.actionGroup(post, PostTA);
   const v = ta.t;
   const vd = v.__getData();
 
@@ -25,10 +25,10 @@ it('Insert', () => {
 });
 
 it('Insert one', () => {
-  class PostTA extends mm.TableActions {
+  class PostTA extends mm.ActionGroup {
     t = mm.insertOne().setInputs(post.title, post.snake_case_user_id).setInputs();
   }
-  const ta = mm.tableActions(post, PostTA);
+  const ta = mm.actionGroup(post, PostTA);
   const v = ta.t;
   const vd = v.__getData();
 
@@ -36,10 +36,10 @@ it('Insert one', () => {
 });
 
 it('unsafeInsert', () => {
-  class PostTA extends mm.TableActions {
+  class PostTA extends mm.ActionGroup {
     t = mm.unsafeInsert().setInputs(post.title, post.snake_case_user_id);
   }
-  const ta = mm.tableActions(post, PostTA);
+  const ta = mm.actionGroup(post, PostTA);
   const v = ta.t;
   const vd = v.__getData();
 
@@ -47,10 +47,10 @@ it('unsafeInsert', () => {
 });
 
 it('unsafeInsertOne', () => {
-  class PostTA extends mm.TableActions {
+  class PostTA extends mm.ActionGroup {
     t = mm.unsafeInsertOne().setInputs(post.title, post.snake_case_user_id);
   }
-  const ta = mm.tableActions(post, PostTA);
+  const ta = mm.actionGroup(post, PostTA);
   const v = ta.t;
   const vd = v.__getData();
 
@@ -59,10 +59,10 @@ it('unsafeInsertOne', () => {
 });
 
 it('SQLConvertible value', () => {
-  class PostTA extends mm.TableActions {
+  class PostTA extends mm.ActionGroup {
     t = mm.unsafeInsert().set(post.title, mm.localDateNow()).setDefaults();
   }
-  const ta = mm.tableActions(post, PostTA);
+  const ta = mm.actionGroup(post, PostTA);
   const v = ta.t;
   const vd = v.__getData();
 
@@ -72,30 +72,30 @@ it('SQLConvertible value', () => {
 
 it('No setters', () => {
   itThrows(() => {
-    class PostTA extends mm.TableActions {
+    class PostTA extends mm.ActionGroup {
       t = mm.insert();
     }
-    mm.tableActions(post, PostTA);
+    mm.actionGroup(post, PostTA);
   }, 'No setters [action "t"] [table "Post(post)"]');
 });
 
 it('Column number check', () => {
   itThrows(() => {
-    class PostTA extends mm.TableActions {
+    class PostTA extends mm.ActionGroup {
       t = mm.insert().setInputs(post.e_user_id);
     }
-    mm.tableActions(post, PostTA);
+    mm.actionGroup(post, PostTA);
   }, 'You only set 1 of all 5 columns (not including AUTO_INCREMENT columns), you should set all columns or use `unsafeInsert` to bypass this check [action "t"] [table "Post(post)"]');
   assert.doesNotThrow(() => {
-    class PostTA extends mm.TableActions {
+    class PostTA extends mm.ActionGroup {
       t = mm.insert().setInputs();
     }
-    mm.tableActions(post, PostTA);
+    mm.actionGroup(post, PostTA);
   });
   assert.doesNotThrow(() => {
-    class PostTA extends mm.TableActions {
+    class PostTA extends mm.ActionGroup {
       t = mm.unsafeInsert().setInputs(post.e_user_id);
     }
-    mm.tableActions(post, PostTA);
+    mm.actionGroup(post, PostTA);
   });
 });

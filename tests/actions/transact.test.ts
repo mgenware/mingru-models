@@ -5,19 +5,19 @@ import post from '../models/post.js';
 import { eq, ok, deepEq } from '../assert-aliases.js';
 
 it('Transact', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     insert = mm.insert().setInputs(user.follower_count).setInputs();
   }
-  const userTA = mm.tableActions(user, UserTA);
+  const userTA = mm.actionGroup(user, UserTA);
 
-  class PostTA extends mm.TableActions {
+  class PostTA extends mm.ActionGroup {
     insert = mm.insert().setInputs(post.title, post.snake_case_user_id).setInputs();
 
     update = mm.updateOne().setInputs(post.e_user_id_n).by(post.id);
     batch = mm.transact(this.insert, userTA.insert, this.update);
     batch2 = mm.transact(this.insert, userTA.insert, this.batch);
   }
-  const postTA = mm.tableActions(post, PostTA);
+  const postTA = mm.actionGroup(post, PostTA);
 
   let v = postTA.batch;
   let vd = v.__getData();
@@ -42,7 +42,7 @@ it('Inline member actions (wrap self)', () => {
     postCount = mm.int();
   }
   const user2 = mm.table(User2);
-  class User2TA extends mm.TableActions {
+  class User2TA extends mm.ActionGroup {
     updatePostCount = mm
       .updateOne()
       .set(user2.postCount, mm.sql`${user2.postCount} + ${mm.input(mm.int(), 'offset')}`)
@@ -50,7 +50,7 @@ it('Inline member actions (wrap self)', () => {
 
     t = mm.transact(this.updatePostCount.wrap({ offset: '1' }));
   }
-  const user2TA = mm.tableActions(user2, User2TA);
+  const user2TA = mm.actionGroup(user2, User2TA);
   const v = user2TA.t;
   const vd = v.__getData();
   const wrapped = vd.members![0]!.action as mm.WrapAction;
@@ -64,23 +64,23 @@ it('Inline member actions (wrap other)', () => {
     postCount = mm.int();
   }
   const user2 = mm.table(User2);
-  class User2TA extends mm.TableActions {
+  class User2TA extends mm.ActionGroup {
     updatePostCount = mm
       .updateOne()
       .set(user2.postCount, mm.sql`${user2.postCount} + ${mm.input(mm.int(), 'offset')}`)
       .by(user2.id);
   }
-  const user2TA = mm.tableActions(user2, User2TA);
+  const user2TA = mm.actionGroup(user2, User2TA);
   class Post2 extends mm.Table {
     id = mm.pk();
     title = mm.varChar(200);
   }
 
   const post2 = mm.table(Post2);
-  class Post2TA extends mm.TableActions {
+  class Post2TA extends mm.ActionGroup {
     insert = mm.transact(user2TA.updatePostCount.wrap({ offset: '1' }));
   }
-  const postTA = mm.tableActions(post2, Post2TA);
+  const postTA = mm.actionGroup(post2, Post2TA);
   const v = postTA.insert;
   const vd = v.__getData();
   const wrapped = vd.members![0]!.action as mm.WrapAction;
@@ -89,12 +89,12 @@ it('Inline member actions (wrap other)', () => {
 });
 
 it('Setting __table or inline members', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     insert = mm.insert().setInputs(user.follower_count).setInputs();
   }
-  const userTA = mm.tableActions(user, UserTA);
+  const userTA = mm.actionGroup(user, UserTA);
 
-  class PostTA extends mm.TableActions {
+  class PostTA extends mm.ActionGroup {
     insert = mm.insert().setInputs(post.title, post.snake_case_user_id).setInputs();
 
     t = mm.transact(
@@ -104,7 +104,7 @@ it('Setting __table or inline members', () => {
       this.insert.wrap({ title: 'title' }),
     );
   }
-  const postTA = mm.tableActions(post, PostTA);
+  const postTA = mm.actionGroup(post, PostTA);
   const members = postTA.t.__getData().members!;
   eq(members[0]?.action.__getData().groupTable, undefined);
   eq(members[0]?.action.__getData().sqlTable, undefined);
@@ -121,13 +121,13 @@ it('Setting __table or inline members', () => {
 });
 
 it('Declare return values', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     insert1 = mm.insert().setInputs();
     insert2 = mm.insert().setInputs();
   }
-  const userTA = mm.tableActions(user, UserTA);
+  const userTA = mm.actionGroup(user, UserTA);
 
-  class PostTA extends mm.TableActions {
+  class PostTA extends mm.ActionGroup {
     batch = mm
       .transact(
         userTA.insert1,
@@ -137,7 +137,7 @@ it('Declare return values', () => {
       )
       .setReturnValues('_b', '_a');
   }
-  const postTA = mm.tableActions(post, PostTA);
+  const postTA = mm.actionGroup(post, PostTA);
 
   const v = postTA.batch;
   const vd = v.__getData();

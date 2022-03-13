@@ -1,5 +1,5 @@
 import { Table } from '../core/core.js';
-import { Action, ActionData, ActionType } from './tableActions.js';
+import { Action, ActionData, ActionType } from './actionGroup.js';
 import { throwOnEmptyArray } from '../lib/arrayUtil.js';
 
 export class ActionWithReturnValues {

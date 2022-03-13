@@ -10,16 +10,16 @@ export interface TableActionOptions {
   configurableTableName?: string;
 }
 
-export interface TableActionsData {
+export interface ActionGroupData {
   table: Table;
   actions: Readonly<Record<string, Action | undefined>>;
   options: TableActionOptions;
 }
 
-export class TableActions {
-  protected __data!: TableActionsData;
+export class ActionGroup {
+  protected __data!: ActionGroupData;
 
-  __getData(): TableActionsData {
+  __getData(): ActionGroupData {
     return this.__data;
   }
 
@@ -47,11 +47,11 @@ export enum ActionType {
 
 export interface ActionData {
   actionType?: ActionType;
-  // Will be set after calling `mm.tableActions`.
+  // Will be set after calling `mm.actionGroup`.
   name?: string;
   // Set by `from()`.
   sqlTable?: Table;
-  // Will be set after calling `mm.tableActions`.
+  // Will be set after calling `mm.actionGroup`.
   groupTable?: Table;
   argStubs?: SQLVariable[];
   attrs?: Map<ActionAttribute, unknown>;
@@ -83,7 +83,7 @@ export class Action {
   // `__sqlTable` has the highest precedence, and can be set by `from`.
   // If `from` is not called, which is the usual case, it tries to grab one
   // from `__groupTable`, which is the containing table when an action is
-  // initialized from `mm.tableActions`.
+  // initialized from `mm.actionGroup`.
   // Finally, for inline actions (if `from` is not called), it can use the
   // `groupTable` from `validate` method.
   __mustGetAvailableSQLTable(groupTable: Table | undefined | null): Table {
@@ -127,10 +127,10 @@ export class Action {
     return su.desc(this, d.name, { t: d.groupTable?.toString(), ft: d.sqlTable?.toString() });
   }
 
-  // Automatically called by `mm.tableActions` for all the columns it walks through.
-  // Actions are immutable. Actions touched by `mm.tableActions` will have `__groupTable`
+  // Automatically called by `mm.actionGroup` for all the columns it walks through.
+  // Actions are immutable. Actions touched by `mm.actionGroup` will have `__groupTable`
   // and `__name` set.
-  // Other actions, such as ones embedded in SQL exprs are ignored by `ta.tableActions`,
+  // Other actions, such as ones embedded in SQL exprs are ignored by `ta.actionGroup`,
   // thus have to be manually taken care of. You should always use
   // `this.mustGetAvailableSQLTable(groupTable)` in `validate`, and use the result value for
   // action SQL validation.
@@ -141,7 +141,7 @@ export class Action {
     // Implemented by subclass.
   }
 
-  // Called by `ta.tableActions`.
+  // Called by `ta.actionGroup`.
   __configure(groupTable: Table, name: string) {
     if (!this.__data.name) {
       this.__data.name = name;
@@ -168,7 +168,7 @@ export class EmptyAction extends Action {
 // An empty action is ignored in `enumerateActions`.
 export const emptyAction = new EmptyAction(ActionType.select);
 
-function enumerateActions<T extends TableActions>(
+function enumerateActions<T extends ActionGroup>(
   ta: T,
   cb: (action: Action, prop: string) => void,
 ) {
@@ -186,13 +186,13 @@ function enumerateActions<T extends TableActions>(
   }
 }
 
-export function tableActionsCore(
+export function actionGroupCore(
   table: Table,
-  tableActionsObj: TableActions | null,
+  actionGroupObj: ActionGroup | null,
   actions: Record<string, Action | undefined>,
   options: TableActionOptions | undefined,
-): TableActions {
-  tableActionsObj = tableActionsObj || new TableActions();
+): ActionGroup {
+  actionGroupObj = actionGroupObj || new ActionGroup();
   for (const [name, action] of Object.entries(actions)) {
     try {
       action?.__configure(table, name);
@@ -202,11 +202,11 @@ export function tableActionsCore(
       throw err;
     }
   }
-  tableActionsObj.__configure(table, actions, options);
-  return tableActionsObj;
+  actionGroupObj.__configure(table, actions, options);
+  return actionGroupObj;
 }
 
-export function tableActions<T extends Table, A extends TableActions>(
+export function actionGroup<T extends Table, A extends ActionGroup>(
   table: T,
   TACls: new () => A,
   options?: TableActionOptions,
@@ -217,7 +217,7 @@ export function tableActions<T extends Table, A extends TableActions>(
     enumerateActions(taObj, (action, name) => {
       actions[name] = action;
     });
-    return tableActionsCore(table, taObj, actions, options) as A;
+    return actionGroupCore(table, taObj, actions, options) as A;
   } catch (err) {
     mustBeErr(err);
     err.message += ` [table "${table}"]`;

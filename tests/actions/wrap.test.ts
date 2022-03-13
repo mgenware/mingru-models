@@ -5,11 +5,11 @@ import post from '../models/post.js';
 import { eq, ok, deepEq } from '../assert-aliases.js';
 
 it('Wrap', () => {
-  class PostTA extends mm.TableActions {
+  class PostTA extends mm.ActionGroup {
     t = mm.insert().setInputs(post.title, post.snake_case_user_id).setInputs();
   }
-  const postTA = mm.tableActions(post, PostTA);
-  class UserTA extends mm.TableActions {
+  const postTA = mm.actionGroup(post, PostTA);
+  class UserTA extends mm.ActionGroup {
     s = mm.deleteOne().by(user.id);
     t2 = postTA.t.wrap({ id: '32' });
 
@@ -20,7 +20,7 @@ it('Wrap', () => {
 
     t3 = mm.updateOne().from(post).setInputs().by(post.id).wrap({ title: '"t3"' });
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   let v = ta.t;
   ok(v instanceof mm.WrapAction);
   ok(v instanceof mm.Action);
@@ -66,16 +66,16 @@ it('Wrap', () => {
 });
 
 it('Wrap (chains)', () => {
-  class PostTA extends mm.TableActions {
+  class PostTA extends mm.ActionGroup {
     t = mm.insert().setInputs(post.title, post.snake_case_user_id).setInputs();
   }
-  const postTA = mm.tableActions(post, PostTA);
-  class UserTA extends mm.TableActions {
+  const postTA = mm.actionGroup(post, PostTA);
+  class UserTA extends mm.ActionGroup {
     s = mm.deleteOne().by(post.id).from(post);
     t = this.s.wrap({ id: '32' }).wrap({ id: '33' }).wrap({ id2: '34' });
     t2 = postTA.t.wrap({ id: '32' }).wrap({ id: '33' }).wrap({ id2: '34' });
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   let v = ta.t;
   let vd = v.__getData();
   ok(v instanceof mm.WrapAction);
@@ -101,10 +101,10 @@ it('Wrap (chains)', () => {
 });
 
 it('Inline WRAP actions', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.deleteOne().by(user.id).wrap({ id: '23' });
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
   eq(vd.sqlTable, undefined);
@@ -116,10 +116,10 @@ it('Inline WRAP actions', () => {
 });
 
 it('Inline WRAP actions (chaining)', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.deleteOne().by(user.id).wrap({ id: '23' }).wrap({ s: 'name' });
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
   eq(vd.sqlTable, undefined);
@@ -132,10 +132,10 @@ it('Inline WRAP actions (chaining)', () => {
 });
 
 it('Inline WRAP actions (with from)', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.deleteOne().from(post).by(user.id).wrap({ id: '23' });
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
   eq(vd.sqlTable, undefined);
@@ -158,10 +158,10 @@ it('mm.valueRef', () => {
 });
 
 it('wrapAsRefs', () => {
-  class UserTA extends mm.TableActions {
+  class UserTA extends mm.ActionGroup {
     t = mm.deleteOne().from(post).by(user.id).wrapAsRefs({ id: '23', id2: 'abc' });
   }
-  const ta = mm.tableActions(user, UserTA);
+  const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
   deepEq(vd.args, {

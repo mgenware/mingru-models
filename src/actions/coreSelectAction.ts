@@ -1,4 +1,4 @@
-import { Action, ActionData } from './tableActions.js';
+import { Action, ActionData } from './actionGroup.js';
 import { where, by, andBy } from './common.js';
 import { Column, SQL } from '../core/core.js';
 import SQLConvertible from '../core/sqlConvertible.js';
