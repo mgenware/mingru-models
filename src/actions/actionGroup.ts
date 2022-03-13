@@ -11,7 +11,7 @@ export interface TableActionOptions {
 }
 
 export interface ActionGroupData {
-  table: Table;
+  groupTable: Table;
   actions: Readonly<Record<string, Action | undefined>>;
   options: TableActionOptions;
 }
@@ -24,14 +24,14 @@ export class ActionGroup {
   }
 
   __configure(
-    table: Table,
+    groupTable: Table,
     actions: Readonly<Record<string, Action | undefined>>,
-    options: TableActionOptions | undefined,
+    options: TableActionOptions,
   ) {
     this.__data = {
-      table,
+      groupTable,
       actions,
-      options: options ?? {},
+      options,
     };
   }
 }
@@ -59,6 +59,9 @@ export interface ActionData {
 
 export class Action {
   protected __data: ActionData = {};
+  // Called in `__configure`.
+  protected __groupTable!: Table;
+  protected __groupOptions!: TableActionOptions;
 
   __getData(): ActionData {
     return this.__data;
@@ -142,13 +145,15 @@ export class Action {
   }
 
   // Called by `ta.actionGroup`.
-  __configure(groupTable: Table, name: string) {
+  __configure(name: string, groupTable: Table, groupOptions: TableActionOptions) {
     if (!this.__data.name) {
       this.__data.name = name;
     }
     if (!this.__data.groupTable) {
       this.__data.groupTable = groupTable;
     }
+    this.__groupTable = groupTable;
+    this.__groupOptions = groupOptions;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     this.__validate(this.__data.groupTable ?? groupTable);
   }
@@ -190,19 +195,20 @@ export function actionGroupCore(
   table: Table,
   actionGroupObj: ActionGroup | null,
   actions: Record<string, Action | undefined>,
-  options: TableActionOptions | undefined,
+  opt: TableActionOptions | undefined,
 ): ActionGroup {
   actionGroupObj = actionGroupObj || new ActionGroup();
+  opt ??= {};
   for (const [name, action] of Object.entries(actions)) {
     try {
-      action?.__configure(table, name);
+      action?.__configure(name, table, opt);
     } catch (err) {
       mustBeErr(err);
       err.message += ` [action "${name}"]`;
       throw err;
     }
   }
-  actionGroupObj.__configure(table, actions, options);
+  actionGroupObj.__configure(table, actions, opt);
   return actionGroupObj;
 }
 

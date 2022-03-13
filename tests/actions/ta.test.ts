@@ -187,7 +187,7 @@ it('__actions and props', () => {
   const ta = mm.actionGroup(user, UserTA);
   const tad = ta.__getData();
 
-  eq(tad.table, user);
+  eq(tad.groupTable, user);
   eq(ta instanceof mm.ActionGroup, true);
   deepEq(tad.actions, {
     upd: ta.upd,
@@ -209,7 +209,7 @@ it('__actions and props (taCore)', () => {
   const ta = mm.actionGroupCore(user, null, actions, undefined);
   const tad = ta.__getData();
 
-  eq(tad.table, user);
+  eq(tad.groupTable, user);
   eq(ta instanceof mm.ActionGroup, true);
   deepEq(tad.actions, actions);
   // `actionGroupCore` never add property into table actions.
