@@ -60,7 +60,7 @@ export interface ActionData {
 export class Action {
   protected __data: ActionData = {};
   // Called in `__configure`.
-  protected __groupOptions!: TableActionOptions;
+  protected __groupOptions?: TableActionOptions;
 
   __getData(): ActionData {
     return this.__data;
@@ -113,6 +113,13 @@ export class Action {
       throw new Error(`Action "${this}" doesn't have a name`);
     }
     return this.__data.name;
+  }
+
+  __mustGetGroupOptions(): TableActionOptions {
+    if (!this.__groupOptions) {
+      throw new Error(`Action "${this}" doesn't have any group options`);
+    }
+    return this.__groupOptions;
   }
 
   attr(name: ActionAttribute, value: unknown): this {
