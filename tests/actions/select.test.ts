@@ -239,7 +239,7 @@ it('Order by', () => {
       .orderByAsc(user.name)
       .orderByAsc(cc)
       .orderByDesc(user.follower_count)
-      .orderByInput(user.name, user.id);
+      .orderByParams(user.name, user.id);
   }
   const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
@@ -260,7 +260,7 @@ it('Order by', () => {
   eq(order2.column, user.follower_count);
   eq(order2.desc, true);
 
-  const order3 = orderByColumns[3] as mm.OrderByColumnInput;
+  const order3 = orderByColumns[3] as mm.OrderByColumnParam;
   deepEq(order3.columns, [user.name, user.id]);
 });
 

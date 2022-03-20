@@ -6,14 +6,14 @@ import { eq, ok, deepEq } from '../assert-aliases.js';
 
 it('Transact', () => {
   class UserTA extends mm.ActionGroup {
-    insert = mm.insert().setInputs(user.follower_count).setInputs();
+    insert = mm.insert().setParams(user.follower_count).setParams();
   }
   const userTA = mm.actionGroup(user, UserTA);
 
   class PostTA extends mm.ActionGroup {
-    insert = mm.insert().setInputs(post.title, post.snake_case_user_id).setInputs();
+    insert = mm.insert().setParams(post.title, post.snake_case_user_id).setParams();
 
-    update = mm.updateOne().setInputs(post.e_user_id_n).by(post.id);
+    update = mm.updateOne().setParams(post.e_user_id_n).by(post.id);
     batch = mm.transact(this.insert, userTA.insert, this.update);
     batch2 = mm.transact(this.insert, userTA.insert, this.batch);
   }
@@ -45,7 +45,7 @@ it('Inline member actions (wrap self)', () => {
   class User2TA extends mm.ActionGroup {
     updatePostCount = mm
       .updateOne()
-      .set(user2.postCount, mm.sql`${user2.postCount} + ${mm.input(mm.int(), 'offset')}`)
+      .set(user2.postCount, mm.sql`${user2.postCount} + ${mm.param(mm.int(), 'offset')}`)
       .by(user2.id);
 
     t = mm.transact(this.updatePostCount.wrap({ offset: '1' }));
@@ -67,7 +67,7 @@ it('Inline member actions (wrap other)', () => {
   class User2TA extends mm.ActionGroup {
     updatePostCount = mm
       .updateOne()
-      .set(user2.postCount, mm.sql`${user2.postCount} + ${mm.input(mm.int(), 'offset')}`)
+      .set(user2.postCount, mm.sql`${user2.postCount} + ${mm.param(mm.int(), 'offset')}`)
       .by(user2.id);
   }
   const user2TA = mm.actionGroup(user2, User2TA);
@@ -90,12 +90,12 @@ it('Inline member actions (wrap other)', () => {
 
 it('Setting __table or inline members', () => {
   class UserTA extends mm.ActionGroup {
-    insert = mm.insert().setInputs(user.follower_count).setInputs();
+    insert = mm.insert().setParams(user.follower_count).setParams();
   }
   const userTA = mm.actionGroup(user, UserTA);
 
   class PostTA extends mm.ActionGroup {
-    insert = mm.insert().setInputs(post.title, post.snake_case_user_id).setInputs();
+    insert = mm.insert().setParams(post.title, post.snake_case_user_id).setParams();
 
     t = mm.transact(
       mm.insert().setDefaults(),
@@ -122,8 +122,8 @@ it('Setting __table or inline members', () => {
 
 it('Declare return values', () => {
   class UserTA extends mm.ActionGroup {
-    insert1 = mm.insert().setInputs();
-    insert2 = mm.insert().setInputs();
+    insert1 = mm.insert().setParams();
+    insert2 = mm.insert().setParams();
   }
   const userTA = mm.actionGroup(user, UserTA);
 

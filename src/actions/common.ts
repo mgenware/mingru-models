@@ -15,19 +15,19 @@ export function where(action: ActionDataWithWhere, value: SQL) {
 }
 
 export function by(action: ActionDataWithWhere, column: Column, name: string | undefined) {
-  where(action, sql`${column.isEqualToInput(name)}`);
+  where(action, sql`${column.isEqualToParam(name)}`);
 }
 
 export function andBy(action: ActionDataWithWhere, column: Column, name: string | undefined) {
   // Append the expr to the end of the existing WHERE expression.
   let s: SQL;
   if (action.whereSQLValue) {
-    s = and(action.whereSQLValue, sql`${column.toInput(name)}`);
+    s = and(action.whereSQLValue, sql`${column.toParam(name)}`);
     // Set `whereSQLValue` to undefined cuz `where` doesn't allow `whereSQLValue` to be set twice.
     // eslint-disable-next-line no-param-reassign
     action.whereSQLValue = undefined;
   } else {
-    s = sql`${column.toInput()}`;
+    s = sql`${column.toParam()}`;
   }
   where(action, s);
 }

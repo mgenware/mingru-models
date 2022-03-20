@@ -6,7 +6,7 @@ import post from '../models/post.js';
 import { eq, ok, deepEq } from '../assert-aliases.js';
 
 it('SQL', () => {
-  const sql = mm.sql`${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}`;
+  const sql = mm.sql`${user.id} = 1 OR ${user.name} = ${mm.param(user.name)}`;
   eq(
     sql.toString(),
     '`Column(id, t=User(user)) = 1 OR Column(name, t=User(user)) = VAR(Column(name, t=User(user)))`',
@@ -15,7 +15,7 @@ it('SQL', () => {
 });
 
 it('Flatten another SQL', () => {
-  const sql = mm.sql`${mm.sql`${mm.sql`${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}`}`}`;
+  const sql = mm.sql`${mm.sql`${mm.sql`${user.id} = 1 OR ${user.name} = ${mm.param(user.name)}`}`}`;
   eq(
     sql.toString(),
     '`Column(id, t=User(user)) = 1 OR Column(name, t=User(user)) = VAR(Column(name, t=User(user)))`',
@@ -24,7 +24,7 @@ it('Flatten another SQL', () => {
 });
 
 it('SQL with input', () => {
-  const sql = mm.sql`START${user.id} = 1 OR ${user.name} = ${mm.input(user.name)}END`;
+  const sql = mm.sql`START${user.id} = 1 OR ${user.name} = ${mm.param(user.name)}END`;
   eq(
     sql.toString(),
     '`STARTColumn(id, t=User(user)) = 1 OR Column(name, t=User(user)) = VAR(Column(name, t=User(user)))END`',
@@ -32,14 +32,14 @@ it('SQL with input', () => {
 });
 
 it('Input', () => {
-  const input = mm.input(user.name);
+  const input = mm.param(user.name);
   eq(input.type, user.name);
   eq(input.name, undefined);
   eq(input.column, user.name);
 });
 
 it('Named input', () => {
-  const input = mm.input(user.name, 'haha');
+  const input = mm.param(user.name, 'haha');
   eq(input.type, user.name);
   eq(input.name, 'haha');
   eq(input.column, user.name);
@@ -47,7 +47,7 @@ it('Named input', () => {
 
 it('Input (foreign key)', () => {
   const col = post.user_id;
-  const input = mm.input(col);
+  const input = mm.param(col);
   eq((input.type as mm.Column).__getData().foreignColumn, user.id);
   eq(input.name, undefined);
   eq(input.column, col);
@@ -55,28 +55,28 @@ it('Input (foreign key)', () => {
 
 it('Input (joined key)', () => {
   const col = post.user_id.join(user).name;
-  const input = mm.input(col);
+  const input = mm.param(col);
   eq((input.type as mm.Column).__getData().mirroredColumn, user.name);
   eq(input.name, undefined);
   eq(input.column, col);
 });
 
 it('Raw type input', () => {
-  const input = mm.input({ type: 'uint32', defaultValue: 0 }, 'uid');
+  const input = mm.param({ type: 'uint32', defaultValue: 0 }, 'uid');
   deepEq(input.type, { type: 'uint32', defaultValue: 0 });
   eq(input.toString(), 'VAR({"type":"uint32","defaultValue":0}, name=uid)');
 });
 
 it('Empty name for raw type input', () => {
   itThrows(
-    () => mm.input({ type: 'uint32', defaultValue: 0 }),
-    'Unexpected empty input name for type `uint32`',
+    () => mm.param({ type: 'uint32', defaultValue: 0 }),
+    'Unexpected empty param name for type `uint32`',
   );
 });
 
 it('Embed another sql', () => {
-  const embedded = mm.sql`_${user.id} = ${mm.input(user.id)}`;
-  const sql = mm.sql`START${embedded} OR ${user.name} = ${mm.input(user.name)}`;
+  const embedded = mm.sql`_${user.id} = ${mm.param(user.id)}`;
+  const sql = mm.sql`START${embedded} OR ${user.name} = ${mm.param(user.name)}`;
   eq(
     sql.toString(),
     '`START_Column(id, t=User(user)) = VAR(Column(id, t=User(user))) OR Column(name, t=User(user)) = VAR(Column(name, t=User(user)))`',
@@ -105,11 +105,11 @@ it('makeSQL', () => {
 });
 
 it('Input.isEqualTo', () => {
-  const a = user.id.toInput();
-  const b = user.id.toInput();
-  const c = mm.input({ type: 'a', defaultValue: null }, 'id');
-  const d = mm.input({ type: 'a', defaultValue: null }, 'id');
-  const e = mm.input({ type: 'b', defaultValue: null }, 'id');
+  const a = user.id.toParam();
+  const b = user.id.toParam();
+  const c = mm.param({ type: 'a', defaultValue: null }, 'id');
+  const d = mm.param({ type: 'a', defaultValue: null }, 'id');
+  const e = mm.param({ type: 'b', defaultValue: null }, 'id');
   eq(a.name, undefined);
   eq(a.column, user.id);
   deepEq(a, b);
@@ -133,7 +133,7 @@ it('SQLBuilder', () => {
   builder.push(' = 1 OR ');
   builder.push(user.name);
   builder.push(' = ');
-  builder.push(mm.input(user.name));
+  builder.push(mm.param(user.name));
   const sql = builder.toSQL();
   eq(
     sql.toString(),

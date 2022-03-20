@@ -44,7 +44,7 @@ export class SQLBuilder {
     } else if (param instanceof Column) {
       this.pushElement(new SQLElement(SQLElementType.column, param));
     } else if (param instanceof SQLVariable) {
-      this.pushElement(new SQLElement(SQLElementType.input, param));
+      this.pushElement(new SQLElement(SQLElementType.param, param));
     } else if (param instanceof SQL) {
       for (const element of param.elements) {
         this.pushElement(element);
@@ -89,23 +89,23 @@ export function convertToSQL(element: SQLConvertible): SQL {
   return sql`${element}`;
 }
 
-function getInputTypeName(type: SQLVariableType | Column | ColumnType): string {
+function getParamTypeName(type: SQLVariableType | Column | ColumnType): string {
   if (type instanceof ColumnType || type instanceof Column) {
     return `${type}`;
   }
   return type.type;
 }
 
-export interface InputAttributes {
+export interface ParamAttributes {
   isArray?: boolean;
   column?: Column;
   nullable?: boolean;
 }
 
-export function input(
+export function param(
   type: SQLVariableType | Column | ColumnType,
   name?: string,
-  attrs?: InputAttributes,
+  attrs?: ParamAttributes,
 ): SQLVariable {
   // eslint-disable-next-line no-param-reassign
   attrs ??= {};
@@ -115,7 +115,7 @@ export function input(
   }
   if (!tableColumn && !name) {
     // Throws when neither column nor name is present.
-    throw new Error(`Unexpected empty input name for type \`${getInputTypeName(type)}\``);
+    throw new Error(`Unexpected empty param name for type \`${getParamTypeName(type)}\``);
   }
   return new SQLVariable(type, name, attrs.isArray || false, tableColumn, attrs.nullable);
 }

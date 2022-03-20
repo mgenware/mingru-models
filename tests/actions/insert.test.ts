@@ -7,7 +7,7 @@ import { deepEq, eq, ok } from '../assert-aliases.js';
 
 it('Insert', () => {
   class PostTA extends mm.ActionGroup {
-    t = mm.insert().setInputs(post.title, post.snake_case_user_id).setInputs();
+    t = mm.insert().setParams(post.title, post.snake_case_user_id).setParams();
   }
   const ta = mm.actionGroup(post, PostTA);
   const v = ta.t;
@@ -26,7 +26,7 @@ it('Insert', () => {
 
 it('Insert one', () => {
   class PostTA extends mm.ActionGroup {
-    t = mm.insertOne().setInputs(post.title, post.snake_case_user_id).setInputs();
+    t = mm.insertOne().setParams(post.title, post.snake_case_user_id).setParams();
   }
   const ta = mm.actionGroup(post, PostTA);
   const v = ta.t;
@@ -37,7 +37,7 @@ it('Insert one', () => {
 
 it('unsafeInsert', () => {
   class PostTA extends mm.ActionGroup {
-    t = mm.unsafeInsert().setInputs(post.title, post.snake_case_user_id);
+    t = mm.unsafeInsert().setParams(post.title, post.snake_case_user_id);
   }
   const ta = mm.actionGroup(post, PostTA);
   const v = ta.t;
@@ -48,7 +48,7 @@ it('unsafeInsert', () => {
 
 it('unsafeInsertOne', () => {
   class PostTA extends mm.ActionGroup {
-    t = mm.unsafeInsertOne().setInputs(post.title, post.snake_case_user_id);
+    t = mm.unsafeInsertOne().setParams(post.title, post.snake_case_user_id);
   }
   const ta = mm.actionGroup(post, PostTA);
   const v = ta.t;
@@ -82,19 +82,19 @@ it('No setters', () => {
 it('Column number check', () => {
   itThrows(() => {
     class PostTA extends mm.ActionGroup {
-      t = mm.insert().setInputs(post.e_user_id);
+      t = mm.insert().setParams(post.e_user_id);
     }
     mm.actionGroup(post, PostTA);
   }, 'You only set 1 of all 5 columns (not including AUTO_INCREMENT columns), you should set all columns or use `unsafeInsert` to bypass this check [action "t"] [table "Post(post)"]');
   assert.doesNotThrow(() => {
     class PostTA extends mm.ActionGroup {
-      t = mm.insert().setInputs();
+      t = mm.insert().setParams();
     }
     mm.actionGroup(post, PostTA);
   });
   assert.doesNotThrow(() => {
     class PostTA extends mm.ActionGroup {
-      t = mm.unsafeInsert().setInputs(post.e_user_id);
+      t = mm.unsafeInsert().setParams(post.e_user_id);
     }
     mm.actionGroup(post, PostTA);
   });

@@ -32,7 +32,7 @@ it('enumerateActions', () => {
   class UserTA extends mm.ActionGroup {
     upd = mm
       .unsafeUpdateAll()
-      .set(user.name, mm.sql`${mm.input(user.name)}`)
+      .set(user.name, mm.sql`${mm.param(user.name)}`)
       .set(user.follower_count, mm.sql`${user.follower_count} + 1`);
 
     sel = mm.selectRow(user.id);
@@ -75,7 +75,7 @@ class MyInsertAction extends mm.InsertAction {
 
 it('Action.onInit', () => {
   class UserTA extends mm.ActionGroup {
-    t = new MyInsertAction().setInputs();
+    t = new MyInsertAction().setParams();
   }
   const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
@@ -84,7 +84,7 @@ it('Action.onInit', () => {
 
 it('Action.onInit (from)', () => {
   class UserTA extends mm.ActionGroup {
-    t = new MyInsertAction().from(post).setInputs();
+    t = new MyInsertAction().from(post).setParams();
   }
   const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
@@ -179,7 +179,7 @@ it('__actions and props', () => {
   class UserTA extends mm.ActionGroup {
     upd = mm
       .unsafeUpdateAll()
-      .set(user.name, mm.sql`${mm.input(user.name)}`)
+      .set(user.name, mm.sql`${mm.param(user.name)}`)
       .set(user.follower_count, mm.sql`${user.follower_count} + 1`);
 
     sel = mm.selectRow(user.id);
@@ -221,7 +221,7 @@ it('__actions and props (taCore)', () => {
 
 it('Ghost table', () => {
   class GhostTA extends mm.ActionGroup {
-    t = new MyInsertAction().from(post).setInputs();
+    t = new MyInsertAction().from(post).setParams();
   }
   const ta = mm.actionGroup(mm.ghostTable, GhostTA);
   const v = ta.t;
@@ -231,9 +231,9 @@ it('Ghost table', () => {
 
 it('Opt.configurableTable', () => {
   class MyTA extends mm.ActionGroup {
-    t = new MyInsertAction().from(post).setInputs();
+    t = new MyInsertAction().from(post).setParams();
   }
-  const ta = mm.actionGroup(post, MyTA, { configurableTableName: 'tableInput' });
-  eq(ta.__getData().options.configurableTableName, 'tableInput');
-  deepEq(ta.t.__getGroupOptions(), { configurableTableName: 'tableInput' });
+  const ta = mm.actionGroup(post, MyTA, { configurableTableName: 'tableParam' });
+  eq(ta.__getData().options.configurableTableName, 'tableParam');
+  deepEq(ta.t.__getGroupOptions(), { configurableTableName: 'tableParam' });
 });

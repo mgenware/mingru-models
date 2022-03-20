@@ -9,7 +9,7 @@ it('Update', () => {
   class UserTA extends mm.ActionGroup {
     t = mm
       .updateSome()
-      .set(user.name, mm.sql`${mm.input(user.name)}`)
+      .set(user.name, mm.sql`${mm.param(user.name)}`)
       .set(user.follower_count, mm.sql`${user.follower_count} + 1`)
       .whereSQL(mm.sql`${user.id} = 1`);
   }
@@ -34,9 +34,9 @@ it('Update', () => {
   );
 });
 
-it('Order of setInputs and set', () => {
+it('Order of setParams and set', () => {
   class UserTA extends mm.ActionGroup {
-    t = mm.unsafeUpdateAll().setInputs(user.snake_case_name).set(user.name, user.name.toInput('b'));
+    t = mm.unsafeUpdateAll().setParams(user.snake_case_name).set(user.name, user.name.toParam('b'));
   }
   const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
@@ -47,9 +47,9 @@ it('Order of setInputs and set', () => {
   );
 });
 
-it('setInputs and setDefaults', () => {
+it('setParams and setDefaults', () => {
   class UserTA extends mm.ActionGroup {
-    t = mm.unsafeUpdateAll().setDefaults(user.def_value).setInputs(user.snake_case_name);
+    t = mm.unsafeUpdateAll().setDefaults(user.def_value).setParams(user.snake_case_name);
   }
   const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
@@ -60,13 +60,13 @@ it('setInputs and setDefaults', () => {
   );
 });
 
-it('setInputs with no args', () => {
+it('setParams with no args', () => {
   class UserTA extends mm.ActionGroup {
     t = mm
       .unsafeUpdateAll()
       .setDefaults(user.def_value)
-      .setInputs(user.snake_case_name)
-      .setInputs();
+      .setParams(user.snake_case_name)
+      .setParams();
   }
   const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
@@ -75,7 +75,7 @@ it('setInputs with no args', () => {
     v.__settersToString(),
     'def_value: abc, snake_case_name: `VAR(Column(snake_case_name, t=User(user)))`',
   );
-  deepEq([...v.__getData().autoSetters!], [mm.AutoSetterType.input]);
+  deepEq([...v.__getData().autoSetters!], [mm.AutoSetterType.param]);
 });
 
 it('setDefaults with no args', () => {
@@ -83,7 +83,7 @@ it('setDefaults with no args', () => {
     t = mm
       .unsafeUpdateAll()
       .setDefaults(user.def_value)
-      .setInputs(user.snake_case_name)
+      .setParams(user.snake_case_name)
       .setDefaults();
   }
   const ta = mm.actionGroup(user, UserTA);
@@ -96,28 +96,28 @@ it('setDefaults with no args', () => {
   deepEq([...v.__getData().autoSetters!], [mm.AutoSetterType.default]);
 });
 
-it('setInputs and setDefaults twice', () => {
+it('setParams and setDefaults twice', () => {
   {
     class UserTA extends mm.ActionGroup {
-      t = mm.unsafeUpdateAll().setInputs().setDefaults();
+      t = mm.unsafeUpdateAll().setParams().setDefaults();
     }
     mm.actionGroup(user, UserTA);
 
     const ta = mm.actionGroup(user, UserTA);
     const v = ta.t;
 
-    deepEq([...v.__getData().autoSetters!], [mm.AutoSetterType.input, mm.AutoSetterType.default]);
+    deepEq([...v.__getData().autoSetters!], [mm.AutoSetterType.param, mm.AutoSetterType.default]);
   }
   {
     class UserTA extends mm.ActionGroup {
-      t = mm.unsafeUpdateAll().setDefaults().setInputs();
+      t = mm.unsafeUpdateAll().setDefaults().setParams();
     }
     mm.actionGroup(user, UserTA);
 
     const ta = mm.actionGroup(user, UserTA);
     const v = ta.t;
 
-    deepEq([...v.__getData().autoSetters!], [mm.AutoSetterType.default, mm.AutoSetterType.input]);
+    deepEq([...v.__getData().autoSetters!], [mm.AutoSetterType.default, mm.AutoSetterType.param]);
   }
 });
 
@@ -125,9 +125,9 @@ it('Set same column twice', () => {
   class UserTA extends mm.ActionGroup {
     t = mm
       .unsafeUpdateAll()
-      .set(user.name, user.name.toInput('a'))
-      .setInputs(user.snake_case_name, user.name)
-      .set(user.name, user.name.toInput('b'));
+      .set(user.name, user.name.toParam('a'))
+      .setParams(user.snake_case_name, user.name)
+      .set(user.name, user.name.toParam('b'));
   }
   itThrows(
     () => mm.actionGroup(user, UserTA),
@@ -137,7 +137,7 @@ it('Set same column twice', () => {
 
 it('updateOne', () => {
   class UserTA extends mm.ActionGroup {
-    t = mm.updateOne().setInputs(user.snake_case_name).by(user.id);
+    t = mm.updateOne().setParams(user.snake_case_name).by(user.id);
   }
   const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
@@ -149,7 +149,7 @@ it('updateOne', () => {
 
   itThrows(() => {
     class TA extends mm.ActionGroup {
-      t = mm.updateOne().setInputs(user.snake_case_name);
+      t = mm.updateOne().setParams(user.snake_case_name);
     }
     mm.actionGroup(user, TA);
   }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"] [table "User(user)"]');
@@ -157,7 +157,7 @@ it('updateOne', () => {
 
 it('updateSome', () => {
   class UserTA extends mm.ActionGroup {
-    t = mm.updateSome().setInputs(user.snake_case_name).by(user.id);
+    t = mm.updateSome().setParams(user.snake_case_name).by(user.id);
   }
   const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
@@ -169,7 +169,7 @@ it('updateSome', () => {
 
   itThrows(() => {
     class TA extends mm.ActionGroup {
-      t = mm.updateSome().setInputs(user.snake_case_name);
+      t = mm.updateSome().setParams(user.snake_case_name);
     }
     mm.actionGroup(user, TA);
   }, '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeUpdateAll` [action "t"] [table "User(user)"]');
@@ -177,7 +177,7 @@ it('updateSome', () => {
 
 it('unsafeUpdateAll', () => {
   class UserTA extends mm.ActionGroup {
-    t = mm.unsafeUpdateAll().setInputs(user.snake_case_name);
+    t = mm.unsafeUpdateAll().setParams(user.snake_case_name);
   }
   const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
@@ -190,7 +190,7 @@ it('unsafeUpdateAll', () => {
 
 it('ByID', () => {
   class UserTA extends mm.ActionGroup {
-    t = mm.updateOne().setInputs(user.snake_case_name).by(user.id);
+    t = mm.updateOne().setParams(user.snake_case_name).by(user.id);
   }
   const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
@@ -218,7 +218,7 @@ it('No setters', () => {
   }, 'No setters [action "t"] [table "User(user)"]');
   assert.doesNotThrow(() => {
     class UserTA extends mm.ActionGroup {
-      t = mm.unsafeUpdateAll().setInputs();
+      t = mm.unsafeUpdateAll().setParams();
     }
     mm.actionGroup(user, UserTA);
   });
@@ -232,7 +232,7 @@ it('No setters', () => {
 
 it('by', () => {
   class UserTA extends mm.ActionGroup {
-    t = mm.updateOne().setInputs(user.def_value).by(user.snake_case_name);
+    t = mm.updateOne().setParams(user.def_value).by(user.snake_case_name);
   }
   const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
@@ -244,10 +244,10 @@ it('by', () => {
 
 it('andBy', () => {
   class UserTA extends mm.ActionGroup {
-    t1 = mm.updateOne().setInputs(user.name).by(user.snake_case_name).andBy(user.follower_count);
+    t1 = mm.updateOne().setParams(user.name).by(user.snake_case_name).andBy(user.follower_count);
 
-    t2 = mm.updateOne().setInputs(user.name).andBy(user.follower_count);
-    t3 = mm.updateOne().setInputs(user.name).by(user.id).andBy(user.follower_count);
+    t2 = mm.updateOne().setParams(user.name).andBy(user.follower_count);
+    t3 = mm.updateOne().setParams(user.name).by(user.id).andBy(user.follower_count);
   }
   const ta = mm.actionGroup(user, UserTA);
   eq(
@@ -265,10 +265,10 @@ it('where and whereSQL', () => {
   class UserTA extends mm.ActionGroup {
     t1 = mm
       .updateOne()
-      .set(user.name, user.name.toInput())
+      .set(user.name, user.name.toParam())
       .whereSQL(mm.sql`${user.id} = 1`);
 
-    t2 = mm.updateOne().set(user.name, user.name.toInput()).where`${user.id} = 1`;
+    t2 = mm.updateOne().set(user.name, user.name.toParam()).where`${user.id} = 1`;
   }
   const ta = mm.actionGroup(user, UserTA);
   eq(ta.t1.__whereSQLString, '`Column(id, t=User(user)) = 1`');

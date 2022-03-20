@@ -6,7 +6,7 @@ declare module './core.js' {
     toRawString(): string;
     toColumn(): Column;
     toSelectedColumn(): SelectedColumn;
-    toInput(): SQLVariable;
+    toParam(): SQLVariable;
     toCall(): SQLCall;
   }
 }
@@ -23,7 +23,7 @@ SQLElement.prototype.toSelectedColumn = function (): SelectedColumn {
   return this.value as SelectedColumn;
 };
 
-SQLElement.prototype.toInput = function (): SQLVariable {
+SQLElement.prototype.toParam = function (): SQLVariable {
   return this.value as SQLVariable;
 };
 

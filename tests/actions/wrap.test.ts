@@ -6,7 +6,7 @@ import { eq, ok, deepEq } from '../assert-aliases.js';
 
 it('Wrap', () => {
   class PostTA extends mm.ActionGroup {
-    t = mm.insert().setInputs(post.title, post.snake_case_user_id).setInputs();
+    t = mm.insert().setParams(post.title, post.snake_case_user_id).setParams();
   }
   const postTA = mm.actionGroup(post, PostTA);
   class UserTA extends mm.ActionGroup {
@@ -18,7 +18,7 @@ it('Wrap', () => {
       offset: -2,
     });
 
-    t3 = mm.updateOne().from(post).setInputs().by(post.id).wrap({ title: '"t3"' });
+    t3 = mm.updateOne().from(post).setParams().by(post.id).wrap({ title: '"t3"' });
   }
   const ta = mm.actionGroup(user, UserTA);
   let v = ta.t;
@@ -67,7 +67,7 @@ it('Wrap', () => {
 
 it('Wrap (chains)', () => {
   class PostTA extends mm.ActionGroup {
-    t = mm.insert().setInputs(post.title, post.snake_case_user_id).setInputs();
+    t = mm.insert().setParams(post.title, post.snake_case_user_id).setParams();
   }
   const postTA = mm.actionGroup(post, PostTA);
   class UserTA extends mm.ActionGroup {

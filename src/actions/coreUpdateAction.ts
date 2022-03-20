@@ -5,12 +5,12 @@ import { convertToSQL, sql } from '../core/sqlHelper.js';
 
 export enum AutoSetterType {
   default = 1,
-  input,
+  param,
 }
 
 export interface CoreUpdateActionData extends ActionData {
   setters?: Map<Column, unknown>;
-  // You can call both `setInputs()` and `setDefaults()` and the order also matters,
+  // You can call both `setParams()` and `setDefaults()` and the order also matters,
   // we use ES6 `Set` to track those auto setters, which keeps insertion order.
   autoSetters?: Set<AutoSetterType>;
 }
@@ -35,14 +35,14 @@ export class CoreUpdateAction extends Action {
     return this;
   }
 
-  setInputs(...columns: Column[]): this {
+  setParams(...columns: Column[]): this {
     if (!columns.length) {
-      this.mustGetAutoSetters().add(AutoSetterType.input);
+      this.mustGetAutoSetters().add(AutoSetterType.param);
       return this;
     }
     for (const col of columns) {
       this.checkColumnFree(col);
-      this.mustGetSetters().set(col, sql`${col.toInput()}`);
+      this.mustGetSetters().set(col, sql`${col.toParam()}`);
     }
     return this;
   }

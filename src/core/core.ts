@@ -526,7 +526,7 @@ export class JoinTable {
 
 // Generates a column name for a join, we call it a middle and we need to cut the trailing `_id`,
 // e.g. `SELECT post.user_id.join(user).name`, the `user_id` before the join is the middle name,
-// the input name for this column is `userName`.
+// the param name for this column is `userName`.
 function makeMiddleName(s: string): string {
   if (!s) {
     throw new Error('Unexpected empty value in "makeMiddleName"');
@@ -589,7 +589,7 @@ export class SQLVariable {
 export enum SQLElementType {
   rawString,
   column,
-  input,
+  param,
   call,
   rawColumn,
   action,
@@ -635,7 +635,7 @@ export class SelectedColumn {
   constructor(
     core: Column | SQL,
     // `selectedName` can be undefined if `core` is a column.
-    // In that case, when you call `toInput`, a name will be generated from all its joined columns,
+    // In that case, when you call `toParam`, a name will be generated from all its joined columns,
     // so that you don't need to specify names when using joins.
     selectedName?: string,
     type?: ColumnType,

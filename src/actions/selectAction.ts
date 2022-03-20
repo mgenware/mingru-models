@@ -17,13 +17,13 @@ export class OrderByColumn {
   constructor(public readonly column: SelectedColumnTypesOrName, public readonly desc = false) {}
 }
 
-export class OrderByColumnInput {
+export class OrderByColumnParam {
   constructor(public readonly columns: ReadonlyArray<SelectedColumnTypesOrName>) {
     throwOnEmptyArray(columns, 'columns');
   }
 }
 
-export type OrderByColumnType = OrderByColumn | OrderByColumnInput;
+export type OrderByColumnType = OrderByColumn | OrderByColumnParam;
 
 export enum SelectActionMode {
   row = 1,
@@ -120,8 +120,8 @@ export class SelectAction extends CoreSelectAction {
     return this;
   }
 
-  orderByInput(...columns: SelectedColumnTypesOrName[]): this {
-    this.mustGetOrderByColumns().push(new OrderByColumnInput(columns));
+  orderByParams(...columns: SelectedColumnTypesOrName[]): this {
+    this.mustGetOrderByColumns().push(new OrderByColumnParam(columns));
     return this;
   }
 
