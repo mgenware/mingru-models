@@ -17,15 +17,15 @@ import * as constants from '../constants.js';
 export class SQLBuilder {
   elements: SQLElement[] = [];
 
-  loadTemplateString(literals: TemplateStringsArray, params: SQLConvertible[]) {
-    for (let i = 0; i < params.length; i++) {
+  loadTemplateString(literals: TemplateStringsArray, elements: SQLConvertible[]) {
+    for (let i = 0; i < elements.length; i++) {
       // Skip empty strings
       if (literals[i]) {
         this.pushElement(new SQLElement(SQLElementType.rawString, literals[i]));
       }
-      const param = params[i];
-      if (param !== undefined) {
-        this.push(param);
+      const el = elements[i];
+      if (el !== undefined) {
+        this.push(el);
       }
     }
 
@@ -36,35 +36,35 @@ export class SQLBuilder {
     }
   }
 
-  push(param: SQLConvertible) {
-    if (param === null) {
+  push(el: SQLConvertible) {
+    if (el === null) {
       this.pushElement(new SQLElement(SQLElementType.rawString, constants.NULL));
-    } else if (typeof param === 'string') {
-      this.pushElement(new SQLElement(SQLElementType.rawString, param));
-    } else if (param instanceof Column) {
-      this.pushElement(new SQLElement(SQLElementType.column, param));
-    } else if (param instanceof SQLVariable) {
-      this.pushElement(new SQLElement(SQLElementType.param, param));
-    } else if (param instanceof SQL) {
-      for (const element of param.elements) {
+    } else if (typeof el === 'string') {
+      this.pushElement(new SQLElement(SQLElementType.rawString, el));
+    } else if (el instanceof Column) {
+      this.pushElement(new SQLElement(SQLElementType.column, el));
+    } else if (el instanceof SQLVariable) {
+      this.pushElement(new SQLElement(SQLElementType.param, el));
+    } else if (el instanceof SQL) {
+      for (const element of el.elements) {
         this.pushElement(element);
       }
-    } else if (param instanceof SQLCall) {
-      this.pushElement(new SQLElement(SQLElementType.call, param));
-    } else if (param instanceof SelectedColumn) {
-      this.pushElement(new SQLElement(SQLElementType.rawColumn, param));
-    } else if (param instanceof Action) {
-      this.pushElement(new SQLElement(SQLElementType.action, param));
+    } else if (el instanceof SQLCall) {
+      this.pushElement(new SQLElement(SQLElementType.call, el));
+    } else if (el instanceof SelectedColumn) {
+      this.pushElement(new SQLElement(SQLElementType.rawColumn, el));
+    } else if (el instanceof Action) {
+      this.pushElement(new SQLElement(SQLElementType.action, el));
     } else {
-      throw new Error(`Unsupported SQL parameter type "${param}"`);
+      throw new Error(`Unsupported SQL parameter type "${el}"`);
     }
   }
 
-  pushWithSpace(param: SQLConvertible) {
+  pushWithSpace(el: SQLConvertible) {
     if (this.elements.length) {
       this.push(' ');
     }
-    this.push(param);
+    this.push(el);
   }
 
   toSQL(): SQL {
