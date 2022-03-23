@@ -233,10 +233,10 @@ export class Column {
     return table;
   }
 
-  __checkSourceTable(table: Table) {
+  __checkSourceTable(table: Table, context: string) {
     if (table !== this.__getSourceTable()) {
       throw new Error(
-        `Source table assertion failed, expected "${table}", got "${this.__getSourceTable()}".`,
+        `Source table assertion failed, expected "${table}", got "${this.__getSourceTable()}". ${context}`,
       );
     }
   }
