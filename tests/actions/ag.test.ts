@@ -237,3 +237,18 @@ it('Opt.configurableTable', () => {
   eq(ta.__getData().options.configurableTableName, 'tableParam');
   deepEq(ta.t.__getGroupOptions(), { configurableTableName: 'tableParam' });
 });
+
+it('Argument stubs', () => {
+  const stubs = [
+    new mm.SQLVariable({ type: 'int', defaultValue: 0 }, 'id'),
+    new mm.SQLVariable({ type: 'int', defaultValue: 0 }, 'id2'),
+  ];
+  class UserTA extends mm.ActionGroup {
+    t = mm.selectRow(user.id).argStubs(...stubs);
+  }
+  const ta = mm.actionGroup(user, UserTA);
+
+  const v = ta.t;
+  const vd = v.__getData();
+  deepEq(vd.argStubs, stubs);
+});

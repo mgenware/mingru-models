@@ -98,7 +98,7 @@ export function table<T extends Table>(CLASS: new (name?: string) => T, opt?: Ta
   return tableCore(tableName, tableObj, columns, opt) as T;
 }
 
-// A ghost table is a table that is used to create a TA for grouping a set of
+// A ghost table is a table that is used to create an AG for grouping a set of
 // table actions from other tables.
 // The table itself does not contain any columns.
 // Unlike an empty `Table` subclass, `GhostTable` should be recognized by
