@@ -6,9 +6,6 @@ import { sql } from './sqlHelper.js';
 export type DateTimeDefaultValue = 'local' | 'utc';
 
 export function fk(column: Column): Column {
-  if (!Object.isFrozen(column)) {
-    throw new Error(`The column "${column}" is not sealed yet`);
-  }
   return Column.newForeignColumn(column);
 }
 

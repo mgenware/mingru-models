@@ -339,3 +339,17 @@ it('Nullable FK', () => {
   eq(d.foreignColumn, user.id);
   eq(t.__type().nullable, true);
 });
+
+it('Self-referencing FKs', () => {
+  class T extends mm.Table {
+    id = mm.pk();
+    parent_id = mm.fk(this.id);
+    msg = mm.text();
+  }
+  const t = mm.table(T);
+  const d = t.parent_id.__getData();
+  eq(d.table, t);
+  eq(d.propertyName, 'parent_id');
+  eq(d.foreignColumn, t.id);
+  notEq(d.type, t.id.__getData().type);
+});
