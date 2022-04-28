@@ -11,6 +11,7 @@ export interface TableActionOptions {
 }
 
 export interface ActionGroupData {
+  name: string;
   groupTable: Table;
   actions: Readonly<Record<string, Action | undefined>>;
   options: TableActionOptions;
@@ -24,11 +25,13 @@ export class ActionGroup {
   }
 
   __configure(
+    name: string,
     groupTable: Table,
     actions: Readonly<Record<string, Action | undefined>>,
     options: TableActionOptions,
   ) {
     this.__data = {
+      name,
       groupTable,
       actions,
       options,
@@ -154,7 +157,7 @@ export class Action {
     // Implemented by subclass.
   }
 
-  // Called by `ta.actionGroup`.
+  // Called by `ag.actionGroup`.
   __configure(name: string, groupTable: Table, groupOptions: TableActionOptions) {
     if (!this.__data.name) {
       this.__data.name = name;
@@ -202,11 +205,20 @@ function enumerateActions<T extends ActionGroup>(
 
 export function actionGroupCore(
   table: Table,
-  actionGroupObj: ActionGroup | null,
+  actionGroupInput: ActionGroup | string | null,
   actions: Record<string, Action | undefined>,
   opt: TableActionOptions | undefined,
 ): ActionGroup {
-  actionGroupObj = actionGroupObj || new ActionGroup();
+  let agUserName: string | undefined;
+  let ag: ActionGroup;
+  if (!actionGroupInput) {
+    ag = new ActionGroup();
+  } else if (typeof actionGroupInput === 'string') {
+    ag = new ActionGroup();
+    agUserName = actionGroupInput;
+  } else {
+    ag = actionGroupInput;
+  }
   opt ??= {};
   for (const [name, action] of Object.entries(actions)) {
     try {
@@ -217,8 +229,8 @@ export function actionGroupCore(
       throw err;
     }
   }
-  actionGroupObj.__configure(table, actions, opt);
-  return actionGroupObj;
+  ag.__configure(agUserName ?? ag.constructor.name, table, actions, opt);
+  return ag;
 }
 
 export function actionGroup<T extends Table, A extends ActionGroup>(
