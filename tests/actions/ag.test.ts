@@ -210,27 +210,6 @@ it('actionGroupCore', () => {
     del,
     sel,
   };
-  const ta = mm.actionGroupCore(user, null, actions, undefined);
-  const tad = ta.__getData();
-
-  eq(tad.groupTable, user);
-  eq(ta instanceof mm.ActionGroup, true);
-  eq(tad.name, 'ActionGroup');
-  deepEq(tad.actions, actions);
-  // `actionGroupCore` never add property into table actions.
-  for (const [name] of Object.entries(tad.actions)) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    eq((ta as any)[name], undefined);
-  }
-});
-
-it('actionGroupCore (custom name)', () => {
-  const sel = mm.selectRow();
-  const del = mm.deleteOne().by(user.id);
-  const actions: Record<string, mm.Action | undefined> = {
-    del,
-    sel,
-  };
   const ta = mm.actionGroupCore(user, 'MyName', actions, undefined);
   const tad = ta.__getData();
 

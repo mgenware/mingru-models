@@ -205,7 +205,7 @@ function enumerateActions<T extends ActionGroup>(
 
 export function actionGroupCore(
   table: Table,
-  actionGroupInput: ActionGroup | string | null,
+  actionGroupInput: ActionGroup | string,
   actions: Record<string, Action | undefined>,
   opt: TableActionOptions | undefined,
 ): ActionGroup {
