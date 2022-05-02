@@ -210,7 +210,7 @@ it('actionGroupCore', () => {
     del,
     sel,
   };
-  const ta = mm.actionGroupCore(user, 'MyName', actions, undefined);
+  const ta = mm.actionGroupCore(user, 'MyName', actions);
   const tad = ta.__getData();
 
   eq(tad.groupTable, user);
@@ -232,15 +232,6 @@ it('Ghost table', () => {
   const v = ta.t;
   ok(mm.ghostTable instanceof mm.GhostTable);
   eq(v.groupTable, mm.ghostTable);
-});
-
-it('Opt.configurableTable', () => {
-  class MyTA extends mm.ActionGroup {
-    t = new MyInsertAction().from(post).setParams();
-  }
-  const ta = mm.actionGroup(post, MyTA, { configurableTableName: 'tableParam' });
-  eq(ta.__getData().options.configurableTableName, 'tableParam');
-  deepEq(ta.t.__getGroupOptions(), { configurableTableName: 'tableParam' });
 });
 
 it('Argument stubs', () => {

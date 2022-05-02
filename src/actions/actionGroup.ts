@@ -5,16 +5,10 @@ import { Table, SQLVariable } from '../core/core.js';
 import * as constants from '../constants.js';
 import * as su from '../lib/stringUtil.js';
 
-export interface TableActionOptions {
-  // Make table configurable by an param with the given name.
-  configurableTableName?: string;
-}
-
 export interface ActionGroupData {
   name: string;
   groupTable: Table;
   actions: Readonly<Record<string, Action | undefined>>;
-  options: TableActionOptions;
 }
 
 export class ActionGroup {
@@ -28,13 +22,11 @@ export class ActionGroup {
     name: string,
     groupTable: Table,
     actions: Readonly<Record<string, Action | undefined>>,
-    options: TableActionOptions,
   ) {
     this.__data = {
       name,
       groupTable,
       actions,
-      options,
     };
   }
 }
@@ -62,15 +54,9 @@ export interface ActionData {
 
 export class Action {
   protected __data: ActionData = {};
-  // Called in `__configure`.
-  protected __groupOptions?: TableActionOptions;
 
   __getData(): ActionData {
     return this.__data;
-  }
-
-  __getGroupOptions() {
-    return this.__groupOptions;
   }
 
   constructor(actionType: ActionType) {
@@ -118,13 +104,6 @@ export class Action {
     return this.__data.name;
   }
 
-  __mustGetGroupOptions(): TableActionOptions {
-    if (!this.__groupOptions) {
-      throw new Error(`Action "${this}" doesn't have any group options`);
-    }
-    return this.__groupOptions;
-  }
-
   attr(name: ActionAttribute, value: unknown): this {
     this.mustGetAttrs().set(name, value);
     return this;
@@ -158,14 +137,13 @@ export class Action {
   }
 
   // Called by `ag.actionGroup`.
-  __configure(name: string, groupTable: Table, groupOptions: TableActionOptions) {
+  __configure(name: string, groupTable: Table) {
     if (!this.__data.name) {
       this.__data.name = name;
     }
     if (!this.__data.groupTable) {
       this.__data.groupTable = groupTable;
     }
-    this.__groupOptions = groupOptions;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     this.__validate(this.__data.groupTable ?? groupTable);
   }
@@ -207,7 +185,6 @@ export function actionGroupCore(
   table: Table,
   actionGroupInput: ActionGroup | string,
   actions: Record<string, Action | undefined>,
-  opt: TableActionOptions | undefined,
 ): ActionGroup {
   let agUserName: string | undefined;
   let ag: ActionGroup;
@@ -219,24 +196,22 @@ export function actionGroupCore(
   } else {
     ag = actionGroupInput;
   }
-  opt ??= {};
   for (const [name, action] of Object.entries(actions)) {
     try {
-      action?.__configure(name, table, opt);
+      action?.__configure(name, table);
     } catch (err) {
       mustBeErr(err);
       err.message += ` [action "${name}"]`;
       throw err;
     }
   }
-  ag.__configure(agUserName ?? ag.constructor.name, table, actions, opt);
+  ag.__configure(agUserName ?? ag.constructor.name, table, actions);
   return ag;
 }
 
 export function actionGroup<T extends Table, A extends ActionGroup>(
   table: T,
   TACls: new () => A,
-  options?: TableActionOptions,
 ): A {
   try {
     const taObj = new TACls();
@@ -244,7 +219,7 @@ export function actionGroup<T extends Table, A extends ActionGroup>(
     enumerateActions(taObj, (action, name) => {
       actions[name] = action;
     });
-    return actionGroupCore(table, taObj, actions, options) as A;
+    return actionGroupCore(table, taObj, actions) as A;
   } catch (err) {
     mustBeErr(err);
     err.message += ` [table "${table}"]`;

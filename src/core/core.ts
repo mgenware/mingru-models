@@ -390,7 +390,7 @@ export interface TableData {
   dbName?: string;
   pks: Column[];
   aiPKs: Column[];
-  virtualTable: boolean;
+  tableParam: boolean;
 }
 
 export class Table {
@@ -402,7 +402,7 @@ export class Table {
       name: '',
       pks: [],
       aiPKs: [],
-      virtualTable: false,
+      tableParam: false,
     };
   }
 
@@ -430,7 +430,7 @@ export class Table {
     columns: Record<string, Column | undefined>,
     pks: Column[],
     aiPKs: Column[],
-    virtualTable: boolean,
+    tableParam: boolean,
   ) {
     const data = this.__data;
     data.name = name;
@@ -438,7 +438,7 @@ export class Table {
     data.columns = columns;
     data.pks = pks;
     data.aiPKs = aiPKs;
-    data.virtualTable = virtualTable;
+    data.tableParam = tableParam;
   }
 }
 

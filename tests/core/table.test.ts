@@ -11,7 +11,7 @@ it('Core props', () => {
   eq(user.__getDBName(), 'user');
   eq(user.__getModelName(), 'user');
   eq(user.toString(), 'User(user)');
-  eq(d.virtualTable, false);
+  eq(d.tableParam, false);
 
   class MyTable extends mm.Table {
     id = mm.pk();
@@ -91,8 +91,8 @@ it('tableCore', () => {
   }
 });
 
-it('Virtual table', () => {
+it('tableParam', () => {
   class VT extends mm.Table {}
-  const vt = mm.table(VT, { virtualTable: true });
-  eq(vt.__getData().virtualTable, true);
+  const vt = mm.table(VT, { tableParam: true });
+  eq(vt.__getData().tableParam, true);
 });

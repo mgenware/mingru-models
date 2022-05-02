@@ -20,7 +20,7 @@ function enumerateColumns(tableObject: Table, cb: (column: Column, prop: string)
 
 export interface TableOptions {
   dbName?: string;
-  virtualTable?: boolean;
+  tableParam?: boolean;
 }
 
 export function tableCore(
@@ -78,7 +78,7 @@ export function tableCore(
       }
     }
 
-    tableObj.__configure(tableName, opt?.dbName, convertedColumns, pks, aiPKs, !!opt?.virtualTable);
+    tableObj.__configure(tableName, opt?.dbName, convertedColumns, pks, aiPKs, !!opt?.tableParam);
     return tableObj;
   } catch (topErr) {
     mustBeErr(topErr);
