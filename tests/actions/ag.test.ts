@@ -17,6 +17,7 @@ it('Core props', () => {
   let vd = v.__getData();
   eq(vd.name, 't');
   eq(vd.groupTable, user);
+  eq(vd.agName, 'UserTA');
   eq(vd.sqlTable, undefined);
   eq(v.__mustGetGroupTable(), user);
   eq(v.__mustGetAvailableSQLTable(user), user);

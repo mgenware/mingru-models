@@ -42,12 +42,14 @@ export enum ActionType {
 
 export interface ActionData {
   actionType?: ActionType;
-  // Will be set after calling `mm.actionGroup`.
+  // Will be set in `mm.actionGroup`.
   name?: string;
   // Set by `from()`.
   sqlTable?: Table;
-  // Will be set after calling `mm.actionGroup`.
+  // Will be set in `mm.actionGroup`.
   groupTable?: Table;
+  // Will be set in `mm.actionGroup`.
+  agName?: string;
   argStubs?: SQLVariable[];
   attrs?: Map<ActionAttribute, unknown>;
 }
@@ -137,15 +139,19 @@ export class Action {
   }
 
   // Called by `ag.actionGroup`.
-  __configure(name: string, groupTable: Table) {
-    if (!this.__data.name) {
-      this.__data.name = name;
+  __configure(name: string, agName: string, groupTable: Table) {
+    const d = this.__data;
+    if (!d.name) {
+      d.name = name;
     }
-    if (!this.__data.groupTable) {
-      this.__data.groupTable = groupTable;
+    if (!d.agName) {
+      d.agName = agName;
+    }
+    if (!d.groupTable) {
+      d.groupTable = groupTable;
     }
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    this.__validate(this.__data.groupTable ?? groupTable);
+    this.__validate(d.groupTable ?? groupTable);
   }
 
   private mustGetAttrs(): Map<ActionAttribute, unknown> {
@@ -186,26 +192,27 @@ export function actionGroupCore(
   actionGroupInput: ActionGroup | string,
   actions: Record<string, Action | undefined>,
 ): ActionGroup {
-  let agUserName: string | undefined;
+  let userAGName: string | undefined;
   let ag: ActionGroup;
   if (!actionGroupInput) {
     ag = new ActionGroup();
   } else if (typeof actionGroupInput === 'string') {
     ag = new ActionGroup();
-    agUserName = actionGroupInput;
+    userAGName = actionGroupInput;
   } else {
     ag = actionGroupInput;
   }
+  const agName = userAGName ?? ag.constructor.name;
   for (const [name, action] of Object.entries(actions)) {
     try {
-      action?.__configure(name, table);
+      action?.__configure(name, agName, table);
     } catch (err) {
       mustBeErr(err);
       err.message += ` [action "${name}"]`;
       throw err;
     }
   }
-  ag.__configure(agUserName ?? ag.constructor.name, table, actions);
+  ag.__configure(agName, table, actions);
   return ag;
 }
 
