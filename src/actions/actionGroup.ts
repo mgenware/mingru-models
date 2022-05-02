@@ -90,12 +90,16 @@ export class Action {
     return table;
   }
 
-  __mustGetGroupTable(): Table {
-    const table = this.__data.actionGroup?.__getData().groupTable;
-    if (!table) {
-      throw new Error(`Action "${this}" doesn't have a group table`);
+  __mustGetActionGroup(): ActionGroup {
+    const ag = this.__data.actionGroup;
+    if (!ag) {
+      throw new Error(`Action "${this}" doesn't belong to any action groups`);
     }
-    return table;
+    return ag;
+  }
+
+  __mustGetGroupTable(): Table {
+    return this.__mustGetActionGroup().__getData().groupTable;
   }
 
   __mustGetName(): string {
