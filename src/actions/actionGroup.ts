@@ -98,6 +98,10 @@ export class Action {
     return ag;
   }
 
+  __getGroupTable(): Table | null {
+    return this.__data.actionGroup?.__getData().groupTable ?? null;
+  }
+
   __mustGetGroupTable(): Table {
     return this.__mustGetActionGroup().__getData().groupTable;
   }
