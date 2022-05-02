@@ -47,9 +47,7 @@ export interface ActionData {
   // Set by `from()`.
   sqlTable?: Table;
   // Will be set in `mm.actionGroup`.
-  groupTable?: Table;
-  // Will be set in `mm.actionGroup`.
-  agName?: string;
+  actionGroup?: ActionGroup;
   argStubs?: SQLVariable[];
   attrs?: Map<ActionAttribute, unknown>;
 }
@@ -84,7 +82,8 @@ export class Action {
   // Finally, for inline actions (if `from` is not called), it can use the
   // `groupTable` from `validate` method.
   __mustGetAvailableSQLTable(groupTable: Table | undefined | null): Table {
-    const table = this.__data.sqlTable || this.__data.groupTable || groupTable;
+    const table =
+      this.__data.sqlTable ?? this.__data.actionGroup?.__getData().groupTable ?? groupTable;
     if (!table) {
       throw new Error(`Action "${this}" doesn't have any tables`);
     }
@@ -92,7 +91,7 @@ export class Action {
   }
 
   __mustGetGroupTable(): Table {
-    const table = this.__data.groupTable;
+    const table = this.__data.actionGroup?.__getData().groupTable;
     if (!table) {
       throw new Error(`Action "${this}" doesn't have a group table`);
     }
@@ -121,7 +120,10 @@ export class Action {
 
   toString(): string {
     const d = this.__data;
-    return su.desc(this, d.name, { t: d.groupTable?.toString(), ft: d.sqlTable?.toString() });
+    return su.desc(this, d.name, {
+      t: d.actionGroup?.__getData().groupTable.toString(),
+      ft: d.sqlTable?.toString(),
+    });
   }
 
   // Automatically called by `mm.actionGroup` for all the columns it walks through.
@@ -139,19 +141,16 @@ export class Action {
   }
 
   // Called by `ag.actionGroup`.
-  __configure(name: string, agName: string, groupTable: Table) {
+  __configure(name: string, ag: ActionGroup) {
     const d = this.__data;
     if (!d.name) {
       d.name = name;
     }
-    if (!d.agName) {
-      d.agName = agName;
-    }
-    if (!d.groupTable) {
-      d.groupTable = groupTable;
+    if (!d.actionGroup) {
+      d.actionGroup = ag;
     }
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    this.__validate(d.groupTable ?? groupTable);
+    this.__validate(ag.__getData().groupTable);
   }
 
   private mustGetAttrs(): Map<ActionAttribute, unknown> {
@@ -203,16 +202,16 @@ export function actionGroupCore(
     ag = actionGroupInput;
   }
   const agName = userAGName ?? ag.constructor.name;
+  ag.__configure(agName, table, actions);
   for (const [name, action] of Object.entries(actions)) {
     try {
-      action?.__configure(name, agName, table);
+      action?.__configure(name, ag);
     } catch (err) {
       mustBeErr(err);
       err.message += ` [action "${name}"]`;
       throw err;
     }
   }
-  ag.__configure(agName, table, actions);
   return ag;
 }
 

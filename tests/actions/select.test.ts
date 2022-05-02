@@ -429,9 +429,9 @@ it('Set action.__table via from()', () => {
   const td = ta.t.__getData();
   const t2d = ta.t2.__getData();
   eq(td.sqlTable, undefined);
-  eq(td.groupTable, user);
+  eq(td.actionGroup, ta);
   eq(t2d.sqlTable, post);
-  eq(t2d.groupTable, user);
+  eq(t2d.actionGroup, ta);
 
   let table = ta.t.__mustGetAvailableSQLTable(null);
   eq(table, user);
@@ -499,7 +499,7 @@ it('UNION on a ghost table', () => {
   eq(td.unionMembers![0], t1);
   eq(td.unionMembers![1], t2);
   eq(td.name, 't');
-  eq(td.groupTable, mm.ghostTable);
+  eq(td.actionGroup, ta);
   eq(td.sqlTable, user);
 });
 

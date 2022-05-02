@@ -16,8 +16,7 @@ it('Core props', () => {
   let v = ta.t;
   let vd = v.__getData();
   eq(vd.name, 't');
-  eq(vd.groupTable, user);
-  eq(vd.agName, 'UserTA');
+  eq(vd.actionGroup, ta);
   eq(vd.sqlTable, undefined);
   eq(v.__mustGetGroupTable(), user);
   eq(v.__mustGetAvailableSQLTable(user), user);
@@ -26,7 +25,7 @@ it('Core props', () => {
   v = ta.t2;
   vd = v.__getData();
   eq(vd.name, 't2');
-  eq(vd.groupTable, user);
+  eq(vd.actionGroup, ta);
   eq(vd.sqlTable, post);
   eq(v.__mustGetGroupTable(), user);
   eq(v.__mustGetAvailableSQLTable(user), post);

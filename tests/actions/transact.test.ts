@@ -106,16 +106,16 @@ it('Setting __table or inline members', () => {
   }
   const postTA = mm.actionGroup(post, PostTA);
   const members = postTA.t.__getData().members!;
-  eq(members[0]?.action.__getData().groupTable, undefined);
+  eq(members[0]?.action.__getData().actionGroup, undefined);
   eq(members[0]?.action.__getData().sqlTable, undefined);
   eq(members[0]?.action.__getData().name, undefined);
-  eq(members[1]?.action.__getData().groupTable, post);
+  eq(members[1]?.action.__getData().actionGroup, postTA);
   eq(members[1]?.action.__getData().sqlTable, undefined);
   eq(members[1]?.action.__getData().name, 'insert');
-  eq(members[2]?.action.__getData().groupTable, user);
+  eq(members[2]?.action.__getData().actionGroup, userTA);
   eq(members[2]?.action.__getData().sqlTable, undefined);
   eq(members[2]?.action.__getData().name, 'insert');
-  eq(members[3]?.action.__getData().groupTable, undefined);
+  eq(members[3]?.action.__getData().actionGroup, undefined);
   eq(members[3]?.action.__getData().sqlTable, undefined);
   eq(members[3]?.action.__getData().name, undefined);
 });

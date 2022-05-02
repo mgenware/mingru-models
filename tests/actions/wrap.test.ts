@@ -32,10 +32,10 @@ it('Wrap', () => {
   eq(ad.actionType, mm.ActionType.wrap);
   eq(innerAction, ta.s);
   eq(bd.name, 's');
-  eq(bd.groupTable, user);
+  eq(bd.actionGroup, ta);
   eq(bd.sqlTable, undefined);
   eq(ad.sqlTable, undefined);
-  eq(ad.groupTable, user);
+  eq(ad.actionGroup, ta);
   deepEq(ad.args, {
     id: '1',
     offset: -2,
@@ -46,7 +46,7 @@ it('Wrap', () => {
   eq(cd.name, 't2');
   eq(cd.innerAction, postTA.t);
   eq(cd.sqlTable, undefined);
-  eq(cd.groupTable, user);
+  eq(cd.actionGroup, ta);
   deepEq(cd.args, {
     id: '32',
   });
@@ -56,10 +56,10 @@ it('Wrap', () => {
   const ed = dd.innerAction!.__getData();
   eq(dd.name, 't3');
   eq(ed.name, undefined);
-  eq(ed.groupTable, undefined);
+  eq(ed.actionGroup, undefined);
   eq(ed.sqlTable, post);
   eq(dd.sqlTable, undefined);
-  eq(dd.groupTable, user);
+  eq(dd.actionGroup, ta);
   deepEq(dd.args, {
     title: '"t3"',
   });
@@ -86,31 +86,31 @@ it('Wrap (chains)', () => {
     id: '33',
     id2: '34',
   });
-  eq(ta.s.__getData().groupTable, user);
+  eq(ta.s.__getData().actionGroup, ta);
   eq(ta.s.__getData().sqlTable, post);
-  eq(vd.groupTable, user);
+  eq(vd.actionGroup, ta);
   eq(vd.sqlTable, undefined);
 
   v = ta.t2;
   vd = v.__getData();
-  eq(vd.groupTable, user);
+  eq(vd.actionGroup, ta);
   eq(vd.sqlTable, undefined);
   eq(vd.innerAction, postTA.t);
   eq(vd.innerAction?.__getData().sqlTable, undefined);
-  eq(vd.innerAction?.__getData().groupTable, post);
+  eq(vd.innerAction?.__getData().actionGroup, postTA);
 });
 
 it('Inline WRAP actions', () => {
   class UserTA extends mm.ActionGroup {
     t = mm.deleteOne().by(user.id).wrap({ id: '23' });
   }
-  const ta = mm.actionGroup(user, UserTA);
-  const v = ta.t;
+  const ag = mm.actionGroup(user, UserTA);
+  const v = ag.t;
   const vd = v.__getData();
   eq(vd.sqlTable, undefined);
   eq(vd.innerAction!.__getData().sqlTable, undefined);
   eq(vd.innerAction!.__getData().name, undefined);
-  eq(vd.groupTable, user);
+  eq(vd.actionGroup, ag);
   eq(vd.name, 't');
   deepEq(vd.args, { id: '23' });
 });
@@ -119,14 +119,14 @@ it('Inline WRAP actions (chaining)', () => {
   class UserTA extends mm.ActionGroup {
     t = mm.deleteOne().by(user.id).wrap({ id: '23' }).wrap({ s: 'name' });
   }
-  const ta = mm.actionGroup(user, UserTA);
-  const v = ta.t;
+  const ag = mm.actionGroup(user, UserTA);
+  const v = ag.t;
   const vd = v.__getData();
   eq(vd.sqlTable, undefined);
-  eq(vd.innerAction!.__getData().groupTable, undefined);
+  eq(vd.innerAction!.__getData().actionGroup, undefined);
   eq(vd.innerAction!.__getData().sqlTable, undefined);
   eq(vd.innerAction!.__getData().name, undefined);
-  eq(vd.groupTable, user);
+  eq(vd.actionGroup, ag);
   eq(vd.name, 't');
   deepEq(vd.args, { id: '23', s: 'name' });
 });
@@ -135,14 +135,14 @@ it('Inline WRAP actions (with from)', () => {
   class UserTA extends mm.ActionGroup {
     t = mm.deleteOne().from(post).by(user.id).wrap({ id: '23' });
   }
-  const ta = mm.actionGroup(user, UserTA);
-  const v = ta.t;
+  const ag = mm.actionGroup(user, UserTA);
+  const v = ag.t;
   const vd = v.__getData();
   eq(vd.sqlTable, undefined);
-  eq(vd.innerAction!.__getData().groupTable, undefined);
+  eq(vd.innerAction!.__getData().actionGroup, undefined);
   eq(vd.innerAction!.__getData().sqlTable, post);
   eq(vd.innerAction!.__getData().name, undefined);
-  eq(vd.groupTable, user);
+  eq(vd.actionGroup, ag);
   eq(vd.name, 't');
   deepEq(vd.args, { id: '23' });
 });
