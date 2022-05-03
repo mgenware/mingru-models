@@ -33,7 +33,7 @@ Action.prototype.wrap = function (args: { [name: string]: WrapArgValue }): WrapA
 Action.prototype.declareReturnValues = function (values: {
   [name: string]: string;
 }): TransactionMember {
-  return new TransactionMember(this, undefined, values);
+  return new TransactionMember(this, values);
 };
 
 Action.prototype.declareReturnValue = function (name: string, value: string): TransactionMember {

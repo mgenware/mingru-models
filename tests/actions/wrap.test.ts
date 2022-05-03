@@ -55,8 +55,8 @@ it('Wrap', () => {
   const dd = v.__getData();
   const ed = dd.innerAction!.__getData();
   eq(dd.name, 't3');
-  eq(ed.name, undefined);
-  eq(ed.actionGroup, undefined);
+  eq(ed.name, 't3Core');
+  eq(ed.actionGroup, ta);
   eq(ed.sqlTable, post);
   eq(dd.sqlTable, undefined);
   eq(dd.actionGroup, ta);
@@ -96,8 +96,8 @@ it('Wrap (chains)', () => {
   eq(vd.actionGroup, ta);
   eq(vd.sqlTable, undefined);
   eq(vd.innerAction, postTA.t);
-  eq(vd.innerAction?.__getData().sqlTable, undefined);
-  eq(vd.innerAction?.__getData().actionGroup, postTA);
+  eq(vd.innerAction!.__getData().sqlTable, undefined);
+  eq(vd.innerAction!.__getData().actionGroup, postTA);
 });
 
 it('Inline WRAP actions', () => {
@@ -108,8 +108,9 @@ it('Inline WRAP actions', () => {
   const v = ag.t;
   const vd = v.__getData();
   eq(vd.sqlTable, undefined);
+  eq(vd.innerAction!.__getData().actionGroup, ag);
   eq(vd.innerAction!.__getData().sqlTable, undefined);
-  eq(vd.innerAction!.__getData().name, undefined);
+  eq(vd.innerAction!.__getData().name, 'tCore');
   eq(vd.actionGroup, ag);
   eq(vd.name, 't');
   deepEq(vd.args, { id: '23' });
@@ -123,9 +124,9 @@ it('Inline WRAP actions (chaining)', () => {
   const v = ag.t;
   const vd = v.__getData();
   eq(vd.sqlTable, undefined);
-  eq(vd.innerAction!.__getData().actionGroup, undefined);
+  eq(vd.innerAction!.__getData().actionGroup, ag);
   eq(vd.innerAction!.__getData().sqlTable, undefined);
-  eq(vd.innerAction!.__getData().name, undefined);
+  eq(vd.innerAction!.__getData().name, 'tCore');
   eq(vd.actionGroup, ag);
   eq(vd.name, 't');
   deepEq(vd.args, { id: '23', s: 'name' });
@@ -139,9 +140,9 @@ it('Inline WRAP actions (with from)', () => {
   const v = ag.t;
   const vd = v.__getData();
   eq(vd.sqlTable, undefined);
-  eq(vd.innerAction!.__getData().actionGroup, undefined);
+  eq(vd.innerAction!.__getData().actionGroup, ag);
   eq(vd.innerAction!.__getData().sqlTable, post);
-  eq(vd.innerAction!.__getData().name, undefined);
+  eq(vd.innerAction!.__getData().name, 'tCore');
   eq(vd.actionGroup, ag);
   eq(vd.name, 't');
   deepEq(vd.args, { id: '23' });

@@ -81,7 +81,7 @@ export function transact(...actions: TransactionMemberTypes[]): TransactAction {
         return a;
       }
       if (a instanceof ActionWithReturnValues) {
-        return new TransactionMember(a.action, undefined, a.returnValues);
+        return new TransactionMember(a.action, a.returnValues);
       }
       return new TransactionMember(a);
     }),

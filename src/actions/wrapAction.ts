@@ -1,4 +1,4 @@
-import { Action, ActionData, ActionType } from './actionGroup.js';
+import { Action, ActionData, ActionGroup, ActionType } from './actionGroup.js';
 import { Table } from '../core/core.js';
 import * as su from '../lib/stringUtil.js';
 
@@ -62,10 +62,10 @@ export class WrapAction extends Action {
     this.#data.args = args;
   }
 
-  override __validate(groupTable: Table) {
-    super.__validate(groupTable);
+  override __configure(name: string, ag: ActionGroup, inline: boolean) {
+    super.__configure(name, ag, inline);
 
-    this.#data.innerAction?.__validate(groupTable);
+    this.__getData().innerAction?.__configure(`${name}Core`, ag, true);
   }
 
   __setArgs(args: Record<string, WrapArgValue>) {

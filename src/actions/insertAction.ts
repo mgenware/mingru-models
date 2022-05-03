@@ -20,11 +20,10 @@ export class InsertAction extends CoreUpdateAction {
     this.#data.allowUnsetColumns = allowUnsetColumns;
   }
 
-  override __validate(groupTable: Table) {
-    super.__validate(groupTable);
+  override __validate(table: Table) {
+    super.__validate(table);
 
     const setterCount = this.#data.setters?.size ?? 0;
-    const table = this.__mustGetAvailableSQLTable(groupTable);
     // Number of columns = total count - number of auto_increment PKs.
     const colCount =
       Object.entries(table.__getData().columns).length - table.__getData().aiPKs.length;

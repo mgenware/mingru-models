@@ -18,8 +18,8 @@ it('Core props', () => {
   eq(vd.name, 't');
   eq(vd.actionGroup, ta);
   eq(vd.sqlTable, undefined);
+  eq(vd.inline, false);
   eq(v.__mustGetGroupTable(), user);
-  eq(v.__mustGetAvailableSQLTable(user), user);
   eq(v.__mustGetName(), 't');
 
   v = ta.t2;
@@ -28,7 +28,6 @@ it('Core props', () => {
   eq(vd.actionGroup, ta);
   eq(vd.sqlTable, post);
   eq(v.__mustGetGroupTable(), user);
-  eq(v.__mustGetAvailableSQLTable(user), post);
   eq(v.__mustGetName(), 't2');
 });
 
@@ -76,24 +75,6 @@ class MyInsertAction extends mm.InsertAction {
     this.groupTable = groupTable;
   }
 }
-
-it('Action.onInit', () => {
-  class UserTA extends mm.ActionGroup {
-    t = new MyInsertAction().setParams();
-  }
-  const ta = mm.actionGroup(user, UserTA);
-  const v = ta.t;
-  eq(v.groupTable, user);
-});
-
-it('Action.onInit (from)', () => {
-  class UserTA extends mm.ActionGroup {
-    t = new MyInsertAction().from(post).setParams();
-  }
-  const ta = mm.actionGroup(user, UserTA);
-  const v = ta.t;
-  eq(v.groupTable, user);
-});
 
 it('Action.attr/attrs', () => {
   {
@@ -225,13 +206,26 @@ it('actionGroupCore', () => {
 });
 
 it('Ghost table', () => {
+  ok(mm.ghostTable instanceof mm.GhostTable);
+});
+
+it('`__validate` with `groupTable`', () => {
+  class UserTA extends mm.ActionGroup {
+    t = new MyInsertAction().setParams();
+  }
+  const ta = mm.actionGroup(user, UserTA);
+  const v = ta.t;
+  eq(v.groupTable, user);
+});
+
+it('`__validate` with `sqlTable`', () => {
   class GhostTA extends mm.ActionGroup {
     t = new MyInsertAction().from(post).setParams();
   }
   const ta = mm.actionGroup(mm.ghostTable, GhostTA);
   const v = ta.t;
   ok(mm.ghostTable instanceof mm.GhostTable);
-  eq(v.groupTable, mm.ghostTable);
+  eq(v.groupTable, post);
 });
 
 it('Argument stubs', () => {

@@ -22,7 +22,7 @@ export default {
   lint: 'eslint --max-warnings 0 --ext .ts src/ tests/',
 
   // Runs tests when you already have `#dev` running.
-  t: 'mocha --parallel --require source-map-support/register dist_tests/**/*.test.js',
+  t: 'mocha --require source-map-support/register dist_tests/**/*.test.js',
 
   _: {
     envGroups: {

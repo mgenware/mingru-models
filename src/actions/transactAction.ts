@@ -1,5 +1,4 @@
-import { Table } from '../core/core.js';
-import { Action, ActionData, ActionType } from './actionGroup.js';
+import { Action, ActionData, ActionGroup, ActionType } from './actionGroup.js';
 import { throwOnEmptyArray } from '../lib/arrayUtil.js';
 
 export class ActionWithReturnValues {
@@ -14,7 +13,6 @@ export type TransactionMemberTypes = TransactionMember | Action | ActionWithRetu
 export class TransactionMember {
   constructor(
     public readonly action: Action,
-    public readonly name?: string,
     public readonly returnValues?: Readonly<Record<string, string | undefined>>,
   ) {}
 }
@@ -37,12 +35,15 @@ export class TransactAction extends Action {
     this.#data.members = members;
   }
 
-  override __validate(groupTable: Table) {
-    super.__validate(groupTable);
+  override __configure(name: string, ag: ActionGroup, inline: boolean) {
+    super.__configure(name, ag, inline);
+
+    let i = 0;
     if (this.#data.members) {
       for (const mem of this.#data.members) {
+        i++;
         const mAction = mem.action;
-        mAction.__validate(groupTable);
+        mAction.__configure(`${name}Child${i}`, ag, true);
       }
     }
   }

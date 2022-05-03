@@ -197,8 +197,8 @@ export class SelectAction extends CoreSelectAction {
     return this;
   }
 
-  override __validate(groupTable: Table) {
-    super.__validate(groupTable);
+  override __validate(table: Table) {
+    super.__validate(table);
 
     const { mode } = this.#data;
     const listMode = mode === SelectActionMode.rowList || mode === SelectActionMode.fieldList;

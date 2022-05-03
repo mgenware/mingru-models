@@ -50,6 +50,7 @@ export interface ActionData {
   actionGroup?: ActionGroup;
   argStubs?: SQLVariable[];
   attrs?: Map<ActionAttribute, unknown>;
+  inline?: boolean;
 }
 
 export class Action {
@@ -73,19 +74,11 @@ export class Action {
     return this;
   }
 
-  // `groupTable` the one from `validate`.
-  // Returns the table this action applies to.
-  // `__sqlTable` has the highest precedence, and can be set by `from`.
-  // If `from` is not called, which is the usual case, it tries to grab one
-  // from `__groupTable`, which is the containing table when an action is
-  // initialized from `mm.actionGroup`.
-  // Finally, for inline actions (if `from` is not called), it can use the
-  // `groupTable` from `validate` method.
-  __mustGetAvailableSQLTable(groupTable: Table | undefined | null): Table {
+  __mustGetAvailableSQLTable(fallback?: Table): Table {
     const table =
-      this.__data.sqlTable ?? this.__data.actionGroup?.__getData().groupTable ?? groupTable;
+      this.__data.sqlTable ?? this.__data.actionGroup?.__getData().groupTable ?? fallback;
     if (!table) {
-      throw new Error(`Action "${this}" doesn't have any tables`);
+      throw new Error(`Action "${this}" doesn't belong to any tables`);
     }
     return table;
   }
@@ -134,31 +127,22 @@ export class Action {
     });
   }
 
-  // Automatically called by `mm.actionGroup` for all the columns it walks through.
-  // Actions are immutable. Actions touched by `mm.actionGroup` will have `__groupTable`
-  // and `__name` set.
-  // Other actions, such as ones embedded in SQL exprs are ignored by `ta.actionGroup`,
-  // thus have to be manually taken care of. You should always use
-  // `this.mustGetAvailableSQLTable(groupTable)` in `validate`, and use the result value for
-  // action SQL validation.
-  // If we need to call `validate` on child components (e.g. a TRANSACT action), pass down the
-  // `groupTable` param of `validate`.
   // eslint-disable-next-line class-methods-use-this
-  __validate(_groupTable: Table) {
-    // Implemented by subclass.
+  __validate(_table: Table) {
+    // Implemented by subclasses.
   }
 
   // Called by `ag.actionGroup`.
-  __configure(name: string, ag: ActionGroup) {
+  // `inline`: true for inner actions in WRAP or TRANSACT actions.
+  __configure(name: string, ag: ActionGroup, inline: boolean) {
     const d = this.__data;
-    if (!d.name) {
-      d.name = name;
+    if (d.name) {
+      return;
     }
-    if (!d.actionGroup) {
-      d.actionGroup = ag;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    this.__validate(ag.__getData().groupTable);
+    d.name = name;
+    d.actionGroup = ag;
+    d.inline = inline;
+    this.__validate(d.sqlTable ?? ag.__getData().groupTable);
   }
 
   private mustGetAttrs(): Map<ActionAttribute, unknown> {
@@ -213,7 +197,7 @@ export function actionGroupCore(
   ag.__configure(agName, table, actions);
   for (const [name, action] of Object.entries(actions)) {
     try {
-      action?.__configure(name, ag);
+      action?.__configure(name, ag, false);
     } catch (err) {
       mustBeErr(err);
       err.message += ` [action "${name}"]`;

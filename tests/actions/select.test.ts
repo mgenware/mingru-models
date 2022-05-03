@@ -432,11 +432,6 @@ it('Set action.__table via from()', () => {
   eq(td.actionGroup, ta);
   eq(t2d.sqlTable, post);
   eq(t2d.actionGroup, ta);
-
-  let table = ta.t.__mustGetAvailableSQLTable(null);
-  eq(table, user);
-  table = ta.t2.__mustGetAvailableSQLTable(null);
-  eq(table, post);
 });
 
 it('Subquery', () => {

@@ -22,8 +22,8 @@ export class DeleteAction extends CoreSelectAction {
     this.#data.ensureOneRowAffected = ensureOneRowAffected;
   }
 
-  override __validate(groupTable: Table) {
-    super.__validate(groupTable);
+  override __validate(table: Table) {
+    super.__validate(table);
     if (!this.#data.unsafeMode && !this.#data.whereSQLValue) {
       throw new Error(
         '`unsafeMode` is not on, you must define a WHERE clause. Otherwise, use `unsafeDeleteAll`',

@@ -63,8 +63,8 @@ export class CoreUpdateAction extends Action {
     return this;
   }
 
-  override __validate(groupTable: Table) {
-    super.__validate(groupTable);
+  override __validate(table: Table) {
+    super.__validate(table);
     if (!this.#data.setters && !this.#data.autoSetters) {
       throw new Error('No setters');
     }

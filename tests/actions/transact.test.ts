@@ -30,9 +30,7 @@ it('Transact', () => {
   vd = v.__getData();
   deepEq(
     vd.members,
-    [postTA.insert, userTA.insert, postTA.batch].map(
-      (m) => new mm.TransactionMember(m, undefined, undefined),
-    ),
+    [postTA.insert, userTA.insert, postTA.batch].map((m) => new mm.TransactionMember(m, undefined)),
   );
 });
 
@@ -88,7 +86,7 @@ it('Inline member actions (wrap other)', () => {
   deepEq(wrapped.__getData().args, { offset: '1' });
 });
 
-it('Setting __table or inline members', () => {
+it('Setting `sqlTable` or inline members', () => {
   class UserTA extends mm.ActionGroup {
     insert = mm.insert().setParams(user.follower_count).setParams();
   }
@@ -102,22 +100,31 @@ it('Setting __table or inline members', () => {
       this.insert,
       userTA.insert,
       this.insert.wrap({ title: 'title' }),
+      mm.insert().from(user).setDefaults(),
     );
   }
   const postTA = mm.actionGroup(post, PostTA);
   const members = postTA.t.__getData().members!;
-  eq(members[0]?.action.__getData().actionGroup, undefined);
+  eq(members[0]?.action.__getData().actionGroup, postTA);
   eq(members[0]?.action.__getData().sqlTable, undefined);
-  eq(members[0]?.action.__getData().name, undefined);
+  eq(members[0]?.action.__getData().name, 'tChild1');
+  eq(members[0]?.action.__getData().inline, true);
   eq(members[1]?.action.__getData().actionGroup, postTA);
   eq(members[1]?.action.__getData().sqlTable, undefined);
   eq(members[1]?.action.__getData().name, 'insert');
+  eq(members[1]?.action.__getData().inline, false);
   eq(members[2]?.action.__getData().actionGroup, userTA);
   eq(members[2]?.action.__getData().sqlTable, undefined);
   eq(members[2]?.action.__getData().name, 'insert');
-  eq(members[3]?.action.__getData().actionGroup, undefined);
+  eq(members[2]?.action.__getData().inline, false);
+  eq(members[3]?.action.__getData().actionGroup, postTA);
   eq(members[3]?.action.__getData().sqlTable, undefined);
-  eq(members[3]?.action.__getData().name, undefined);
+  eq(members[3]?.action.__getData().name, 'tChild4');
+  eq(members[3]?.action.__getData().inline, true);
+  eq(members[4]?.action.__getData().actionGroup, postTA);
+  eq(members[4]?.action.__getData().sqlTable, user);
+  eq(members[4]?.action.__getData().name, 'tChild5');
+  eq(members[4]?.action.__getData().inline, true);
 });
 
 it('Declare return values', () => {

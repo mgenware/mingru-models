@@ -52,8 +52,8 @@ export class UpdateAction extends CoreUpdateAction {
     return this.set(column, sql`${column} - ${value}`);
   }
 
-  override __validate(groupTable: Table) {
-    super.__validate(groupTable);
+  override __validate(table: Table) {
+    super.__validate(table);
 
     if (!this.#data.unsafeMode && !this.#data.whereSQLValue) {
       throw new Error(
