@@ -23,7 +23,7 @@ export class OrderByColumnParam {
   }
 }
 
-export type OrderByColumnType = OrderByColumn | OrderByColumnParam;
+export type OrderByColumnTypes = OrderByColumn | OrderByColumnParam;
 
 export enum SelectActionMode {
   row = 1,
@@ -53,7 +53,7 @@ export interface SelectActionData extends CoreSelectionActionData {
   mode?: SelectActionMode;
   columns?: SelectedColumnTypes[];
   havingSQLValue?: SQL;
-  orderByColumns?: OrderByColumnType[];
+  orderByColumns?: OrderByColumnTypes[];
   groupByColumns?: string[];
   paginationMode?: SelectActionPaginationMode;
   limitValue?: SQLVariable | number;
@@ -92,7 +92,7 @@ export class SelectAction extends CoreSelectAction {
     return (this.#data.groupByColumns ??= []);
   }
 
-  private mustGetOrderByColumns(): OrderByColumnType[] {
+  private mustGetOrderByColumns(): OrderByColumnTypes[] {
     return (this.#data.orderByColumns ??= []);
   }
 
