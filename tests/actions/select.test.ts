@@ -270,11 +270,13 @@ it('ORDER BY', () => {
 
 it('ORDER BY + following columns', () => {
   const cc = mm.sel(mm.sql`haha`, 'name', new mm.ColumnType('int'));
+  const followingColumns = new Map<mm.SelectedColumnTypesOrName, mm.SelectedColumnTypesOrName[]>();
+  followingColumns.set(user.name, [user.id, user.snake_case_name]);
   class UserTA extends mm.ActionGroup {
     t = mm
       .selectRow(user.name, user.follower_count, cc)
       .by(user.id)
-      .orderByParams([user.name, user.id], [user.follower_count, user.name]);
+      .orderByParams([user.name, user.id], followingColumns);
   }
   const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
@@ -285,7 +287,7 @@ it('ORDER BY + following columns', () => {
   const order0 = orderByColumns[0];
   ok(order0 instanceof mm.OrderByColumnParam);
   deepEq(order0.columnChoices, [user.name, user.id]);
-  deepEq(order0.followingColumns, [user.follower_count, user.name]);
+  eq(order0.followingColumns, followingColumns);
 });
 
 it('Validate columns', () => {

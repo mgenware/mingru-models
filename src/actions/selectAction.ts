@@ -17,10 +17,12 @@ export class OrderByColumn {
   constructor(public readonly column: SelectedColumnTypesOrName, public readonly desc = false) {}
 }
 
+export type FollowingColumnsType = Map<SelectedColumnTypesOrName, SelectedColumnTypesOrName[]>;
+
 export class OrderByColumnParam {
   constructor(
     public readonly columnChoices: ReadonlyArray<SelectedColumnTypesOrName>,
-    public readonly followingColumns?: ReadonlyArray<SelectedColumnTypesOrName>,
+    public readonly followingColumns?: FollowingColumnsType,
   ) {}
 }
 
@@ -123,7 +125,7 @@ export class SelectAction extends CoreSelectAction {
 
   orderByParams(
     columnChoices: SelectedColumnTypesOrName[],
-    followingColumns?: ReadonlyArray<SelectedColumnTypesOrName>,
+    followingColumns?: FollowingColumnsType,
   ): this {
     this.mustGetOrderByColumns().push(new OrderByColumnParam(columnChoices, followingColumns));
     return this;
