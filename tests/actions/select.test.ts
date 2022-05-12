@@ -248,25 +248,49 @@ it('Order by', () => {
 
   eq(orderByColumns.length, 5);
 
-  const order0 = orderByColumns[0] as mm.OrderByColumn;
+  const order0 = orderByColumns[0];
+  ok(order0 instanceof mm.OrderByColumn);
   eq(order0.column, user.name);
   eq(order0.desc, false);
 
-  const order1 = orderByColumns[1] as mm.OrderByColumn;
+  const order1 = orderByColumns[1];
+  ok(order1 instanceof mm.OrderByColumn);
   eq(order1.column, cc);
   eq(order1.desc, false);
 
-  const order2 = orderByColumns[2] as mm.OrderByColumn;
+  const order2 = orderByColumns[2];
+  ok(order2 instanceof mm.OrderByColumn);
   eq(order2.column, user.follower_count);
   eq(order2.desc, true);
 
-  const order3 = orderByColumns[3] as mm.OrderByColumn;
+  const order3 = orderByColumns[3];
+  ok(order3 instanceof mm.OrderByColumnParam);
   eq(order3.column, user.name);
-  eq(order3.desc, undefined);
 
-  const order4 = orderByColumns[4] as mm.OrderByColumn;
+  const order4 = orderByColumns[4];
+  ok(order4 instanceof mm.OrderByColumnParam);
   eq(order4.column, user.id);
-  eq(order4.desc, undefined);
+});
+
+it('orderByParamsCore', () => {
+  const cc = mm.sel(mm.sql`haha`, 'name', new mm.ColumnType('int'));
+  class UserTA extends mm.ActionGroup {
+    t = mm
+      .selectRow(user.name, user.follower_count, cc)
+      .by(user.id)
+      .orderByParamsCore(new mm.OrderByColumnParam(user.name, [user.id, user.follower_count]));
+  }
+  const ta = mm.actionGroup(user, UserTA);
+  const v = ta.t;
+  const vd = v.__getData();
+  const orderByColumns = vd.orderByColumns!;
+  eq(orderByColumns.length, 1);
+
+  const order0 = orderByColumns[0];
+  ok(order0 instanceof mm.OrderByColumnParam);
+  eq(order0.column, user.name);
+  eq(order0.followingColumns![0], user.id);
+  eq(order0.followingColumns![1], user.follower_count);
 });
 
 it('Validate columns', () => {
