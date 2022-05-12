@@ -246,7 +246,7 @@ it('Order by', () => {
   const vd = v.__getData();
   const orderByColumns = vd.orderByColumns!;
 
-  eq(orderByColumns.length, 4);
+  eq(orderByColumns.length, 5);
 
   const order0 = orderByColumns[0] as mm.OrderByColumn;
   eq(order0.column, user.name);
@@ -260,8 +260,13 @@ it('Order by', () => {
   eq(order2.column, user.follower_count);
   eq(order2.desc, true);
 
-  const order3 = orderByColumns[3] as mm.OrderByColumnParam;
-  deepEq(order3.columns, [user.name, user.id]);
+  const order3 = orderByColumns[3] as mm.OrderByColumn;
+  eq(order3.column, user.name);
+  eq(order3.desc, undefined);
+
+  const order4 = orderByColumns[4] as mm.OrderByColumn;
+  eq(order4.column, user.id);
+  eq(order4.desc, undefined);
 });
 
 it('Validate columns', () => {

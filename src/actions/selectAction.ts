@@ -18,9 +18,10 @@ export class OrderByColumn {
 }
 
 export class OrderByColumnParam {
-  constructor(public readonly columns: ReadonlyArray<SelectedColumnTypesOrName>) {
-    throwOnEmptyArray(columns, 'columns');
-  }
+  constructor(
+    public readonly column: SelectedColumnTypesOrName,
+    public readonly followingColumns?: ReadonlyArray<SelectedColumnTypesOrName>,
+  ) {}
 }
 
 export type OrderByColumnTypes = OrderByColumn | OrderByColumnParam;
@@ -121,7 +122,12 @@ export class SelectAction extends CoreSelectAction {
   }
 
   orderByParams(...columns: SelectedColumnTypesOrName[]): this {
-    this.mustGetOrderByColumns().push(new OrderByColumnParam(columns));
+    this.mustGetOrderByColumns().push(...columns.map((c) => new OrderByColumnParam(c)));
+    return this;
+  }
+
+  orderByParamsCore(...columns: OrderByColumnParam[]): this {
+    this.mustGetOrderByColumns().push(...columns);
     return this;
   }
 
