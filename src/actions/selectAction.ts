@@ -17,7 +17,7 @@ export class OrderByColumn {
   constructor(public readonly column: SelectedColumnTypesOrName, public readonly desc = false) {}
 }
 
-export type FollowingColumnsType = Map<SelectedColumnTypesOrName, SelectedColumnTypesOrName[]>;
+export type FollowingColumnsType = Map<SelectedColumnTypesOrName, OrderByColumn[]>;
 
 export class OrderByColumnParam {
   constructor(

@@ -270,8 +270,11 @@ it('ORDER BY', () => {
 
 it('ORDER BY + following columns', () => {
   const cc = mm.sel(mm.sql`haha`, 'name', new mm.ColumnType('int'));
-  const followingColumns = new Map<mm.SelectedColumnTypesOrName, mm.SelectedColumnTypesOrName[]>();
-  followingColumns.set(user.name, [user.id, user.snake_case_name]);
+  const followingColumns = new Map<mm.SelectedColumnTypesOrName, mm.OrderByColumn[]>();
+  followingColumns.set(
+    user.name,
+    [user.id, user.snake_case_name].map((c) => new mm.OrderByColumn(c)),
+  );
   class UserTA extends mm.ActionGroup {
     t = mm
       .selectRow(user.name, user.follower_count, cc)
