@@ -17,7 +17,8 @@ export class OrderByColumn {
   constructor(public readonly column: SelectedColumnTypesOrName, public readonly desc = false) {}
 }
 
-export type FollowingColumnsType = Map<SelectedColumnTypesOrName, OrderByColumn[]>;
+// Use string as column ID as columns from `JoinedTable` are not unique.
+export type FollowingColumnsType = Record<string, OrderByColumn[]>;
 
 export class OrderByColumnParam {
   constructor(
