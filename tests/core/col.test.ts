@@ -316,6 +316,8 @@ it('Column.getPath', () => {
   eq(employee.id.__getPath(), 'employees.emp_no');
 
   eq(post.user_id.join(user).name.__getPath(), '(J|1|post|user)[user_id|id].name');
+  // Make sure multiple calls to a same path have the same result.
+  eq(post.user_id.join(user).name.__getPath(), post.user_id.join(user).name.__getPath());
   eq(
     post.title
       .join(user, user.name, [

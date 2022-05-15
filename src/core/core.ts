@@ -248,7 +248,7 @@ export class Column {
     if (table instanceof Table) {
       return `${table.__getDBName()}.${curName}`;
     }
-    return `${table.keyPath}.${curName}`;
+    return `${table.path}.${curName}`;
   }
 
   toString(): string {
@@ -450,9 +450,9 @@ export class Table {
  destColumn: user.id (Column)
 */
 export class JoinTable {
-  // `keyPath` is useful to detect duplicate joins, if multiple `JoinTable` instances are
-  // created with same columns and tables, they'd have the same `keyPath`.
-  readonly keyPath: string;
+  // `path` is useful to detect duplicate joins, if multiple `JoinTable` instances are
+  // created with same columns and tables, they'd have the same `path`.
+  readonly path: string;
 
   // This name is used to generate `autoModelName` of a column.
   readonly modelName: string;
@@ -479,24 +479,24 @@ export class JoinTable {
     let localTableString: string;
     if (srcTable instanceof JoinTable) {
       // Source column is a joined column.
-      localTableString = srcTable.keyPath;
+      localTableString = srcTable.path;
     } else {
       localTableString = srcTable.__getDBName();
     }
     const remoteTableString = destTable.__getDBName();
-    let keyPath = `(J|${this.joinType}|${localTableString}|${remoteTableString})`;
+    let path = `(J|${this.joinType}|${localTableString}|${remoteTableString})`;
     // Append columns.
     // We are not using `column.getPath()` as we assume src and dest columns are
     // always from src and dest tables.
     // Primary columns.
-    keyPath += `[${srcColumn.__getDBName()}|${destColumn.__getDBName()}]`;
+    path += `[${srcColumn.__getDBName()}|${destColumn.__getDBName()}]`;
 
     // Extra columns.
     for (const [col1, col2] of extraColumns) {
-      keyPath += `[${col1.__getDBName()}|${col2.__getDBName()}]`;
+      path += `[${col1.__getDBName()}|${col2.__getDBName()}]`;
     }
 
-    this.keyPath = keyPath;
+    this.path = path;
     this.modelName = this.getModelName();
   }
 
@@ -520,7 +520,7 @@ export class JoinTable {
   }
 
   toString(): string {
-    return su.desc(this, this.keyPath);
+    return su.desc(this, this.path);
   }
 }
 

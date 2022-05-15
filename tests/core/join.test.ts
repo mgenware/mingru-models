@@ -24,7 +24,7 @@ function testJCCols(
   eq(jt.destTable, destTable);
   eq(jt.destColumn, destColumn);
   eq(jt.srcColumn, srcColumn);
-  eq(jt.keyPath, path);
+  eq(jt.path, path);
   eq(jc.__getSourceTable(), sourceTable);
   eq(jc.__getModelName(), jsModelName);
 }

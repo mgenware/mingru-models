@@ -785,7 +785,7 @@ export declare class JoinTable {
   srcColumn: Column;
   destTable: Table;
   destColumn: Column;
-  keyPath: string;
+  path: string;
 
   tableInputName(): string;
 }
