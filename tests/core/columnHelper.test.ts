@@ -273,3 +273,13 @@ it('Allow null as default value', () => {
   c = mm.bool();
   eq(c.__getData().defaultValue, undefined);
 });
+
+it('Default FSP for datetime cols', () => {
+  mm.setDefaultDateFSP(1);
+  mm.setDefaultDatetimeFSP(2);
+  mm.setDefaultTimeFSP(3);
+
+  eq(mm.date().__getData().type.length, 1);
+  eq(mm.datetime().__getData().type.length, 2);
+  eq(mm.time().__getData().type.length, 3);
+});

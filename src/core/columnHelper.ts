@@ -3,6 +3,22 @@ import dt from './dt.js';
 import * as call from './sqlCallHelper.js';
 import { sql } from './sqlHelper.js';
 
+let defDateFsp = 0;
+let defDateTimeFsp = 0;
+let defTimeFsp = 0;
+
+export function setDefaultDateFSP(fsp: number) {
+  defDateFsp = fsp;
+}
+
+export function setDefaultDatetimeFSP(fsp: number) {
+  defDateTimeFsp = fsp;
+}
+
+export function setDefaultTimeFSP(fsp: number) {
+  defTimeFsp = fsp;
+}
+
 export type DateTimeDefaultValue = 'local' | 'utc';
 
 export function fk(column: Column): Column {
@@ -128,6 +144,7 @@ function createDateTimeCol(
   opt: TimeOptions | undefined,
   utcNow: SQLCall,
   localNow: SQLCall | null,
+  defFsp: number | null,
 ) {
   let defValue: SQL | undefined;
   if (opt?.defaultToNow) {
@@ -138,29 +155,33 @@ function createDateTimeCol(
     }
   }
   const colType = new ColumnType(type);
-  if (opt?.fsp) {
-    colType.length = opt.fsp;
-  }
+  colType.length = opt?.fsp ?? defFsp ?? 0;
   const col = new Column(colType);
   col.__getData().defaultValue = defValue;
   return col;
 }
 
 export function datetime(opt?: TimeOptions): Column {
-  return createDateTimeCol(dt.datetime, opt, call.utcDatetimeNow(), call.localDatetimeNow());
+  return createDateTimeCol(
+    dt.datetime,
+    opt,
+    call.utcDatetimeNow(),
+    call.localDatetimeNow(),
+    defDateTimeFsp,
+  );
 }
 
 export function date(opt?: TimeOptions): Column {
-  return createDateTimeCol(dt.date, opt, call.utcDateNow(), call.localDateNow());
+  return createDateTimeCol(dt.date, opt, call.utcDateNow(), call.localDateNow(), defDateFsp);
 }
 
 export function time(opt?: TimeOptions): Column {
-  return createDateTimeCol(dt.time, opt, call.utcTimeNow(), call.localTimeNow());
+  return createDateTimeCol(dt.time, opt, call.utcTimeNow(), call.localTimeNow(), defTimeFsp);
 }
 
 export function timestamp(opt?: TimeOptions): Column {
   if (opt?.defaultToNow === 'local') {
     throw new Error('"local" is not support in TIMESTAMP, use "utc" instead.');
   }
-  return createDateTimeCol(dt.timestamp, opt, call.timestampNow(), null);
+  return createDateTimeCol(dt.timestamp, opt, call.timestampNow(), null, null);
 }
