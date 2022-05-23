@@ -66,7 +66,10 @@ it('SQLConvertible value', () => {
   const v = ta.t;
   const vd = v.__getData();
 
-  deepEq(vd.setters, new Map<mm.Column, unknown>([[post.title, mm.sql`${mm.localDateNow()}`]]));
+  deepEq(
+    vd.setters,
+    new Map<mm.Column, mm.SQLConvertible>([[post.title, mm.sql`${mm.localDateNow()}`]]),
+  );
   eq(`${vd.setters!.get(post.title)}`, '`LOCALDATENOW()`');
 });
 

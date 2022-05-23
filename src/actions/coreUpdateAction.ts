@@ -9,7 +9,7 @@ export enum AutoSetterType {
 }
 
 export interface CoreUpdateActionData extends ActionData {
-  setters?: Map<Column, unknown>;
+  setters?: Map<Column, SQLConvertible>;
   // You can call both `setParams()` and `setDefaults()` and the order also matters,
   // we use ES6 `Set` to track those auto setters, which keeps insertion order.
   autoSetters?: Set<AutoSetterType>;
@@ -22,7 +22,7 @@ export class CoreUpdateAction extends Action {
   }
 
   private mustGetSetters(): Map<Column, unknown> {
-    return (this.#data.setters ??= new Map<Column, unknown>());
+    return (this.#data.setters ??= new Map<Column, SQLConvertible>());
   }
 
   private mustGetAutoSetters(): Set<AutoSetterType> {
