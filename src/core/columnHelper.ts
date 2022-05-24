@@ -193,7 +193,7 @@ export function time(opt?: TimeOptions): Column {
 
 export function timestamp(opt?: TimeOptions): Column {
   if (opt?.defaultToNow === 'server') {
-    throw new Error('"local" is not support in TIMESTAMP, use "utc" instead.');
+    throw new Error('"server" is not support in TIMESTAMP, use "utc" instead.');
   }
   const fsp = opt?.fsp ?? defTimestampFsp;
   let defVal: SQL | undefined;
