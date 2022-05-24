@@ -60,7 +60,7 @@ it('unsafeInsertOne', () => {
 
 it('SQLConvertible value', () => {
   class PostTA extends mm.ActionGroup {
-    t = mm.unsafeInsert().set(post.title, mm.localDateNow()).setDefaults();
+    t = mm.unsafeInsert().set(post.title, mm.dateNow()).setDefaults();
   }
   const ta = mm.actionGroup(post, PostTA);
   const v = ta.t;
@@ -68,9 +68,9 @@ it('SQLConvertible value', () => {
 
   deepEq(
     vd.setters,
-    new Map<mm.Column, mm.SQLConvertible>([[post.title, mm.sql`${mm.localDateNow()}`]]),
+    new Map<mm.Column, mm.SQLConvertible>([[post.title, mm.sql`${mm.dateNow()}`]]),
   );
-  eq(`${vd.setters!.get(post.title)}`, '`LOCALDATENOW()`');
+  eq(`${vd.setters!.get(post.title)}`, '`DATENOW()`');
 });
 
 it('No setters', () => {

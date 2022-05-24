@@ -11,16 +11,16 @@ function fspToParams(fsp: number | undefined): SQLConvertible[] | undefined {
   return [fsp.toString()];
 }
 
-export function localDatetimeNow(fsp?: number): SQLCall {
-  return sqlCall(SQLCallType.localDatetimeNow, new ColumnType(dt.datetime), fspToParams(fsp));
+export function datetimeNow(fsp?: number): SQLCall {
+  return sqlCall(SQLCallType.datetimeNow, new ColumnType(dt.datetime), fspToParams(fsp));
 }
 
-export function localTimeNow(fsp?: number): SQLCall {
-  return sqlCall(SQLCallType.localTimeNow, new ColumnType(dt.time), fspToParams(fsp));
+export function timeNow(fsp?: number): SQLCall {
+  return sqlCall(SQLCallType.timeNow, new ColumnType(dt.time), fspToParams(fsp));
 }
 
-export function localDateNow(fsp?: number): SQLCall {
-  return sqlCall(SQLCallType.localDateNow, new ColumnType(dt.date), fspToParams(fsp));
+export function dateNow(fsp?: number): SQLCall {
+  return sqlCall(SQLCallType.dateNow, new ColumnType(dt.date), fspToParams(fsp));
 }
 
 export function utcDatetimeNow(fsp?: number): SQLCall {

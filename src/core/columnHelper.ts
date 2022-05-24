@@ -24,7 +24,7 @@ export function setDefaultTimestampFSP(fsp: number) {
   defTimestampFsp = fsp;
 }
 
-export type DateTimeDefaultValue = 'local' | 'utc';
+export type DateTimeDefaultValue = 'server' | 'utc';
 
 export function fk(column: Column): Column {
   return Column.newForeignColumn(column);
@@ -159,7 +159,7 @@ export function datetime(opt?: TimeOptions): Column {
     if (opt.defaultToNow === 'utc') {
       defVal = sql`${call.utcDatetimeNow(fsp)}`;
     } else {
-      defVal = sql`${call.localDatetimeNow(fsp)}`;
+      defVal = sql`${call.datetimeNow(fsp)}`;
     }
   }
   return createDateTimeCol(dt.datetime, defVal, fsp);
@@ -172,7 +172,7 @@ export function date(opt?: TimeOptions): Column {
     if (opt.defaultToNow === 'utc') {
       defVal = sql`${call.utcDateNow(fsp)}`;
     } else {
-      defVal = sql`${call.localDateNow(fsp)}`;
+      defVal = sql`${call.dateNow(fsp)}`;
     }
   }
   return createDateTimeCol(dt.date, defVal, fsp);
@@ -185,14 +185,14 @@ export function time(opt?: TimeOptions): Column {
     if (opt.defaultToNow === 'utc') {
       defVal = sql`${call.utcTimeNow(fsp)}`;
     } else {
-      defVal = sql`${call.localTimeNow(fsp)}`;
+      defVal = sql`${call.timeNow(fsp)}`;
     }
   }
   return createDateTimeCol(dt.time, defVal, fsp);
 }
 
 export function timestamp(opt?: TimeOptions): Column {
-  if (opt?.defaultToNow === 'local') {
+  if (opt?.defaultToNow === 'server') {
     throw new Error('"local" is not support in TIMESTAMP, use "utc" instead.');
   }
   const fsp = opt?.fsp ?? defTimestampFsp;

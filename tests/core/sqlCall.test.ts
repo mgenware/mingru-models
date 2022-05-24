@@ -9,24 +9,24 @@ function dtc(dtString: string): mm.ColumnType {
 
 it('SQL calls', () => {
   let t: mm.SQLCall;
-  t = mm.localDatetimeNow();
-  eq(t.type, mm.SQLCallType.localDatetimeNow);
+  t = mm.datetimeNow();
+  eq(t.type, mm.SQLCallType.datetimeNow);
   deepEq(t.returnType, dtc(dt.datetime));
 
   t = mm.utcDatetimeNow();
   eq(t.type, mm.SQLCallType.utcDatetimeNow);
   deepEq(t.returnType, dtc(dt.datetime));
 
-  t = mm.localDateNow();
-  eq(t.type, mm.SQLCallType.localDateNow);
+  t = mm.dateNow();
+  eq(t.type, mm.SQLCallType.dateNow);
   deepEq(t.returnType, dtc(dt.date));
 
   t = mm.utcDateNow();
   eq(t.type, mm.SQLCallType.utcDateNow);
   deepEq(t.returnType, dtc(dt.date));
 
-  t = mm.localTimeNow();
-  eq(t.type, mm.SQLCallType.localTimeNow);
+  t = mm.timeNow();
+  eq(t.type, mm.SQLCallType.timeNow);
   deepEq(t.returnType, dtc(dt.time));
 
   t = mm.utcTimeNow();
@@ -105,16 +105,13 @@ it('SQL calls', () => {
 });
 
 it('Embeded in SQL', () => {
+  eq(mm.sql`haha ${mm.datetimeNow()} ${mm.dateNow()}`.toString(), '`haha DATETIMENOW() DATENOW()`');
   eq(
-    mm.sql`haha ${mm.localDatetimeNow()} ${mm.localDateNow()}`.toString(),
-    '`haha LOCALDATETIMENOW() LOCALDATENOW()`',
-  );
-  eq(
-    mm.sql`haha ${mm.sqlCall(
-      mm.SQLCallType.localDatetimeNow,
-      new mm.ColumnType('c1'),
-    )} ${mm.sqlCall(mm.SQLCallType.localDateNow, new mm.ColumnType('c2'))}`.toString(),
-    '`haha LOCALDATETIMENOW() LOCALDATENOW()`',
+    mm.sql`haha ${mm.sqlCall(mm.SQLCallType.datetimeNow, new mm.ColumnType('c1'))} ${mm.sqlCall(
+      mm.SQLCallType.dateNow,
+      new mm.ColumnType('c2'),
+    )}`.toString(),
+    '`haha DATETIMENOW() DATENOW()`',
   );
 });
 

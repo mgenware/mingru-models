@@ -669,9 +669,9 @@ export class SelectedColumn {
 }
 
 export enum SQLCallType {
-  localDatetimeNow, // NOW() for DATETIME
-  localDateNow, // NOW() for DATE
-  localTimeNow, // NOW() for TIME
+  datetimeNow, // NOW() for DATETIME
+  dateNow, // NOW() for DATE
+  timeNow, // NOW() for TIME
   count, // COUNT()
   avg, // AVG()
   sum, // SUM()

@@ -200,13 +200,13 @@ it('ByID', () => {
 
 it('SQLConvertible value', () => {
   class UserTA extends mm.ActionGroup {
-    t = mm.updateOne().set(user.name, mm.localDateNow()).by(user.id);
+    t = mm.updateOne().set(user.name, mm.dateNow()).by(user.id);
   }
   const ta = mm.actionGroup(user, UserTA);
   const v = ta.t;
   const vd = v.__getData();
 
-  eq(`${vd.setters?.get(user.name)}`, '`LOCALDATENOW()`');
+  eq(`${vd.setters?.get(user.name)}`, '`DATENOW()`');
 });
 
 it('No setters', () => {

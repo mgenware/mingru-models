@@ -174,8 +174,8 @@ it('datetime', () => {
   let c = mm.datetime();
   ok(c.__type().types.includes(mm.dt.datetime));
 
-  c = mm.datetime({ defaultToNow: 'local' });
-  eq(`${c.__getData().defaultValue}`, '`LOCALDATETIMENOW()`');
+  c = mm.datetime({ defaultToNow: 'server' });
+  eq(`${c.__getData().defaultValue}`, '`DATETIMENOW()`');
 
   c = mm.datetime({ defaultToNow: 'utc' });
   eq(`${c.__getData().defaultValue}`, '`UTCDATETIMENOW()`');
@@ -183,16 +183,16 @@ it('datetime', () => {
   c = mm.datetime({ fsp: 4 });
   eq(c.__getData().type.length, 4);
 
-  c = mm.datetime({ fsp: 4, defaultToNow: 'local' });
-  eq(`${c.__getData().defaultValue}`, '`LOCALDATETIMENOW(`4`)`');
+  c = mm.datetime({ fsp: 4, defaultToNow: 'server' });
+  eq(`${c.__getData().defaultValue}`, '`DATETIMENOW(`4`)`');
 });
 
 it('date', () => {
   let c = mm.date();
   ok(c.__type().types.includes(mm.dt.date));
 
-  c = mm.date({ defaultToNow: 'local' });
-  eq(`${c.__getData().defaultValue}`, '`LOCALDATENOW()`');
+  c = mm.date({ defaultToNow: 'server' });
+  eq(`${c.__getData().defaultValue}`, '`DATENOW()`');
 
   c = mm.date({ defaultToNow: 'utc' });
   eq(`${c.__getData().defaultValue}`, '`UTCDATENOW()`');
@@ -200,16 +200,16 @@ it('date', () => {
   c = mm.date({ fsp: 4 });
   eq(c.__getData().type.length, 4);
 
-  c = mm.date({ fsp: 4, defaultToNow: 'local' });
-  eq(`${c.__getData().defaultValue}`, '`LOCALDATENOW(`4`)`');
+  c = mm.date({ fsp: 4, defaultToNow: 'server' });
+  eq(`${c.__getData().defaultValue}`, '`DATENOW(`4`)`');
 });
 
 it('time', () => {
   let c = mm.time();
   ok(c.__type().types.includes(mm.dt.time));
 
-  c = mm.time({ defaultToNow: 'local' });
-  eq(`${c.__getData().defaultValue}`, '`LOCALTIMENOW()`');
+  c = mm.time({ defaultToNow: 'server' });
+  eq(`${c.__getData().defaultValue}`, '`TIMENOW()`');
 
   c = mm.time({ defaultToNow: 'utc' });
   eq(`${c.__getData().defaultValue}`, '`UTCTIMENOW()`');
