@@ -157,9 +157,9 @@ export function datetime(opt?: TimeOptions): Column {
   let defVal: SQL | undefined;
   if (opt?.defaultToNow) {
     if (opt.defaultToNow === 'utc') {
-      defVal = sql`${call.utcDatetimeNow()}`;
+      defVal = sql`${call.utcDatetimeNow(fsp)}`;
     } else {
-      defVal = sql`${call.localDatetimeNow()}`;
+      defVal = sql`${call.localDatetimeNow(fsp)}`;
     }
   }
   return createDateTimeCol(dt.datetime, defVal, fsp);
@@ -170,9 +170,9 @@ export function date(opt?: TimeOptions): Column {
   let defVal: SQL | undefined;
   if (opt?.defaultToNow) {
     if (opt.defaultToNow === 'utc') {
-      defVal = sql`${call.utcDateNow()}`;
+      defVal = sql`${call.utcDateNow(fsp)}`;
     } else {
-      defVal = sql`${call.localDateNow()}`;
+      defVal = sql`${call.localDateNow(fsp)}`;
     }
   }
   return createDateTimeCol(dt.date, defVal, fsp);
@@ -183,9 +183,9 @@ export function time(opt?: TimeOptions): Column {
   let defVal: SQL | undefined;
   if (opt?.defaultToNow) {
     if (opt.defaultToNow === 'utc') {
-      defVal = sql`${call.utcTimeNow()}`;
+      defVal = sql`${call.utcTimeNow(fsp)}`;
     } else {
-      defVal = sql`${call.localTimeNow()}`;
+      defVal = sql`${call.localTimeNow(fsp)}`;
     }
   }
   return createDateTimeCol(dt.time, defVal, fsp);
@@ -198,7 +198,7 @@ export function timestamp(opt?: TimeOptions): Column {
   const fsp = opt?.fsp ?? defTimestampFsp;
   let defVal: SQL | undefined;
   if (opt?.defaultToNow) {
-    defVal = sql`${call.timestampNow()}`;
+    defVal = sql`${call.timestampNow(fsp)}`;
   }
   return createDateTimeCol(dt.timestamp, defVal, fsp);
 }

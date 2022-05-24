@@ -182,6 +182,9 @@ it('datetime', () => {
 
   c = mm.datetime({ fsp: 4 });
   eq(c.__getData().type.length, 4);
+
+  c = mm.datetime({ fsp: 4, defaultToNow: 'local' });
+  eq(`${c.__getData().defaultValue}`, '`LOCALDATETIMENOW(`4`)`');
 });
 
 it('date', () => {
@@ -196,6 +199,9 @@ it('date', () => {
 
   c = mm.date({ fsp: 4 });
   eq(c.__getData().type.length, 4);
+
+  c = mm.date({ fsp: 4, defaultToNow: 'local' });
+  eq(`${c.__getData().defaultValue}`, '`LOCALDATENOW(`4`)`');
 });
 
 it('time', () => {
@@ -210,6 +216,9 @@ it('time', () => {
 
   c = mm.time({ fsp: 4 });
   eq(c.__getData().type.length, 4);
+
+  c = mm.time({ fsp: 4, defaultToNow: 'utc' });
+  eq(`${c.__getData().defaultValue}`, '`UTCTIMENOW(`4`)`');
 });
 
 it('timestamp', () => {
@@ -221,6 +230,9 @@ it('timestamp', () => {
 
   c = mm.timestamp({ fsp: 4 });
   eq(c.__getData().type.length, 4);
+
+  c = mm.timestamp({ fsp: 4, defaultToNow: 'utc' });
+  eq(`${c.__getData().defaultValue}`, '`TIMESTAMPNOW(`4`)`');
 });
 
 it('decimal', () => {
@@ -278,8 +290,10 @@ it('Default FSP for datetime cols', () => {
   mm.setDefaultDateFSP(1);
   mm.setDefaultDatetimeFSP(2);
   mm.setDefaultTimeFSP(3);
+  mm.setDefaultTimestampFSP(4);
 
   eq(mm.date().__getData().type.length, 1);
   eq(mm.datetime().__getData().type.length, 2);
   eq(mm.time().__getData().type.length, 3);
+  eq(mm.timestamp().__getData().type.length, 4);
 });

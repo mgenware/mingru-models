@@ -4,32 +4,39 @@ import SQLConvertible from './sqlConvertible.js';
 import { sqlCall } from './sqlHelper.js';
 import { throwOnEmptyArray } from '../lib/arrayUtil.js';
 
-export function localDatetimeNow(): SQLCall {
-  return sqlCall(SQLCallType.localDatetimeNow, new ColumnType(dt.datetime));
+function fspToParams(fsp: number | undefined): SQLConvertible[] | undefined {
+  if (!fsp) {
+    return undefined;
+  }
+  return [fsp.toString()];
 }
 
-export function localTimeNow(): SQLCall {
-  return sqlCall(SQLCallType.localTimeNow, new ColumnType(dt.time));
+export function localDatetimeNow(fsp?: number): SQLCall {
+  return sqlCall(SQLCallType.localDatetimeNow, new ColumnType(dt.datetime), fspToParams(fsp));
 }
 
-export function localDateNow(): SQLCall {
-  return sqlCall(SQLCallType.localDateNow, new ColumnType(dt.date));
+export function localTimeNow(fsp?: number): SQLCall {
+  return sqlCall(SQLCallType.localTimeNow, new ColumnType(dt.time), fspToParams(fsp));
 }
 
-export function utcDatetimeNow(): SQLCall {
-  return sqlCall(SQLCallType.utcDatetimeNow, new ColumnType(dt.datetime));
+export function localDateNow(fsp?: number): SQLCall {
+  return sqlCall(SQLCallType.localDateNow, new ColumnType(dt.date), fspToParams(fsp));
 }
 
-export function utcTimeNow(): SQLCall {
-  return sqlCall(SQLCallType.utcTimeNow, new ColumnType(dt.time));
+export function utcDatetimeNow(fsp?: number): SQLCall {
+  return sqlCall(SQLCallType.utcDatetimeNow, new ColumnType(dt.datetime), fspToParams(fsp));
 }
 
-export function utcDateNow(): SQLCall {
-  return sqlCall(SQLCallType.utcDateNow, new ColumnType(dt.date));
+export function utcTimeNow(fsp?: number): SQLCall {
+  return sqlCall(SQLCallType.utcTimeNow, new ColumnType(dt.time), fspToParams(fsp));
 }
 
-export function timestampNow(): SQLCall {
-  return sqlCall(SQLCallType.timestampNow, new ColumnType(dt.timestamp));
+export function utcDateNow(fsp?: number): SQLCall {
+  return sqlCall(SQLCallType.utcDateNow, new ColumnType(dt.date), fspToParams(fsp));
+}
+
+export function timestampNow(fsp?: number): SQLCall {
+  return sqlCall(SQLCallType.timestampNow, new ColumnType(dt.timestamp), fspToParams(fsp));
 }
 
 export function count(column: SQLConvertible): SQLCall {
