@@ -1,4 +1,4 @@
-import { Column, ColumnType, SQLCall, SQL } from './core.js';
+import { Column, ColumnType, SQL } from './core.js';
 import dt from './dt.js';
 import * as call from './sqlCallHelper.js';
 import { sql } from './sqlHelper.js';
@@ -6,6 +6,7 @@ import { sql } from './sqlHelper.js';
 let defDateFsp = 0;
 let defDateTimeFsp = 0;
 let defTimeFsp = 0;
+let defTimestampFsp = 0;
 
 export function setDefaultDateFSP(fsp: number) {
   defDateFsp = fsp;
@@ -17,6 +18,10 @@ export function setDefaultDatetimeFSP(fsp: number) {
 
 export function setDefaultTimeFSP(fsp: number) {
   defTimeFsp = fsp;
+}
+
+export function setDefaultTimestampFSP(fsp: number) {
+  defTimestampFsp = fsp;
 }
 
 export type DateTimeDefaultValue = 'local' | 'utc';
@@ -139,49 +144,61 @@ export interface TimeOptions {
   fsp?: number;
 }
 
-function createDateTimeCol(
-  type: string,
-  opt: TimeOptions | undefined,
-  utcNow: SQLCall,
-  localNow: SQLCall | null,
-  defFsp: number | null,
-) {
-  let defValue: SQL | undefined;
-  if (opt?.defaultToNow) {
-    if (!localNow) {
-      defValue = sql`${utcNow}`;
-    } else {
-      defValue = sql`${opt.defaultToNow === 'utc' ? utcNow : localNow}`;
-    }
-  }
+function createDateTimeCol(type: string, defVal: SQL | undefined, fsp: number) {
   const colType = new ColumnType(type);
-  colType.length = opt?.fsp ?? defFsp ?? 0;
+  colType.length = fsp;
   const col = new Column(colType);
-  col.__getData().defaultValue = defValue;
+  col.__getData().defaultValue = defVal;
   return col;
 }
 
 export function datetime(opt?: TimeOptions): Column {
-  return createDateTimeCol(
-    dt.datetime,
-    opt,
-    call.utcDatetimeNow(),
-    call.localDatetimeNow(),
-    defDateTimeFsp,
-  );
+  const fsp = opt?.fsp ?? defDateTimeFsp;
+  let defVal: SQL | undefined;
+  if (opt?.defaultToNow) {
+    if (opt.defaultToNow === 'utc') {
+      defVal = sql`${call.utcDatetimeNow()}`;
+    } else {
+      defVal = sql`${call.localDatetimeNow()}`;
+    }
+  }
+  return createDateTimeCol(dt.datetime, defVal, fsp);
 }
 
 export function date(opt?: TimeOptions): Column {
-  return createDateTimeCol(dt.date, opt, call.utcDateNow(), call.localDateNow(), defDateFsp);
+  const fsp = opt?.fsp ?? defDateFsp;
+  let defVal: SQL | undefined;
+  if (opt?.defaultToNow) {
+    if (opt.defaultToNow === 'utc') {
+      defVal = sql`${call.utcDateNow()}`;
+    } else {
+      defVal = sql`${call.localDateNow()}`;
+    }
+  }
+  return createDateTimeCol(dt.date, defVal, fsp);
 }
 
 export function time(opt?: TimeOptions): Column {
-  return createDateTimeCol(dt.time, opt, call.utcTimeNow(), call.localTimeNow(), defTimeFsp);
+  const fsp = opt?.fsp ?? defTimeFsp;
+  let defVal: SQL | undefined;
+  if (opt?.defaultToNow) {
+    if (opt.defaultToNow === 'utc') {
+      defVal = sql`${call.utcTimeNow()}`;
+    } else {
+      defVal = sql`${call.localTimeNow()}`;
+    }
+  }
+  return createDateTimeCol(dt.time, defVal, fsp);
 }
 
 export function timestamp(opt?: TimeOptions): Column {
   if (opt?.defaultToNow === 'local') {
     throw new Error('"local" is not support in TIMESTAMP, use "utc" instead.');
   }
-  return createDateTimeCol(dt.timestamp, opt, call.timestampNow(), null, null);
+  const fsp = opt?.fsp ?? defTimestampFsp;
+  let defVal: SQL | undefined;
+  if (opt?.defaultToNow) {
+    defVal = sql`${call.timestampNow()}`;
+  }
+  return createDateTimeCol(dt.timestamp, defVal, fsp);
 }
