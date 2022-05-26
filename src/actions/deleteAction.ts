@@ -11,7 +11,7 @@ export interface DeleteActionData extends CoreSelectionActionData {
 
 export class DeleteAction extends CoreSelectAction {
   #data = this.__data as DeleteActionData;
-  __getData(): DeleteActionData {
+  override __getData(): DeleteActionData {
     return this.#data;
   }
 

@@ -48,7 +48,7 @@ export interface WrapActionData extends ActionData {
 
 export class WrapAction extends Action {
   #data = this.__data as WrapActionData;
-  __getData(): WrapActionData {
+  override __getData(): WrapActionData {
     return this.#data;
   }
 

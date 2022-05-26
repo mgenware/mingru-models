@@ -88,7 +88,7 @@ export interface SelectActionData extends CoreSelectionActionData {
  */
 export class SelectAction extends CoreSelectAction {
   #data = this.__data as SelectActionData;
-  __getData(): SelectActionData {
+  override __getData(): SelectActionData {
     return this.#data;
   }
 

@@ -10,7 +10,7 @@ export interface CoreSelectionActionData extends ActionData {
 
 export class CoreSelectAction extends Action {
   #data = this.__data as CoreSelectionActionData;
-  __getData(): CoreSelectionActionData {
+  override __getData(): CoreSelectionActionData {
     return this.#data;
   }
 

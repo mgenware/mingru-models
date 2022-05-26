@@ -9,7 +9,7 @@ export interface InsertActionData extends CoreUpdateActionData {
 
 export class InsertAction extends CoreUpdateAction {
   #data = this.__data as InsertActionData;
-  __getData(): InsertActionData {
+  override __getData(): InsertActionData {
     return this.#data;
   }
 

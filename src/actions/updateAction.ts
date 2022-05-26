@@ -13,7 +13,7 @@ export interface UpdateActionData extends CoreUpdateActionData, CoreSelectionAct
 
 export class UpdateAction extends CoreUpdateAction {
   #data = this.__data as UpdateActionData;
-  __getData(): UpdateActionData {
+  override __getData(): UpdateActionData {
     return this.#data;
   }
 

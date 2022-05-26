@@ -24,7 +24,7 @@ export interface TransactActionData extends ActionData {
 
 export class TransactAction extends Action {
   #data = this.__data as TransactActionData;
-  __getData(): TransactActionData {
+  override __getData(): TransactActionData {
     return this.#data;
   }
 

@@ -17,7 +17,7 @@ export interface CoreUpdateActionData extends ActionData {
 
 export class CoreUpdateAction extends Action {
   #data = this.__data as CoreUpdateActionData;
-  __getData(): CoreUpdateActionData {
+  override __getData(): CoreUpdateActionData {
     return this.#data;
   }
 
