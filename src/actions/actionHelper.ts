@@ -73,10 +73,11 @@ export function unsafeDeleteAll(): DeleteAction {
   return new DeleteAction(true, false);
 }
 
-export function transact(...actions: TransactionMemberTypes[]): TransactAction {
+export function transact(...actions: Array<TransactionMemberTypes | null>): TransactAction {
   throwOnEmptyArray(actions, 'actions');
+  const filteredActions = actions.filter((a) => !!a) as TransactionMemberTypes[];
   return new TransactAction(
-    actions.map((a) => {
+    filteredActions.map((a) => {
       if (a instanceof TransactionMember) {
         return a;
       }
