@@ -1,7 +1,7 @@
 import { Action } from './actionGroup.js';
 import { WrapAction, CapturedVar, WrapArgValue } from './wrapAction.js';
 import { TransactionMember } from './transactAction.js';
-import { ReturnValues } from '../returnValues.js';
+import { ReturnValueSrc } from '../returnValues.js';
 
 declare module './actionGroup.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -41,7 +41,7 @@ Action.prototype.declareReturnValue = function (name: string, value: string): Tr
 };
 
 Action.prototype.declareInsertedID = function (value: string): TransactionMember {
-  return this.declareReturnValues({ [ReturnValues.insertedID]: value });
+  return this.declareReturnValues({ [ReturnValueSrc.insertedID]: value });
 };
 
 Action.prototype.wrapAsRefs = function (args: { [name: string]: string }): WrapAction {

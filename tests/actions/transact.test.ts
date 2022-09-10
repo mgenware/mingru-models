@@ -153,7 +153,7 @@ it('Declare return values', () => {
   deepEq(members[1]!.returnValues, { a: '_a' });
   deepEq(members[2]!.returnValues, { b: '_b' });
   deepEq(members[3]!.returnValues, {
-    [mm.ReturnValues.insertedID]: 'i',
+    [mm.ReturnValueSrc.insertedID]: 'i',
   });
   deepEq(vd.returnValues, ['_b', '_a']);
 });
