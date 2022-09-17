@@ -1,7 +1,7 @@
 import { Action, ActionData } from './actionGroup.js';
-import { Column, Table } from '../core/core.js';
+import { Column, SQLVariable, Table } from '../core/core.js';
 import SQLConvertible from '../core/sqlConvertible.js';
-import { convertToSQL, sql } from '../core/sqlHelper.js';
+import { convertToSQL, ParamAttributes, sql } from '../core/sqlHelper.js';
 
 export enum AutoSetterType {
   default = 1,
@@ -13,6 +13,11 @@ export interface CoreUpdateActionData extends ActionData {
   // You can call both `setParams()` and `setDefaults()` and the order also matters,
   // we use ES6 `Set` to track those auto setters, which keeps insertion order.
   autoSetters?: Set<AutoSetterType>;
+}
+
+export interface SetParamsOptions {
+  toParamOpt?: ParamAttributes;
+  toParamCallback?: (col: Column) => SQLVariable;
 }
 
 export class CoreUpdateAction extends Action {
@@ -36,13 +41,20 @@ export class CoreUpdateAction extends Action {
   }
 
   setParams(...columns: Column[]): this {
+    return this.setParamsAdv(columns);
+  }
+
+  setParamsAdv(columns: Column[], opt?: SetParamsOptions): this {
     if (!columns.length) {
       this.mustGetAutoSetters().add(AutoSetterType.param);
       return this;
     }
     for (const col of columns) {
+      const param = opt?.toParamCallback
+        ? opt.toParamCallback(col)
+        : col.toParam(undefined, opt?.toParamOpt);
       this.checkColumnFree(col);
-      this.mustGetSetters().set(col, sql`${col.toParam()}`);
+      this.mustGetSetters().set(col, sql`${param}`);
     }
     return this;
   }
