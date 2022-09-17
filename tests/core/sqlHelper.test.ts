@@ -1,6 +1,6 @@
 import * as mm from '../../dist/main.js';
 import user from '../models/user.js';
-import { eq } from '../assert-aliases.js';
+import { eq, deepEq } from '../assert-aliases.js';
 
 it('and', () => {
   eq(
@@ -22,6 +22,24 @@ it('toParam', () => {
   eq(input.type, user.name);
   eq(input.name, undefined);
   eq(input.nullable, undefined);
+});
+
+it('toParamsAdv', () => {
+  class UserTA extends mm.ActionGroup {
+    someCols = mm
+      .updateSome()
+      .setParamsAdv([user.follower_count], { toParamOpt: { nullable: false } })
+      .by(user.id);
+
+    allCols = mm
+      .updateSome()
+      .setParamsAdv([], { toParamOpt: { nullable: false } })
+      .by(user.id);
+  }
+  const ta = mm.actionGroup(user, UserTA);
+
+  eq(ta.someCols.__getData().autoSetterParamsOpt, undefined);
+  deepEq(ta.allCols.__getData().autoSetterParamsOpt, { toParamOpt: { nullable: false } });
 });
 
 it('toParamNotNull', () => {

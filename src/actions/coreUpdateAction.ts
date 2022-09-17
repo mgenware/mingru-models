@@ -13,6 +13,7 @@ export interface CoreUpdateActionData extends ActionData {
   // You can call both `setParams()` and `setDefaults()` and the order also matters,
   // we use ES6 `Set` to track those auto setters, which keeps insertion order.
   autoSetters?: Set<AutoSetterType>;
+  autoSetterParamsOpt?: SetParamsOptions;
 }
 
 export interface SetParamsOptions {
@@ -47,6 +48,7 @@ export class CoreUpdateAction extends Action {
   setParamsAdv(columns: Column[], opt?: SetParamsOptions): this {
     if (!columns.length) {
       this.mustGetAutoSetters().add(AutoSetterType.param);
+      this.#data.autoSetterParamsOpt = opt;
       return this;
     }
     for (const col of columns) {
