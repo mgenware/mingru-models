@@ -6,6 +6,7 @@ declare module './core.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Column {
     toParam(name?: string, opt?: ParamAttributes): SQLVariable;
+    toParamNotNull(name?: string, opt?: ParamAttributes): SQLVariable;
     toArrayParam(name?: string, opt?: ParamAttributes): SQLVariable;
     isEqualTo(literals: TemplateStringsArray, ...params: SQLConvertible[]): SQL;
     isEqualToSQL(valueSQL: SQL): SQL;
@@ -21,6 +22,10 @@ declare module './core.js' {
 
 Column.prototype.toParam = function (name?: string, opt?: ParamAttributes) {
   return param(this, name, { column: this, ...opt });
+};
+
+Column.prototype.toParamNotNull = function (name?: string, opt?: ParamAttributes) {
+  return param(this, name, { column: this, ...opt, nullable: false });
 };
 
 Column.prototype.toArrayParam = function (name?: string, opt?: ParamAttributes) {

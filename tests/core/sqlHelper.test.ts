@@ -21,6 +21,15 @@ it('toParam', () => {
   eq(input.isArray, false);
   eq(input.type, user.name);
   eq(input.name, undefined);
+  eq(input.nullable, undefined);
+});
+
+it('toParamNotNull', () => {
+  const input = user.name.toParamNotNull();
+  eq(input.isArray, false);
+  eq(input.type, user.name);
+  eq(input.name, undefined);
+  eq(input.nullable, false);
 });
 
 it('toParam(string)', () => {
