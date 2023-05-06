@@ -197,7 +197,13 @@ it('Column.mustGet', () => {
 it('Column.attr n SelectedColumn.attr', () => {
   {
     class UserTA extends mm.ActionGroup {
-      t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
+      t = mm.selectRow(
+        user.follower_count
+          .attr(1, true)
+          .attr(2, 's')
+          .attr(1, 3)
+          .attr(4 as mm.SelectedColumnAttribute, 3),
+      );
     }
     const table = mm.actionGroup(user, UserTA);
     const { t } = table;
@@ -215,7 +221,13 @@ it('Column.attr n SelectedColumn.attr', () => {
   }
   {
     class UserTA extends mm.ActionGroup {
-      t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
+      t = mm.selectRow(
+        user.follower_count
+          .attr(1, true)
+          .attr(2, 's')
+          .attr(1, 3)
+          .attr(4 as mm.SelectedColumnAttribute, 3),
+      );
     }
     const table = mm.actionGroup(user, UserTA);
     const { t } = table;
@@ -254,7 +266,13 @@ it('Column.colAttr', () => {
   }
   {
     class UserTA extends mm.ActionGroup {
-      t = mm.selectRow(user.follower_count.attr(1, true).attr(2, 's').attr(1, 3).attr(4, 3));
+      t = mm.selectRow(
+        user.follower_count
+          .attr(1, true)
+          .attr(2, 's')
+          .attr(1, 3)
+          .attr(4 as mm.SelectedColumnAttribute, 3),
+      );
     }
     const table = mm.actionGroup(user, UserTA);
     const { t } = table;

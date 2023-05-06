@@ -712,7 +712,7 @@ export class SQLCall {
   }
 
   toString(): string {
-    return `${SQLCallType[this.type]?.toUpperCase()}(${this.params.join(',')})`;
+    return `${SQLCallType[this.type].toUpperCase()}(${this.params.join(',')})`;
   }
 
   setReturnType(type: ColumnType): this {

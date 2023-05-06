@@ -185,6 +185,7 @@ export function actionGroupCore(
 ): ActionGroup {
   let userAGName: string | undefined;
   let ag: ActionGroup;
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!actionGroupInput) {
     ag = new ActionGroup();
   } else if (typeof actionGroupInput === 'string') {
